@@ -6,23 +6,24 @@ public class GrillSpecs {
 	static float GRILL_MED_COST = 300;
 	static float GRILL_LG_COST = 1000;
 	
-	GrillType type;
-	GrillSize size;
+	GrillType grillType;
+	GrillSize grillSize;
 
-	public GrillSpecs() {
-		this.type = new GrillType();
-		this.size = new GrillSize();
+	public GrillSpecs(Inventory inventory) {
+		this.grillType = new GrillType(inventory);
+		this.grillSize = new GrillSize(inventory);
 	}
-	
+	public GrillSpecs(){};
+
 	public GrillType getType() {
-		return type;
+		return grillType;
 	}
 	
 	public int getSize() {
-		return size.currentSize.size;
+		return ((GrillSize.Size) grillSize.currentQuality).size;
 	}
 	
 	public GrillSize getGrillSize() {
-		return size;
+		return grillSize;
 	}
 }

@@ -14,6 +14,7 @@ public class Meat {
 		float sellPrice;
 		float cookTime;
 		float burnTime;
+		
 		private Type(float buy, float sell, float cook, float burn) {
 			this.buyPrice = buy;
 			this.sellPrice = sell;
@@ -55,8 +56,6 @@ public class Meat {
 			this.state = State.BURNT;
 		else if (cookTime > this.getCookTime())
 			this.state = State.COOKED;
-		
-		
 	}
 	
 	public void draw(SpriteBatch batch, int x, int y) {

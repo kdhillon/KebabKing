@@ -1,123 +1,67 @@
 package com.chuanrchef.game.Purchases;
 
+import com.badlogic.gdx.utils.TimeUtils;
 import com.chuanrchef.game.Analytics;
 import com.chuanrchef.game.Profile;
+import com.chuanrchef.game.Purchases.AdCampaign.Campaign;
+import com.chuanrchef.game.Purchases.Vanity.VanityDecorationType;
+import com.chuanrchef.game.Purchases.Vanity.VanityGrillStandType;
+import com.chuanrchef.game.Purchases.Vanity.VanityItem;
 
 public class Inventory {	
-
-	static String beerQualityDescription =
-			"Upgrade the quality of your drinks! Better drinks cost more, but sell for "
-					+ "more and increase your reputation!. Some customers will only accept"
-					+ " high quality drinks! ";
-
-
-	Profile profile;
 	// class that contains all information about purchased items
 	// remember to make this expandable, so that there are no problems when updates are released
+	Profile profile;
 
 	public MeatQuality meatQuality;
 	public DrinkQuality drinkQuality;
 
-	public GrillSpecs grillSpecs; // not an item but contains two relevant items, can remove later
+	// Info about grill
+	public GrillSpecs grillSpecs; // contains two relevant items, can remove later
 
+	// Current location
 	public LocationType locationType;
-	
+
+	// Ad campaigns
 	public AdCampaign adCampaign;
+	public AdCampaign.Campaign currentCampaign;
+	public long campaignStartedAtNanos;
+	public long campaignEndsAtNanos;
 
-	// Grill types:
-	//	Regular Small, 
-	//	Regular Large, 
-	//	Storage Small, 
-	//	Storage Big, 
-	//	(Control Small), 
-	//	(Control Big)
-
+	// List of Vanity items player might have
+	// decorations includes things that don' get in the way of other things (flowers, etc)
+	public VanityDecorationType decorations;
+	public VanityGrillStandType grillStand;
 
 	// Location upgrades
-	//	Location location;
-
-	// Advertising plans (increase reputation, go away after a day)
-	// advertise in local paper 
-	// press release (expensive)
-	boolean advertisingToday;
-	static int advertisingTodayCooldown = 1;
-	int advertisingTodayCountdown = 0;
-
-	// Free chuanr for students, boosts reputation but you don't make money from students
-	boolean freeForStudents;
-	static int freeForStudentsCooldown = 5;
-	int freeForStudentsCountdown = 0;
-
-	//	Invite the health inspector for a visit
-	//	expires after one day
-	boolean healthInspectorVisit;
-	static int healthInspectorVisitCooldown = 5;
-	int healthInspectorCountdown = 0;
-
-	// Street vendor permit
-	// prevents cops from shutting you down, expires every 7 days
-	boolean streetVendorPermit;
-	static int streetVendorPermitCooldown = 7;
-	int streetVendorCountdown = 0;
-
-
-	// Stand upgrades
-	// chuanr sign
-	int signLevel; // increases popularity (?)
-
-	// outdoor lighting
-	int lightingLevel; // extends day length
-
-	// aesthetics
-	//	boolean flowers; // flowers do nothing
-
-
-	// Extra line (?)
-	boolean extraLine;
-
-	// Vanity items:
-	// flowers
-	// 
-
 	// Subordinates (?)
 	// can manage additional stands once you get good enough?
 	// each one has its own reputation and you have to manage them
 
-	// Switch out your meat for other types (eventually)
-
-	//	invite the health inspector for a free meal
-	//	Advertise in the local newspaper
-	//	upgrade your premises 
-	//	extra seating
-	//	restaurant
-	//	Change location 
-
 	// no-arg constructor for kryo
 	public Inventory() {
-		
+		VanityItem.initialize();
 	}
-	
+
 	// create a blank purchases
 	public Inventory(Profile profile) {
+		VanityItem.initialize();
+
 		this.profile = profile;
 
-		meatQuality = new MeatQuality();
-		drinkQuality = new DrinkQuality();
+		meatQuality = new MeatQuality(this);
+
+		drinkQuality = new DrinkQuality(this);
+
+		locationType = new LocationType(this);
+
+		grillSpecs = new GrillSpecs(this);
+
+		adCampaign = new AdCampaign(this);
+
+		decorations = new VanityDecorationType(this);
 		
-		locationType = new LocationType();
-
-		grillSpecs = new GrillSpecs();
-		
-		adCampaign = new AdCampaign();
-
-		lightingLevel = 1;
-
-		extraLine = false;
-
-		advertisingToday = false;
-		freeForStudents = false;
-		healthInspectorVisit = false;
-		streetVendorPermit = false;
+		grillStand = new VanityGrillStandType(this);
 	}
 
 	public float getCash() {
@@ -127,13 +71,24 @@ public class Inventory {
 	public int getCoins() {
 		return this.profile.getCoins();
 	}
-	
+
 	public void spendCoins(int coins) {
 		profile.spendCoins(coins);
 	}
-	
+
 	public void spendCash(float cash) {
 		profile.spendCash(cash);
+	}
+
+	public boolean hasUnlockedByRound(Purchaseable item) {
+		if (this.profile == null) return false;
+		return this.profile.getCurrentRound() >= item.unlockAtRound();
+	}
+
+	// Does the current round exactly equal the unlock round?
+	public boolean atExactRoundForUnlock(Purchaseable item) {
+		if (this.profile == null) return false;
+		return this.profile.getCurrentRound() == item.unlockAtRound();
 	}
 
 	// returns true if can afford to upgrade given item
@@ -148,13 +103,14 @@ public class Inventory {
 	}
 
 	public boolean unlock(Purchaseable item, PurchaseType type) {
+		if (!hasUnlockedByRound(item)) throw new java.lang.AssertionError();
 		if (!canAffordUnlock(item)) return false;
-		
+
 		// unlock item
 		type.unlock(item);
-		
+
 		Analytics.sendEventHit("Inventory", "Unlock", item.getName());
-		
+
 		// spend money
 		if (item.coinsToUnlock() > 0) {
 			spendCoins(item.coinsToUnlock());
@@ -162,65 +118,80 @@ public class Inventory {
 		else{ 
 			spendCash(item.cashToUnlock());
 		}
-		
+
 		// save game
 		profile.save();
-		
+
 		return true;
 	}
-	
-	
-	// return false if cannot afford
-	//	public void purchaseGrillSize(GrillSize size) {
-	//		if (!canAffordGrillSize(size)) throw new java.lang.AssertionError();
-	//		this.grillSize = size;
-	//	}
-	//
-	//
-	//	public void purchaseMeatUpgrade() {
-	//		if (!canAffordGrillSize(size)) throw new java.lang.AssertionError();
-	//
-	//
-	//	}
-	//
-	//	public void purchaseAdvertisingToday() {
-	//		if (!canAffordGrillSize(size)) throw new java.lang.AssertionError();
-	//
-	//		this.advertisingToday = true;
-	//		this.advertisingTodayCountdown = advertisingTodayCooldown;
-	//	}
-	//
-	//	public void purchaseFreeForStudents() {
-	//		if (!canAffordGrillSize(size)) throw new java.lang.AssertionError();
-	//
-	//		this.freeForStudents = true;
-	//		this.freeForStudentsCountdown = freeForStudentsCooldown;
-	//	}
-	//
-	//	public void purchaseHealthInspectorVisit() {
-	//		if (!canAffordGrillSize(size)) throw new java.lang.AssertionError();
-	//
-	//		this.healthInspectorVisit = true;
-	//		this.healthInspectorCountdown = healthInspectorVisitCooldown;
-	//	}
-	//
-	//	public void purchaseStreetVendorPermit() {
-	//		if (!canAffordGrillSize(size)) throw new java.lang.AssertionError();
-	//
-	//		this.streetVendorPermit = true;
-	//		this.advertisingTodayCountdown = advertisingTodayCooldown;
-	//	}
+
+	public boolean purchaseConsumable(Purchaseable item, PurchaseType type) {
+		if (!type.unlocked(item)) {
+			System.out.println("Item not unlocked!");
+			return false;
+		}
+		if (!canAffordConsumable(item)) {
+			System.out.println("Can't afford item!");
+			return false;
+		}
+		if (alreadyActive(item)) {
+			System.out.println("Item already active!");
+			return false;
+		}
+
+		Analytics.sendEventHit("Inventory", "Purchase Consumable", item.getName());
+
+		// spend money
+		spendCash(item.getDailyCost());
+
+		if (type == adCampaign) {
+			System.out.println("purchased ad campaign");
+			Campaign campaign = (Campaign) item;
+			this.currentCampaign = campaign;
+			this.campaignEndsAtNanos = TimeUtils.nanoTime() + 1000000000*campaign.seconds;
+			this.campaignStartedAtNanos = TimeUtils.nanoTime();
+			// this needs to happen on load...
+			profile.updateCustomerDistribution(campaign.type, campaign.hypeBoost);
+		}
+
+		// save game
+		profile.save();
+
+		return true;
+	}
+
+	public boolean alreadyActive(Purchaseable item) {
+		if (this.currentCampaign == item) return true;
+		return false;
+	}
+
+	// returns true if can afford to purchase given consumable
+	public boolean canAffordConsumable(Purchaseable item) {
+		if (this.getCash() >= item.getDailyCost()) return true;
+		return false;
+	}
+
+	// Updates current ad campaign. Should be called every frame that kitchen screen is active.
+	public void updateAds() {
+//		System.out.println("Boost: " + profile.boost);
+//		System.out.println("Campaign percent: " + campaignPercent());
+
+		if (currentCampaign != null &&
+				TimeUtils.nanoTime() > this.campaignEndsAtNanos) {
+			this.currentCampaign = null;
+			profile.resetCustomerDistribution();
+		}
+	}
+
+	// can be used for Hype meter
+	public float campaignPercent() {
+		if (this.currentCampaign == null) return 0;
+		return 1.0f * TimeUtils.timeSinceNanos(campaignStartedAtNanos) / 
+				(campaignEndsAtNanos - campaignStartedAtNanos);
+	}
 
 	// reset values after one day
 	public void endDay() {
-		advertisingToday = false;
-		freeForStudents = false;
-		healthInspectorVisit = false;
-		if (advertisingTodayCountdown > 0) advertisingTodayCountdown--;
-		if (freeForStudentsCountdown > 0) freeForStudentsCountdown--;
-		if (healthInspectorCountdown > 0) healthInspectorCountdown--;
-		if (streetVendorCountdown > 0) streetVendorCountdown--;
 
-		if (streetVendorCountdown == 0) streetVendorPermit = false; // expires after 7 days
 	}
 }

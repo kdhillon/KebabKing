@@ -4,9 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.google.android.gms.analytics.ecommerce.Product;
-import com.google.android.gms.analytics.ecommerce.ProductAction;
-
 public interface PlatformSpecific {
 	
     public boolean isLoggedIn();
@@ -33,7 +30,7 @@ public interface PlatformSpecific {
 	public void sendEventHit(String category, String action, String label);
 	public void sendEventHit(String category, String action, String label, long value);
 	
-	public void sendPaymentHit(Product product, ProductAction productAction);
-
-	public void sendUserTiming(String eventName, long milliseconds);
+//	public void sendPaymentHit(Product product, ProductAction productAction);
+//
+//	public void sendUserTiming(String eventName, long milliseconds);
 }

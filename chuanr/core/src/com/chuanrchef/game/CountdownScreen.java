@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class CountdownScreen extends ScreenTemplate  {
-	static int COUNTDOWN_TIME = 3;
+	static int COUNTDOWN_TIME = 0;
 	static float GOAL_TIME = 0f;
 	
 	ChuanrC master;
@@ -54,7 +54,7 @@ public class CountdownScreen extends ScreenTemplate  {
 
 		table = new Table();
 		uiStage.addActor(table);
-		table.setSize(ChuanrC.width, ChuanrC.height);
+		table.setSize(ChuanrC.getWidth(), ChuanrC.getHeight());
 		table.setPosition(0, 0);
 		table.align(Align.center);
 		table.align(Align.top);
@@ -63,7 +63,7 @@ public class CountdownScreen extends ScreenTemplate  {
 		
 		goal = new DailyGoal();
 		
-		this.countdownLabel = new Label("", Assets.generateLabelStyle(200 * ChuanrC.width / 480));
+		this.countdownLabel = new Label("", Assets.generateLabelStyle(ChuanrC.getGlobalX(200.0f / 480)));
 //		
 //		goalTitle = new Label("Daily Goal:", Assets.generateLabelStyle(48));
 //		table.add(goalTitle).bottom().expandY();
@@ -126,14 +126,14 @@ public class CountdownScreen extends ScreenTemplate  {
 			this.goalCountdown -= delta;
 			if (this.goalCountdown <= 0) {
 				table.clear();
-				table.add(countdownLabel).expand().center().padTop(ChuanrC.height / 4);
+				table.add(countdownLabel).expand().center().padTop(ChuanrC.getGlobalY(1.0f / 4));
 				table.row();
 			
 				table.add(goalTitle).bottom();
 				table.row();
 				table.add(goalLabel).bottom();
 				table.row();
-				table.add(rewardLabel).bottom().padBottom(ChuanrC.height*0.15f);
+				table.add(rewardLabel).bottom().padBottom(ChuanrC.getGlobalY(0.15f));
 			
 				this.countingDown = true;
 			}
@@ -148,13 +148,6 @@ public class CountdownScreen extends ScreenTemplate  {
 
 	public void transition() {
 		this.master.startDay();
-	}
-
-
-	@Override
-	public void resize(int width, int height) {
-		ChuanrC.width = width;
-		ChuanrC.height = height;
 	}
 
 	@Override

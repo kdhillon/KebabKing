@@ -10,6 +10,8 @@ public interface Purchaseable {
 	
 	public float cashToUnlock();
 	
+	public int unlockAtRound();
+	
 	public float getDailyCost();
 	
 	public TextureRegion getIcon();

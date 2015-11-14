@@ -35,8 +35,8 @@ public class PauseScreen extends ScreenTemplate  {
 		uiStage = new Stage(viewport, batch);	
 				
 		table = new Table();
-		table.setPosition(ChuanrC.width / 8, ChuanrC.height / 4);
-		table.setSize(ChuanrC.width * 3 / 4, ChuanrC.height / 2);
+		table.setPosition(ChuanrC.getGlobalX(1.0f / 8), ChuanrC.getGlobalY(1.0f / 4));
+		table.setSize(ChuanrC.getGlobalX(3.0f / 4), ChuanrC.getGlobalY(1.0f / 2));
 //		table.debugAll();
 		table.align(Align.top);
 		uiStage.addActor(table);
@@ -58,7 +58,7 @@ public class PauseScreen extends ScreenTemplate  {
 		
 		TextButton resume = new TextButton("Resume", Assets.getMainButtonStyle());
 		table.row();
-		table.add(resume).padTop(ChuanrC.height / 32);
+		table.add(resume).padTop(ChuanrC.getGlobalY(1.0f / 32));
 		
 		resume.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {

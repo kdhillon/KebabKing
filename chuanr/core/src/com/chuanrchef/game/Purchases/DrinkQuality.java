@@ -1,17 +1,12 @@
 package com.chuanrchef.game.Purchases;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.chuanrchef.game.Assets;
 
 
 // user has one of these
 // later: split this into separate ones for chicken beef, lamb
-public class DrinkQuality implements PurchaseType {
-	static String meatQualityDescription =
-			"Upgrade the quality of your drinks!";
-
+public class DrinkQuality extends PurchaseType {
 	// Specific types that you might own 
 	enum Quality implements Purchaseable{
 		// name, initial cost, daily cost, qual factor, description
@@ -34,7 +29,7 @@ public class DrinkQuality implements PurchaseType {
 			this.dailyCost = dailyCost;
 			this.qualityFactor = qualityFactor;
 			this.description = description;
-			this.icon = Assets.getTexture(iconName);
+			this.icon = Assets.getTextureRegion(iconName);
 		}
 		
 		@Override
@@ -61,73 +56,17 @@ public class DrinkQuality implements PurchaseType {
 		public String getDescription() {
 			return this.description;
 		}
+		@Override
+		public int unlockAtRound() {
+			return 0;
+		}
 	};
 
-	ArrayList<Quality> unlocked;
-	Quality currentQuality;
-	
-	// create a new one
-	public DrinkQuality() {
-		unlocked = new ArrayList<Quality>();
+	public DrinkQuality(Inventory inventory) {
+		super(inventory, "Drink Quality", "Upgrade the quality of your drinks!", null, Quality.values());
 		unlock(Quality.LEVEL1);
 	}
 	
-	@Override
-	public String getName() {
-		return "Drink Quality";
-	}
-
-	@Override
-	public String getDescription() {
-		return meatQualityDescription;
-	}
-
-	@Override
-	public TextureRegion getIcon() {
-		return null;
-	}
-
-	@Override
-	public Purchaseable getCurrentSelected() {
-		return currentQuality;
-	}
-
-	@Override
-	public boolean unlocked(Purchaseable purchaseable) {
-		return unlocked.contains(purchaseable);
-	}
-
-	@Override
-	public void setCurrent(Purchaseable newCurrent) {
-		if (!unlocked(newCurrent)) throw new java.lang.AssertionError();
-		this.currentQuality = (Quality) newCurrent;
-	}
-
-	@Override
-	public void unlock(Purchaseable toUnlock) {
-		this.unlocked.add((Quality) toUnlock);
-		this.setCurrent((Quality) toUnlock);
-	}
-	
-	@Override
-	public Purchaseable getNext(Purchaseable current, boolean left) {
-		Quality[] values = Quality.values();
-		
-		int currentIndex = -1;
-		for (int i = 0; i < values.length; i++) {
-			if (values[i] == current) currentIndex = i;
-		}
-		int nextIndex;
-		
-		if (left) {
-			nextIndex = currentIndex - 1;
-			if (nextIndex < 0) nextIndex = values.length - 1;
-		}
-		else {
-			nextIndex = currentIndex + 1;
-			if (nextIndex > values.length - 1) nextIndex = 0;
-		}
-		
-		return values[nextIndex];
-	}
+	// for kryo
+	public DrinkQuality() {};
 }

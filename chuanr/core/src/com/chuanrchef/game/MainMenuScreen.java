@@ -61,7 +61,7 @@ public class MainMenuScreen extends ScreenTemplate {
 
 		table = new Table();
 		uiStage.addActor(table);
-		table.setSize(ChuanrC.width, ChuanrC.height);
+		table.setSize(ChuanrC.getWidth(), ChuanrC.getHeight());
 		table.setPosition(0, 0);
 		table.align(Align.center);
 		table.align(Align.top);
@@ -75,14 +75,14 @@ public class MainMenuScreen extends ScreenTemplate {
 		//		}
 
 		//		Label title1 = new Label(string1, Assets.ls120);
-		float padTop = .2f * ChuanrC.height;
+		float padTop = ChuanrC.getGlobalY(.2f);
 		//		table.add(title1).padTop(padTop).colspan(2);
 		//		table.row();
 		//		Label title2 = new Label(string2, Assets.ls120);
 		//		table.add(title2).padTop(-.05f * ChuanrC.height).colspan(2);
 		Image title = new Image(Assets.title);
 		
-		float titleWidth = ChuanrC.width * 0.6f;
+		float titleWidth = ChuanrC.getGlobalX(0.6f);
 //		float titleHeight = titleWidth * (Assets.title.getRegionHeight()/Assets.title.getRegionWidth()); //(Assets.title.getRegionHeight() / Assets.title.getRegionWidth());
 	
 		table.add(title).padTop(padTop).colspan(2).size(titleWidth, titleWidth * 1.5f);
@@ -90,7 +90,7 @@ public class MainMenuScreen extends ScreenTemplate {
 		table.row();
 
 		startDay = new TextButton("Start Day!", Assets.getStartButtonStyle());
-		table.add(startDay).padTop(.03f * ChuanrC.height).center().width(BUTTON_WIDTH*ChuanrC.width).height(BUTTON_WIDTH*ChuanrC.width).padRight(ChuanrC.width*BUTTON_GAP);
+		table.add(startDay).padTop(ChuanrC.getGlobalY(.03f)).center().width(ChuanrC.getGlobalX(BUTTON_WIDTH)).height(ChuanrC.getGlobalX(BUTTON_WIDTH)).padRight(ChuanrC.getGlobalX(BUTTON_GAP));
 
 		startDay.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
@@ -108,7 +108,7 @@ public class MainMenuScreen extends ScreenTemplate {
 		});
 
 		TextButton upgrades = new TextButton("Market", Assets.getMarketButtonStyle());
-		table.add(upgrades).padTop(.03f * ChuanrC.height).center().width(BUTTON_WIDTH*ChuanrC.width).height(BUTTON_WIDTH*ChuanrC.width);
+		table.add(upgrades).padTop(ChuanrC.getGlobalY(.03f)).center().width(ChuanrC.getGlobalX(BUTTON_WIDTH)).height(ChuanrC.getGlobalX(BUTTON_WIDTH));
 
 		upgrades.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
@@ -202,7 +202,7 @@ public class MainMenuScreen extends ScreenTemplate {
 			fastForward = true;
 
 		grill.mousedOver = -1;
-		grill.mousedOverTrash = false;
+//		grill.mousedOverTrash = false;
 		cm.mousedOver = null;
 
 		if (fastForward) {
@@ -246,17 +246,11 @@ public class MainMenuScreen extends ScreenTemplate {
 	}
 
 
+	// This is a duplicate method.
+	// TODO try to put this only in one parent (create a parent screen for everything to implement)
 	@Override
 	public void resize(int width, int height) {
-		ChuanrC.width = width;
-		ChuanrC.height = height;
-
-		// initialize once
-		if (KitchenScreen.UNIT_HEIGHT == 0 && KitchenScreen.UNIT_WIDTH == 0) {
-			KitchenScreen.UNIT_WIDTH = (int) (ChuanrC.width / KitchenScreen.WIDTH);
-			KitchenScreen.UNIT_HEIGHT = (int) (ChuanrC.height / KitchenScreen.HEIGHT);
-		}
-
+		super.resize(width, height);
 		initializeStage();
 	}
 

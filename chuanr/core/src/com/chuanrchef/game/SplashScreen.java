@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // load this screen while rest of game is loading
-public class SplashScreen extends ScreenTemplate  {
-	
+public class SplashScreen extends ScreenTemplate  {	
+	static float FadeInTime = 0f;
+	static float TransitionTime = 0f;
 	
 //	static float FadeInTime = 2f;
-//	static float TransitionTime = 4f;
-	
-	static float FadeInTime = 2f;
-	static float TransitionTime = 2f;
+//	static float TransitionTime = 2f;
 	
 	ChuanrC master;
 	
@@ -58,11 +56,12 @@ public class SplashScreen extends ScreenTemplate  {
 			
 		spriteBatch.setColor(1,  1,  1, fadePercent);
 		
-		float logoWidth = ChuanrC.width*.9f;
+		float logoWidth = ChuanrC.getGlobalX(.9f);
 		float logoHeight = logoWidth * (logo.getHeight()*1f/logo.getWidth()); 
 		
-		float logoX = (ChuanrC.width - logoWidth)/2;
-		float logoY = (ChuanrC.height - logoHeight)/2;
+		// TODO add function to ChuanrC that facilitates subtracting relative widths/heights
+		float logoX = (ChuanrC.getWidth() - logoWidth)/2;
+		float logoY = (ChuanrC.getHeight() - logoHeight)/2;
 		
 //		System.out.println("width: " + logoWidth + " height: " + logoHeight);
 		
@@ -85,18 +84,6 @@ public class SplashScreen extends ScreenTemplate  {
 			
 			if (currentTime > TransitionTime)
 				this.fadeInComplete = true;
-		}
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		ChuanrC.width = width;
-		ChuanrC.height = height;
-
-		// initialize once
-		if (KitchenScreen.UNIT_HEIGHT == 0 && KitchenScreen.UNIT_WIDTH == 0) {
-			KitchenScreen.UNIT_WIDTH = (int) (ChuanrC.width / KitchenScreen.WIDTH);
-			KitchenScreen.UNIT_HEIGHT = (int) (ChuanrC.height / KitchenScreen.HEIGHT);
 		}
 	}
 

@@ -6,9 +6,26 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.chuanrchef.game.Purchases.Vanity.VanityGrillStand;
 
-// contains information for the grill, the trash, spice box, and ice chests
+// contains information for the grill, the "trash", spice box, and ice chests
+//
+// The following is how the control scheme for meat should work:
+//  	Tapping a chest opens the chest. 
+//		Trying to drag the chest does nothing. Chest opens on release.
+//		Tapping an open grill spot places a meat at that spot. 
+//		Tapping anywhere else closes the chest.
+//
+//		Tapping a meat on the grill selects that meat. You can select multiple meats. (Dragging?)
+//		Tapping a customer gives them the meat you selected.
+//		Tapping the void deselects the meat.
+//
+//		Dragging the meat to the void trashes the meat.
+//		Dragging the spice brush onto the meat spices it.
+
 public class Grill {
+	static final boolean DISABLE_DRAG_TO_PLACE = true;
+	
 	static final int GRILL_X = 0;
 	static final float GRILL_Y = 2.5f;
 	static final int GRILL_WIDTH = 10;
@@ -33,19 +50,26 @@ public class Grill {
 	static final int BOTTOM_Y = 0;
 	static final int BEER_X = 9;
 	static final int BEER_Y = 0;
-	static int SPICE_X = 10;
 	static final int SPICE_Y = 3;
 //	static final int TRASH_X = 0;
 //	static final int TRASH_Y = 2;
 	
+	static final float STAND_X = .25f;
+	static final float STAND_Y = .11f;
+	static final float STAND_WIDTH = .5f;
+	static final float STAND_HEIGHT = .1f;
+	
 	private int draw_width;
 	private int draw_height;
+
 	private int draw_x;
 	private int draw_y;
 
 	private float time;
-	private int xOffset;
-	private final int yOffset = 0;
+	
+	private int grillLeftX;
+	private final int grillLeftY = 0;
+	private int grillRightX;
 
 	public enum Selected {
 		NONE, CHICKEN, BEEF, LAMB, SPICE, BEER
@@ -59,6 +83,8 @@ public class Grill {
 	boolean active; 
 	boolean disableTouch;
 	
+	boolean hoverTrash;
+	
 	Profile profile;
 	KitchenScreen ks; // only non-null when active
 	int size; 
@@ -66,7 +92,7 @@ public class Grill {
 	int mousedOver; // index of moused-over slot on grill?
 	//	boolean meatBoxSelected; // for use when highlighting grill
 
-	boolean mousedOverTrash = false;
+//	boolean mousedOverTrash = false;
 	//	boolean boxSelectedNotHeld = false; // try to use this to differentiate between holding and clicking
 	boolean meatSelectedNotHeld = false;
 	boolean placedWhileHeld = false; // true when meat has been placed during the 'hold'
@@ -111,23 +137,15 @@ public class Grill {
 	// this updates the values that are used to draw grill, must be updated when grill changes
 	public void updateSize() {
 		this.size = profile.grillSize();
-		if (size == 6) {
-			SPICE_X = 8;
-		}
-		if (size == 8) {
-			SPICE_X = 9;
-		}
-		if (size == 10) {
-			SPICE_X = 10;
-		}
 
-		xOffset = (GRILL_WIDTH - size) / 2;
-		
+		grillLeftX = (GRILL_WIDTH - size) / 2;
+		grillRightX = grillLeftX + size; 
+				
 		draw_width = GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH;
-		draw_height =(int) ( GRILL_PIECE_HEIGHT * KitchenScreen.UNIT_HEIGHT);
+		draw_height = (int) ( GRILL_PIECE_HEIGHT * KitchenScreen.UNIT_HEIGHT);
 
-		draw_x = (xOffset + GRILL_X) * KitchenScreen.UNIT_WIDTH;
-		draw_y = (int) ((yOffset + GRILL_Y) * KitchenScreen.UNIT_HEIGHT);
+		draw_x = (grillLeftX + GRILL_X) * KitchenScreen.UNIT_WIDTH;
+		draw_y = (int) ((grillLeftY + GRILL_Y) * KitchenScreen.UNIT_HEIGHT);
 	}
 
 	public void activate() {
@@ -165,6 +183,13 @@ public class Grill {
 		// this is required for now.
 		this.updateSize();
 		
+		if (ks != null && TrashPile.DRAW_TRASH_PILE) {
+			drawTrashPile(batch);
+		}
+		
+		// draw grill stand
+		drawStand(batch);
+		
 		drawBoxes(batch);
 
 		Color original = batch.getColor();
@@ -177,8 +202,10 @@ public class Grill {
 			fire = Assets.gray;
 		}
 
-		int xCount = xOffset;
+		int xCount = grillLeftX;
 
+		
+		
 		// draw left
 		batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
@@ -186,7 +213,7 @@ public class Grill {
 		xCount++;
 
 		// draw middle
-		while (xCount < GRILL_WIDTH - xOffset - 1) {
+		while (xCount < GRILL_WIDTH - grillLeftX - 1) {
 			draw_x = (xCount + GRILL_X) * KitchenScreen.UNIT_WIDTH;
 			batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
 			batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
@@ -206,17 +233,39 @@ public class Grill {
 		
 		// draw spice paintbrush
 		if (this.selected == Selected.SPICE && Gdx.input.isTouched()) {
-			float brushWidth = 80;
-			float brushHeight = 120;
-			
-			batch.draw(Assets.paintBrush, Gdx.input.getX() - brushWidth/2, ChuanrC.height-Gdx.input.getY() - brushHeight/8, brushWidth, brushHeight);
+			drawPaintbrush(batch);
 		}
+		
+		// draw trash icon if throwing away
+		if (trashHover()) {
+			hoverTrash = true;
+			drawTrashIcon(batch);
+		}
+		else hoverTrash = false;
 	}
 	
+	public boolean trashHover() {
+		if (ks != null && ks.cm != null && ks.cm.mousedOver != null) return false;
+		return this.meatSelected() && !meatSelectedNotHeld && !this.onGrillAbsolute(Gdx.input.getX(), Gdx.input.getY());
+	}
 	
+	public void drawPaintbrush(SpriteBatch batch) {
+		float brushWidth = 80;
+		float brushHeight = 120;
+		
+		batch.draw(Assets.paintBrush, Gdx.input.getX() - brushWidth/2, ChuanrC.getHeight() - Gdx.input.getY() - brushHeight/8, brushWidth, brushHeight);
+	}
+	
+	public void drawTrashIcon(SpriteBatch batch) {
+		float trashWidth = 40;
+		float trashHeight = 40;
+		
+		batch.draw(Assets.trashIcon, Gdx.input.getX() - trashWidth/2, ChuanrC.getHeight() - Gdx.input.getY() - trashHeight/8, trashWidth, trashHeight);
+	}
+
 	public void tutDrawLeftGrill(SpriteBatch batch) {
 		// draw left
-		draw_x = (0 + GRILL_X + xOffset) * KitchenScreen.UNIT_WIDTH;
+		draw_x = (0 + GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH;
 		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillLeft, draw_x, draw_y, draw_width, draw_height); 
@@ -224,14 +273,14 @@ public class Grill {
 
 	public void tutDrawGrill(int index, SpriteBatch batch) {
 		// draw middle
-		draw_x = (index + GRILL_X + xOffset) * KitchenScreen.UNIT_WIDTH;
+		draw_x = (index + GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH;
 		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillMid, draw_x, draw_y, draw_width, draw_height);
 	}
 	
 	public void tutDrawRightGrill(SpriteBatch batch) {
-		draw_x = (5 + GRILL_X + xOffset) * KitchenScreen.UNIT_WIDTH;
+		draw_x = (5 + GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH;
 		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillRight, draw_x, draw_y, draw_width, draw_height); 
@@ -244,12 +293,16 @@ public class Grill {
 		int unit_x = KitchenScreen.getUnitX(x);
 		int unit_y = KitchenScreen.getUnitY(y);
 
+		// select spice box for dragging
+		Selected box = touchBox(unit_x, unit_y); 
+		if (box == Selected.SPICE) select(box);
+		
 		// if not on grill
-		Selected box = touchBox(unit_x, unit_y);
-		if (box != Selected.NONE && !ks.paused) {
-			select(box);
-			return;
-		}
+//		Selected box = touchBox(unit_x, unit_y);
+//		if (box != Selected.NONE && !ks.paused) {
+//			select(box);
+//			return;
+//		}
 
 		// if on grill
 		if (onGrill(unit_x, unit_y) && (selected == Selected.NONE || meatSelected())) {
@@ -264,7 +317,7 @@ public class Grill {
 						//						selectedSet.remove(meat[index]);
 					}
 				}
-				else select(index);
+				else selectMeat(index);
 			}
 			return;
 		}
@@ -285,6 +338,18 @@ public class Grill {
 //		//		batch.setColor(1, 1, 1, 1);
 //	}
 
+	public void drawTrashPile(SpriteBatch batch) {
+		ks.tp.draw(batch);
+	}
+	
+	public void drawStand(SpriteBatch batch) {
+		VanityGrillStand stand = (VanityGrillStand) profile.inventory.grillStand.getCurrentSelected();
+		if (stand.getTexture() != null) {
+			batch.draw(stand.getTexture(), ChuanrC.getGlobalX(STAND_X), ChuanrC.getGlobalY(STAND_Y), 
+					ChuanrC.getGlobalX(STAND_WIDTH), ChuanrC.getGlobalY(STAND_HEIGHT));
+		}
+	}
+	
 	public void drawBoxes(SpriteBatch batch) {
 		int box_hor_width 	= KitchenScreen.convertWidth(BOX_HOR_WIDTH);
 		int box_hor_height 	= KitchenScreen.convertHeight(BOX_HOR_HEIGHT);
@@ -298,7 +363,9 @@ public class Grill {
 		int bottom_y 	= KitchenScreen.convertYWithBuffer(BOTTOM_Y);
 		int beer_x 		= KitchenScreen.convertXWithBuffer(BEER_X);
 		int beer_y 		= KitchenScreen.convertYWithBuffer(BEER_Y);
-		int spice_x 	= KitchenScreen.convertXWithBuffer(SPICE_X);
+		
+		// draw spice directly to right of grill
+		int spice_x 	= KitchenScreen.convertXWithBuffer(grillRightX);
 		int spice_y 	= KitchenScreen.convertYWithBuffer(SPICE_Y);
 		
 		// draw boxes in their proper locations
@@ -396,7 +463,7 @@ public class Grill {
 	public void tutDrawSpiceBox(SpriteBatch batch, boolean open) {
 		int spice_width 	= KitchenScreen.convertWidth(SPICE_WIDTH);
 		int spice_height 	= KitchenScreen.convertHeight(SPICE_HEIGHT);
-		int spice_x 	= KitchenScreen.convertXWithBuffer(SPICE_X);
+		int spice_x 	= KitchenScreen.convertXWithBuffer(grillRightX);
 		int spice_y 	= KitchenScreen.convertYWithBuffer(SPICE_Y);
 		
 		if (open) {
@@ -423,7 +490,7 @@ public class Grill {
 		this.meatSelectedNotHeld = false;
 	}
 
-	public void select(int grillIndex) {
+	public void selectMeat(int grillIndex) {
 		if (grillIndex < 0 || grillIndex > meat.length) throw new java.lang.ArrayIndexOutOfBoundsException();
 		this.selected = Selected.NONE;
 		this.selectedSet.add(meat[grillIndex]);
@@ -436,9 +503,9 @@ public class Grill {
 		int unit_x = KitchenScreen.getUnitX(x);
 		int unit_y = KitchenScreen.getUnitY(y);
 
-		mousedOverTrash = false;
-		if (meatSelected() && mousedOverTrash(x, unit_y))
-			mousedOverTrash = true;
+//		mousedOverTrash = false;
+//		if (meatSelected() && mousedOverTrash(x, unit_y))
+//			mousedOverTrash = true;
 
 		mousedOver = -1;
 		if (onGrill(unit_x, unit_y)) 
@@ -457,13 +524,7 @@ public class Grill {
 			}
 		}
 
-		// drop fresh meat on grill
-		if (mousedOver != -1 && this.newMeatSelected()) {
-			if (meat[mousedOver] == null && open(mousedOver)) {
-				ks.dropMeatOnGrill(toMeat(selected));
-				this.placedWhileHeld = true;
-			}
-		}
+		// draw ghost meat under mouse when dragging meat off grill
 
 		// only if a meat from the grill is selected
 		if ((meatSelected() || selected == Selected.BEER) && ks.cm != null)
@@ -473,6 +534,10 @@ public class Grill {
 	public void release(int x, int y) {
 		if (!this.active || this.disableTouch) return;
 
+		if (hoverTrash) {
+			this.trashSelected();
+		}
+		
 		boolean gaveBeerToCustomer = false;
 		// drop stuff onto grill 
 		if (mousedOver()) {
@@ -513,16 +578,28 @@ public class Grill {
 						dropSpice();
 					}
 					else if (selected != Selected.SPICE) {
-						select(mousedOver); // unselect if double-spice
+						selectMeat(mousedOver); // unselect if double-spice
 					}
 					select(Selected.NONE);
 				}
 			}
+			// drop fresh meat on grill
+			if (mousedOver != -1 && this.newMeatSelected()) {
+				if (meat[mousedOver] == null && open(mousedOver)) {
+					ks.dropMeatOnGrill(toMeat(selected));
+					this.placedWhileHeld = true;
+					
+					if (DISABLE_DRAG_TO_PLACE) {
+						removeOnRelease(this.mousedOver);
+//						this.select(Selected.NONE);
+					}
+				}
+			}
 		}
 		// drop stuff into trash
-		else if (mousedOverTrash && meatSelected()) {
-//			trashSelected();
-		}
+//		else if (mousedOverTrash && meatSelected()) {
+////			trashSelected();
+//		}
 		// drop meat on customers
 		else if (meatSelected() && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null) {
 			ks.earnMoney(ks.cm.mousedOver.giveMeat(selectedSet));
@@ -563,7 +640,7 @@ public class Grill {
 		int unit_y = KitchenScreen.getUnitY(y);
 		Selected box = touchBox(unit_x, unit_y);
 
-		// touched and released same box
+		// touched and released same meat
 		if (box == Selected.NONE) {
 			if (onGrill(unit_x, unit_y)) {
 				if (selectedSet.contains(meat[getGrillIndex(x, y)])) 
@@ -576,7 +653,8 @@ public class Grill {
 			}
 		}
 		else {
-			if (isMeat(box)) {
+			if (box != Selected.SPICE) {
+				select(box);
 				//				this.boxSelectedNotHeld = true;
 			}
 		}
@@ -617,7 +695,7 @@ public class Grill {
 			}
 		}
 
-		if (unit_x >= SPICE_X && unit_x < SPICE_X + SPICE_WIDTH) {
+		if (unit_x >= grillRightX && unit_x < grillRightX + SPICE_WIDTH) {
 			if (unit_y >= SPICE_Y && unit_y < SPICE_Y + SPICE_HEIGHT){
 				return Selected.SPICE;
 			}
@@ -627,14 +705,14 @@ public class Grill {
 	}
 
 	// not regular x, unit y (for off-screen stuff) 
-	public boolean mousedOverTrash(int x, int unit_y) {
-		if (x < 0 || x > ChuanrC.width) {
-//			if (unit_y >= TRASH_Y && unit_y < TRASH_Y + TRASH_HEIGHT){
-				return true;
-//			}
-		}
-		return false;
-	}
+//	public boolean mousedOverTrash(int x, int unit_y) {
+//		if (x < 0 || x > ChuanrC.width) {
+////			if (unit_y >= TRASH_Y && unit_y < TRASH_Y + TRASH_HEIGHT){
+//				return true;
+////			}
+//		}
+//		return false;
+//	}
 
 	public boolean isMeat(Selected selected) {
 		return (selected == Selected.CHICKEN || selected == Selected.BEEF || selected == Selected.LAMB);
@@ -644,9 +722,13 @@ public class Grill {
 		return size;
 	}
 
+	public boolean onGrillAbsolute(int x, int y) {
+		return onGrill(KitchenScreen.getUnitX(x), KitchenScreen.getUnitY(y));
+	}
+	
 	public boolean onGrill(int unit_x, int unit_y) {
-		if (unit_x >= GRILL_X + this.xOffset && unit_x < GRILL_X + GRILL_WIDTH - xOffset) {
-			if (unit_y >= GRILL_Y + this.yOffset && unit_y < GRILL_Y + GRILL_HEIGHT - yOffset) {
+		if (unit_x >= GRILL_X + this.grillLeftX && unit_x < GRILL_X + GRILL_WIDTH - grillLeftX) {
+			if (unit_y >= GRILL_Y + this.grillLeftY && unit_y < GRILL_Y + GRILL_HEIGHT - grillLeftY) {
 				return true;
 			}
 		}
@@ -655,7 +737,7 @@ public class Grill {
 
 	// can add vertical grills later
 	public int getGrillIndex(int x, int y) {
-		int distanceFromLeft = x - (GRILL_X + xOffset) * KitchenScreen.UNIT_WIDTH; 		
+		int distanceFromLeft = x - (GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH; 		
 		return (int) (distanceFromLeft * CHUANR_PER_PIECE / (KitchenScreen.UNIT_WIDTH * GRILL_PIECE_WIDTH));
 	}
 
@@ -668,11 +750,11 @@ public class Grill {
 	//	}
 
 	private int getXForIndex(int i) {
-		return  (int) (i * (KitchenScreen.UNIT_WIDTH * GRILL_PIECE_WIDTH / CHUANR_PER_PIECE) + KitchenScreen.UNIT_WIDTH * (xOffset + GRILL_X));
+		return  (int) (i * (KitchenScreen.UNIT_WIDTH * GRILL_PIECE_WIDTH / CHUANR_PER_PIECE) + KitchenScreen.UNIT_WIDTH * (grillLeftX + GRILL_X));
 	}
 
 	private int getYForIndex(int i) {
-		return  (int) (KitchenScreen.UNIT_HEIGHT * (GRILL_Y + yOffset));
+		return  (int) (KitchenScreen.UNIT_HEIGHT * (GRILL_Y + grillLeftY));
 	}
 
 	public void drawMeat(SpriteBatch batch) {
@@ -753,9 +835,10 @@ public class Grill {
 		//		this.boxSelectedNotHeld = false;
 	}
 
-	// removes selected meat from grill
-	public void removeSelected() {
-		trashSelected(); // for now
+	// trashes meat from grill
+	public void trashSelected() {
+		ks.kebabsTrashed += removeSelected(); 
+		System.out.println("Kebabs trashed: " + ks.kebabsTrashed);		
 	}
 
 	private boolean canFitAt(int index, Meat piece) {
@@ -792,14 +875,16 @@ public class Grill {
 		meat[mousedOver].spice();
 	}
 
-	// drops selected meat into trash
-	public void trashSelected() {
+	// returns number of kebabs trashed
+	public int removeSelected() {
 		if (!meatSelected()) throw new java.lang.IllegalArgumentException();
-
+		int count = 0;
 		for (Meat m : selectedSet) {
 			meat[m.index1] = null;
 			if (m.type == Meat.Type.CHICKEN) meat[m.index2] = null;
+			count++;
 		}
+		return count;
 	}
 
 	// moves meat from selected to mousedOver
@@ -851,6 +936,7 @@ public class Grill {
 		return this.selected == Selected.BEEF || this.selected == Selected.CHICKEN || this.selected == Selected.LAMB;
 	}
 
+	// Is meat from grill selected?
 	public boolean meatSelected() {
 		return this.selectedSet.size() > 0;
 	}

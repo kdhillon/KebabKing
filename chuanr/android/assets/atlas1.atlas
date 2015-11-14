@@ -1,1081 +1,1123 @@
 
 atlas1.png
-size: 2046,2043
+size: 2045,2044
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+FatAmerican
+  rotate: false
+  xy: 1058, 42
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+OldMan
+  rotate: false
+  xy: 455, 41
+  size: 601, 721
+  orig: 601, 721
+  offset: 0, 0
+  index: -1
 beef_burnt
   rotate: false
-  xy: 1982, 2
+  xy: 1606, 1799
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
 lamb_burnt
   rotate: false
-  xy: 1982, 2
+  xy: 1606, 1799
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
-beef_closed
-  rotate: false
-  xy: 1864, 1059
-  size: 180, 160
-  orig: 180, 160
-  offset: 0, 0
-  index: -1
 beef_cooked
   rotate: false
-  xy: 1995, 1687
+  xy: 1606, 1597
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
 beef_cooked_spice
   rotate: false
-  xy: 1995, 1485
+  xy: 1606, 1395
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
 beef_icon
   rotate: false
-  xy: 1606, 1555
+  xy: 1658, 1571
   size: 387, 332
   orig: 387, 332
-  offset: 0, 0
-  index: -1
-beef_open
-  rotate: false
-  xy: 1864, 897
-  size: 180, 160
-  orig: 180, 160
   offset: 0, 0
   index: -1
 beef_raw
   rotate: false
-  xy: 1995, 1283
+  xy: 1606, 1193
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
-bg_cbd
-  rotate: false
-  xy: 714, 16
-  size: 800, 195
-  orig: 800, 195
-  offset: 0, 0
-  index: -1
-cash_bg
-  rotate: false
-  xy: 1606, 1889
-  size: 402, 154
-  orig: 402, 154
-  offset: 0, 0
-  index: -1
-cbd
-  rotate: false
-  xy: 2, 763
-  size: 800, 1280
-  orig: 800, 1280
-  offset: 0, 0
-  index: -1
-chicken_icon
-  rotate: false
-  xy: 1606, 1221
-  size: 387, 332
-  orig: 387, 332
-  offset: 0, 0
-  index: -1
-cloud
-  rotate: false
-  xy: 2, 19
-  size: 166, 63
-  orig: 166, 63
-  offset: 0, 0
-  index: -1
-coals
-  rotate: false
-  xy: 1488, 620
-  size: 18, 141
-  orig: 18, 141
-  offset: 0, 0
-  index: -1
-coin
-  rotate: false
-  xy: 1864, 767
-  size: 127, 128
-  orig: 127, 128
-  offset: 0, 0
-  index: -1
-cow_icon
-  rotate: false
-  xy: 1982, 204
-  size: 56, 43
-  orig: 56, 43
-  offset: 0, 0
-  index: -1
-foreignerbackright
-  rotate: false
-  xy: 1606, 770
-  size: 256, 449
-  orig: 256, 449
-  offset: 0, 0
-  index: -1
-grampsbackstepleft
-  rotate: false
-  xy: 714, 213
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-grampsbackstepright
-  rotate: false
-  xy: 972, 213
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-grampsideleft1
-  rotate: false
-  xy: 1230, 213
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-graypixel
-  rotate: false
-  xy: 1508, 760
-  size: 1, 1
-  orig: 1, 1
-  offset: 0, 0
-  index: -1
-grillcenter4
-  rotate: false
-  xy: 2010, 1892
-  size: 36, 151
-  orig: 36, 151
-  offset: 0, 0
-  index: -1
-icon_ads
-  rotate: false
-  xy: 1516, 17
-  size: 231, 230
-  orig: 231, 230
-  offset: 0, 0
-  index: -1
-icon_coin
-  rotate: false
-  xy: 1516, 249
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-icon_food
-  rotate: false
-  xy: 1749, 17
-  size: 231, 230
-  orig: 231, 230
-  offset: 0, 0
-  index: -1
-kebabking o
-  rotate: false
-  xy: 2, 84
-  size: 710, 677
-  orig: 710, 677
-  offset: 0, 0
-  index: -1
-man_down
-  rotate: false
-  xy: 1488, 472
-  size: 18, 23
-  orig: 18, 23
-  offset: 0, 0
-  index: -1
-man_walk_down
-  rotate: false
-  xy: 359, 59
-  size: 40, 23
-  orig: 40, 23
-  offset: 0, 0
-  index: -1
-man_walk_left
-  rotate: false
-  xy: 401, 59
-  size: 40, 23
-  orig: 40, 23
-  offset: 0, 0
-  index: -1
-man_walk_right
-  rotate: false
-  xy: 443, 59
-  size: 40, 23
-  orig: 40, 23
-  offset: 0, 0
-  index: -1
-man_walk_up
-  rotate: false
-  xy: 485, 59
-  size: 40, 23
-  orig: 40, 23
-  offset: 0, 0
-  index: -1
-old_man_stingy_down
-  rotate: false
-  xy: 1488, 497
-  size: 20, 20
-  orig: 20, 20
-  offset: 0, 0
-  index: -1
-old_man_stingy_walk_down
-  rotate: false
-  xy: 269, 34
-  size: 39, 22
-  orig: 39, 22
-  offset: 0, 0
-  index: -1
-old_man_stingy_walk_left
-  rotate: false
-  xy: 269, 58
-  size: 39, 24
-  orig: 39, 24
-  offset: 0, 0
-  index: -1
-old_man_stingy_walk_right
-  rotate: false
-  xy: 527, 59
-  size: 39, 23
-  orig: 39, 23
-  offset: 0, 0
-  index: -1
-old_man_stingy_walk_up
-  rotate: false
-  xy: 228, 55
-  size: 39, 27
-  orig: 39, 27
-  offset: 0, 0
-  index: -1
-old_woman_down
-  rotate: false
-  xy: 1488, 519
-  size: 20, 22
-  orig: 20, 22
-  offset: 0, 0
-  index: -1
-old_woman_walk_down
-  rotate: false
-  xy: 568, 36
-  size: 43, 22
-  orig: 43, 22
-  offset: 0, 0
-  index: -1
-old_woman_walk_left
-  rotate: false
-  xy: 613, 36
-  size: 43, 22
-  orig: 43, 22
-  offset: 0, 0
-  index: -1
-old_woman_walk_right
-  rotate: false
-  xy: 658, 36
-  size: 43, 22
-  orig: 43, 22
-  offset: 0, 0
-  index: -1
-old_woman_walk_up
-  rotate: false
-  xy: 310, 35
-  size: 43, 22
-  orig: 43, 22
-  offset: 0, 0
-  index: -1
-outskirts
-  rotate: false
-  xy: 804, 763
-  size: 800, 1280
-  orig: 800, 1280
-  offset: 0, 0
-  index: -1
-police_down
-  rotate: false
-  xy: 1488, 593
-  size: 22, 25
-  orig: 22, 25
-  offset: 0, 0
-  index: -1
-police_walk_down
-  rotate: false
-  xy: 1995, 1254
-  size: 48, 27
-  orig: 48, 27
-  offset: 0, 0
-  index: -1
-police_walk_right
-  rotate: false
-  xy: 1995, 1225
-  size: 48, 27
-  orig: 48, 27
-  offset: 0, 0
-  index: -1
-police_walk_up
-  rotate: false
-  xy: 1993, 868
-  size: 48, 27
-  orig: 48, 27
-  offset: 0, 0
-  index: -1
-sheep_icon
-  rotate: false
-  xy: 170, 45
-  size: 56, 37
-  orig: 56, 37
-  offset: 0, 0
-  index: -1
-teen_down
-  rotate: false
-  xy: 1488, 543
-  size: 22, 22
-  orig: 22, 22
-  offset: 0, 0
-  index: -1
-teen_walk_down
-  rotate: false
-  xy: 1993, 763
-  size: 44, 22
-  orig: 44, 22
-  offset: 0, 0
-  index: -1
-teen_walk_left
-  rotate: false
-  xy: 568, 60
-  size: 44, 22
-  orig: 44, 22
-  offset: 0, 0
-  index: -1
-teen_walk_right
-  rotate: false
-  xy: 614, 60
-  size: 44, 22
-  orig: 44, 22
-  offset: 0, 0
-  index: -1
-teen_walk_up
-  rotate: false
-  xy: 660, 60
-  size: 44, 22
-  orig: 44, 22
-  offset: 0, 0
-  index: -1
-tourist_down
-  rotate: false
-  xy: 1488, 567
-  size: 22, 24
-  orig: 22, 24
-  offset: 0, 0
-  index: -1
-tourist_walk_down
-  rotate: false
-  xy: 1993, 841
-  size: 47, 25
-  orig: 47, 25
-  offset: 0, 0
-  index: -1
-tourist_walk_left
-  rotate: false
-  xy: 1993, 814
-  size: 47, 25
-  orig: 47, 25
-  offset: 0, 0
-  index: -1
-tourist_walk_right
-  rotate: false
-  xy: 310, 59
-  size: 47, 23
-  orig: 47, 23
-  offset: 0, 0
-  index: -1
-tourist_walk_up
-  rotate: false
-  xy: 1993, 787
-  size: 47, 25
-  orig: 47, 25
-  offset: 0, 0
-  index: -1
-whitepixel
-  rotate: false
-  xy: 1508, 757
-  size: 1, 1
-  orig: 1, 1
-  offset: 0, 0
-  index: -1
-
-atlas12.png
-size: 2045,2039
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
 beef_raw_spice
   rotate: false
-  xy: 1270, 80
+  xy: 1606, 991
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
 beef_sp_icon
   rotate: false
-  xy: 2, 2
+  xy: 1669, 671
   size: 117, 100
   orig: 117, 100
-  offset: 0, 0
-  index: -1
-beer_closed
-  rotate: false
-  xy: 1864, 1879
-  size: 180, 160
-  orig: 180, 160
   offset: 0, 0
   index: -1
 beer_icon
   rotate: false
-  xy: 121, 2
+  xy: 1669, 569
   size: 117, 100
   orig: 117, 100
   offset: 0, 0
   index: -1
-beer_open
+cbd
   rotate: false
-  xy: 1606, 779
-  size: 180, 160
-  orig: 180, 160
+  xy: 2, 764
+  size: 800, 1280
+  orig: 800, 1280
   offset: 0, 0
   index: -1
-chicken_burnt
+chicken_icon
   rotate: false
-  xy: 964, 43
-  size: 100, 200
-  orig: 100, 200
-  offset: 0, 0
-  index: -1
-chicken_closed
-  rotate: false
-  xy: 600, 83
-  size: 180, 160
-  orig: 180, 160
-  offset: 0, 0
-  index: -1
-chicken_cooked
-  rotate: false
-  xy: 1066, 80
-  size: 100, 200
-  orig: 100, 200
-  offset: 0, 0
-  index: -1
-chicken_cooked_spice
-  rotate: false
-  xy: 1168, 80
-  size: 100, 200
-  orig: 100, 200
-  offset: 0, 0
-  index: -1
-chicken_open
-  rotate: false
-  xy: 1864, 1717
-  size: 180, 160
-  orig: 180, 160
-  offset: 0, 0
-  index: -1
-chicken_raw
-  rotate: false
-  xy: 1322, 7
-  size: 100, 200
-  orig: 100, 200
-  offset: 0, 0
-  index: -1
-chicken_raw_spice
-  rotate: false
-  xy: 1424, 7
-  size: 100, 200
-  orig: 100, 200
+  xy: 1658, 1237
+  size: 387, 332
+  orig: 387, 332
   offset: 0, 0
   index: -1
 chicken_sp_icon
   rotate: false
-  xy: 240, 2
+  xy: 1669, 467
   size: 117, 100
   orig: 117, 100
   offset: 0, 0
   index: -1
+coals
+  rotate: false
+  xy: 1978, 8
+  size: 18, 141
+  orig: 18, 141
+  offset: 0, 0
+  index: -1
 coins_bg
   rotate: false
-  xy: 2, 104
+  xy: 1669, 1905
   size: 363, 139
   orig: 363, 139
   offset: 0, 0
   index: -1
-face1
+cow_icon
   rotate: false
-  xy: 1864, 1398
-  size: 155, 155
-  orig: 155, 155
+  xy: 1606, 2001
+  size: 56, 43
+  orig: 56, 43
   offset: 0, 0
   index: -1
-face2
+grampsbackstepleft
   rotate: false
-  xy: 1864, 1241
-  size: 155, 155
-  orig: 155, 155
-  offset: 0, 0
-  index: -1
-face3
-  rotate: false
-  xy: 1864, 1084
-  size: 155, 155
-  orig: 155, 155
-  offset: 0, 0
-  index: -1
-face4
-  rotate: false
-  xy: 1864, 927
-  size: 155, 155
-  orig: 155, 155
-  offset: 0, 0
-  index: -1
-face5
-  rotate: false
-  xy: 1854, 512
-  size: 155, 155
-  orig: 155, 155
-  offset: 0, 0
-  index: -1
-face_s
-  rotate: false
-  xy: 1854, 355
-  size: 155, 155
-  orig: 155, 155
-  offset: 0, 0
-  index: -1
-fire
-  rotate: false
-  xy: 1854, 203
-  size: 128, 150
-  orig: 128, 150
-  offset: 0, 0
-  index: -1
-grampsideleft2
-  rotate: false
-  xy: 1606, 1491
+  xy: 1788, 353
   size: 256, 548
   orig: 256, 548
   offset: 0, 0
   index: -1
-grampsideright1
+graypixel
   rotate: false
-  xy: 1606, 941
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-grampsideright1-1
-  rotate: false
-  xy: 1596, 209
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-grampsideright2
-  rotate: false
-  xy: 1338, 209
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-grillcenter
-  rotate: false
-  xy: 2011, 517
-  size: 32, 150
-  orig: 32, 150
-  offset: 0, 0
-  index: -1
-grillleft
-  rotate: false
-  xy: 2011, 365
-  size: 32, 150
-  orig: 32, 150
-  offset: 0, 0
-  index: -1
-grillleft4
-  rotate: false
-  xy: 1788, 789
-  size: 41, 150
-  orig: 41, 150
-  offset: 0, 0
-  index: -1
-grillright
-  rotate: false
-  xy: 1984, 203
-  size: 32, 150
-  orig: 32, 150
-  offset: 0, 0
-  index: -1
-grillright4
-  rotate: false
-  xy: 1853, 51
-  size: 41, 150
-  orig: 41, 150
-  offset: 0, 0
-  index: -1
-icon_grill
-  rotate: false
-  xy: 367, 13
-  size: 231, 230
-  orig: 231, 230
-  offset: 0, 0
-  index: -1
-icon_map
-  rotate: false
-  xy: 2, 245
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-lamb_closed
-  rotate: false
-  xy: 782, 83
-  size: 180, 160
-  orig: 180, 160
+  xy: 2, 8
+  size: 1, 1
+  orig: 1, 1
   offset: 0, 0
   index: -1
 lamb_cooked
   rotate: false
-  xy: 1526, 7
+  xy: 1606, 789
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
 lamb_cooked_spice
   rotate: false
-  xy: 1578, 7
+  xy: 1978, 151
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
+lamb_icon
+  rotate: false
+  xy: 1658, 903
+  size: 387, 332
+  orig: 387, 332
+  offset: 0, 0
+  index: -1
+lamb_sp_icon
+  rotate: false
+  xy: 1669, 365
+  size: 117, 100
+  orig: 117, 100
+  offset: 0, 0
+  index: -1
+lock
+  rotate: false
+  xy: 1658, 773
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+man_down
+  rotate: false
+  xy: 1198, 17
+  size: 18, 23
+  orig: 18, 23
+  offset: 0, 0
+  index: -1
+man_walk_down
+  rotate: false
+  xy: 989, 16
+  size: 40, 23
+  orig: 40, 23
+  offset: 0, 0
+  index: -1
+man_walk_left
+  rotate: false
+  xy: 1031, 16
+  size: 40, 23
+  orig: 40, 23
+  offset: 0, 0
+  index: -1
+man_walk_right
+  rotate: false
+  xy: 1073, 17
+  size: 40, 23
+  orig: 40, 23
+  offset: 0, 0
+  index: -1
+man_walk_up
+  rotate: false
+  xy: 1115, 17
+  size: 40, 23
+  orig: 40, 23
+  offset: 0, 0
+  index: -1
+old_man_stingy_down
+  rotate: false
+  xy: 1606, 767
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+old_man_stingy_walk_down
+  rotate: false
+  xy: 1582, 18
+  size: 39, 22
+  orig: 39, 22
+  offset: 0, 0
+  index: -1
+old_man_stingy_walk_left
+  rotate: false
+  xy: 875, 15
+  size: 39, 24
+  orig: 39, 24
+  offset: 0, 0
+  index: -1
+old_man_stingy_walk_right
+  rotate: false
+  xy: 1157, 17
+  size: 39, 23
+  orig: 39, 23
+  offset: 0, 0
+  index: -1
+old_man_stingy_walk_up
+  rotate: false
+  xy: 663, 12
+  size: 39, 27
+  orig: 39, 27
+  offset: 0, 0
+  index: -1
+old_woman_down
+  rotate: false
+  xy: 1647, 18
+  size: 20, 22
+  orig: 20, 22
+  offset: 0, 0
+  index: -1
+old_woman_walk_down
+  rotate: false
+  xy: 1402, 18
+  size: 43, 22
+  orig: 43, 22
+  offset: 0, 0
+  index: -1
+old_woman_walk_left
+  rotate: false
+  xy: 1447, 18
+  size: 43, 22
+  orig: 43, 22
+  offset: 0, 0
+  index: -1
+old_woman_walk_right
+  rotate: false
+  xy: 1492, 18
+  size: 43, 22
+  orig: 43, 22
+  offset: 0, 0
+  index: -1
+old_woman_walk_up
+  rotate: false
+  xy: 1537, 18
+  size: 43, 22
+  orig: 43, 22
+  offset: 0, 0
+  index: -1
+outskirts
+  rotate: false
+  xy: 804, 764
+  size: 800, 1280
+  orig: 800, 1280
+  offset: 0, 0
+  index: -1
+police_down
+  rotate: false
+  xy: 851, 14
+  size: 22, 25
+  orig: 22, 25
+  offset: 0, 0
+  index: -1
+police_walk_down
+  rotate: false
+  xy: 513, 12
+  size: 48, 27
+  orig: 48, 27
+  offset: 0, 0
+  index: -1
+police_walk_right
+  rotate: false
+  xy: 563, 12
+  size: 48, 27
+  orig: 48, 27
+  offset: 0, 0
+  index: -1
+police_walk_up
+  rotate: false
+  xy: 613, 12
+  size: 48, 27
+  orig: 48, 27
+  offset: 0, 0
+  index: -1
+sheep_icon
+  rotate: false
+  xy: 455, 2
+  size: 56, 37
+  orig: 56, 37
+  offset: 0, 0
+  index: -1
+star
+  rotate: false
+  xy: 1660, 48
+  size: 316, 303
+  orig: 316, 303
+  offset: 0, 0
+  index: -1
+teen_down
+  rotate: false
+  xy: 1623, 18
+  size: 22, 22
+  orig: 22, 22
+  offset: 0, 0
+  index: -1
+teen_walk_down
+  rotate: false
+  xy: 1218, 18
+  size: 44, 22
+  orig: 44, 22
+  offset: 0, 0
+  index: -1
+teen_walk_left
+  rotate: false
+  xy: 1264, 18
+  size: 44, 22
+  orig: 44, 22
+  offset: 0, 0
+  index: -1
+teen_walk_right
+  rotate: false
+  xy: 1310, 18
+  size: 44, 22
+  orig: 44, 22
+  offset: 0, 0
+  index: -1
+teen_walk_up
+  rotate: false
+  xy: 1356, 18
+  size: 44, 22
+  orig: 44, 22
+  offset: 0, 0
+  index: -1
+tourist_down
+  rotate: false
+  xy: 916, 15
+  size: 22, 24
+  orig: 22, 24
+  offset: 0, 0
+  index: -1
+tourist_walk_down
+  rotate: false
+  xy: 704, 14
+  size: 47, 25
+  orig: 47, 25
+  offset: 0, 0
+  index: -1
+tourist_walk_left
+  rotate: false
+  xy: 753, 14
+  size: 47, 25
+  orig: 47, 25
+  offset: 0, 0
+  index: -1
+tourist_walk_right
+  rotate: false
+  xy: 940, 16
+  size: 47, 23
+  orig: 47, 23
+  offset: 0, 0
+  index: -1
+tourist_walk_up
+  rotate: false
+  xy: 802, 14
+  size: 47, 25
+  orig: 47, 25
+  offset: 0, 0
+  index: -1
+village2
+  rotate: false
+  xy: 2, 11
+  size: 451, 751
+  orig: 451, 751
+  offset: 0, 0
+  index: -1
+whitepixel
+  rotate: false
+  xy: 2, 5
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+
+atlas12.png
+size: 2044,2034
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+OldWoman
+  rotate: false
+  xy: 714, 32
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+beef_closed
+  rotate: false
+  xy: 1864, 1874
+  size: 180, 160
+  orig: 180, 160
+  offset: 0, 0
+  index: -1
+beef_open
+  rotate: false
+  xy: 1606, 774
+  size: 180, 160
+  orig: 180, 160
+  offset: 0, 0
+  index: -1
+beer_closed
+  rotate: false
+  xy: 1864, 1712
+  size: 180, 160
+  orig: 180, 160
+  offset: 0, 0
+  index: -1
+beer_open
+  rotate: false
+  xy: 1864, 1550
+  size: 180, 160
+  orig: 180, 160
+  offset: 0, 0
+  index: -1
+cash_bg
+  rotate: false
+  xy: 1316, 48
+  size: 402, 154
+  orig: 402, 154
+  offset: 0, 0
+  index: -1
+chicken_burnt
+  rotate: false
+  xy: 1720, 2
+  size: 100, 200
+  orig: 100, 200
+  offset: 0, 0
+  index: -1
+chicken_closed
+  rotate: false
+  xy: 1864, 1388
+  size: 180, 160
+  orig: 180, 160
+  offset: 0, 0
+  index: -1
+chicken_open
+  rotate: false
+  xy: 1864, 1226
+  size: 180, 160
+  orig: 180, 160
+  offset: 0, 0
+  index: -1
+cloud
+  rotate: false
+  xy: 2, 10
+  size: 166, 63
+  orig: 166, 63
+  offset: 0, 0
+  index: -1
+face1
+  rotate: false
+  xy: 1832, 487
+  size: 155, 155
+  orig: 155, 155
+  offset: 0, 0
+  index: -1
+face2
+  rotate: false
+  xy: 1832, 330
+  size: 155, 155
+  orig: 155, 155
+  offset: 0, 0
+  index: -1
+face3
+  rotate: false
+  xy: 1832, 173
+  size: 155, 155
+  orig: 155, 155
+  offset: 0, 0
+  index: -1
+face4
+  rotate: false
+  xy: 1822, 16
+  size: 155, 155
+  orig: 155, 155
+  offset: 0, 0
+  index: -1
+grampsbackstepright
+  rotate: false
+  xy: 1606, 1486
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+grampsideleft1
+  rotate: false
+  xy: 1316, 204
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+grampsideleft2
+  rotate: false
+  xy: 1606, 936
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+grampsideright1
+  rotate: false
+  xy: 1574, 204
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+grillcenter4
+  rotate: false
+  xy: 1979, 20
+  size: 36, 151
+  orig: 36, 151
+  offset: 0, 0
+  index: -1
+grillleft4
+  rotate: false
+  xy: 1788, 784
+  size: 41, 150
+  orig: 41, 150
+  offset: 0, 0
+  index: -1
+kebabking o
+  rotate: false
+  xy: 2, 75
+  size: 710, 677
+  orig: 710, 677
+  offset: 0, 0
+  index: -1
+lamb_closed
+  rotate: false
+  xy: 1864, 1064
+  size: 180, 160
+  orig: 180, 160
+  offset: 0, 0
+  index: -1
 lamb_open
   rotate: false
-  xy: 1864, 1555
+  xy: 1864, 902
   size: 180, 160
   orig: 180, 160
   offset: 0, 0
   index: -1
 lamb_raw
   rotate: false
-  xy: 1630, 7
+  xy: 1989, 442
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
 lamb_raw_spice
   rotate: false
-  xy: 1682, 7
+  xy: 1989, 240
   size: 50, 200
   orig: 50, 200
   offset: 0, 0
   index: -1
-lamb_sp_icon
-  rotate: false
-  xy: 1734, 107
-  size: 117, 100
-  orig: 117, 100
-  offset: 0, 0
-  index: -1
-paintbrush
-  rotate: false
-  xy: 1030, 282
-  size: 306, 475
-  orig: 306, 475
-  offset: 0, 0
-  index: -1
 speech
   rotate: false
-  xy: 1854, 669
+  xy: 1832, 644
   size: 191, 256
   orig: 191, 256
   offset: 0, 0
   index: -1
-spicebox
-  rotate: false
-  xy: 516, 245
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
 suburbs
   rotate: false
-  xy: 2, 759
+  xy: 2, 754
   size: 800, 1280
   orig: 800, 1280
   offset: 0, 0
   index: -1
 university
   rotate: false
-  xy: 804, 759
+  xy: 804, 754
   size: 800, 1280
   orig: 800, 1280
   offset: 0, 0
   index: -1
 
 atlas13.png
-size: 1965,2038
+size: 2035,2034
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-foreignerfrontleft
+bg_cbd
   rotate: false
-  xy: 1430, 2
-  size: 256, 449
-  orig: 256, 449
+  xy: 1032, 557
+  size: 800, 195
+  orig: 800, 195
   offset: 0, 0
   index: -1
-foreignerfrontright
+chicken_cooked
   rotate: false
-  xy: 1688, 2
-  size: 256, 449
-  orig: 256, 449
+  xy: 511, 2
+  size: 100, 200
+  orig: 100, 200
+  offset: 0, 0
+  index: -1
+chicken_cooked_spice
+  rotate: false
+  xy: 613, 2
+  size: 100, 200
+  orig: 100, 200
+  offset: 0, 0
+  index: -1
+chicken_raw
+  rotate: false
+  xy: 715, 2
+  size: 100, 200
+  orig: 100, 200
+  offset: 0, 0
+  index: -1
+chicken_raw_spice
+  rotate: false
+  xy: 817, 2
+  size: 100, 200
+  orig: 100, 200
+  offset: 0, 0
+  index: -1
+coin
+  rotate: false
+  xy: 1864, 1278
+  size: 127, 128
+  orig: 127, 128
+  offset: 0, 0
+  index: -1
+face5
+  rotate: false
+  xy: 1804, 168
+  size: 155, 155
+  orig: 155, 155
+  offset: 0, 0
+  index: -1
+face_s
+  rotate: false
+  xy: 1804, 11
+  size: 155, 155
+  orig: 155, 155
+  offset: 0, 0
+  index: -1
+fire
+  rotate: false
+  xy: 1834, 706
+  size: 128, 150
+  orig: 128, 150
+  offset: 0, 0
+  index: -1
+grampsideright1-1
+  rotate: false
+  xy: 774, 204
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+grampsideright2
+  rotate: false
+  xy: 516, 204
+  size: 256, 548
+  orig: 256, 548
   offset: 0, 0
   index: -1
 grampsideright2-1
   rotate: false
-  xy: 2, 208
+  xy: 1546, 7
   size: 256, 548
   orig: 256, 548
   offset: 0, 0
   index: -1
 grampsstepleft
   rotate: false
-  xy: 260, 208
+  xy: 1606, 858
   size: 256, 548
   orig: 256, 548
   offset: 0, 0
   index: -1
-grampsstepright
+grillcenter
   rotate: false
-  xy: 518, 208
-  size: 256, 548
-  orig: 256, 548
+  xy: 919, 52
+  size: 32, 150
+  orig: 32, 150
   offset: 0, 0
   index: -1
-lamb_icon
+grillleft
   rotate: false
-  xy: 776, 424
-  size: 387, 332
-  orig: 387, 332
+  xy: 953, 52
+  size: 32, 150
+  orig: 32, 150
   offset: 0, 0
   index: -1
-man
+grillright
   rotate: false
-  xy: 804, 1542
-  size: 256, 496
-  orig: 256, 496
+  xy: 987, 52
+  size: 32, 150
+  orig: 32, 150
   offset: 0, 0
   index: -1
-manbackstepleft
+grillright4
   rotate: false
-  xy: 804, 1044
-  size: 256, 496
-  orig: 256, 496
+  xy: 468, 88
+  size: 41, 150
+  orig: 41, 150
+  offset: 0, 0
+  index: -1
+icon_ads
+  rotate: false
+  xy: 2, 8
+  size: 231, 230
+  orig: 231, 230
+  offset: 0, 0
+  index: -1
+icon_coin
+  rotate: false
+  xy: 2, 240
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+icon_food
+  rotate: false
+  xy: 235, 8
+  size: 231, 230
+  orig: 231, 230
+  offset: 0, 0
+  index: -1
+icon_grill
+  rotate: false
+  xy: 1804, 325
+  size: 231, 230
+  orig: 231, 230
+  offset: 0, 0
+  index: -1
+icon_map
+  rotate: false
+  xy: 1032, 43
+  size: 512, 512
+  orig: 512, 512
   offset: 0, 0
   index: -1
 pause
   rotate: false
-  xy: 776, 101
+  xy: 1606, 1713
   size: 334, 321
   orig: 334, 321
   offset: 0, 0
   index: -1
-star
-  rotate: false
-  xy: 1112, 119
-  size: 316, 303
-  orig: 316, 303
-  offset: 0, 0
-  index: -1
 stargray
   rotate: false
-  xy: 1165, 453
+  xy: 1606, 1408
   size: 316, 303
   orig: 316, 303
   offset: 0, 0
   index: -1
-starhalf
+trash
   rotate: false
-  xy: 1483, 453
-  size: 316, 303
-  orig: 316, 303
+  xy: 1834, 576
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1
-village
+village old
   rotate: false
-  xy: 2, 758
+  xy: 2, 754
   size: 800, 1280
   orig: 800, 1280
   offset: 0, 0
   index: -1
-village2
+village old 
   rotate: false
-  xy: 1165, 758
+  xy: 804, 754
   size: 800, 1280
   orig: 800, 1280
   offset: 0, 0
   index: -1
 
 atlas14.png
-size: 1948,2038
+size: 1948,2005
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-foreignersideleft1
+foreignerbackright
   rotate: false
-  xy: 2, 2
+  xy: 1142, 2
   size: 256, 449
   orig: 256, 449
   offset: 0, 0
   index: -1
-foreignersideleft2
+foreignerfrontleft
   rotate: false
-  xy: 1610, 593
+  xy: 1400, 2
   size: 256, 449
   orig: 256, 449
   offset: 0, 0
   index: -1
-foreignersideright1
+grampsstepright
   rotate: false
-  xy: 1610, 142
-  size: 256, 449
-  orig: 256, 449
-  offset: 0, 0
-  index: -1
-foreignersideright2
-  rotate: false
-  xy: 836, 35
-  size: 256, 449
-  orig: 256, 449
-  offset: 0, 0
-  index: -1
-girl
-  rotate: false
-  xy: 1094, 36
-  size: 256, 448
-  orig: 256, 448
-  offset: 0, 0
-  index: -1
-girlbackstepleft
-  rotate: false
-  xy: 1352, 36
-  size: 256, 448
-  orig: 256, 448
-  offset: 0, 0
-  index: -1
-girlbackstepright
-  rotate: false
-  xy: 1692, 1590
-  size: 256, 448
-  orig: 256, 448
-  offset: 0, 0
-  index: -1
-girlsideleft1
-  rotate: false
-  xy: 1692, 1140
-  size: 256, 448
-  orig: 256, 448
+  xy: 824, 401
+  size: 256, 548
+  orig: 256, 548
   offset: 0, 0
   index: -1
 kebabking
   rotate: false
-  xy: 804, 984
+  xy: 804, 951
   size: 628, 1054
   orig: 628, 1054
   offset: 0, 0
   index: -1
+man
+  rotate: false
+  xy: 1082, 453
+  size: 256, 496
+  orig: 256, 496
+  offset: 0, 0
+  index: -1
+manbackstepleft
+  rotate: false
+  xy: 1340, 453
+  size: 256, 496
+  orig: 256, 496
+  offset: 0, 0
+  index: -1
 manbackstepright
   rotate: false
-  xy: 320, 260
+  xy: 1434, 1509
   size: 256, 496
   orig: 256, 496
   offset: 0, 0
   index: -1
 mansideleft1
   rotate: false
-  xy: 578, 260
+  xy: 1434, 1011
   size: 256, 496
   orig: 256, 496
   offset: 0, 0
   index: -1
 mansideleft2
   rotate: false
-  xy: 836, 486
+  xy: 1598, 513
   size: 256, 496
   orig: 256, 496
   offset: 0, 0
   index: -1
 mansideright1
   rotate: false
-  xy: 1094, 486
+  xy: 1658, 15
   size: 256, 496
   orig: 256, 496
   offset: 0, 0
   index: -1
 mansideright2
   rotate: false
-  xy: 1352, 486
+  xy: 1692, 1509
   size: 256, 496
   orig: 256, 496
   offset: 0, 0
   index: -1
 manstepleft
   rotate: false
-  xy: 1434, 1542
+  xy: 1692, 1011
   size: 256, 496
   orig: 256, 496
   offset: 0, 0
   index: -1
-manstepright
+paintbrush
   rotate: false
-  xy: 1434, 1044
-  size: 256, 496
-  orig: 256, 496
+  xy: 516, 248
+  size: 306, 475
+  orig: 306, 475
   offset: 0, 0
   index: -1
-starhalf n
+spicebox
   rotate: false
-  xy: 2, 453
+  xy: 2, 211
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+starhalf
+  rotate: false
+  xy: 824, 96
   size: 316, 303
   orig: 316, 303
   offset: 0, 0
   index: -1
 village2 old
   rotate: false
-  xy: 2, 758
+  xy: 2, 725
   size: 800, 1280
   orig: 800, 1280
   offset: 0, 0
   index: -1
 
 atlas15.png
-size: 1290,1797
+size: 1866,1850
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+foreignerfrontright
+  rotate: false
+  xy: 2, 903
+  size: 256, 449
+  orig: 256, 449
+  offset: 0, 0
+  index: -1
+foreignersideleft1
+  rotate: false
+  xy: 260, 1401
+  size: 256, 449
+  orig: 256, 449
+  offset: 0, 0
+  index: -1
+foreignersideleft2
+  rotate: false
+  xy: 2, 452
+  size: 256, 449
+  orig: 256, 449
+  offset: 0, 0
+  index: -1
+foreignersideright1
+  rotate: false
+  xy: 260, 950
+  size: 256, 449
+  orig: 256, 449
+  offset: 0, 0
+  index: -1
+foreignersideright2
+  rotate: false
+  xy: 518, 1401
+  size: 256, 449
+  orig: 256, 449
+  offset: 0, 0
+  index: -1
+girl
+  rotate: false
+  xy: 2, 2
+  size: 256, 448
+  orig: 256, 448
+  offset: 0, 0
+  index: -1
+girlbackstepleft
+  rotate: false
+  xy: 260, 500
+  size: 256, 448
+  orig: 256, 448
+  offset: 0, 0
+  index: -1
+girlbackstepright
+  rotate: false
+  xy: 518, 951
+  size: 256, 448
+  orig: 256, 448
+  offset: 0, 0
+  index: -1
+girlsideleft1
+  rotate: false
+  xy: 776, 1402
+  size: 256, 448
+  orig: 256, 448
+  offset: 0, 0
+  index: -1
 girlsideleft2
   rotate: false
-  xy: 2, 1349
+  xy: 260, 50
   size: 256, 448
   orig: 256, 448
   offset: 0, 0
   index: -1
 girlsideright
   rotate: false
-  xy: 2, 899
+  xy: 518, 501
   size: 256, 448
   orig: 256, 448
   offset: 0, 0
   index: -1
 girlsideright1
   rotate: false
-  xy: 260, 1349
+  xy: 776, 952
   size: 256, 448
   orig: 256, 448
   offset: 0, 0
   index: -1
 girlstepleft
   rotate: false
-  xy: 2, 449
+  xy: 1034, 1402
   size: 256, 448
   orig: 256, 448
   offset: 0, 0
   index: -1
 girlstepright
   rotate: false
-  xy: 260, 899
+  xy: 518, 51
   size: 256, 448
   orig: 256, 448
   offset: 0, 0
   index: -1
+manstepright
+  rotate: false
+  xy: 2, 1354
+  size: 256, 496
+  orig: 256, 496
+  offset: 0, 0
+  index: -1
 policemman
   rotate: false
-  xy: 518, 1352
+  xy: 776, 505
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanbackstepleft
   rotate: false
-  xy: 2, 2
+  xy: 1034, 955
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanbackstepright
   rotate: false
-  xy: 260, 452
+  xy: 1292, 1405
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanstepleft
   rotate: false
-  xy: 518, 905
+  xy: 776, 58
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanstepright
   rotate: false
-  xy: 776, 1352
+  xy: 1034, 508
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanwalkingleft1
   rotate: false
-  xy: 260, 5
+  xy: 1292, 958
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanwalkingleft2
   rotate: false
-  xy: 518, 458
+  xy: 1550, 1405
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanwalkingright1
   rotate: false
-  xy: 776, 905
+  xy: 1034, 61
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanwalkingright1-1
   rotate: false
-  xy: 518, 11
+  xy: 1550, 958
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanwalkingright2
   rotate: false
-  xy: 1034, 1352
+  xy: 1292, 511
   size: 256, 445
   orig: 256, 445
   offset: 0, 0
   index: -1
 policemmanwalkingright2-1
   rotate: false
-  xy: 776, 458
+  xy: 1292, 64
   size: 256, 445
   orig: 256, 445
+  offset: 0, 0
+  index: -1
+starhalf n
+  rotate: false
+  xy: 1550, 653
+  size: 316, 303
+  orig: 316, 303
   offset: 0, 0
   index: -1
 
@@ -1342,82 +1384,6 @@ man/manstepright
   index: -1
 
 atlas110.png
-size: 1032,1650
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-oldman/grampsbackstepleft
-  rotate: false
-  xy: 2, 1102
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsbackstepright
-  rotate: false
-  xy: 2, 552
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsideleft1
-  rotate: false
-  xy: 260, 1102
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsideleft2
-  rotate: false
-  xy: 2, 2
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsideright1
-  rotate: false
-  xy: 260, 552
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsideright1-1
-  rotate: false
-  xy: 260, 2
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsideright2
-  rotate: false
-  xy: 518, 1102
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsideright2-1
-  rotate: false
-  xy: 518, 552
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsstepleft
-  rotate: false
-  xy: 776, 1102
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-oldman/grampsstepright
-  rotate: false
-  xy: 518, 2
-  size: 256, 548
-  orig: 256, 548
-  offset: 0, 0
-  index: -1
-
-atlas111.png
 size: 1548,894
 format: RGBA8888
 filter: Nearest,Nearest
@@ -1500,7 +1466,7 @@ police/policemmanwalkingright2-1
   offset: 0, 0
   index: -1
 
-atlas112.png
+atlas111.png
 size: 1999,2015
 format: RGBA8888
 filter: Nearest,Nearest
@@ -1671,5 +1637,81 @@ unused/vol_on
   xy: 662, 736
   size: 512, 512
   orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+atlas112.png
+size: 1032,1650
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+unused/oldman/grampsbackstepleft
+  rotate: false
+  xy: 2, 1102
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsbackstepright
+  rotate: false
+  xy: 2, 552
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsideleft1
+  rotate: false
+  xy: 260, 1102
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsideleft2
+  rotate: false
+  xy: 2, 2
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsideright1
+  rotate: false
+  xy: 260, 552
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsideright1-1
+  rotate: false
+  xy: 260, 2
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsideright2
+  rotate: false
+  xy: 518, 1102
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsideright2-1
+  rotate: false
+  xy: 518, 552
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsstepleft
+  rotate: false
+  xy: 776, 1102
+  size: 256, 548
+  orig: 256, 548
+  offset: 0, 0
+  index: -1
+unused/oldman/grampsstepright
+  rotate: false
+  xy: 518, 2
+  size: 256, 548
+  orig: 256, 548
   offset: 0, 0
   index: -1

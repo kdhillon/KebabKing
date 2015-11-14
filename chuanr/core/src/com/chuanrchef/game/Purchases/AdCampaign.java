@@ -1,40 +1,52 @@
 package com.chuanrchef.game.Purchases;
 
-import java.util.ArrayList;
-
+import static com.chuanrchef.game.Customer.CustomerType.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.chuanrchef.game.Assets;
-
+import com.chuanrchef.game.Customer;
 
 // user has one of these
 // later: split this into separate ones for chicken beef, lamb
-public class AdCampaign implements PurchaseType {
-	static String meatQualityDescription =
-			"Launch an advertising campaign!";
-
+public class AdCampaign extends PurchaseType {
 	// Specific types that you might own 
-	enum Campaign implements Purchaseable{
-		// name, initial cost, daily cost, qual factor, description
-		LEVEL1 ("Poster Ads", 	0,	 0,	 1, "icon_ads",	"Advertise with posters!"), 
-		LEVEL2 ("Newspaper Ads", 	150, 5, 1.1f, "icon_ads",	 "Get in print!"),
-		LEVEL3 ("Online Ads", 	500, 10, 1.2f, "icon_ads",	 "Technology!"), 
-		LEVEL4 ("Radio Ads",	1000, 25, 1.3f, "icon_ads",  "Kebab FM!"),
-		LEVEL5 ("TV Ads",		 2000, 40, 1.4f, "icon_ads",	 "Billy Mays here!");
+	public enum Campaign implements Purchaseable{
+		// name, 			unlock round	initial cost, daily cost, seconds, hype boost, customer?, 	icon,		description
+		LEVEL0 ("Sign", 			1,		20,				0,	 		-1,		1, 			null,		"icon_ads",	"A nice kebab sign!"), 
+		POSTER ("Poster Ads", 		1,		10, 			5,			60,		200f,		OLD_MAN, 	"icon_ads",	"Advertise with posters!"), 
+		NEWSPAPER ("Newspaper Ads",	1,		10,				5,	 		120,	1.1f, 		OLD_WOMAN, 	"icon_ads",	 "Get in print!"),
+		ONLINE ("Online Ads", 		1,		10, 			10, 		120,	1.2f,		null,		"icon_ads",	 "Technology!"), 
+		LEVEL4 ("Radio Ads",		1,		30,			25, 		120,	1.3f, 		null,	 	"icon_ads",  "Kebab FM!"),
+		LEVEL5 ("TV Ads",			1,		20, 			40, 		120,	1.4f,		null,		 "icon_ads",	 "Billy Mays here!"),
+		PRESS_R ("Press Release",	1,		20, 			40, 		120,	1.4f,		BUSINESSMAN, "icon_ads",	 "Billy Mays here!"),
+		PLANE ("Plane Banner",		25,		20, 			40, 		120,	1.4f,		null,		 "icon_ads",	 "Billy Mays here!"),
+		SHIRTS ("T-Shirts",			25,		2000, 			40, 		120,	1.4f,		STUDENT,	 "icon_ads",	 "Billy Mays here!"),
+		SELFIE ("Selfie Sticks",	25,		2000, 			40, 		120,	1.4f,		null,	 "icon_ads",	 "Billy Mays here!"),
+		TOURIST ("Tourist Brochure",25,		2000, 			40, 		120,	1.4f,		FOREIGNER, "icon_ads",	 "Billy Mays here!"),
+		TWO4ONE ("Two 4 One",		25,		2000, 			40, 		120,	1.7f,		null,	 "icon_ads",	 "Billy Mays here!"),
+		;
 
 		String name; 
 		float initialCost;
 		float dailyCost;
 		String description;
-		float qualityFactor;
+		float hypeBoost; // aka hype meter boost
+		Customer.CustomerType type;
+		long seconds;
 		TextureRegion icon;
+		int roundToUnlock;
+		int coinsToUnlock;
 
-		private Campaign(String name, float initialCost, float dailyCost, float qualityFactor, String iconName, String description) {
+		private Campaign(String name, int roundToUnlock, float initialCost, float dailyCost, long seconds, float hypeBoost, Customer.CustomerType type, String iconName, String description) {
 			this.name = name;
 			this.initialCost = initialCost;
 			this.dailyCost = dailyCost;
-			this.qualityFactor = qualityFactor;
+			this.hypeBoost = hypeBoost;
+			this.seconds = seconds;
 			this.description = description;
-			this.icon = Assets.getTexture(iconName);
+			this.icon = Assets.getTextureRegion(iconName);
+			this.roundToUnlock = roundToUnlock;
+			this.type = type;
+			this.coinsToUnlock = 0;
 		}
 		
 		@Override
@@ -43,7 +55,7 @@ public class AdCampaign implements PurchaseType {
 		}
 		@Override
 		public int coinsToUnlock() {
-			return 0;
+			return coinsToUnlock;
 		}
 		@Override
 		public float cashToUnlock() {
@@ -61,73 +73,17 @@ public class AdCampaign implements PurchaseType {
 		public String getDescription() {
 			return this.description;
 		}
+		@Override
+		public int unlockAtRound() {
+			return this.roundToUnlock;
+		}
 	};
-
-	ArrayList<Campaign> unlocked;
-	Campaign currentQuality;
 	
-	// create a new one
-	public AdCampaign() {
-		unlocked = new ArrayList<Campaign>();
-		unlock(Campaign.LEVEL1);
-	}
+	// for Kryo
+	public AdCampaign(){};
 	
-	@Override
-	public String getName() {
-		return "Ad Campaigns";
-	}
-
-	@Override
-	public String getDescription() {
-		return meatQualityDescription;
-	}
-
-	@Override
-	public TextureRegion getIcon() {
-		return null;
-	}
-
-	@Override
-	public Purchaseable getCurrentSelected() {
-		return currentQuality;
-	}
-
-	@Override
-	public boolean unlocked(Purchaseable purchaseable) {
-		return unlocked.contains(purchaseable);
-	}
-
-	@Override
-	public void setCurrent(Purchaseable newCurrent) {
-		if (!unlocked(newCurrent)) throw new java.lang.AssertionError();
-		this.currentQuality = (Campaign) newCurrent;
-	}
-
-	@Override
-	public void unlock(Purchaseable toUnlock) {
-		this.unlocked.add((Campaign) toUnlock);
-		this.setCurrent((Campaign) toUnlock);
-	}
-	
-	@Override
-	public Purchaseable getNext(Purchaseable current, boolean left) {
-		Campaign[] values = Campaign.values();
-		
-		int currentIndex = -1;
-		for (int i = 0; i < values.length; i++) {
-			if (values[i] == current) currentIndex = i;
-		}
-		int nextIndex;
-		
-		if (left) {
-			nextIndex = currentIndex - 1;
-			if (nextIndex < 0) nextIndex = values.length - 1;
-		}
-		else {
-			nextIndex = currentIndex + 1;
-			if (nextIndex > values.length - 1) nextIndex = 0;
-		}
-		
-		return values[nextIndex];
+	public AdCampaign(Inventory inventory) {
+		super(inventory, "Ads", "Ad campaigns", null, Campaign.values());
+		unlock(Campaign.LEVEL0);
 	}
 }

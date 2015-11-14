@@ -1,13 +1,9 @@
 package com.chuanrchef.game.Purchases;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 // this class contains the user's current grill type
-public class GrillType implements PurchaseType {	
-	static String grillTypeDescription = "Change your grill type!";
-	
+public class GrillType extends PurchaseType {	
 	// Specific types that you might own 
 	enum Type implements Purchaseable{
 		// name, initial cost, daily cost, description
@@ -51,74 +47,19 @@ public class GrillType implements PurchaseType {
 		public String getDescription() {
 			return this.description;
 		}
+		@Override
+		public int unlockAtRound() {
+			return 0;
+		}
 	};
+	static String grillTypeDescription = "Change your grill type!";
 
-	Type currentType;
-	ArrayList<Type> unlocked;
-	
-	// create default grill type
-	public GrillType() {
-		this.unlocked = new ArrayList<Type>();
-		this.unlock(Type.Regular);
-	}
-
-	@Override
-	public String getName() {
-		return "Grill Type";
+	public GrillType(Inventory inventory) {
+		super(inventory, "Grill Type", grillTypeDescription, null, Type.values());
+		unlock(Type.Regular);
 	}
 	
-	@Override
-	public String getDescription() {
-		return grillTypeDescription;
-	}
-
-	@Override
-	public TextureRegion getIcon() {
-		return null;
-	}
-
-	@Override
-	public Purchaseable getCurrentSelected() {
-		return currentType;
-	}
-
-	@Override
-	public boolean unlocked(Purchaseable purchaseable) {
-		return unlocked.contains(purchaseable);
-	}
-
-	@Override
-	public void setCurrent(Purchaseable newCurrent) {
-		if (!this.unlocked(newCurrent)) throw new java.lang.AssertionError();
-		this.currentType = (Type) newCurrent;
-	}
-
-	@Override
-	public void unlock(Purchaseable toUnlock) {
-		this.unlocked.add((Type) toUnlock);
-		this.setCurrent(toUnlock);
-	}
-
-	@Override
-	public Purchaseable getNext(Purchaseable current, boolean left) {
-		Type[] values = Type.values();
-		
-		int currentIndex = -1;
-		for (int i = 0; i < values.length; i++) {
-			if (values[i] == current) currentIndex = i;
-		}
-		int nextIndex;
-		
-		if (left) {
-			nextIndex = currentIndex - 1;
-			if (nextIndex < 0) nextIndex = values.length - 1;
-		}
-		else {
-			nextIndex = currentIndex + 1;
-			if (nextIndex > values.length - 1) nextIndex = 0;
-		}
-		
-		return values[nextIndex];
-	}
+	// for kryo
+	public GrillType() {};
 }
 

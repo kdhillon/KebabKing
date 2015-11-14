@@ -12,8 +12,14 @@ public class ScreenTemplate implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
+		ChuanrC.setWidth(width);
+		ChuanrC.setHeight(height);
+
+		// initialize once
+		if (KitchenScreen.UNIT_HEIGHT == 0 && KitchenScreen.UNIT_WIDTH == 0) {
+			KitchenScreen.UNIT_WIDTH = (int) (ChuanrC.getWidth() / KitchenScreen.WIDTH);
+			KitchenScreen.UNIT_HEIGHT = (int) (ChuanrC.getHeight() / KitchenScreen.HEIGHT);
+		}
 	}
 
 	@Override

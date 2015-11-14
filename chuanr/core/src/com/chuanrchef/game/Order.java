@@ -112,7 +112,7 @@ public class Order {
 		if (meat.state == Meat.State.BURNT) burnt++;
 		if (meat.state == Meat.State.RAW) raw++;
 		
-		return Meat.getSellPrice(meat.type);
+		return Meat.getSellPrice(meat.type) - Meat.getBuyPrice(meat.type);
 	}
 	
 //	public float giveBeer(int count) {

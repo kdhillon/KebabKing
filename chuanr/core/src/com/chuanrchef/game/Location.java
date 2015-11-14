@@ -4,15 +4,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.chuanrchef.game.Purchases.Purchaseable;
 
 public enum Location implements Purchaseable {							
-	//						Man		Woman Old Man Old Woman Student Businessman Foreigner	Police	Girl
-	Village(	new float[] {1,	 	0,		1,		0,		0.0f,		0,		0.5f,		0.5f,	0	}, "Village", Assets.bgVillage, 0, .6, 0),
-	Outskirts(	new float[] {1,		0, 		1,		0, 			0, 		0,			1,		0.05f,	0	}, "Outskirts", Assets.bgOutskirts, 5, .8, 10),
-	Suburbs(	new float[] {1, 	0,		1,		0,			0,		0,			1,		0.2f,	0	}, "Suburbs", Assets.bgSuburbs, 10, 1, 50),
-	University(	new float[] {1, 	0,		1,		0,			0,		0,			1,		0.2f,	0	}, "University", Assets.bgUniversity, 15, 1.2, 200),
-	CBD(		new float[] {1, 	0,		1,		0,			0,		0,			1,		0.2f,	0	}, "Central Business District", Assets.bgCBD, 20, 1.5, 500);
+	//						Man		Woman Old Man Old Woman Student Businessman Foreigner	Police	Girl Fat
+	Village(	new float[] {1,	 	0,		1,		0,		0.0f,		0,		0.5f,		0.5f,	0,	0.2f}, "Village", Assets.bgVillage, 0, 3, 0),
+	Outskirts(	new float[] {1,		0, 		1,		0, 			0, 		0,			1,		0.05f,	0,	0.2f}, "Outskirts", Assets.bgOutskirts, 5, .8, 10),
+	Suburbs(	new float[] {1, 	0,		1,		0,			0,		0,			1,		0.2f,	0,	0.2f}, "Suburbs", Assets.bgSuburbs, 10, 1, 50),
+	University(	new float[] {1, 	0,		1,		0,			0,		0,			1,		0.2f,	0,	0.2f}, "University", Assets.bgUniversity, 15, 1.2, 200),
+	CBD(		new float[] {1, 	0,		1,		0,			0,		0,			1,		0.2f,	0,	0.2f}, "Central Business District", Assets.bgCBD, 20, 1.5, 500);
 	
 	String name;
-	float[] customerSpread; 	// once we figure out how many types of customers, assign these.
+	float[] originalCustomerSpread; 	// once we figure out how many types of customers, assign these.
 	double popularity; 			// how many people walk byy
 	TextureRegion bg;			// background to use 
 	int coinsToUnlock;
@@ -22,13 +22,15 @@ public enum Location implements Purchaseable {
 		this.name = name;
 		this.bg = bg;
 		this.rentCost = rentCost;
-		this.customerSpread = spread;
+		
+		this.originalCustomerSpread = spread;		
+
 		this.popularity = popularity;
 		this.coinsToUnlock = coinsToUnlock;
 	}
 
 	@Override
-	public String getName() {		// TODO Auto-generated method stub
+	public String getName() {		
 		return name;
 	}
 
@@ -63,4 +65,8 @@ public enum Location implements Purchaseable {
 		return this.bg;
 	}
 
+	@Override
+	public int unlockAtRound() {
+		return 0;
+	}
 }

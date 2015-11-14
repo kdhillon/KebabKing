@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.chuanrchef.game.Purchases.Vanity.VanityDecoration;
 
 public class Background {
 	static Color daySky = new Color(.1f, .3f, 1f, 1);
@@ -99,7 +100,7 @@ public class Background {
 		
 		for (int i = 0; i < CLOUD_COUNT; i++) {
 			cloudX[i] += cloudSpeed[i] * delta;
-			if (cloudX[i] >= ChuanrC.width) generateCloud(i);	
+			if (cloudX[i] >= ChuanrC.getWidth()) generateCloud(i);	
 		}
 	}
 
@@ -118,31 +119,44 @@ public class Background {
 		for (int i = 0; i < CLOUD_COUNT; i++)
 			batch.draw(Assets.cloud, cloudX[i], cloudY[i], cloudWidth * cloudScale[i], cloudHeight * cloudScale[i]);
 
-		batch.draw(profile.getLocationBG(), 0, 0, ChuanrC.width, ChuanrC.height);
+		batch.draw(profile.getLocationBG(), 0, 0, ChuanrC.getWidth(), ChuanrC.getHeight());
 
 		
 		batch.setColor(orig);
-
-
 		// draw the background filling entire screen
+		
+		drawVanityDecorations(batch);
+	}
+	
+	// draw background vanity decorations
+	public void drawVanityDecorations(SpriteBatch batch) {
+		
+//		for (VanityDecoration d : profile.inventory.decorations.getAll()) {
+//			
+		VanityDecoration d = (VanityDecoration) profile.inventory.decorations.getCurrentSelected();
+		if (d != null)
+			batch.draw(d.getTexture(), ChuanrC.getGlobalX(d.x), ChuanrC.getGlobalY(d.y), ChuanrC.getGlobalX(d.width), ChuanrC.getGlobalY(d.height));
+//		}
+		
+		// for now, just draw currently selected
 	}
 	
 	public void initialize() {
-		this.cloudWidth = 0.35f * ChuanrC.width;
-		this.cloudHeight = 0.1f * ChuanrC.height;
+		this.cloudWidth = ChuanrC.getGlobalX(0.35f);
+		this.cloudHeight = ChuanrC.getGlobalY(0.1f);
 		
 		generateCloud(0);
 		generateCloud(1);
 		generateCloud(2);
 		
-		cloudX[2] = ChuanrC.width * 1/4;
-		cloudX[1] = ChuanrC.width * 3/4;
+		cloudX[2] = ChuanrC.getGlobalX(1.0f / 4);
+		cloudX[1] = ChuanrC.getGlobalY(3.0f / 4);
 	}
 	
 	public void generateCloud(int i) {
 		this.cloudX[i] = (float) (-cloudWidth * 1.2) + (float) Math.random() * -100;
 //		this.cloudY[i] = ((float) (Math.random() * 0.07f) + 0.81f) * ChuanrC.height;
-		this.cloudY[i] = (float) (((1.0 * i / (CLOUD_COUNT - 1)) * 0.07f + 0.78f) * ChuanrC.height);
+		this.cloudY[i] = (float) (ChuanrC.getGlobalY(((1.0f * i / (CLOUD_COUNT - 1)) * 0.07f + 0.78f)));
 		
 		this.cloudSpeed[i] = (float) (Math.random() * 10 + 15);
 		this.cloudScale[i] = (float) (Math.random() * 0.5 + 1.);

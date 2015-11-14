@@ -1,14 +1,15 @@
 package com.chuanrchef.game;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.chuanrchef.game.Purchases.Inventory;
 
 
 public class Profile {
-	static final float STARTING_CASH = 50;
-	static final int STARTING_COINS = 5;
+	static final float STARTING_CASH = 99999;
+	static final int STARTING_COINS = 999;
 	static final float MAX_MONEY = 100000;
 	static final float MIN_MONEY = 0;
 	static final float START_REP = 2.5f;
@@ -21,11 +22,14 @@ public class Profile {
 	boolean tutorialNeeded;
 	float cash; 			// current cash
 	int coins; 				// special currency!
-	int daysWorked;
+	public int daysWorked;		// starts at 0
 	float customerPatienceFactor = 1;
 	float[] pastFiveDaysReputation = {START_REP, START_REP, START_REP, START_REP, START_REP};
 	float currentReputation;
 	float sicknessFactor;
+	
+	float[] currentCustomerSpread; 		// modified during ad campaigns
+	public float boost;						// what is the percent increase in total people, after normalization?
 	
 	public Profile() {
 	}
@@ -37,13 +41,15 @@ public class Profile {
 		this.coins = STARTING_COINS;
 		this.daysWorked = 0;
 		this.currentReputation = START_REP;
-		this.tutorialNeeded = true;
+//		this.tutorialNeeded = true;
 		
 		// for now, disable tutorial
-//		this.tutorialNeeded = false;
+		this.tutorialNeeded = false;
 		
 		this.inventory = new Inventory(this);
 		this.settings = new Settings();
+		
+		resetCustomerDistribution();
 	}
 	
 	// only used at the end of the day
@@ -51,6 +57,12 @@ public class Profile {
 		validateMoney();
 		this.cash += money;
 		validateMoney();
+	}
+	
+	public void endDay() {
+		daysWorked++;
+		// unlock everything that should be unlocked based on days?
+		// two levels of unlock - unlock by round, then unlock by money?
 	}
 	
 	public void updateRepuation(float dayReputation) {
@@ -76,6 +88,10 @@ public class Profile {
 		return currentReputation;
 	}
 	
+	public int getCurrentRound() {
+		return this.daysWorked + 1;
+	}
+	
 	public void validateMoney() {
 		if (this.cash < MIN_MONEY || this.cash > MAX_MONEY) {
 			throw new java.util.InputMismatchException("money out of range");
@@ -90,6 +106,32 @@ public class Profile {
 		}
 		return inventory.grillSpecs.getSize();
 	}
+
+	public void resetCustomerDistribution() {
+		this.currentCustomerSpread = Arrays.copyOf(this.getLocation().originalCustomerSpread, this.getLocation().originalCustomerSpread.length);
+		this.boost = 1;
+	}
+	
+	public void updateCustomerDistribution(Customer.CustomerType type, float bonus) {
+		this.currentCustomerSpread = Arrays.copyOf(this.getLocation().originalCustomerSpread, this.getLocation().originalCustomerSpread.length);
+		int nonZeroCustomers = 0;
+		for (int i = 0; i < currentCustomerSpread.length; i++) {
+			if (currentCustomerSpread[i] != 0) nonZeroCustomers++;
+		}
+		
+		if (type != null) {
+			int i = Customer.getIndexOf(type);
+			currentCustomerSpread[i] *= bonus;
+			this.boost = bonus / nonZeroCustomers;
+		}
+		else {
+			for (int i = 0; i < currentCustomerSpread.length; i++) {
+				currentCustomerSpread[i] *= bonus;
+			}
+			this.boost = bonus;
+		}
+	}
+	
 	
 //	public void setLocation(Location location) {
 //		this.inventory.location = location;

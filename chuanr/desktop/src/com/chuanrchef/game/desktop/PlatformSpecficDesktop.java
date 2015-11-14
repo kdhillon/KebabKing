@@ -88,15 +88,4 @@ public class PlatformSpecficDesktop implements PlatformSpecific {
 		System.out.println("SEND HIT: event: " + category + "/" + action + "/" + label + "/" + value);		
 	}
 	
-	@Override
-	public void sendPaymentHit(Product product, ProductAction productAction) {
-		System.out.println("SEND HIT: payment: " + product.toString() + "/" + productAction.toString());
-	}
-	
-	@Override
-	public void sendUserTiming(String eventName, long milliseconds) {
-		System.out.println("SEND TIMING: event: " + eventName + " time:" + milliseconds);		
-	}
-	
-	
 }

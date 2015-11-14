@@ -18,8 +18,8 @@ public class KitchenScreen extends ScreenTemplate {
 //	static final float PAUSE_WIDTH = 2.1f; // this times unit width
 //	static final float PAUSE_HEIGHT = 1.5f;
 
-	static final float DAY_LENGTH = 70; // 2 minutes per day
-//	static final float DAY_LENGTH = 15; // 2 minutes per day
+//	static final float DAY_LENGTH = 120; // 2 minutes per day
+	static final float DAY_LENGTH = 40; 
 	
 //	static float TIME_TO_WAIT = 2f;
 	
@@ -52,6 +52,10 @@ public class KitchenScreen extends ScreenTemplate {
 
 	long roundStartTime;
 	
+	int kebabsTrashed = 0;
+	
+	TrashPile tp;
+	
 	// A new Kitchen Screen is created every time the player starts a new day.
 	// handles user input and the main render / update loop
 	public KitchenScreen(ChuanrC master) {
@@ -71,6 +75,8 @@ public class KitchenScreen extends ScreenTemplate {
 		grill = master.grill;
 		grill.reset(this);
 		grill.tutorialMode = false;
+		
+		tp = new TrashPile(this);
 
 		// clear cm for each day
 		
@@ -109,7 +115,7 @@ public class KitchenScreen extends ScreenTemplate {
 	}
 
 	// actually run a game loop
-	public void update(float delta) {	
+	public void update(float delta) {
 		// just for testing
 		boolean fastForward = false;
 		if (Gdx.input.isKeyPressed(Keys.F))
@@ -121,7 +127,7 @@ public class KitchenScreen extends ScreenTemplate {
 		}
 		else {
 			grill.mousedOver = -1;
-			grill.mousedOverTrash = false;
+//			grill.mousedOverTrash = false;
 			cm.mousedOver = null;
 		}
 
@@ -210,29 +216,13 @@ public class KitchenScreen extends ScreenTemplate {
 		return (int) (unit_y * UNIT_HEIGHT);
 	}
 	
-	@Override
-	public void resize(int width, int height) {
-		ChuanrC.width = width;
-		ChuanrC.height = height;
-
-		// initialize once
-		if (UNIT_HEIGHT == 0 && UNIT_WIDTH == 0) {
-			UNIT_WIDTH = (int) (ChuanrC.width / WIDTH);
-			UNIT_HEIGHT = (int) (ChuanrC.height / HEIGHT);
-		}
-
-		// don't need this, because screen auto-resizes
-		//		UNIT_WIDTH = width / WIDTH;
-		//		UNIT_HEIGHT = height / HEIGHT;
-	}
-
 	public Meat dropMeatOnGrill(Meat.Type type) {
-		if (!canAfford(Meat.getBuyPrice(type))
-				|| !grill.open(grill.mousedOver)) return null;
+//		if (!canAfford(Meat.getBuyPrice(type))
+//				|| !grill.open(grill.mousedOver)) return null;
 		System.out.println("Dropping meat on grill");
 		Meat meat = grill.dropMeat(type);
-		if (meat != null) 
-			spendMoney(Meat.getBuyPrice(type));
+//		if (meat != null) 
+//			spendMoney(Meat.getBuyPrice(type));
 		return meat;
 	}
 
@@ -259,7 +249,7 @@ public class KitchenScreen extends ScreenTemplate {
 	}
 
 	public static int getUnitY(int y) {
-		return ((ChuanrC.height - y) / UNIT_HEIGHT);
+		return ((ChuanrC.getHeight() - y) / UNIT_HEIGHT);
 	}
 
 	// when you get shut down by police
@@ -270,7 +260,7 @@ public class KitchenScreen extends ScreenTemplate {
 	
 	public void finishDay() {	
 		// switch to summary screen
-		master.platformSpec.sendUserTiming("Round", System.currentTimeMillis() - roundStartTime);
+//		master.platformSpec.sendUserTiming("Round", System.currentTimeMillis() - roundStartTime);
 		master.endDay();
 	}
 

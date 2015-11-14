@@ -94,11 +94,11 @@ public class SummaryScreen extends ScreenTemplate  {
 
 		timeElapsed = 0;
 		
-		dayComplete = new Label("Day Complete!", Assets.generateLabelStyle(60 * ChuanrC.width / 480));
+		dayComplete = new Label("Day Complete!", Assets.generateLabelStyle(ChuanrC.getGlobalX(60.f / 480)));
 		if (kitchen.wasShutDown)
 			dayComplete.setText("You got shut down! Obey the Health Code!");
-		dayComplete.setPosition(0, ChuanrC.height*0.45f);
-		dayComplete.setWidth(ChuanrC.width);
+		dayComplete.setPosition(0, ChuanrC.getGlobalY(0.45f));
+		dayComplete.setWidth(ChuanrC.getWidth());
 		dayComplete.setAlignment(Align.center);
 		dayComplete.setWrap(true);
 		
@@ -113,21 +113,23 @@ public class SummaryScreen extends ScreenTemplate  {
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, batch);
 
-		// refund any meat that's on the grill:
-		float refund = 0;
-		for (int i = 0; i < kitchen.grill.meat.length; i++) {
-			Meat meat = kitchen.grill.meat[i];
-			if (meat == null) continue;
-			if (meat.state == Meat.State.BURNT) continue;
-
-			refund += Meat.getBuyPrice(meat.type);
-		}
-		kitchen.master.profile.cash += refund;
-		System.out.println("refund: " + refund);
+		// No need to refund anymore. 
+//		// refund any meat that's on the grill:
+//		float refund = 0;
+//		for (int i = 0; i < kitchen.grill.meat.length; i++) {
+//			Meat meat = kitchen.grill.meat[i];
+//			if (meat == null) continue;
+//			if (meat.state == Meat.State.BURNT) continue;
+//
+//			refund += Meat.getBuyPrice(meat.type);
+//		}
+//		kitchen.master.profile.cash += refund;
+//		System.out.println("refund: " + refund);
 		
 		// update revenue and expenses
 		this.revenue = kitchen.moneyEarnedToday;
-		this.expenses = kitchen.moneySpentToday - refund;
+//		this.expenses = kitchen.moneySpentToday - refund;
+		this.expenses = kitchen.moneySpentToday;
 		
 		// TODO this is legendary but a bit problematic
 		this.rent = kitchen.master.profile.getLocation().rentCost;
@@ -152,7 +154,7 @@ public class SummaryScreen extends ScreenTemplate  {
 		kitchen.master.profile.subtractDailyExpenses();
 				
 		// save to getProfile()
-		getProfile().daysWorked++;
+		getProfile().endDay();
 //		getProfile().updateRepuation(kitchen.calculateReputation());
 //		getProfile().cash += profit;
 		getProfile().updateRepuation(kitchen.calculateReputation());
@@ -237,8 +239,9 @@ public class SummaryScreen extends ScreenTemplate  {
 		this.table = new Table();
 //		table.debugAll();
 		
-		table.setSize(ChuanrC.width * 3 / 4, ChuanrC.height * 3/4);
-		table.setPosition((ChuanrC.width - table.getWidth())/2, (ChuanrC.height - table.getHeight())/2);
+		
+		table.setSize(ChuanrC.getGlobalX(3.0f / 4), ChuanrC.getGlobalY(3.0f / 4));
+		table.setPosition((ChuanrC.getWidth() - table.getWidth())/2, (ChuanrC.getHeight() - table.getHeight())/2);
 		table.setBackground(Assets.uiSkin.getDrawable("textbox_01"));
 		table.top();
 		
@@ -247,7 +250,7 @@ public class SummaryScreen extends ScreenTemplate  {
 		Label title = new Label("Day " + getProfile().daysWorked + ":", Assets.generateLabelStyle(60));
 		table.add(title).colspan(2);
 		
-		labelPad = 0.01f * ChuanrC.height;
+		labelPad = ChuanrC.getGlobalY(0.01f);
 				
 		addLabelLeft("Revenue:");
 		revenueR = new Label("", Assets.generateLabelStyle(32));

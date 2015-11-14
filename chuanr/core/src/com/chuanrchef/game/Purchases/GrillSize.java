@@ -1,16 +1,13 @@
 package com.chuanrchef.game.Purchases;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 // this class contains the user's current grill Size
-public class GrillSize implements PurchaseType {	
-	static String grillSizeDescription = "Change your grill Size!";
-	
+public class GrillSize extends PurchaseType {		
 	// Specific Sizes that you might own 
 	enum Size implements Purchaseable{
 		// name, initial cost, daily cost, int size, description
+		Tiny("Small", 		0,	 0, 4,	"Fits just 4 kebabs!"), 
 		Small("Small", 		0,	 0, 6,	"Fits just 6 kebabs!"), 
 		Medium("Medium", 	20, 0, 8,	"Fits 8 whole kebabs!"),
 		Large("Large", 		500, 0, 10,	"Fits 10 kebabs! Wow!");
@@ -53,73 +50,19 @@ public class GrillSize implements PurchaseType {
 		public String getDescription() {
 			return this.description;
 		}
+		@Override
+		public int unlockAtRound() {
+			return 0;
+		}
 	};
 
-	Size currentSize;
-	ArrayList<Size> unlocked;
+	static String grillSizeDescription = "Change your grill Size!";
 	
-	// create default grill Size
-	public GrillSize() {
-		this.unlocked = new ArrayList<Size>();
-		this.unlock(Size.Small);
+	public GrillSize(Inventory inventory) {
+		super(inventory, "Grill Size", grillSizeDescription, null, Size.values());
+		unlock(Size.values()[0]);
 	}
 	
-	@Override
-	public String getName() {
-		return "Grill Size";
-	}
-
-	@Override
-	public String getDescription() {
-		return grillSizeDescription;
-	}
-
-	@Override
-	public TextureRegion getIcon() {
-		return null;
-	}
-
-	@Override
-	public Purchaseable getCurrentSelected() {
-		return currentSize;
-	}
-
-	@Override
-	public boolean unlocked(Purchaseable purchaseable) {
-		return unlocked.contains(purchaseable);
-	}
-
-	@Override
-	public void setCurrent(Purchaseable newCurrent) {
-		if (!this.unlocked(newCurrent)) throw new java.lang.AssertionError();
-		this.currentSize = (Size) newCurrent;
-	}
-	
-	@Override
-	public Purchaseable getNext(Purchaseable current, boolean left) {
-		Size[] values = Size.values();
-		
-		int currentIndex = -1;
-		for (int i = 0; i < values.length; i++) {
-			if (values[i] == current) currentIndex = i;
-		}
-		int nextIndex;
-		
-		if (left) {
-			nextIndex = currentIndex - 1;
-			if (nextIndex < 0) nextIndex = values.length - 1;
-		}
-		else {
-			nextIndex = currentIndex + 1;
-			if (nextIndex > values.length - 1) nextIndex = 0;
-		}
-		
-		return values[nextIndex];
-	}
-
-	@Override
-	public void unlock(Purchaseable toUnlock) {
-		this.unlocked.add((Size) toUnlock);
-		this.setCurrent(toUnlock);
-	}
+	// for kryo
+	public GrillSize() {};
 }

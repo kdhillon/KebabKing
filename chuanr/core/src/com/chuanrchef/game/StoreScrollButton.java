@@ -9,6 +9,7 @@ public class StoreScrollButton extends Button {
 	Table scroll;
 	PurchaseType type;
 	Purchaseable current;
+	public StoreScrollButton other;
 	
 	public StoreScrollButton(Table scroll, PurchaseType type, Purchaseable current) {
 		super();

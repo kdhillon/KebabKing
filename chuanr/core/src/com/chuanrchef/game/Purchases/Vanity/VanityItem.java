@@ -1,0 +1,81 @@
+package com.chuanrchef.game.Purchases.Vanity;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.chuanrchef.game.Assets;
+import com.chuanrchef.game.Purchases.Purchaseable;
+
+// Represents an item that doesn't do anything, but changes appearance
+// there are different types of vanity items:
+//		grill stand
+// 		customer skins
+//		customer hats
+// 		spice box skins
+//		music (radio)
+//		ui colors
+//		
+// 		decorations (generic and can have infinite)
+public class VanityItem implements Purchaseable {	
+	String name;
+	int priceInCoins;
+	String description;
+	TextureRegion region;
+		
+	public VanityItem(String name, int priceInCoins, String description, String region) {
+		this.name = name;
+		this.priceInCoins = priceInCoins;
+		this.description = description;
+		
+		if (region != null && !region.isEmpty())
+			this.region = Assets.getTextureRegion(region);
+	}
+	
+	public static void initialize() {
+		VanityDecoration.initialize();
+		VanityGrillStand.initialize();
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public int coinsToUnlock() {
+		return priceInCoins;
+	}
+
+	@Override
+	public float cashToUnlock() {
+		return 0;
+	}
+
+	@Override
+	public int unlockAtRound() {
+		return 1;
+	}
+
+	@Override
+	public float getDailyCost() {
+		return 0;
+	}
+
+	@Override
+	public TextureRegion getIcon() {
+		return region;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+	
+	public TextureRegion getTexture() {
+		return region;
+	}
+	
+//	// should be implemented by inheriting classes
+//	public void draw() {
+//		System.out.println("You shouldn't call this draw function in VanityItem");
+//	}
+
+}

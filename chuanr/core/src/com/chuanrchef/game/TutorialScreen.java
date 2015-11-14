@@ -55,10 +55,11 @@ public class TutorialScreen extends KitchenScreen {
 		System.out.println("STARTING TUTORIAL MODE");
 
 		current = Step.Welcome1;
-		currentText = new Label("Welcome to Kebab King!", Assets.generateLabelStyle(ChuanrC.width * 64 / 480));
+		currentText = new Label("Welcome to Kebab King!", Assets.generateLabelStyle(ChuanrC.getGlobalX(64.0f / 480)));
 //		currentText.debug();
-		currentText.setSize(ChuanrC.width, ChuanrC.height/4);
-		currentText.setPosition(0, (ChuanrC.height - currentText.getHeight())*0.7f);
+		// TODO fix this janky shit
+		currentText.setSize(ChuanrC.getWidth(), ChuanrC.getGlobalY(1.0f/4));
+		currentText.setPosition(0, (ChuanrC.getHeight() - currentText.getHeight())*0.7f);
 		currentText.setAlignment(Align.center);
 		currentText.setWrap(true);
 		
@@ -72,6 +73,8 @@ public class TutorialScreen extends KitchenScreen {
 	@Override
 	public void render(float delta) {	
 		super.render(delta);
+		// prevent countdown
+		this.time = 9999;
 
 		// draw appropriate overlays
 		// draw gray overlay
@@ -81,7 +84,7 @@ public class TutorialScreen extends KitchenScreen {
 			
 			Color c = batch.getColor();
 			this.batch.setColor(GRAY);
-			batch.draw(Assets.white, 0, 0, ChuanrC.width, ChuanrC.height);
+			batch.draw(Assets.white, 0, 0, ChuanrC.getWidth(), ChuanrC.getHeight());
 			this.batch.setColor(c);
 			
 			if (current == Step.ClickChicken)
@@ -95,7 +98,7 @@ public class TutorialScreen extends KitchenScreen {
 				}
 				else {
 					grill.mousedOver = -1;
-					grill.mousedOverTrash = false;
+//					grill.mousedOverTrash = false;
 				}
 			}
 			else if (current == Step.ClickLamb) {
@@ -112,7 +115,7 @@ public class TutorialScreen extends KitchenScreen {
 				}
 				else {
 					grill.mousedOver = -1;
-					grill.mousedOverTrash = false;
+//					grill.mousedOverTrash = false;
 				}
 			}
 			else if (current == Step.ClickSpice) {
@@ -123,7 +126,7 @@ public class TutorialScreen extends KitchenScreen {
 				}
 				else {
 					grill.mousedOver = -1;
-					grill.mousedOverTrash = false;
+//					grill.mousedOverTrash = false;
 				}
 			}
 			else if (current == Step.ClickGrill3) {
@@ -137,7 +140,7 @@ public class TutorialScreen extends KitchenScreen {
 				}
 				else {
 					grill.mousedOver = -1;
-					grill.mousedOverTrash = false;
+//					grill.mousedOverTrash = false;
 				}
 				
 				if (lamb1.spiced && lamb2.spiced && lamb3.spiced) {
@@ -157,7 +160,7 @@ public class TutorialScreen extends KitchenScreen {
 				}
 				else {
 					grill.mousedOver = -1;
-					grill.mousedOverTrash = false;
+//					grill.mousedOverTrash = false;
 				}
 				
 				if (grill.selectedSet.contains(lamb1) && grill.selectedSet.contains(lamb2) && grill.selectedSet.contains(lamb3) && grill.selectedSet.contains(chicken)) {
@@ -172,7 +175,7 @@ public class TutorialScreen extends KitchenScreen {
 				}
 				else {
 					grill.mousedOver = -1;
-					grill.mousedOverTrash = false;
+//					grill.mousedOverTrash = false;
 				}
 			}
 //			else if (current == Step.ClickLamb2) {

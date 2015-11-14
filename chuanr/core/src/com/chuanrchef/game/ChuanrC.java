@@ -11,11 +11,12 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
 public class ChuanrC extends Game {
+	public static final boolean FORCE_NEW = false;
 	public static final String SAVE_FILENAME = "cc.sav";
 	public static final boolean ENGLISH = true;
 
-	static int width;
-	static int height; 
+	private static int width;
+	private static int height; 
 
 	PlatformSpecific platformSpec;
 	
@@ -68,7 +69,7 @@ public class ChuanrC extends Game {
 	public void initialize(long startTime) {
 		long finalAssetStart = System.currentTimeMillis();
 		Assets.finalizeLoading();
-		this.platformSpec.sendUserTiming("Asset Finalization", System.currentTimeMillis() - finalAssetStart);
+//		this.platformSpec.sendUserTiming("Asset Finalization", System.currentTimeMillis() - finalAssetStart);
 		
 		// load this from device in the future (only thing that needs to be saved)
 		if (saveFileExists()) {
@@ -76,20 +77,20 @@ public class ChuanrC extends Game {
 			// load a new game
 			if (this.load()) {
 //				this.TUTORIAL_MODE = false;
-				this.platformSpec.sendUserTiming("Load", System.currentTimeMillis() - loadStartTime);
+//				this.platformSpec.sendUserTiming("Load", System.currentTimeMillis() - loadStartTime);
 			}
 			else {
 				this.profile = new Profile(this);
 //				this.TUTORIAL_MODE = true;
-				System.out.println("Creating a new profile");
+				System.out.println("Loading failed, creating a new profile");
 			}
 		}
 		else {
+			System.out.println("No save found, starting new profile");
 			// start a new game
 			// launch tutorial screen if first launch
 			this.profile = new Profile(this);
 //			this.TUTORIAL_MODE = true;
-			System.out.println("Creating a new profile");
 		}
 
 		// initialize new spritebatch
@@ -119,8 +120,8 @@ public class ChuanrC extends Game {
 		DrawUI.initializeUIBar(this, batch);
 		
 		long totalLoadTime = System.currentTimeMillis() - startTime;
-		this.platformSpec.sendUserTiming("Splash Load", totalLoadTime);
-		this.platformSpec.sendEventHit("App", "Started");
+//		this.platformSpec.sendUserTiming("Splash Load", totalLoadTime);
+//		this.platformSpec.sendEventHit("App", "Started");
 	}
 
 	public void save() throws FileNotFoundException {	
@@ -138,7 +139,7 @@ public class ChuanrC extends Game {
 		output.close();
 
 		System.out.println("Game saved successfully!");
-		this.platformSpec.sendUserTiming("Save", System.currentTimeMillis() - startTime);
+//		this.platformSpec.sendUserTiming("Save", System.currentTimeMillis() - startTime);
 	}
 
 //	public void deleteProfile() {
@@ -153,7 +154,10 @@ public class ChuanrC extends Game {
 	}
 	
 	public boolean saveFileExists() {
-		return platformSpec.saveFileExists();
+		if (FORCE_NEW)
+			return false;
+		else 
+			return platformSpec.saveFileExists();
 	}
 
 	public boolean load() {
@@ -168,7 +172,6 @@ public class ChuanrC extends Game {
 			return false;
 		}
 
-
 		Profile profile;
 		try {
 			Date date = kryo.readObject(input, Date.class);
@@ -181,7 +184,8 @@ public class ChuanrC extends Game {
 			System.out.println("save file in wrong format, creating new profile");
 			input.close();
 			deleteSave();
-			profile = new Profile();
+			// Create fresh profile
+			profile = new Profile(this);
 		}
 		// update profile 
 		this.profile = profile;	
@@ -317,5 +321,25 @@ public class ChuanrC extends Game {
 	// switch to main menu screen
 	public void menu() {
 
+	}
+	
+	public static void setWidth(int toSet) {
+		width = toSet;
+	}
+	public static void setHeight(int toSet) {
+		height = toSet;
+	}
+	public static int getWidth() {
+		return width;
+	}
+	public static int getHeight() {
+		return height;
+	}
+	
+	public static int getGlobalX(float percentX) {
+		return (int) (percentX * width);
+	}
+	public static int getGlobalY(float percentY) {
+		return (int) (percentY * height);
 	}
 }

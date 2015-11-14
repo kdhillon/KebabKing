@@ -39,8 +39,8 @@ public class DrawUI {
 //	static final float MONEY_X = 0.70f * ChuanrC.width;
 //	static final float MONEY_Y = 0.982f * ChuanrC.height;
 	
-	static final float TIME_X = 0.4f * ChuanrC.width;
-	static final float TIME_Y = 0.98f * ChuanrC.height;
+	static final float TIME_X =ChuanrC.getGlobalX(0.4f);
+	static final float TIME_Y = ChuanrC.getGlobalY(0.98f);
 	
 	static Stage uiStage;
 	static ChuanrC master;
@@ -74,14 +74,14 @@ public class DrawUI {
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, batch);		
 		
-		barHeight = UI_BAR_HEIGHT * ChuanrC.height;
+		barHeight = ChuanrC.getGlobalY(UI_BAR_HEIGHT);
 		
 		uiTable = new Table();
 //		uiTable.debugAll();
 		
 		uiTable.background(Assets.getTopBarBG());
-		uiTable.setPosition(0, ChuanrC.height - barHeight);
-		uiTable.setSize(ChuanrC.width, barHeight+5);
+		uiTable.setPosition(0, ChuanrC.getHeight() - barHeight);
+		uiTable.setSize(ChuanrC.getWidth(), barHeight+5);
 		
 		uiStage.addActor(uiTable);
 			
@@ -116,7 +116,7 @@ public class DrawUI {
 //		uiTable.add(muteButton).height(barHeight).width(barHeight).left().expandX();
 		
 		
-		float starTableWidth = STAR_WIDTH * ChuanrC.width;
+		float starTableWidth = ChuanrC.getGlobalX(STAR_WIDTH);
 		starWidth = starTableWidth / 5;
 		
 		starTable = new Table();
@@ -161,9 +161,9 @@ public class DrawUI {
 		coins.setAlignment(Align.right);
 		uiTable.add(coinsTable).width(coins_bg_size).height(barHeight);
 		
-		time = new Label("", Assets.generateLabelStyle(200 * ChuanrC.width / 480, true));
-		time.setPosition(0, ChuanrC.height - 4*barHeight);
-		time.setWidth(ChuanrC.width);
+		time = new Label("", Assets.generateLabelStyle(ChuanrC.getGlobalX(200f / 480), true));
+		time.setPosition(0, ChuanrC.getHeight() - 4*barHeight);
+		time.setWidth(ChuanrC.getWidth());
 		time.setAlignment(Align.center);
 		
 		color = new Color(1, 1, 1, 1);
@@ -234,7 +234,7 @@ public class DrawUI {
 		// draw gray fade over everything
 		Color c = batch.getColor();
 		batch.setColor(GRAY);
-		batch.draw(Assets.white, 0, 0, ChuanrC.width, ChuanrC.height);
+		batch.draw(Assets.white, 0, 0, ChuanrC.getWidth(), ChuanrC.getHeight());
 		batch.setColor(c);
 	}
 //

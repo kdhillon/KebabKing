@@ -1,40 +1,6 @@
 package com.chuanrchef.game;
 
-import static com.chuanrchef.game.Assets.girlIdle;
-import static com.chuanrchef.game.Assets.girlWalkDown;
-import static com.chuanrchef.game.Assets.girlWalkLeft;
-import static com.chuanrchef.game.Assets.girlWalkRight;
-import static com.chuanrchef.game.Assets.girlWalkUp;
-import static com.chuanrchef.game.Assets.manIdle;
-import static com.chuanrchef.game.Assets.manWalkDown;
-import static com.chuanrchef.game.Assets.manWalkLeft;
-import static com.chuanrchef.game.Assets.manWalkRight;
-import static com.chuanrchef.game.Assets.manWalkUp;
-import static com.chuanrchef.game.Assets.oldManStingyIdle;
-import static com.chuanrchef.game.Assets.oldManStingyWalkDown;
-import static com.chuanrchef.game.Assets.oldManStingyWalkLeft;
-import static com.chuanrchef.game.Assets.oldManStingyWalkRight;
-import static com.chuanrchef.game.Assets.oldManStingyWalkUp;
-import static com.chuanrchef.game.Assets.oldWomanIdle;
-import static com.chuanrchef.game.Assets.oldWomanWalkDown;
-import static com.chuanrchef.game.Assets.oldWomanWalkLeft;
-import static com.chuanrchef.game.Assets.oldWomanWalkRight;
-import static com.chuanrchef.game.Assets.oldWomanWalkUp;
-import static com.chuanrchef.game.Assets.policeIdle;
-import static com.chuanrchef.game.Assets.policeWalkDown;
-import static com.chuanrchef.game.Assets.policeWalkRight;
-import static com.chuanrchef.game.Assets.policeWalkUp;
-import static com.chuanrchef.game.Assets.speech;
-import static com.chuanrchef.game.Assets.teenIdle;
-import static com.chuanrchef.game.Assets.teenWalkDown;
-import static com.chuanrchef.game.Assets.teenWalkLeft;
-import static com.chuanrchef.game.Assets.teenWalkRight;
-import static com.chuanrchef.game.Assets.teenWalkUp;
-import static com.chuanrchef.game.Assets.touristIdle;
-import static com.chuanrchef.game.Assets.touristWalkDown;
-import static com.chuanrchef.game.Assets.touristWalkLeft;
-import static com.chuanrchef.game.Assets.touristWalkRight;
-import static com.chuanrchef.game.Assets.touristWalkUp;
+import static com.chuanrchef.game.Assets.*;
 import static com.chuanrchef.game.Customer.CustomerType.*;
 
 import java.util.ArrayList;
@@ -58,14 +24,22 @@ public class Customer implements Comparable<Customer> {
 	static final float BASE_WALK_SPEED_X = .2f; // avg customer moves this much of the screen every second
 	static final float BASE_WALK_SPEED_Y = .15f;
 	static final float SQUISH_FACTOR = .4f; // for the line
+	
+	static final float BORDER_RIGHT = 0.1f; // this times the customer width is border.
 //	static final float SCALE_FACTOR = 2f;
 	
-	static final float TEXTURE_WIDTH = 3f; 	// double the old values before Vic's textures
-	static final float TEXTURE_HEIGHT = 4.5f; 
+//	static final float TEXTURE_WIDTH = 3f; 	// double the old values before Vic's textures
+//	static final float TEXTURE_HEIGHT = 4.5f; 
 
-	static final float TEXTURE_WIDTH_BACK = 2.2f; 	
-	static final float TEXTURE_HEIGHT_BACK = 3.8f;
+	static final float TEXTURE_WIDTH = 4f; 	// double the old values before Vic's textures
+	static final float TEXTURE_HEIGHT = 4f; 
+	
+//	static final float TEXTURE_WIDTH_BACK = 2.2f; 	
+//	static final float TEXTURE_HEIGHT_BACK = 3.8f;
 
+	static final float TEXTURE_WIDTH_BACK = 3.5f; 	
+	static final float TEXTURE_HEIGHT_BACK = 3.5f;
+	
 	static final float ORDER_ROW_WIDTH = 1.25f;
 	static final float ORDER_ROW_HEIGHT = .675f;
 	static final float ICON_WIDTH  = 0.75f; // times unit height
@@ -73,8 +47,10 @@ public class Customer implements Comparable<Customer> {
 	static final float ICON_OFFSET_X = 0.45f;
 	static final float ICON_OFFSET_Y = 0.02f;
 	static final float FONT_OFFSET_Y = 0.54f;
+	
+	static final float SPEECH_X_OFFSET = .8f;
 
-	static final CustomerType[] genOrder = 	{MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, BUSINESSMAN, FOREIGNER, POLICE, GIRL};
+	static final CustomerType[] genOrder = 	{MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, BUSINESSMAN, FOREIGNER, POLICE, GIRL, FAT_AMERICAN};
 
 	static final float highlightWidth = (int) (TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH);
 	static final float highlightHeight = (int) (TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT);
@@ -101,6 +77,8 @@ public class Customer implements Comparable<Customer> {
 
 	float width; // to be used for drawing speech bubble when leaving
 	float height; 
+	
+	float initTimeOffset; // to randomize walking start frame
 
 	boolean policeShutdown; // if this is a policeman who is going to shut down stand
 
@@ -115,7 +93,7 @@ public class Customer implements Comparable<Customer> {
 		UP, DOWN, LEFT, RIGHT
 	}
 
-	enum CustomerType {
+	public enum CustomerType {
 		OLD_MAN(oldManStingyIdle, oldManStingyWalkUp, oldManStingyWalkDown, oldManStingyWalkLeft, oldManStingyWalkRight, 1, 1, 3, .1f, .5f),
 		OLD_WOMAN(oldWomanIdle, oldWomanWalkUp, oldWomanWalkDown, oldWomanWalkLeft, oldWomanWalkRight, 1.2f, 1, 3, .05f, .5f),
 		STUDENT(teenIdle, teenWalkUp, teenWalkDown, teenWalkLeft, teenWalkRight, .8f, 5, 10, .9f, .8f),
@@ -124,7 +102,9 @@ public class Customer implements Comparable<Customer> {
 		BUSINESSMAN(policeIdle, policeWalkUp, policeWalkDown, policeWalkRight, policeWalkRight, .8f, 4, 10, .8f, .75f),
 		POLICE(policeIdle, policeWalkUp, policeWalkDown, policeWalkRight, policeWalkRight, .8f, 4, 10, .8f, .75f),
 		FOREIGNER(touristIdle, touristWalkUp, touristWalkDown, touristWalkLeft, touristWalkRight, .8f, 4, 10, .8f, .75f),
-		GIRL(girlIdle, girlWalkUp, girlWalkDown, girlWalkLeft, girlWalkRight, 1f, 1, 3, 0f, .75f);
+		GIRL(girlIdle, girlWalkUp, girlWalkDown, girlWalkLeft, girlWalkRight, 1f, 1, 3, 0f, .75f),
+		FAT_AMERICAN(fatAmericanIdle, fatAmericanUp, fatAmericanDown, fatAmericanRight, fatAmericanRight, 0.8f, 4, 10, 0.5f, .5f),
+		;
 
 		Animation walkUp;
 		Animation walkDown;
@@ -191,22 +171,25 @@ public class Customer implements Comparable<Customer> {
 		// decide which line to go in
 		this.lineChoice = chooseLine();
 		//		System.out.println("line choice: " + this.lineChoice);
+		this.initTimeOffset = (float) (Math.random() * 10);
 	}
 
 	public CustomerType generateCustomerType() {
 		// testing for now
-//		return CustomerType.POLICE;
-		
-		
+		if (Math.random() < 0.5) 
+			return CustomerType.OLD_MAN;
+		else if (true) {
+			return CustomerType.OLD_WOMAN;
+		}
 		
 		// do this based off profile
-		float[] spread = cm.profile.getLocation().customerSpread;
+		float[] spread = cm.profile.currentCustomerSpread;
 
 		// first calculate total from Profile
 		float sum = 0;
 		for (float f : spread) sum += f;
 
-		// calculate probabilities
+		// calculate probabilities (normalize)
 		float[] probs = new float[spread.length];
 		probs[0] = spread[0] / sum;
 		for (int i = 1; i < probs.length; i++) {
@@ -239,7 +222,7 @@ public class Customer implements Comparable<Customer> {
 
 		// move down
 		if (this.action == CustomerAction.ARRIVE) {			
-			this.position_y -= BASE_WALK_SPEED_Y * this.type.walkSpeed * delta * ChuanrC.height;
+			this.position_y -= ChuanrC.getGlobalY(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			if (this.position_y <= targetY) this.placeOrder();
 			CustomerManager.SHOULD_ORDER = true;
 		}
@@ -248,14 +231,14 @@ public class Customer implements Comparable<Customer> {
 			this.waitTime -= delta;
 			if (this.waitTime < 0) startLeaving();
 			else if (this.position_y > targetY){
-				this.position_y -= BASE_WALK_SPEED_Y * this.type.walkSpeed * delta * ChuanrC.height;
+				this.position_y -= ChuanrC.getGlobalY(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			}
 		}
 		else this.order = null;
 
 		// move up
 		if (this.action == CustomerAction.LEAVE) {			
-			this.position_y += BASE_WALK_SPEED_Y * this.type.walkSpeed * delta * ChuanrC.height;
+			this.position_y += ChuanrC.getGlobalY(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			//			System.out.println("leaving");
 			//			System.out.println(position_y + " " + targetY);
 			if (this.position_y >= targetY) this.finishLeaving();
@@ -270,7 +253,7 @@ public class Customer implements Comparable<Customer> {
 	public void draw(SpriteBatch batch) {
 		// two possible animations, depending on the state and direction
 		TextureRegion toDraw;
-		float time = cm.timeElapsed;
+		float time = cm.timeElapsed + initTimeOffset;
 		// default
 		if (type.walkDown == null) toDraw = type.idle.getKeyFrame(0);
 		else {
@@ -291,7 +274,7 @@ public class Customer implements Comparable<Customer> {
 		}
 
 		// calculate global position
-		int x_pos = (int) (this.position_x * ChuanrC.width);
+		int x_pos = (int) (ChuanrC.getGlobalX(this.position_x));
 		int y_pos = (int) (this.position_y);
 
 		width =  (int) (TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH);
@@ -314,7 +297,10 @@ public class Customer implements Comparable<Customer> {
 			height = (float) ((TEXTURE_HEIGHT - TEXTURE_HEIGHT_BACK) * interpolate + TEXTURE_HEIGHT_BACK) * KitchenScreen.UNIT_HEIGHT;
 
 			// also move slightly right to account for awkward shifting
-			x_pos += (int) (((1 - interpolate) * TEXTURE_WIDTH_BACK * KitchenScreen.UNIT_WIDTH / 4));
+//			x_pos -= TEXTURE_WIDTH_BACK * interpolate * BORDER_RIGHT * KitchenScreen.UNIT_WIDTH;
+			// TODO fix the character offest here
+			// 
+			x_pos += (int) (((1 - interpolate) * (TEXTURE_WIDTH_BACK)  * KitchenScreen.UNIT_WIDTH * BORDER_RIGHT));
 		}
 
 		// draw proper animation, in proper location
@@ -365,6 +351,7 @@ public class Customer implements Comparable<Customer> {
 		batch.draw(icon, order_x_pos + width, y_position, (int) (width * 0.5), (int) (width * 0.5));
 	}
 
+	// TODO THIS IS SHITTY CODE FIX THIS 
 	public void drawOrder(SpriteBatch batch, int x_pos, int y_pos) {
 		int order_x_pos = x_pos - 10;
 
@@ -374,7 +361,7 @@ public class Customer implements Comparable<Customer> {
 		float speechWidth = 1.25f * ORDER_ROW_WIDTH;
 		float speechHeight = 1.05f * ORDER_ROW_HEIGHT;
 
-		float speechXOffset = Customer.TEXTURE_WIDTH * .9f;
+		float speechXOffset = Customer.TEXTURE_WIDTH * SPEECH_X_OFFSET;
 		float speechYOffset = 0.98f;
 
 		if (order.getTotalTypes() == 1) {
@@ -455,7 +442,7 @@ public class Customer implements Comparable<Customer> {
 
 	public void highlight(SpriteBatch batch) {
 		// calculate global position
-		int x_pos = (int) (this.position_x * ChuanrC.width);
+		int x_pos = ChuanrC.getGlobalX(this.position_x);
 		int y_pos = (int) (this.position_y);
 
 		Color orig = batch.getColor();
@@ -745,6 +732,13 @@ public class Customer implements Comparable<Customer> {
 
 	public boolean isPolice() {
 		return this.type == CustomerType.POLICE;
+	}
+	
+	public static int getIndexOf(CustomerType type) {
+		for (int i = 0; i < genOrder.length; i++) {
+			if (genOrder[i] == type) return i;
+		}
+		return -1;
 	}
 
 	//	@Override

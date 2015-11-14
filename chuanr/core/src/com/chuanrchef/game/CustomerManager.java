@@ -61,6 +61,8 @@ public class CustomerManager {
 
 	float lastCustomer; // time since last customer created;
 	float nextCustomer; // generated randomly, when next customer should spawn
+	
+	float customerGenerationRate = 1;
 
 	// going to need to iterate through, add, remove
 	//	ArrayList<Customer> customers;
@@ -122,6 +124,13 @@ public class CustomerManager {
 		}
 
 		lastCustomer += delta;
+		
+//		if (this.active)
+		// This happens at ALL TIME
+		// in fact, this should be based on global clock
+		// we want players to play as many rounds as possible during the 
+		// time that this campaign lasts
+		master.profile.inventory.updateAds();
 	}
 
 	// draw all customers
@@ -150,7 +159,7 @@ public class CustomerManager {
 		if (!active) return;
 
 		// simply check if there is a customer in this range, and only worry about customers in lines
-		y = ChuanrC.height - y;
+		y = ChuanrC.getHeight() - y;
 		// first check unit position
 		mousedOver = null;
 
@@ -158,7 +167,7 @@ public class CustomerManager {
 			for (int j = 0; j < MAX_IN_LINE; j++) {
 				Customer c = lines[i][j];
 				if (c != null) {
-					int xPos = (int) (c.position_x * ChuanrC.width);
+					int xPos = (int) (ChuanrC.getGlobalX(c.position_x));
 					int yPos = (int) c.position_y;
 					if (x > xPos && x < xPos + Customer.TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH) {
 						if (y > yPos && y < yPos + Customer.TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT) {
@@ -215,7 +224,7 @@ public class CustomerManager {
 			System.out.println("CANT ADD, ALREADY EXISTS");
 		}
 		lastCustomer = 0;
-		this.nextCustomer = (float) (Math.random() * (customerGenerationMaxTime - 0.5f) + 0.5f);
+		calcNextCustomer();
 		
 		SHOULD_ORDER = true;
 	}
@@ -250,6 +259,11 @@ public class CustomerManager {
 		
 		SHOULD_ORDER = true;
 	}
+	
+	public void calcNextCustomer() {
+		this.customerGenerationMaxTime = getGenerationMaxTime(this.profile);
+		this.nextCustomer = (float) (Math.random() * (customerGenerationMaxTime - 0.5f) + 0.5f);
+	}
 
 	// call this if someone gets sick and the stand should be shutdown
 	public void generatePoliceNext() {
@@ -257,7 +271,7 @@ public class CustomerManager {
 	}
 	
 	public float getGenerationMaxTime(Profile profile) {
-		return GENERATE_BASE_TIME * (1/(float)profile.getLocation().popularity);
+		return GENERATE_BASE_TIME * (1/(float) (profile.getLocation().popularity * profile.boost));
 	}
 
 	public void removeCustomers() {

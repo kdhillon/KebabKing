@@ -18,7 +18,7 @@ public class CoinsTable extends Table {
 		this.master = master;
 		Label title = new Label("Coins!", Assets.getStoreTitleLS());
 		title.setAlignment(Align.center);
-		this.add(title).height(StoreScreen.TitleHeight * ChuanrC.height / StoreScreen.UNITS_HEIGHT);
+		this.add(title).height(ChuanrC.getGlobalY(StoreScreen.TitleHeight / StoreScreen.UNITS_HEIGHT));
 		this.row();
 		for (PurchaseableOnline op : OnlinePurchaseManager.PurchaseableOnline.values()) {
 			this.add(newTableEntry(op));
