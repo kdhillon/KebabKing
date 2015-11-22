@@ -6,27 +6,27 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.chuanrchef.game.ChuanrC;
-import com.chuanrchef.game.FileManager;
+import com.chuanrchef.game.Managers.FileManager;
+import com.chuanrchef.game.Managers.Manager;
 
 public class AndroidLauncher extends AndroidApplication {
 	ChuanrC game;
-
-	IABManagerAndroid iabManager;
-	AnalyticsManagerAndroid analyticsManager;
-	FileManagerAndroid fileManager;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
-
-		iabManager = new IABManagerAndroid(this);
-		analyticsManager = new AnalyticsManagerAndroid(this);
-		fileManager = new FileManagerAndroid(this);
-
+		// Initialize all android managers
+		IABManagerAndroid iab = new IABManagerAndroid(this);
+		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
+		FileManagerAndroid file = new FileManagerAndroid(this);
+		AdsManagerAndroid ads = new AdsManagerAndroid(this);
+//		FacebookManagerAndroid fb = new FacebookManagerAndroid(this);
+		
+//		Manager.initAndroid(iab, file, analytics, ads, fb);
+		
 		game = new ChuanrC();
-//		game.setPlatformSpecific(ps);
 
 		config.useWakelock = true; // forces screen to stay on, remove later TODO
 		initialize(game, config);
@@ -43,6 +43,6 @@ public class AndroidLauncher extends AndroidApplication {
 	public void onDestroy() {
 		super.onDestroy();
 		System.out.println("DESTROYING APP");
-		this.analyticsManager.sendUserTiming("Total Activity Time", System.currentTimeMillis() - game.activityStartTime);
+		Manager.analytics.sendUserTiming("Total Activity Time", System.currentTimeMillis() - game.activityStartTime);
 	}
 }

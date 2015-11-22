@@ -1,6 +1,7 @@
 package com.chuanrchef.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -25,12 +26,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class Assets {	
 	final static float GRILL_ANIMATION_TIME = 1f;
 	//	final static int GRILL_ANIMATION_FRAMES = 1;
-	final static float CUSTOMER_ANIMATION_TIME = .25f;
+	final static float CUSTOMER_ANIMATION_TIME = .15f;
 	final static int CUSTOMER_ANIMATION_FRAMES = 1;
 
 	public static AssetManager manager; // must be disposed
 
 	public static BitmapFont fontOrder; // must be disposed
+//	
+//	public static BitmapFont topBarFont; // must be disposed
 
 	static Texture peppercornLogo; // must be disposed
 
@@ -48,75 +51,25 @@ public class Assets {
 	static TextureRegion grillCoals;
 	static Animation grillFire;
 
-	static Animation customerIdle;
-	static Animation customerWalking;
-
-	static Animation teenIdle;
-	static Animation teenWalkLeft;
-	static Animation teenWalkRight;
-	static Animation teenWalkDown;
-	static Animation teenWalkUp;
+	static public class CustomerTextures {
+		Animation idle;
+		Animation right;
+		Animation down;
+		Animation up;
+	}
 	
-	static Animation girlIdle;
-	static Animation girlWalkLeft;
-	static Animation girlWalkRight;
-	static Animation girlWalkDown;
-	static Animation girlWalkUp;
-
-	static Animation manIdle;
-	static Animation manWalkLeft;
-	static Animation manWalkRight;
-	static Animation manWalkDown;
-	static Animation manWalkUp;
-
-	static Animation touristIdle;
-	static Animation touristWalkLeft;
-	static Animation touristWalkRight;
-	static Animation touristWalkDown;
-	static Animation touristWalkUp;
-
-	static Animation oldWomanIdle;
-	static Animation oldWomanWalkLeft;
-	static Animation oldWomanWalkRight;
-	static Animation oldWomanWalkDown;
-	static Animation oldWomanWalkUp;
-
-	static Animation oldManStingyIdle;
-	static Animation oldManStingyWalkLeft;
-	static Animation oldManStingyWalkRight;
-	static Animation oldManStingyWalkDown;
-	static Animation oldManStingyWalkUp;
-
-	static Animation policeIdle;
-	static Animation policeWalkRight;
-	static Animation policeWalkDown;
-	static Animation policeWalkUp;	
+//	static HashMap<Customer.CustomerType, CustomerTextures> customerMap;
 	
-	static Animation fatAmericanIdle;
-	static Animation fatAmericanRight;
-	static Animation fatAmericanDown;
-	static Animation fatAmericanUp;
-
-	static TextureRegion chuanrChickenRaw;
-	static TextureRegion chuanrChickenCooked;
-	static TextureRegion chuanrChickenRawSpice;
-	static TextureRegion chuanrChickenCookedSpice;
-	static TextureRegion chuanrChickenBurnt;
-	static TextureRegion chuanrChickenGhost;
-
-	static TextureRegion chuanrBeefRaw;
-	static TextureRegion chuanrBeefCooked;
-	static TextureRegion chuanrBeefRawSpice;
-	static TextureRegion chuanrBeefCookedSpice;
-	static TextureRegion chuanrBeefBurnt;
-	static TextureRegion chuanrBeefGhost;
-
-	static TextureRegion chuanrLambRaw;
-	static TextureRegion chuanrLambCooked;
-	static TextureRegion chuanrLambRawSpice;
-	static TextureRegion chuanrLambCookedSpice;
-	static TextureRegion chuanrLambBurnt;
-	static TextureRegion chuanrLambGhost;
+	static public class KebabTextures {
+		TextureRegion raw;
+		TextureRegion cooked;
+		TextureRegion rawSp;
+		TextureRegion cookedSp;
+		TextureRegion burnt;
+	}
+	
+	
+	static HashMap<Meat.Type, KebabTextures> meatMap;
 
 	static TextureRegion beefBox;
 	static TextureRegion chickenBox;
@@ -136,20 +89,18 @@ public class Assets {
 	static TextureRegion lambSpicyIcon;
 	static TextureRegion beerIcon;
 
-	static TextureRegion star;
-	static TextureRegion starHalf;
-
 	static TextureRegion face1, face2, face3, face4, face5, faceSick;
 
-	
-	// make these textures, maybe that will save some memory?
 	static TextureRegion bgVillage;
 	static TextureRegion bgOutskirts;
 	static TextureRegion bgSuburbs;
 	static TextureRegion bgUniversity;
 	static TextureRegion bgCBD;
 
-	static TextureRegion cloud;
+	static TextureRegion cloud1;
+	static TextureRegion cloud2;
+	static TextureRegion sun;
+	static TextureRegion skyStar;
 
 	static TextureRegion paintBrush;
 	static TextureRegion trashIcon;
@@ -168,6 +119,8 @@ public class Assets {
 
 	static FreeTypeFontGenerator gang;
 	static FreeTypeFontParameter p;
+	
+	static FreeTypeFontGenerator worksans;
 
 	static FreeTypeFontGenerator c1;
 	static FreeTypeFontGenerator c1p;
@@ -188,28 +141,11 @@ public class Assets {
 	static TextButtonStyle facebookButtonStyle;
 	static TextButtonStyle unlockButtonStyle;
 
-//	static LabelStyle ls16;
-//	static LabelStyle ls20;
-//	static LabelStyle ls24;
-//	static LabelStyle ls32;
-//	static LabelStyle ls48;
-//	static LabelStyle ls60;
-//	static LabelStyle ls80;
-//	static LabelStyle ls100;
-//	static LabelStyle ls120;
-//	static LabelStyle ls160;
-
-	//	static TextButtonStyle tbs32;
-	//	static TextButtonStyle tbs48;
-	//	static TextButtonStyle tbs60;
-	//	static TextButtonStyle tbs80;
-
 	static NinePatchDrawable roundUp;
 	
 	// currently allocated fonts, dispose after every screen
 	static ArrayList<BitmapFont> fonts;
-
-
+	
 	static Music music;
 
 	//	static Animation
@@ -252,55 +188,7 @@ public class Assets {
 	public static void createUI() {
 		uiAtlas = new TextureAtlas(Gdx.files.internal("ui/ui-orange.atlas"));
 
-		uiSkin = new Skin(uiAtlas);
-		//		purchaseableTableSkin = new Skin(Gdx.files.internal("ui/ptable.json"));	
-//		purchaseableTableSkin = new Skin(new TextureAtlas(Gdx.files.internal("ui/ui-red.atlas")));	
-
-
-//		final CheckBoxStyle t = new CheckBoxStyle();
-//		t.font = china32;
-//		t.fontColor =new Color(0, 0, 0, 1f);
-//		t.disabledFontColor = new Color(0, 0, 0, 0.4f);
-//		t.checkboxOff = uiSkin.getDrawable( "checkbox_off");
-//		t.checkboxOn = uiSkin.getDrawable( "checkbox_on");
-//		uiSkin.add("default", t);
-
-		// Make these 9 patches yo!
-//		Drawable roundDown = uiSkin.getDrawable("button_03");
-//		Drawable roundUp = uiSkin.getDrawable("button_04");
-
-//		TextButtonStyle tbs32;
-//		TextButtonStyle tbs48;
-//		TextButtonStyle tbs60;
-//		TextButtonStyle tbs80;
-//
-//		// set up style for buttons
-//		tbs32 = new TextButtonStyle();
-//		tbs32.down = roundDown;
-//		tbs32.up = roundUp;
-//		tbs32.font = Assets.china32o;
-//
-//		tbs48 = new TextButtonStyle();
-//		tbs48.down = roundDown;
-//		tbs48.up = roundUp;
-//		tbs48.font = Assets.china48o;
-//
-//		tbs60 = new TextButtonStyle();
-//		tbs60.down = roundDown;
-//		tbs60.up = roundUp;
-//		tbs60.font = Assets.china60;
-//		//
-//		tbs80 = new TextButtonStyle();
-//		tbs80.down = roundDown;
-//		tbs80.up = roundUp;
-//		tbs80.font = Assets.china80;
-//
-//		uiSkin.add("small_button", tbs48);
-//		uiSkin.add("button_medium", tbs48);
-//		uiSkin.add("default", tbs80);
-
-		//		tbs80.fontColor = new Color(1, .8f, 0, 1);
-		
+		uiSkin = new Skin(uiAtlas);	
 	}
 
 	/** loads music and sound */
@@ -352,8 +240,22 @@ public class Assets {
 	public static Animation createAnimation(String region, float time, int row, int rowsColumns) {
 		TextureRegion walkSheet = getTextureRegion(region);
 		TextureRegion[][] textureArray = walkSheet.split(walkSheet.getRegionWidth()/rowsColumns, walkSheet.getRegionHeight()/rowsColumns);
-		System.out.println(textureArray.length + " " + textureArray[0].length);
 		Animation animation = new Animation(time, textureArray[row - 1]);
+		animation.setPlayMode(Animation.PlayMode.LOOP);
+		return animation;
+	}
+	
+	public static Animation createAnimationWithRepeatFirst(String region, float time, int row, int rowsColumns) {
+		TextureRegion walkSheet = getTextureRegion(region);
+		TextureRegion[][] textureArray = walkSheet.split(walkSheet.getRegionWidth()/rowsColumns, walkSheet.getRegionHeight()/rowsColumns);
+		TextureRegion[] framesToUse = new TextureRegion[4];
+	
+		framesToUse[0] = textureArray[row-1][0];
+		framesToUse[1] = textureArray[row-1][1];
+		framesToUse[2] = textureArray[row-1][0];
+		framesToUse[3] = textureArray[row-1][2];
+		
+		Animation animation = new Animation(time, framesToUse);
 		animation.setPlayMode(Animation.PlayMode.LOOP);
 		return animation;
 	}
@@ -395,13 +297,21 @@ public class Assets {
 		return ls;
 	}
 
+	public static LabelStyle generateLabelStyleUI(int size, boolean permanent) {
+		p.size = size;
+		LabelStyle ls = new LabelStyle();
+		ls.font = worksans.generateFont(p);
+		if (!permanent)
+			fonts.add(ls.font);
+		return ls;
+	}
+
 	// continue loading
 	public static void update() {
 		manager.update();
 	}
 
 	public static boolean loadingComplete() {
-		//		System.out.println(manager.getProgress());
 		if (manager.getProgress() >= 1) {
 			return true;
 		}
@@ -422,126 +332,41 @@ public class Assets {
 		//		store = getTexture("store");
 		//		quit = getTexture("quit");
 
-		beefBox = getTextureRegion("beef_closed");
-		lambBox = getTextureRegion("lamb_closed");
-		chickenBox = getTextureRegion("chicken_closed");
-		beerBox = getTextureRegion("beer_closed");
-		beefBoxOpen = getTextureRegion("beef_open");
-		lambBoxOpen = getTextureRegion("lamb_open");
-		chickenBoxOpen = getTextureRegion("chicken_open");
-		beerBoxOpen = getTextureRegion("beer_open");
-		spiceBox = getTextureRegion("spicebox");
-//		trashBox = getTexture("trashbox");
+//		beefBox = getTextureRegion("beef_closed");
+//		lambBox = getTextureRegion("lamb_closed");
+//		chickenBox = getTextureRegion("chicken_closed");
+//		beerBox = getTextureRegion("beer_closed");
+//		beefBoxOpen = getTextureRegion("beef_open");
+//		lambBoxOpen = getTextureRegion("lamb_open");
+//		chickenBoxOpen = getTextureRegion("chicken_open");
+//		beerBoxOpen = getTextureRegion("beer_open");
+		
+		spiceBox = getTextureRegion("Grill-05");
+		
+		beefBox = getTextureRegion("Cooler-21");
+		lambBox = getTextureRegion("Cooler-23");
+		chickenBox = getTextureRegion("Cooler-22");
+		beerBox = getTextureRegion("Cooler-24");
+		beefBoxOpen = getTextureRegion("Cooler_open-29");
+		lambBoxOpen = getTextureRegion("Cooler_open-31");
+		chickenBoxOpen = getTextureRegion("Cooler_open-30");
+		beerBoxOpen = getTextureRegion("Cooler_open-32");
 
-		chuanrChickenRaw = getTextureRegion("chicken_raw");
-		chuanrChickenCooked = getTextureRegion("chicken_cooked");
-		chuanrChickenRawSpice = getTextureRegion("chicken_raw_spice");
-		chuanrChickenCookedSpice = getTextureRegion("chicken_cooked_spice");
-		chuanrChickenBurnt = getTextureRegion("chicken_burnt");
-		//		chuanrChickenGhost = getTexture("chicken_raw_ghost");
+		//		trashBox = getTexture("trashbox");
 
-		chuanrBeefRaw = getTextureRegion("beef_raw");
-		chuanrBeefCooked = getTextureRegion("beef_cooked");
-		chuanrBeefRawSpice = getTextureRegion("beef_raw_spice");
-		chuanrBeefCookedSpice = getTextureRegion("beef_cooked_spice");
-		chuanrBeefBurnt = getTextureRegion("beef_burnt");
-		//		chuanrBeefGhost = getTexture("beef_raw_ghost");
+		meatMap = new HashMap<Meat.Type, KebabTextures>();
+		
+		meatMap.put(Meat.Type.CHICKEN, generateKebabTextures("ChickenKebab"));
+		meatMap.put(Meat.Type.BEEF,  generateKebabTextures("BeefKebab"));
+		meatMap.put(Meat.Type.LAMB, generateKebabTextures("LambKebab"));
 
-		chuanrLambRaw = getTextureRegion("lamb_raw");
-		chuanrLambCooked = getTextureRegion("lamb_cooked");
-		chuanrLambRawSpice = getTextureRegion("lamb_raw_spice");
-		chuanrLambCookedSpice = getTextureRegion("lamb_cooked_spice");
-		chuanrLambBurnt = getTextureRegion("lamb_burnt");
-		//		chuanrLambGhost = getTexture("lamb_raw_ghost");
-
-		grillMid = getTextureRegion("grillcenter4");
-		grillLeft = getTextureRegion("grillleft4");
-		grillRight = getTextureRegion("grillright4");
+		grillMid = getTextureRegion("Grill-03");
+		grillLeft = getTextureRegion("Grill-02");
+		grillRight = getTextureRegion("Grill-04");
 
 		grillCoals = getTextureRegion("coals");
 		
 		grillFire = createAnimation("fire", GRILL_ANIMATION_TIME, 4);
-
-		teenIdle = createAnimation("teen_down", CUSTOMER_ANIMATION_TIME, 1);
-		teenWalkLeft = createAnimation("teen_walk_left", CUSTOMER_ANIMATION_TIME, 2);
-		teenWalkRight = createAnimation("teen_walk_right", CUSTOMER_ANIMATION_TIME, 2);
-		teenWalkDown = createAnimation("teen_walk_down", CUSTOMER_ANIMATION_TIME, 2);
-		teenWalkUp = createAnimation("teen_walk_up", CUSTOMER_ANIMATION_TIME, 2);
-
-		girlIdle = createAnimation("girl", CUSTOMER_ANIMATION_TIME, 1);
-		girlWalkRight = createAnimationFromTextures("girlsideright1", 
-	  			"girlsideright", CUSTOMER_ANIMATION_TIME);
-		girlWalkUp = createAnimationFromTextures("girlbackstepright",
-				"girlbackstepleft", CUSTOMER_ANIMATION_TIME);
-		girlWalkDown = createAnimationFromTextures("girlstepleft", "girlstepright", CUSTOMER_ANIMATION_TIME);
-	
-		
-//		manIdle = createAnimation("man_down", CUSTOMER_ANIMATION_TIME, 1);
-//		manWalkLeft = createAnimation("man_walk_left", CUSTOMER_ANIMATION_TIME, 2);
-//		manWalkRight = createAnimation("man_walk_right", CUSTOMER_ANIMATION_TIME, 2);
-//		manWalkDown = createAnimation("man_walk_down", CUSTOMER_ANIMATION_TIME, 2);
-//		manWalkUp = createAnimation("man_walk_up", CUSTOMER_ANIMATION_TIME, 2);
-
-		manIdle = createAnimation("man", CUSTOMER_ANIMATION_TIME, 1);
-		manWalkRight = createAnimationFromTextures("mansideright1", 
-	  			"mansideright2", CUSTOMER_ANIMATION_TIME);
-		manWalkUp = createAnimationFromTextures("manbackstepright",
-				"manbackstepleft", CUSTOMER_ANIMATION_TIME);
-		manWalkDown = createAnimationFromTextures("manstepleft", "manstepright", CUSTOMER_ANIMATION_TIME);
-		
-//		oldWomanIdle = createAnimation("old_woman_down", CUSTOMER_ANIMATION_TIME, 1);
-//		oldWomanWalkLeft = createAnimation("old_woman_walk_left", CUSTOMER_ANIMATION_TIME, 2);
-//		oldWomanWalkRight = createAnimation("old_woman_walk_right", CUSTOMER_ANIMATION_TIME, 2);
-//		oldWomanWalkUp = createAnimation("old_woman_walk_up", CUSTOMER_ANIMATION_TIME, 2);
-//		oldWomanWalkDown = createAnimation("old_woman_walk_down", CUSTOMER_ANIMATION_TIME, 2);
-
-		oldWomanIdle = createAnimation("OldWoman", CUSTOMER_ANIMATION_TIME, 2, 3, 1);
-		oldWomanWalkRight = createAnimation("OldWoman", CUSTOMER_ANIMATION_TIME, 1, 3);
-		oldWomanWalkUp = createAnimation("OldWoman", CUSTOMER_ANIMATION_TIME, 3, 3);
-		oldWomanWalkDown = createAnimation("OldWoman", CUSTOMER_ANIMATION_TIME, 2, 3);
-	
-//		oldManStingyIdle = createAnimation("old_man_stingy_down", CUSTOMER_ANIMATION_TIME, 1);
-//		oldManStingyWalkLeft = createAnimation("old_man_stingy_walk_left", CUSTOMER_ANIMATION_TIME, 2);
-//		oldManStingyWalkRight = createAnimation("old_man_stingy_walk_right", CUSTOMER_ANIMATION_TIME, 2);
-//		oldManStingyWalkUp = createAnimation("old_man_stingy_walk_up", CUSTOMER_ANIMATION_TIME, 2);
-//		oldManStingyWalkDown = createAnimation("old_man_stingy_walk_down", CUSTOMER_ANIMATION_TIME, 2);
-		
-		oldManStingyIdle = createAnimation("OldMan", CUSTOMER_ANIMATION_TIME, 2, 3, 1);
-		oldManStingyWalkRight = createAnimation("OldMan", CUSTOMER_ANIMATION_TIME, 1, 3);
-		oldManStingyWalkUp = createAnimation("OldMan", CUSTOMER_ANIMATION_TIME, 3, 3);
-		oldManStingyWalkDown = createAnimation("OldMan", CUSTOMER_ANIMATION_TIME, 2, 3);
-		
-		fatAmericanIdle = createAnimation("FatAmerican", CUSTOMER_ANIMATION_TIME, 2, 3, 1);
-		fatAmericanRight = createAnimation("FatAmerican", CUSTOMER_ANIMATION_TIME, 1, 3);
-		fatAmericanUp = createAnimation("FatAmerican", CUSTOMER_ANIMATION_TIME, 3, 3);
-		fatAmericanDown = createAnimation("FatAmerican", CUSTOMER_ANIMATION_TIME, 2, 3);
-		
-//		policeIdle = createAnimation("police_down", CUSTOMER_ANIMATION_TIME, 1);
-//		policeWalkRight = createAnimation("police_walk_right", CUSTOMER_ANIMATION_TIME, 2);
-//		policeWalkUp = createAnimation("police_walk_up", CUSTOMER_ANIMATION_TIME, 2);
-//		policeWalkDown = createAnimation("police_walk_down", CUSTOMER_ANIMATION_TIME, 2);
-		
-		policeIdle = createAnimation("policemman", CUSTOMER_ANIMATION_TIME, 1);
-		policeWalkRight = createAnimationFromTextures("policemmanwalkingright1", 
-										  			"policemmanwalkingright2-1", 
-										  			"policemmanwalkingright2",	
-										  			"policemmanwalkingright1-1", CUSTOMER_ANIMATION_TIME);
-		policeWalkUp = createAnimationFromTextures("policemmanbackstepleft",
-													"policemmanbackstepright", CUSTOMER_ANIMATION_TIME);
-		policeWalkDown = createAnimationFromTextures("policemmanstepleft",
-												"policemmanstepright", CUSTOMER_ANIMATION_TIME);
-
-//		touristIdle = createAnimation("tourist_down", CUSTOMER_ANIMATION_TIME, 1);
-//		touristWalkLeft = createAnimation("tourist_walk_left", CUSTOMER_ANIMATION_TIME, 2);
-//		touristWalkRight = createAnimation("tourist_walk_right", CUSTOMER_ANIMATION_TIME, 2);
-//		touristWalkDown = createAnimation("tourist_walk_down", CUSTOMER_ANIMATION_TIME, 2);
-//		touristWalkUp = createAnimation("tourist_walk_up", CUSTOMER_ANIMATION_TIME, 2);
-
-		touristIdle = createAnimation("foreignerfrontleft", CUSTOMER_ANIMATION_TIME, 1);
-		touristWalkDown = createAnimationFromTextures("foreignerfrontleft", "foreignerfrontright", CUSTOMER_ANIMATION_TIME);
-		touristWalkUp = createAnimationFromTextures("foreignerbackright", "foreignerbackright", CUSTOMER_ANIMATION_TIME);
-		touristWalkRight = createAnimationFromTextures("foreignersideright1", "foreignersideright2", CUSTOMER_ANIMATION_TIME);
-		touristWalkLeft = createAnimationFromTextures("foreignersideleft1", "foreignersideleft2", CUSTOMER_ANIMATION_TIME);
 		
 		chickenIcon = getTextureRegion("chicken_icon");
 		beefIcon = getTextureRegion("beef_icon");
@@ -550,14 +375,6 @@ public class Assets {
 		beefSpicyIcon = getTextureRegion("beef_sp_icon");
 		lambSpicyIcon = getTextureRegion("lamb_sp_icon");
 		beerIcon = getTextureRegion("beer_icon");
-
-//		volOn = new TextureRegionDrawable(getTexture("vol_on"));
-//		volMute = new TextureRegionDrawable(getTexture("vol_mute"));
-
-//		facebook = new TextureRegionDrawable(getTexture("facebook"));
-
-		star = getTextureRegion("star");
-		starHalf = getTextureRegion("starhalf");
 
 		face1 = getTextureRegion("face1");
 		face2 = getTextureRegion("face2");
@@ -569,9 +386,13 @@ public class Assets {
 		paintBrush = getTextureRegion("paintbrush");
 		trashIcon = getTextureRegion("trash");
 
-		cloud = getTextureRegion("cloud");
+		cloud1 = getTextureRegion("SkyElement-02");
+		cloud2 = getTextureRegion("SkyElement-03");
+		sun = getTextureRegion("SkyElement-04");
+		skyStar = getTextureRegion("SkyElement-05");
 
 		bgVillage = getTextureRegion("village2");
+
 		bgOutskirts = getTextureRegion("outskirts");
 		bgSuburbs = getTextureRegion("suburbs");
 		bgUniversity = getTextureRegion("university");
@@ -584,82 +405,66 @@ public class Assets {
 		p.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!@#$%^&*()/1234567890:-'\"";
 
 		p.size = 24;
+		// permanent font
 		fontOrder = gang.generateFont(p);
+		
+		worksans = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
+		p.size = 20;
+		p.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!@#$%^&*()/1234567890:-'\"";
+
+		// permanent font
+//		topBarFont = worksans.generateFont(p);
 		
 		// don't add this to the list of fonts because it's permanent
 //		fonts.add(fontOrder);
 		
 		fontOrder.setColor(Color.BLACK);
 
-//		china24 = gang.generateFont(p);
-//
-//		p.size = 32;
-//		china32 = gang.generateFont(p);
-//
-//		p.size = 48;
-//		china48 = gang.generateFont(p);
-//
-//		p.size = 60; 
-//		china60 = gang.generateFont(p);
-//
-//		p.size = 80; 
-//		china80 = gang.generateFont(p);
-//
-//		p.size = 100; 
-//		china100 = gang.generateFont(p);
-//
-//		p.size = 120; 
-//		china120 = gang.generateFont(p);
-//
-//		p.size = 240;
-//		china160 = gang.generateFont(p);
-//
-//
-//		String fontClass = "gang";
-//
-//		//		china24 = new BitmapFont(Gdx.files.internal("data/" + fontClass + "24.fnt"), false);
-//		//
-//		china32o = new BitmapFont(Gdx.files.internal("data/" + fontClass + "32.fnt"), false);
-//		china48o = new BitmapFont(Gdx.files.internal("data/" + fontClass + "48.fnt"), false);
-//		china60o = new BitmapFont(Gdx.files.internal("data/" + fontClass + "64.fnt"), false);
-//		//		china80o = new BitmapFont(Gdx.files.internal("data/" + fontClass + "80.fnt"), false);
-//		china100o = new BitmapFont(Gdx.files.internal("data/" + fontClass + "100.fnt"), false);
-//		china120o = new BitmapFont(Gdx.files.internal("data/" + fontClass + "120.fnt"), false);
-//
-//		china240o = new BitmapFont(Gdx.files.internal("data/" + fontClass + "240.fnt"), false);
-
-
-
-
-//		ls24 = new LabelStyle();
-//		ls24.font = china24;
-//
-//		ls32 = new LabelStyle();
-//		ls32.font = china32;
-//
-//		ls48 = new LabelStyle();
-//		ls48.font = china48;
-//
-//		ls60 = new LabelStyle();
-//		ls60.font = china60o;
-//
-//		ls80 = new LabelStyle();
-//		ls80.font = china100o;
-//
-//		ls100 = new LabelStyle();
-//		ls100.font = china100;
-//
-//		ls120 = new LabelStyle();
-//		ls120.font = china120;
-//
-//		ls160 = new LabelStyle();
-//		ls160.font = china240o;
-
 		createUI();
 
 		loadSound();
 	}
-
+	
+	public static CustomerTextures generateCustomerTextures(String prefix, float speed) {
+		CustomerTextures ct = new CustomerTextures();
+		float time = 1/speed * CUSTOMER_ANIMATION_TIME;
+		ct.idle = createAnimation(prefix, time, 2, 3, 1);
+		ct.right = createAnimationWithRepeatFirst(prefix, time, 1, 3);
+		ct.up = createAnimationWithRepeatFirst(prefix, time, 3, 3);
+		ct.down = createAnimationWithRepeatFirst(prefix, time, 2, 3);
+		if (ct.idle == null || ct.right == null || ct.up == null || ct.down == null)
+			throw new java.lang.NullPointerException();
+		return ct;
+	}
+	
+	public static KebabTextures generateKebabTextures(String prefix) {
+		KebabTextures kt = new KebabTextures();
+		kt.raw = getTextureRegion(prefix + "_raw");
+		kt.cooked = getTextureRegion(prefix + "_cooked");
+		kt.rawSp = getTextureRegion(prefix + "_rawSp");
+		kt.cookedSp = getTextureRegion(prefix + "_cookedSp");
+		kt.burnt = getTextureRegion(prefix + "_burnt");
+		return kt;
+	}
+	
+	public static TextureRegion getStickTexture() {
+		return getTextureRegion("stick_brown");
+	}
+	
+	public static TextureRegion getMeatTexture(Meat meat) {
+		KebabTextures kt = meatMap.get(meat.type);
+		switch (meat.state) {
+		case RAW:
+			if (!meat.spiced) return kt.raw;
+			else return kt.rawSp;
+		case COOKED:
+			if (!meat.spiced) return kt.cooked;
+			else return kt.cookedSp;
+		case BURNT:
+			return kt.burnt;
+		}
+		return null;
+	}
 	
 	// ui methods for (hopefully) simplicity
 	public static Drawable getStoreBackground() {
@@ -841,46 +646,43 @@ public class Assets {
 		return getTextureRegion("coin");
 	}
 	public static TextureRegion getStar() {
-		return getTextureRegion("star");
+		return getTextureRegion("Top-Bar-Element-06");
 	}
 	public static TextureRegion getHalfStar() {
-		return getTextureRegion("starhalf");
+		return getTextureRegion("Top-Bar-Element-08");
 	}
 	public static TextureRegion getGrayStar() {
-		return getTextureRegion("stargray");
+		return getTextureRegion("Top-Bar-Element-07");
 	}
 	public static Drawable getTopBarBG() {
 		return uiSkin.getDrawable("button_06");
 	}
-	public static ButtonStyle getPauseButtonStyle() {
+	public static ButtonStyle getStyleFromRegion(String name) {
 		ButtonStyle bs = new ButtonStyle();
-		bs.up = uiSkin.getDrawable("icon_pause");
-		bs.down = uiSkin.getDrawable("icon_pause");
+		bs.up = new TextureRegionDrawable(getTextureRegion(name));
+		bs.down = new TextureRegionDrawable(getTextureRegion(name));
 		return bs;
+	}
+	public static ButtonStyle getPauseButtonStyle() {
+		return getStyleFromRegion("TopBarElement02");
 	}
 	public static ButtonStyle getButtonStyleMuted() {
-		ButtonStyle bs = new ButtonStyle();
-		bs.up = uiSkin.getDrawable("icon_sound_off");
-		bs.down = uiSkin.getDrawable("icon_sound_off");
-		return bs;
+		return getStyleFromRegion("TopBarElement01");
 	}
 	public static ButtonStyle getButtonStyleUnmuted() {
-		ButtonStyle bs = new ButtonStyle();
-		bs.up = uiSkin.getDrawable("icon_sound_on");
-		bs.down = uiSkin.getDrawable("icon_sound_on");
-		return bs;
+		return getStyleFromRegion("TopBarElement01");
 	}
 	public static ButtonStyle getCoinPlusStyle() {
-		ButtonStyle bs = new ButtonStyle();
-		bs.up = uiSkin.getDrawable("icon_check");
-		bs.down = uiSkin.getDrawable("icon_check");
-		return bs;
+		return getStyleFromRegion("icon_check");
+	}
+	public static TextureRegion getReputationBG() {
+		return getTextureRegion("Top-Bar-Element-09");
 	}
 	public static TextureRegion getCoinsBG() {
-		return getTextureRegion("coins_bg");
+		return getTextureRegion("Top-Bar-Element-05");
 	}
 	public static TextureRegion getCashBG() {
-		return getTextureRegion("cash_bg");
+		return getTextureRegion("Top-Bar-Element-04");
 	}
 	
 	public static void deleteTempResources() {

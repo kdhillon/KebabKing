@@ -1,5 +1,16 @@
 apply plugin: 'eclipse'
 android {
+    defaultConfig {
+        applicationId "com.chuanrchef.game"
+        minSdkVersion 11
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
     signingConfigs {
         debug {
             keyAlias 'debugkey'
@@ -9,6 +20,7 @@ android {
         }
     }
     buildToolsVersion '23.0.2'
+    // I think this is important but I'm not sure?
     compileSdkVersion 22
     sourceSets {
         main {
@@ -22,7 +34,10 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+    productFlavors {
+    }
 }
+
 // needed to add JNI shared libraries to APK when compiling on CLI
 tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
 //    pkgTask.jniFolders = new HashSet<File>()

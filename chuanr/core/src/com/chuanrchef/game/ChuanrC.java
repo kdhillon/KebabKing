@@ -6,6 +6,7 @@ import java.util.Date;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.chuanrchef.game.Managers.Manager;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -18,7 +19,7 @@ public class ChuanrC extends Game {
 	private static int width;
 	private static int height; 
 
-	PlatformSpecific platformSpec;
+//	PlatformSpecific platformSpec;
 	
 //	boolean TUTORIAL_MODE;
 
@@ -61,7 +62,7 @@ public class ChuanrC extends Game {
 		SplashScreen splash = new SplashScreen(this);
 		this.setScreen(splash);
 		
-		// allow catching of back key
+		// allow catching of back button on Android
         Gdx.input.setCatchBackKey(true);
 	}
 
@@ -130,7 +131,7 @@ public class ChuanrC extends Game {
 		
 		long startTime = System.currentTimeMillis();
 	
-		Output output = new Output(platformSpec.getOutputStream());
+		Output output = new Output(Manager.file.getOutputStream());
 
 		Date date = new Date();
 		kryo.writeObject(output, date);
@@ -150,14 +151,14 @@ public class ChuanrC extends Game {
 //	}
 
 	public void deleteSave() {
-		platformSpec.deleteProfile();
+		Manager.file.deleteProfile();
 	}
 	
 	public boolean saveFileExists() {
 		if (FORCE_NEW)
 			return false;
 		else 
-			return platformSpec.saveFileExists();
+			return Manager.file.saveFileExists();
 	}
 
 	public boolean load() {
@@ -165,7 +166,7 @@ public class ChuanrC extends Game {
 
 		Input input = null;
 		try {
-			input = new Input(platformSpec.getInputStream());
+			input = new Input(Manager.file.getInputStream());
 		}
 		catch (Exception e) {	
 			System.out.println("no save file found");
@@ -198,8 +199,6 @@ public class ChuanrC extends Game {
 		// update main menu screen stuff
 //		this.initialize();
 		
-		
-
 		input.close();
 		return true;
 	}
@@ -231,7 +230,8 @@ public class ChuanrC extends Game {
 		
 		long muted = 0;
 		if (profile.settings.muteMusic) muted = 1;
-		platformSpec.sendEventHit("Day", "Start", "Muted", muted);
+		
+		Manager.analytics.sendEventHit("Day", "Start", "Muted", muted);
 	}
 
 	// switch from kitchen screen to summary screen
@@ -248,11 +248,11 @@ public class ChuanrC extends Game {
 	public void toggleMute() {
 		if (!profile.settings.muteMusic) {
 			profile.settings.muteMusic();
-			platformSpec.sendEventHit("Volume", "Mute");
+			Manager.analytics.sendEventHit("Volume", "Mute");
 		}
 		else {
 			profile.settings.unmuteMusic();
-			platformSpec.sendEventHit("Volume", "Unmute");
+			Manager.analytics.sendEventHit("Volume", "Unmute");
 		}
 	}
 
@@ -285,13 +285,13 @@ public class ChuanrC extends Game {
 		this.setScreen(store);
 	}
 
-	public void setPlatformSpecific(PlatformSpecific ps) {
-		this.platformSpec = ps;
-		Analytics.init(ps);
-	}
+//	public void setPlatformSpecific(PlatformSpecific ps) {
+//		this.platformSpec = ps;
+//		Analytics.init(ps);
+//	}
 
 	public void makePurchase(OnlinePurchaseManager.PurchaseableOnline choice) {
-		this.platformSpec.makePurchase(choice.productID);
+		Manager.iab.makePurchase(choice.productID);
 	}
 	
 	// confirm that user has purchased specified product
@@ -303,7 +303,7 @@ public class ChuanrC extends Game {
 		}
 		System.out.println("You just purchased " + purchased.coins + " coins!");		
 		
-		platformSpec.sendEventHit("OnlinePurchase", "Coins", productID);
+		Manager.analytics.sendEventHit("OnlinePurchase", "Coins", productID);
 
 		this.profile.coins += purchased.coins;
 	}

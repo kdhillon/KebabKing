@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.chuanrchef.game.Managers.Manager;
 
 // this screen summarizes your sales for the day
 public class SummaryScreen extends ScreenTemplate  {
@@ -186,10 +187,10 @@ public class SummaryScreen extends ScreenTemplate  {
 			}
 		});		
 		
-		kitchen.master.platformSpec.sendEventHit("Day", "End", "Twice_Rating", (long) (2*rating));
-		kitchen.master.platformSpec.sendEventHit("Day", "End", "Profit_Rounded", (long) (profit));
-		kitchen.master.platformSpec.sendEventHit("Day", "End", "Expenses", (long) (expenses));
-		kitchen.master.platformSpec.sendEventHit("Day", "End", kitchen.master.profile.getLocation().name);
+		Manager.analytics.sendEventHit("Day", "End", "Twice_Rating", (long) (2*rating));
+		Manager.analytics.sendEventHit("Day", "End", "Profit_Rounded", (long) (profit));
+		Manager.analytics.sendEventHit("Day", "End", "Expenses", (long) (expenses));
+		Manager.analytics.sendEventHit("Day", "End", kitchen.master.profile.getLocation().name);
 		
 		initializeTable();
 	}

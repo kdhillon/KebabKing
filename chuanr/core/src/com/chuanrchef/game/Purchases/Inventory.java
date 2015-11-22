@@ -1,8 +1,8 @@
 package com.chuanrchef.game.Purchases;
 
 import com.badlogic.gdx.utils.TimeUtils;
-import com.chuanrchef.game.Analytics;
 import com.chuanrchef.game.Profile;
+import com.chuanrchef.game.Managers.Manager;
 import com.chuanrchef.game.Purchases.AdCampaign.Campaign;
 import com.chuanrchef.game.Purchases.Vanity.VanityDecorationType;
 import com.chuanrchef.game.Purchases.Vanity.VanityGrillStandType;
@@ -109,7 +109,7 @@ public class Inventory {
 		// unlock item
 		type.unlock(item);
 
-		Analytics.sendEventHit("Inventory", "Unlock", item.getName());
+		Manager.analytics.sendEventHit("Inventory", "Unlock", item.getName());
 
 		// spend money
 		if (item.coinsToUnlock() > 0) {
@@ -139,7 +139,7 @@ public class Inventory {
 			return false;
 		}
 
-		Analytics.sendEventHit("Inventory", "Purchase Consumable", item.getName());
+		Manager.analytics.sendEventHit("Inventory", "Purchase Consumable", item.getName());
 
 		// spend money
 		spendCash(item.getDailyCost());

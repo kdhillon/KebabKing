@@ -18,8 +18,8 @@ public class KitchenScreen extends ScreenTemplate {
 //	static final float PAUSE_WIDTH = 2.1f; // this times unit width
 //	static final float PAUSE_HEIGHT = 1.5f;
 
-//	static final float DAY_LENGTH = 120; // 2 minutes per day
-	static final float DAY_LENGTH = 40; 
+	static final float DAY_LENGTH = 120; // 2 minutes per day
+//	static final float DAY_LENGTH = 40; 
 	
 //	static float TIME_TO_WAIT = 2f;
 	

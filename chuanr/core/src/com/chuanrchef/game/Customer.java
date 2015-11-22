@@ -1,7 +1,16 @@
 package com.chuanrchef.game;
 
-import static com.chuanrchef.game.Assets.*;
-import static com.chuanrchef.game.Customer.CustomerType.*;
+import static com.chuanrchef.game.Assets.speech;
+import static com.chuanrchef.game.Customer.CustomerType.BUSINESSMAN;
+import static com.chuanrchef.game.Customer.CustomerType.FAT_AMERICAN;
+import static com.chuanrchef.game.Customer.CustomerType.FOREIGNER;
+import static com.chuanrchef.game.Customer.CustomerType.GIRL;
+import static com.chuanrchef.game.Customer.CustomerType.MAN;
+import static com.chuanrchef.game.Customer.CustomerType.OLD_MAN;
+import static com.chuanrchef.game.Customer.CustomerType.OLD_WOMAN;
+import static com.chuanrchef.game.Customer.CustomerType.POLICE;
+import static com.chuanrchef.game.Customer.CustomerType.STUDENT;
+import static com.chuanrchef.game.Customer.CustomerType.WOMAN;
 
 import java.util.ArrayList;
 
@@ -9,6 +18,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.chuanrchef.game.Assets.CustomerTextures;
 
 public class Customer implements Comparable<Customer> {
 	// customers arrive at the stand, place an order, and wait until their patience runs out
@@ -94,16 +104,16 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	public enum CustomerType {
-		OLD_MAN(oldManStingyIdle, oldManStingyWalkUp, oldManStingyWalkDown, oldManStingyWalkLeft, oldManStingyWalkRight, 1, 1, 3, .1f, .5f),
-		OLD_WOMAN(oldWomanIdle, oldWomanWalkUp, oldWomanWalkDown, oldWomanWalkLeft, oldWomanWalkRight, 1.2f, 1, 3, .05f, .5f),
-		STUDENT(teenIdle, teenWalkUp, teenWalkDown, teenWalkLeft, teenWalkRight, .8f, 5, 10, .9f, .8f),
-		MAN(manIdle, manWalkUp, manWalkDown, manWalkLeft, manWalkRight, 1, 3, 7, .5f, .7f),
-		WOMAN(manIdle, manWalkUp, manWalkDown, manWalkLeft, manWalkRight, 1, 3, 7, .5f, .7f),
-		BUSINESSMAN(policeIdle, policeWalkUp, policeWalkDown, policeWalkRight, policeWalkRight, .8f, 4, 10, .8f, .75f),
-		POLICE(policeIdle, policeWalkUp, policeWalkDown, policeWalkRight, policeWalkRight, .8f, 4, 10, .8f, .75f),
-		FOREIGNER(touristIdle, touristWalkUp, touristWalkDown, touristWalkLeft, touristWalkRight, .8f, 4, 10, .8f, .75f),
-		GIRL(girlIdle, girlWalkUp, girlWalkDown, girlWalkLeft, girlWalkRight, 1f, 1, 3, 0f, .75f),
-		FAT_AMERICAN(fatAmericanIdle, fatAmericanUp, fatAmericanDown, fatAmericanRight, fatAmericanRight, 0.8f, 4, 10, 0.5f, .5f),
+		OLD_MAN(	1, 1, 3, .1f, .5f, "OldMan"),
+		OLD_WOMAN(	1.2f, 1, 3, .05f, .5f, "OldWoman"),
+		STUDENT(	.8f, 5, 10, .9f, .8f, "OldMan"),
+		MAN(		1, 3, 7, .5f, .7f, "OldMan"),
+		WOMAN(		1, 3, 7, .5f, .7f, "OldWoman"),
+		BUSINESSMAN(.8f, 4, 10, .8f, .75f, "OldMan"),
+		POLICE(		.8f, 4, 10, .8f, .75f, "Policeman"),
+		FOREIGNER(	.8f, 4, 10, .8f, .75f, "OldMan"),
+		GIRL(		1f, 1, 3, 0f, .75f, "OldMan"),
+		FAT_AMERICAN(0.8f, 4, 10, 0.5f, .5f, "FatAmerican"),
 		;
 
 		Animation walkUp;
@@ -133,12 +143,13 @@ public class Customer implements Comparable<Customer> {
 		//			this.beerFactor = beerFactor;	
 		//		}
 
-		private CustomerType(Animation idle, Animation walkUp, Animation walkDown, Animation walkLeft, Animation walkRight, float patienceFactor, int minOrder, int maxOrder, float beerFactor, float speed) {
-			this.idle = idle;
-			this.walkUp = walkUp;
-			this.walkDown = walkDown;
-			this.walkLeft = walkLeft;
-			this.walkRight = walkRight;
+		private CustomerType(float patienceFactor, int minOrder, int maxOrder, float beerFactor, float speed, String prefix) {
+			CustomerTextures ct = Assets.generateCustomerTextures(prefix, speed);
+			this.idle = ct.idle;
+			this.walkUp = ct.up;
+			this.walkDown = ct.down;
+			this.walkLeft = ct.right;
+			this.walkRight = ct.right;
 			this.walkSpeed = speed;
 			this.patienceFactor = patienceFactor;
 			this.minOrder = minOrder;
@@ -176,11 +187,11 @@ public class Customer implements Comparable<Customer> {
 
 	public CustomerType generateCustomerType() {
 		// testing for now
-		if (Math.random() < 0.5) 
-			return CustomerType.OLD_MAN;
-		else if (true) {
-			return CustomerType.OLD_WOMAN;
-		}
+//		if (Math.random() < 0.5) 
+//			return CustomerType.OLD_MAN;
+//		else if (true) {
+//			return CustomerType.OLD_WOMAN;
+//		}
 		
 		// do this based off profile
 		float[] spread = cm.profile.currentCustomerSpread;

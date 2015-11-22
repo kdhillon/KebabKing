@@ -27,14 +27,15 @@ public class Grill {
 	static final boolean DISABLE_DRAG_TO_PLACE = true;
 	
 	static final int GRILL_X = 0;
-	static final float GRILL_Y = 2.5f;
-	static final int GRILL_WIDTH = 10;
-	static final float GRILL_HEIGHT = 2.5f;
+	static final float GRILL_Y = 2f;
+	static final int GRILL_WIDTH = 12;
+	static final float GRILL_HEIGHT = 3.5f;
 
 	static final int GRILL_PIECE_WIDTH = 1;
 	static final float GRILL_PIECE_HEIGHT = GRILL_HEIGHT;
 	static final double CHUANR_PER_PIECE = 1;
-
+	static final float CHUANR_HEIGHT = 2.5f;
+	
 	// bottom values
 	static final int BOX_HOR_WIDTH = 3;
 	static final int BOX_HOR_HEIGHT = 2;
@@ -137,8 +138,11 @@ public class Grill {
 	// this updates the values that are used to draw grill, must be updated when grill changes
 	public void updateSize() {
 		this.size = profile.grillSize();
-
-		grillLeftX = (GRILL_WIDTH - size) / 2;
+		
+		// is this wrong? we should center the grill?
+		// So the left side of the grill should be half the screen size - half the grill size
+		grillLeftX = (GRILL_WIDTH)/2 - (size + SPICE_WIDTH)/2;
+		
 		grillRightX = grillLeftX + size; 
 				
 		draw_width = GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH;
@@ -203,29 +207,28 @@ public class Grill {
 		}
 
 		int xCount = grillLeftX;
-
-		
 		
 		// draw left
-		batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
-		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
-		batch.draw(Assets.grillLeft, draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
+		batch.draw(Assets.grillLeft, draw_x, draw_y, draw_width * 2, draw_height); 
 		xCount++;
-
+		xCount++;
+		
 		// draw middle
-		while (xCount < GRILL_WIDTH - grillLeftX - 1) {
+		while (xCount < GRILL_WIDTH - grillLeftX - 4) {
 			draw_x = (xCount + GRILL_X) * KitchenScreen.UNIT_WIDTH;
-			batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
-			batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
+//			batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
+//			batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 			batch.draw(Assets.grillMid, draw_x, draw_y, draw_width, draw_height);
 			xCount++;
 		}
 
 		// draw right		 
 		draw_x = (xCount + GRILL_X) * KitchenScreen.UNIT_WIDTH;
-		batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
-		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
-		batch.draw(Assets.grillRight, draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(fire, draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
+		batch.draw(Assets.grillRight, draw_x, draw_y, draw_width*2, draw_height); 
 
 		if (active)
 			drawMeat(batch);
@@ -727,7 +730,7 @@ public class Grill {
 	}
 	
 	public boolean onGrill(int unit_x, int unit_y) {
-		if (unit_x >= GRILL_X + this.grillLeftX && unit_x < GRILL_X + GRILL_WIDTH - grillLeftX) {
+		if (unit_x >= GRILL_X + this.grillLeftX && unit_x < GRILL_X + grillRightX) {
 			if (unit_y >= GRILL_Y + this.grillLeftY && unit_y < GRILL_Y + GRILL_HEIGHT - grillLeftY) {
 				return true;
 			}
@@ -787,34 +790,37 @@ public class Grill {
 		//					CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
 		//		}
 		if (this.mousedOver() && this.meatSelected() && !this.selectedSet.contains(meat[mousedOver])) {
+			
+			// TODO fix this, because we're dealing with placing new meat.
+			
 			// draw where all the meat will go if dropped!
 			// for now, just draw the first one
-			batch.setColor(1, 1, 1, .6f);
-			TextureRegion toDraw = null;
-			int widthFactor = 1;
-			if (this.selectedSet.get(0).type == Meat.Type.CHICKEN && this.canFit(Meat.Type.CHICKEN)) {
-				toDraw = Assets.chuanrChickenRaw;
-				widthFactor = 2;
-			}
-			if (this.selectedSet.get(0).type == Meat.Type.BEEF  && this.canFit(Meat.Type.BEEF))
-				toDraw = Assets.chuanrBeefRaw;
-			if (this.selectedSet.get(0).type == Meat.Type.LAMB  && this.canFit(Meat.Type.LAMB))
-				toDraw = Assets.chuanrLambRaw;			
-
-			if (toDraw != null)
-				batch.draw(toDraw, getXForIndex(mousedOver), getYForIndex(mousedOver),  (int) (GRILL_PIECE_WIDTH * widthFactor * KitchenScreen.UNIT_WIDTH / 
-						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
+//			batch.setColor(1, 1, 1, .6f);
+//			TextureRegion toDraw = null;
+//			int widthFactor = 1;
+//			if (this.selectedSet.get(0).type == Meat.Type.CHICKEN && this.canFit(Meat.Type.CHICKEN)) {
+//				toDraw = Assets.chuanrChickenRaw;
+//				widthFactor = 2;
+//			}
+//			if (this.selectedSet.get(0).type == Meat.Type.BEEF  && this.canFit(Meat.Type.BEEF))
+//				toDraw = Assets.chuanrBeefRaw;
+//			if (this.selectedSet.get(0).type == Meat.Type.LAMB  && this.canFit(Meat.Type.LAMB))
+//				toDraw = Assets.chuanrLambRaw;			
+//
+//			if (toDraw != null)
+//				batch.draw(toDraw, getXForIndex(mousedOver), getYForIndex(mousedOver),  (int) (GRILL_PIECE_WIDTH * widthFactor * KitchenScreen.UNIT_WIDTH / 
+//						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
 		}
 		if (this.meatSelected()) {
 			for (Meat m : selectedSet) {
 				Color myColor = Color.WHITE;
 				myColor.a = .2f;
 				batch.setColor(myColor);
-				batch.draw(Assets.white, getXForIndex(m.index1), getYForIndex(m.index1),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
-						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
+				batch.draw(Assets.white, getXForIndex(m.index1), getYForIndex(m.index1) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
+						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
 				if (m.chicken()) 
-					batch.draw(Assets.white, getXForIndex(m.index2), getYForIndex(m.index2),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
-							CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
+					batch.draw(Assets.white, getXForIndex(m.index2), getYForIndex(m.index2) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
+							CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
 			}
 			batch.setColor(1, 1, 1, 1);
 		}

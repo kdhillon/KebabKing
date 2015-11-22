@@ -2,7 +2,7 @@ package com.kebabchef.game.android;
 
 import android.util.Log;
 
-import com.chuanrchef.game.AnalyticsManager;
+import com.chuanrchef.game.Managers.AnalyticsManager;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;

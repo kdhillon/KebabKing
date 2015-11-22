@@ -2,8 +2,9 @@ package com.kebabchef.game.android;
 
 import android.util.Log;
 
-import com.chuanrchef.game.IABManager;
+import com.chuanrchef.game.Managers.Manager;
 import com.chuanrchef.game.OnlinePurchaseManager;
+import com.chuanrchef.game.Managers.IABManager;
 import com.google.android.gms.analytics.ecommerce.Product;
 import com.google.android.gms.analytics.ecommerce.ProductAction;
 import com.kebabchef.game.android.util.IabHelper;
@@ -102,7 +103,7 @@ public class IABManagerAndroid implements IABManager {
                 .setTransactionId(purchase.getOrderId())
                 .setTransactionAffiliation("Google Play");
 
-        androidLauncher.analyticsManager.sendPaymentHit(product, productAction);
+//        Manager.analytics.sendPaymentHit(product, productAction);
     }
 
     @Override

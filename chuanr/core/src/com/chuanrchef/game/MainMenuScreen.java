@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.chuanrchef.game.Managers.Manager;
 
 public class MainMenuScreen extends ScreenTemplate {
 	static final float FADEOUT_TIME = 1f; // it should take this many seconds to fade out towards countdown screen
@@ -335,13 +336,10 @@ public class MainMenuScreen extends ScreenTemplate {
 	}
 	
 	public void clickFacebook() {
-		if (master.platformSpec != null && !master.platformSpec.isLoggedIn())
-			master.platformSpec.logIn();
-		else if (master.platformSpec != null) {
-			
-			master.platformSpec.inviteFriends();
-//			master.facebook.logOut();
-		}
+		if (!Manager.fb.isLoggedIn())
+			Manager.fb.login();		
+		else 
+		Manager.fb.inviteFriends();
 	}
 	
 	private Profile getProfile() {

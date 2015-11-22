@@ -59,73 +59,81 @@ public class Meat {
 	}
 	
 	public void draw(SpriteBatch batch, int x, int y) {
-		TextureRegion toDraw = Assets.beerBox;
-		switch (state) {
-		case RAW: 
-			switch (type) {
-			case CHICKEN:
-				if (!this.spiced)
-					toDraw = Assets.chuanrChickenRaw;	
-				else
-					toDraw = Assets.chuanrChickenRawSpice;
-				break;
-			case BEEF:
-				if (!this.spiced)
-					toDraw = Assets.chuanrBeefRaw;	
-				else 
-					toDraw = Assets.chuanrBeefRawSpice;
-				break;
-			case LAMB:
-				if (!this.spiced)
-					toDraw = Assets.chuanrLambRaw;	
-				else 
-					toDraw = Assets.chuanrLambRawSpice;
-				break;
-			}
-			break;
-		case COOKED:
-			switch (type) {
-			case CHICKEN:
-				if (!this.spiced)
-					toDraw = Assets.chuanrChickenCooked;
-				else 
-					toDraw = Assets.chuanrChickenCookedSpice;
-				break;
-			case BEEF:
-				if (!this.spiced)
-					toDraw = Assets.chuanrBeefCooked;
-				else 
-					toDraw = Assets.chuanrBeefCookedSpice;
-				break;
-			case LAMB:
-				if (!this.spiced)
-					toDraw = Assets.chuanrLambCooked;
-				else 
-					toDraw = Assets.chuanrLambCookedSpice;
-				break;
-			}
-			break;
-		case BURNT:
-			switch (type) {
-			case CHICKEN:
-				toDraw = Assets.chuanrChickenBurnt;
-				break;
-			case BEEF:
-				toDraw = Assets.chuanrBeefBurnt;
-				break;
-			case LAMB:
-				toDraw = Assets.chuanrLambBurnt;
-				break;
-			}
-			break;
-		}
+		TextureRegion stickTexture = Assets.getStickTexture();
+		TextureRegion meatTexture = Assets.getMeatTexture(this);
+//		switch (state) {
+//		case RAW: 
+//			switch (type) {
+//			case CHICKEN:
+//				if (!this.spiced)
+//					toDraw = Assets.chuanrChickenRaw;	
+//				else
+//					toDraw = Assets.chuanrChickenRawSpice;
+//				break;
+//			case BEEF:
+//				if (!this.spiced)
+//					toDraw = Assets.chuanrBeefRaw;	
+//				else 
+//					toDraw = Assets.chuanrBeefRawSpice;
+//				break;
+//			case LAMB:
+//				if (!this.spiced)
+//					toDraw = Assets.chuanrLambRaw;	
+//				else 
+//					toDraw = Assets.chuanrLambRawSpice;
+//				break;
+//			}
+//			break;
+//		case COOKED:
+//			switch (type) {
+//			case CHICKEN:
+//				if (!this.spiced)
+//					toDraw = Assets.chuanrChickenCooked;
+//				else 
+//					toDraw = Assets.chuanrChickenCookedSpice;
+//				break;
+//			case BEEF:
+//				if (!this.spiced)
+//					toDraw = Assets.chuanrBeefCooked;
+//				else 
+//					toDraw = Assets.chuanrBeefCookedSpice;
+//				break;
+//			case LAMB:
+//				if (!this.spiced)
+//					toDraw = Assets.chuanrLambCooked;
+//				else 
+//					toDraw = Assets.chuanrLambCookedSpice;
+//				break;
+//			}
+//			break;
+//		case BURNT:
+//			switch (type) {
+//			case CHICKEN:
+//				toDraw = Assets.chuanrChickenBurnt;
+//				break;
+//			case BEEF:
+//				toDraw = Assets.chuanrBeefBurnt;
+//				break;
+//			case LAMB:
+//				toDraw = Assets.chuanrLambBurnt;
+//				break;
+//			}
+//			break;
+//		}
+		
+		// First draw meat
 		int width =  (int) (Grill.GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
 				Grill.CHUANR_PER_PIECE);
-		int height = (int) (KitchenScreen.UNIT_HEIGHT * Grill.GRILL_PIECE_HEIGHT);
+		int height = (int) (KitchenScreen.UNIT_HEIGHT * Grill.CHUANR_HEIGHT);
 		
-		if (this.chicken()) width *= 2;
+		batch.draw(stickTexture, x, y, width, KitchenScreen.UNIT_HEIGHT * Grill.GRILL_PIECE_HEIGHT);
+
+		if (this.chicken()) {
+			batch.draw(stickTexture, x + KitchenScreen.UNIT_WIDTH, y, width, KitchenScreen.UNIT_HEIGHT * Grill.GRILL_PIECE_HEIGHT);
+			width *= 2;
+		}
 		
-		batch.draw(toDraw, x, y, width, height);
+		batch.draw(meatTexture, x, y + KitchenScreen.UNIT_HEIGHT * (Grill.GRILL_PIECE_HEIGHT - Grill.CHUANR_HEIGHT), width, height);
 	}
 	
 	// cost for player to purchase

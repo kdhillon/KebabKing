@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.chuanrchef.game.Managers.Manager;
 import com.chuanrchef.game.Purchases.AdCampaign;
 import com.chuanrchef.game.Purchases.Inventory;
 import com.chuanrchef.game.Purchases.PurchaseType;
@@ -742,7 +743,7 @@ public class StoreScreen extends ScreenTemplate {
 
 		this.currentTable = switchToThis;
 
-		this.master.platformSpec.sendEventHit("Store", "Switch To", name);
+		Manager.analytics.sendEventHit("Store", "Switch To", name);
 	}
 
 	public Profile getProfile() {

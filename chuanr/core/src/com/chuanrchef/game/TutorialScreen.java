@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.chuanrchef.game.Grill.Selected;
 import com.chuanrchef.game.Meat.State;
 import com.chuanrchef.game.Meat.Type;
+import com.chuanrchef.game.Managers.Manager;
 
 
 public class TutorialScreen extends KitchenScreen {
@@ -50,7 +51,7 @@ public class TutorialScreen extends KitchenScreen {
 	public TutorialScreen(ChuanrC master) {
 		super(master);
 		
-		this.master.platformSpec.sendEventHit("Tutorial", "Start", "");
+		Manager.analytics.sendEventHit("Tutorial", "Start", "");
 		
 		System.out.println("STARTING TUTORIAL MODE");
 
@@ -400,7 +401,7 @@ public class TutorialScreen extends KitchenScreen {
 	@Override
 	public void finishDay() {			
 		super.finishDay();
-		this.master.platformSpec.sendEventHit("Tutorial", "End", "");
+		Manager.analytics.sendEventHit("Tutorial", "End", "");
 
 		master.profile.tutorialNeeded = false;
 		try {

@@ -48,7 +48,7 @@ public class Profile {
 		
 		this.inventory = new Inventory(this);
 		this.settings = new Settings();
-		
+				
 		resetCustomerDistribution();
 	}
 	

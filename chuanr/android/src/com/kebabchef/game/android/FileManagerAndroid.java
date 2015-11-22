@@ -3,7 +3,7 @@ package com.kebabchef.game.android;
 import android.content.Context;
 
 import com.chuanrchef.game.ChuanrC;
-import com.chuanrchef.game.FileManager;
+import com.chuanrchef.game.Managers.FileManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
