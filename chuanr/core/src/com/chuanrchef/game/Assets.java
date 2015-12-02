@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -22,13 +23,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.chuanrchef.game.StoreScreen.TableType;
 
 public class Assets {	
 	final static float GRILL_ANIMATION_TIME = 1f;
 	//	final static int GRILL_ANIMATION_FRAMES = 1;
 	final static float CUSTOMER_ANIMATION_TIME = .15f;
 	final static int CUSTOMER_ANIMATION_FRAMES = 1;
-
+	
+	final static int GREEN_9PATCH_OFFSET_X = 17;
+	final static int GREEN_9PATCH_OFFSET_X_2 = GREEN_9PATCH_OFFSET_X + 2;
+	final static int GREEN_9PATCH_OFFSET_Y = 17;
+	final static int GREEN_9PATCH_OFFSET_Y_2 = GREEN_9PATCH_OFFSET_X + 4;
+	
 	public static AssetManager manager; // must be disposed
 
 	public static BitmapFont fontOrder; // must be disposed
@@ -68,7 +75,6 @@ public class Assets {
 		TextureRegion burnt;
 	}
 	
-	
 	static HashMap<Meat.Type, KebabTextures> meatMap;
 
 	static TextureRegion beefBox;
@@ -84,9 +90,9 @@ public class Assets {
 	static TextureRegion beefIcon;
 	static TextureRegion chickenIcon;
 	static TextureRegion lambIcon;
-	static TextureRegion beefSpicyIcon;
-	static TextureRegion chickenSpicyIcon;
-	static TextureRegion lambSpicyIcon;
+//	static TextureRegion beefSpicyIcon;
+//	static TextureRegion chickenSpicyIcon;
+//	static TextureRegion lambSpicyIcon;
 	static TextureRegion beerIcon;
 
 	static TextureRegion face1, face2, face3, face4, face5, faceSick;
@@ -112,15 +118,22 @@ public class Assets {
 
 	static TextureRegion speech;
 
-	static TextureRegion pause;
+//	static TextureRegion pause;
+	
+	static TextureRegion purchaseableCheck;
 
 	static TextureRegion gray;
 	static TextureRegion white;
+	static TextureRegion whiteAlpha;
 
 	static FreeTypeFontGenerator gang;
 	static FreeTypeFontParameter p;
 	
 	static FreeTypeFontGenerator worksans;
+	static FreeTypeFontGenerator worksansLight;
+	static FreeTypeFontGenerator worksansHeavy;
+	
+	static FreeTypeFontGenerator china;
 
 	static FreeTypeFontGenerator c1;
 	static FreeTypeFontGenerator c1p;
@@ -138,8 +151,21 @@ public class Assets {
 	static TextButtonStyle mainButtonStyle;
 	static TextButtonStyle startButtonStyle;
 	static TextButtonStyle marketButtonStyle;
+	static TextButtonStyle purchaseTypeButtonStyle;
 	static TextButtonStyle facebookButtonStyle;
 	static TextButtonStyle unlockButtonStyle;
+	
+	static TextureRegion marketShelf;
+	static TextureRegion marketTitle;
+	static TextureRegion marketGray;
+	static TextureRegion marketLock;
+	static TextureRegion marketJade;
+	static TextureRegion purchaseableJade;
+	static TextureRegion marketGreen;
+	static TextureRegion marketDarkGreen;
+	static TextureRegion questionMark;
+	
+	static TextureRegion red;
 
 	static NinePatchDrawable roundUp;
 	
@@ -147,6 +173,9 @@ public class Assets {
 	static ArrayList<BitmapFont> fonts;
 	
 	static Music music;
+	
+	static NinePatch green9Patch;
+	static NinePatch gray9Patch;
 
 	//	static Animation
 
@@ -305,7 +334,44 @@ public class Assets {
 			fonts.add(ls.font);
 		return ls;
 	}
-
+	
+//	public static LabelStyle generateLabelStyleUIDark(int size, boolean permanent) {
+//		p.size = size;
+//		LabelStyle ls = new LabelStyle();
+//		ls.font = worksans.generateFont(p);
+//		ls.fontColor = FONT_COLOR;
+//		if (!permanent)
+//			fonts.add(ls.font);
+//		return ls;
+//	}
+	
+	public static LabelStyle generateLabelStyleUILight(int size, boolean permanent) {
+		p.size = size;
+		LabelStyle ls = new LabelStyle();
+		ls.font = worksansLight.generateFont(p);
+		if (!permanent)
+			fonts.add(ls.font);
+		return ls;
+	}
+	
+	public static LabelStyle generateLabelStyleUIHeavy(int size, boolean permanent) {
+		p.size = size;
+		LabelStyle ls = new LabelStyle();
+		ls.font = worksansHeavy.generateFont(p);
+		if (!permanent)
+			fonts.add(ls.font);
+		return ls;
+	}
+	
+	public static LabelStyle generateLabelStyleUIChina(int size, boolean permanent) {
+		p.size = size;
+		LabelStyle ls = new LabelStyle();
+		ls.font = china.generateFont(p);
+		if (!permanent)
+			fonts.add(ls.font);
+		return ls;
+	}
+	
 	// continue loading
 	public static void update() {
 		manager.update();
@@ -322,10 +388,11 @@ public class Assets {
 	public static void finalizeLoading() {
 		atlas = manager.get("atlas1.atlas", TextureAtlas.class);
 				
-		speech = getTextureRegion("speech");
+		speech = getTextureRegion("customers/Play_speechbubble_element-38");
 
 		gray = getTextureRegion("graypixel");
 		white = getTextureRegion("whitepixel");
+		whiteAlpha = getTextureRegion("white_alpha");
 
 		title = getTextureRegion("kebabking");
 		//		start = getTexture("start");
@@ -341,40 +408,40 @@ public class Assets {
 //		chickenBoxOpen = getTextureRegion("chicken_open");
 //		beerBoxOpen = getTextureRegion("beer_open");
 		
-		spiceBox = getTextureRegion("Grill-05");
+		spiceBox = getTextureRegion("grill/Grill-05");
 		
-		beefBox = getTextureRegion("Cooler-21");
-		lambBox = getTextureRegion("Cooler-23");
-		chickenBox = getTextureRegion("Cooler-22");
-		beerBox = getTextureRegion("Cooler-24");
-		beefBoxOpen = getTextureRegion("Cooler_open-29");
-		lambBoxOpen = getTextureRegion("Cooler_open-31");
-		chickenBoxOpen = getTextureRegion("Cooler_open-30");
-		beerBoxOpen = getTextureRegion("Cooler_open-32");
+		beefBox = getTextureRegion("grill/Cooler-21");
+		lambBox = getTextureRegion("grill/Cooler-23");
+		chickenBox = getTextureRegion("grill/Cooler-22");
+		beerBox = getTextureRegion("grill/Cooler-24");
+		beefBoxOpen = getTextureRegion("grill/Cooler_open-29");
+		lambBoxOpen = getTextureRegion("grill/Cooler_open-31");
+		chickenBoxOpen = getTextureRegion("grill/Cooler_open-30");
+		beerBoxOpen = getTextureRegion("grill/Cooler_open-32");
 
 		//		trashBox = getTexture("trashbox");
 
 		meatMap = new HashMap<Meat.Type, KebabTextures>();
 		
-		meatMap.put(Meat.Type.CHICKEN, generateKebabTextures("ChickenKebab"));
-		meatMap.put(Meat.Type.BEEF,  generateKebabTextures("BeefKebab"));
-		meatMap.put(Meat.Type.LAMB, generateKebabTextures("LambKebab"));
+		meatMap.put(Meat.Type.CHICKEN, generateKebabTextures("kebabs/ChickenKebab"));
+		meatMap.put(Meat.Type.BEEF,  generateKebabTextures("kebabs/BeefKebab"));
+		meatMap.put(Meat.Type.LAMB, generateKebabTextures("kebabs/LambKebab"));
 
-		grillMid = getTextureRegion("Grill-03");
-		grillLeft = getTextureRegion("Grill-02");
-		grillRight = getTextureRegion("Grill-04");
+		grillMid = getTextureRegion("grill/Grill-03");
+		grillLeft = getTextureRegion("grill/Grill-02");
+		grillRight = getTextureRegion("grill/Grill-04");
 
-		grillCoals = getTextureRegion("coals");
+//		grillCoals = getTextureRegion("coals");
+//		
+//		grillFire = createAnimation("fire", GRILL_ANIMATION_TIME, 4);
 		
-		grillFire = createAnimation("fire", GRILL_ANIMATION_TIME, 4);
-		
-		chickenIcon = getTextureRegion("chicken_icon");
-		beefIcon = getTextureRegion("beef_icon");
-		lambIcon = getTextureRegion("lamb_icon");
-		chickenSpicyIcon = getTextureRegion("chicken_sp_icon");
-		beefSpicyIcon = getTextureRegion("beef_sp_icon");
-		lambSpicyIcon = getTextureRegion("lamb_sp_icon");
-		beerIcon = getTextureRegion("beer_icon");
+		beerIcon = getTextureRegion("customers/beer_icon");
+		chickenIcon = getTextureRegion("customers/chicken_icon");
+		beefIcon = getTextureRegion("customers/beef_icon");
+		lambIcon = getTextureRegion("customers/lamb_icon");
+//		chickenSpicyIcon = getTextureRegion("chicken_sp_icon");
+//		beefSpicyIcon = getTextureRegion("beef_sp_icon");
+//		lambSpicyIcon = getTextureRegion("lamb_sp_icon");
 
 		face1 = getTextureRegion("face1");
 		face2 = getTextureRegion("face2");
@@ -398,7 +465,7 @@ public class Assets {
 		bgUniversity = getTextureRegion("university");
 		bgCBD = getTextureRegion("cbd");
 
-		pause = getTextureRegion("pause");
+//		pause = getTextureRegion("pause");
 
 		gang = new FreeTypeFontGenerator(Gdx.files.internal("data/CarterOne.ttf"));
 		p = new FreeTypeFontParameter();
@@ -408,10 +475,31 @@ public class Assets {
 		// permanent font
 		fontOrder = gang.generateFont(p);
 		
-		worksans = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
-		p.size = 20;
-		p.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!@#$%^&*()/1234567890:-'\"";
+		worksans = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Medium.otf"));
+		worksansHeavy = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
 
+		china = new FreeTypeFontGenerator(Gdx.files.internal("data/CHINA.TTF"));
+
+//		p.size = 20;
+//		p.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!@#$%^&*()/1234567890:-'\"";
+
+		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
+		
+		marketShelf = getTextureRegion("market/Market_menu_element-02");
+		marketTitle = getTextureRegion("market/Market_menu_element-08");
+		marketGray = getTextureRegion("market/grayalpha");
+		marketGreen = getTextureRegion("market/green");
+		marketDarkGreen = getTextureRegion("market/darkGreen");
+		marketJade = getTextureRegion("market/jade");
+		marketLock = getTextureRegion("market/Market_subMenus__template_element-02");
+		purchaseableCheck = getTextureRegion("market/Market_subMenus__template_element-05");
+		purchaseableJade = getTextureRegion("market/Market_subMenus__template_element-04");
+		questionMark = getTextureRegion("market/question");
+
+		red = getTextureRegion("customers/red");
+		
+		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
+		gray9Patch = new NinePatch(getTextureRegion("market/gray9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		// permanent font
 //		topBarFont = worksans.generateFont(p);
 		
@@ -426,6 +514,7 @@ public class Assets {
 	}
 	
 	public static CustomerTextures generateCustomerTextures(String prefix, float speed) {
+		prefix = "customers/" + prefix;
 		CustomerTextures ct = new CustomerTextures();
 		float time = 1/speed * CUSTOMER_ANIMATION_TIME;
 		ct.idle = createAnimation(prefix, time, 2, 3, 1);
@@ -448,7 +537,7 @@ public class Assets {
 	}
 	
 	public static TextureRegion getStickTexture() {
-		return getTextureRegion("stick_brown");
+		return getTextureRegion("kebabs/Kebab_Stick-28");
 	}
 	
 	public static TextureRegion getMeatTexture(Meat meat) {
@@ -550,48 +639,100 @@ public class Assets {
 		mainButtonStyle = tbs;
 		return tbs;
 	}
-	public static TextButtonStyle getBackButtonStyle() {
-		if (backButtonStyle != null) return backButtonStyle;
-		
-		TextButtonStyle tbs = new TextButtonStyle();
-		tbs.down = uiSkin.getDrawable("button_01");
-		tbs.up = uiSkin.getDrawable("button_02");
-		tbs.font = Assets.generateUIFont(32, true);
-//		tbs.font = Assets.china32;
-		backButtonStyle = tbs;
-		return tbs;
+	public static TextButtonStyle getBackButtonStyle(int fontSize) {
+//		if (backButtonStyle != null) return backButtonStyle;
+//		
+//		TextButtonStyle tbs = new TextButtonStyle();
+//		tbs.down = uiSkin.getDrawable("button_01");
+//		tbs.up = uiSkin.getDrawable("button_02");
+//		tbs.font = Assets.generateUIFont(32, true);
+////		tbs.font = Assets.china32;
+//		backButtonStyle = tbs;
+//		return tbs;
+		return getTextStyleFromRegion("market/back_button", fontSize);
 	}
+	
 	public static TextButtonStyle getStartButtonStyle() {
 		if (startButtonStyle != null) return startButtonStyle;
 
 		TextButtonStyle tbs = new TextButtonStyle();
 		tbs.down = uiSkin.getDrawable("button_01");
 		tbs.up = uiSkin.getDrawable("button_02");
-		tbs.font = Assets.generateUIFont(ChuanrC.getGlobalX(36.0f / 480), true);
+		tbs.font = Assets.generateUIFont(36, true);
 //		tbs.font = Assets.china32;
 		startButtonStyle = tbs;
 		return tbs;
 	}
 	public static TextButtonStyle getMarketButtonStyle() {
-		if (marketButtonStyle != null) return marketButtonStyle;
+		return getStartButtonStyle();
+	}
+	
+	public static ButtonStyle getSpecificMarketButtonStyle(TableType type) {
+//		if (marketButtonStyle != null) return marketButtonStyle;
+//
+//		TextButtonStyle tbs = new TextButtonStyle();
+//		tbs.down = uiSkin.getDrawable("button_01");
+//		tbs.up = uiSkin.getDrawable("button_02");
+//		tbs.font = Assets.generateUIFont(ChuanrC.getGlobalX(36.0f / 480), true);
+////		tbs.font = Assets.china32;
+//		marketButtonStyle = tbs;
+//		return tbs;
+		switch(type) {
+		case food:
+			return getStyleFromRegion("market/Market_menu_element-03");
+		case grill:
+			return getStyleFromRegion("market/Market_menu_element-04");
+		case map:
+			return getStyleFromRegion("market/Market_menu_element-05");
+		case ads:
+			return getStyleFromRegion("market/Market_menu_element-06");
+		case coins:
+			return getStyleFromRegion("market/Market_menu_element-07");
+		case vanity:
+			return null;
+		default:
+			return null;
+		}
+		
+	}
+	
+	public static TextureRegion getIcon(Meat.Type type) {
+		switch(type) {
+		case BEEF: return beefIcon;
+		case CHICKEN: return chickenIcon;
+		case LAMB: return lambIcon;
+		}
+		return null;
+	}
+	
+	// basically normalizes all font sizes, converts from standard 480 width to current width
+	public static int getFontSize(int originalFont) {
+		return ChuanrC.getGlobalX(originalFont / 480.0f);
+	}
+	
+	public static TextButtonStyle getPurchaseTypeButtonStyle(int fontSize) {
+		if (purchaseTypeButtonStyle != null) return purchaseTypeButtonStyle;
 
 		TextButtonStyle tbs = new TextButtonStyle();
-		tbs.down = uiSkin.getDrawable("button_01");
-		tbs.up = uiSkin.getDrawable("button_02");
-		tbs.font = Assets.generateUIFont(ChuanrC.getGlobalX(36.0f / 480), true);
+		tbs.down = new TextureRegionDrawable(getTextureRegion("whitepixel"));
+		tbs.up =  new TextureRegionDrawable(getTextureRegion("whitepixel"));
+		tbs.font = Assets.generateChinaFont(fontSize, true);
+		tbs.fontColor = Color.BLACK;
+		tbs.disabledFontColor = Color.WHITE;
+		tbs.disabled = new TextureRegionDrawable(getTextureRegion("market/bluePixel"));
 //		tbs.font = Assets.china32;
-		marketButtonStyle = tbs;
+		purchaseTypeButtonStyle = tbs;
 		return tbs;
 	}
 	public static TextButtonStyle getFacebookButtonStyle() {
-		if (facebookButtonStyle != null) return facebookButtonStyle;
+		if (purchaseTypeButtonStyle != null) return purchaseTypeButtonStyle;
 
 		TextButtonStyle tbs = new TextButtonStyle();
 		tbs.down = uiSkin.getDrawable("button_01");
 		tbs.up = uiSkin.getDrawable("button_02");
-		tbs.font = Assets.generateUIFont(ChuanrC.getGlobalX(48.0f / 480), true);
+		tbs.font = Assets.generateUIFont(48, true);
 //		tbs.font = Assets.china32;
-		facebookButtonStyle = tbs;
+		purchaseTypeButtonStyle = tbs;
 		return tbs;
 	}
 	public static TextButtonStyle getUnlockButtonStyle() {
@@ -609,15 +750,25 @@ public class Assets {
 //		sps.vScroll = uiSkin.getDrawable("scroll_back_ver");
 //		sps.hScroll = uiSkin.getDrawable("scroll_back_hor");
 //		sps.vScrollKnob = uiSkin.getDrawable("slider_back_ver");
-		sps.background = uiSkin.getDrawable("textbox_01");
+//		sps.background = uiSkin.getDrawable("textbox_01");
 		return sps;
 	}
 	
 	public static BitmapFont generateUIFont(int size, boolean permanent) {
 		// these are leaking hard!
-		p.size = size;
+		p.size = getFontSize(size);
 		System.out.println(size + " size font");
-		BitmapFont toReturn = gang.generateFont(p);
+		BitmapFont toReturn = worksansLight.generateFont(p);
+		if (!permanent)
+			fonts.add(toReturn);
+		return toReturn;
+	}
+	
+	public static BitmapFont generateChinaFont(int size, boolean permanent) {
+		// these are leaking hard!
+		p.size = getFontSize(size);
+		System.out.println(size + " size font");
+		BitmapFont toReturn = china.generateFont(p);
 		if (!permanent)
 			fonts.add(toReturn);
 		return toReturn;
@@ -646,13 +797,13 @@ public class Assets {
 		return getTextureRegion("coin");
 	}
 	public static TextureRegion getStar() {
-		return getTextureRegion("Top-Bar-Element-06");
+		return getTextureRegion("topbar/Top-Bar-Element-06");
 	}
 	public static TextureRegion getHalfStar() {
-		return getTextureRegion("Top-Bar-Element-08");
+		return getTextureRegion("topbar/Top-Bar-Element-08");
 	}
 	public static TextureRegion getGrayStar() {
-		return getTextureRegion("Top-Bar-Element-07");
+		return getTextureRegion("topbar/Top-Bar-Element-07");
 	}
 	public static Drawable getTopBarBG() {
 		return uiSkin.getDrawable("button_06");
@@ -663,26 +814,49 @@ public class Assets {
 		bs.down = new TextureRegionDrawable(getTextureRegion(name));
 		return bs;
 	}
+	public static TextButtonStyle getTextStyleFromRegion(String name, int fontSize) {
+		TextButtonStyle bs = new TextButtonStyle();
+		bs.font = Assets.generateUIFont(fontSize, true);
+		bs.up = new TextureRegionDrawable(getTextureRegion(name));
+		bs.down = new TextureRegionDrawable(getTextureRegion(name));
+		return bs;
+	}
 	public static ButtonStyle getPauseButtonStyle() {
-		return getStyleFromRegion("TopBarElement02");
+		return getStyleFromRegion("topbar/TopBarElement02");
 	}
 	public static ButtonStyle getButtonStyleMuted() {
-		return getStyleFromRegion("TopBarElement01");
+		return getStyleFromRegion("topbar/TopBarElement01");
 	}
 	public static ButtonStyle getButtonStyleUnmuted() {
-		return getStyleFromRegion("TopBarElement01");
+		return getStyleFromRegion("topbar/TopBarElement01");
 	}
 	public static ButtonStyle getCoinPlusStyle() {
 		return getStyleFromRegion("icon_check");
 	}
 	public static TextureRegion getReputationBG() {
-		return getTextureRegion("Top-Bar-Element-09");
+		return getTextureRegion("topbar/Top-Bar-Element-09");
 	}
 	public static TextureRegion getCoinsBG() {
-		return getTextureRegion("Top-Bar-Element-05");
+		return getTextureRegion("topbar/Top-Bar-Element-05");
 	}
 	public static TextureRegion getCashBG() {
-		return getTextureRegion("Top-Bar-Element-04");
+		return getTextureRegion("topbar/Top-Bar-Element-04");
+	}
+	
+	public static ButtonStyle getButtonStylePurchaseableGreen() {
+		ButtonStyle bs = new ButtonStyle();
+		NinePatchDrawable np = new NinePatchDrawable(Assets.green9Patch);
+		bs.up = np;
+		bs.down = np;
+		return bs;
+	}
+	
+	public static ButtonStyle getButtonStylePurchaseableGray() {
+		ButtonStyle bs = new ButtonStyle();
+		NinePatchDrawable np = new NinePatchDrawable(Assets.gray9Patch);
+		bs.up = np;
+		bs.down = np;
+		return bs;
 	}
 	
 	public static void deleteTempResources() {

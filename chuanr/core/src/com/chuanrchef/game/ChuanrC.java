@@ -35,7 +35,7 @@ public class ChuanrC extends Game {
 
 	// these three screens are permanent
 	MainMenuScreen mainMenu;
-	StoreScreen store;
+	MainStoreScreen store;
 
 	// these three screens are created each day, and need to be disposed of each day
 	CountdownScreen countdown;
@@ -114,7 +114,7 @@ public class ChuanrC extends Game {
 		mainMenu = new MainMenuScreen(this);
 		setScreen(mainMenu); // have to set this immediately, otherwise height and width won't load properly
 
-		store = new StoreScreen(this);
+		store = new MainStoreScreen(this);
 
 		bg.initialize(); // have to do  this after setScreen, so height and width work
 		

@@ -280,17 +280,17 @@ public class SummaryScreen extends ScreenTemplate  {
 		generateBlankStarsTable();
 		table.add(starsTable).padTop(labelPad).expandX().right();
 		
-		float coinSize = labelPad*4;
-		earnCoinsTable = new Table();
-		Image coin = new Image(Assets.getCoin());
-		Image coin2 = new Image(Assets.getCoin());
-		earnCoinsTable.add(coin).height(coinSize).width(coinSize).left();
-		Label earnCoins = new Label("  Earn Coins!  ", Assets.generateLabelStyle(32));
-		earnCoins.setAlignment(Align.center);
-		earnCoinsTable.add(earnCoins).center();
-		earnCoinsTable.add(coin2).height(coinSize).width(coinSize).right();
-		table.row();
-		table.add(earnCoinsTable).colspan(2);
+//		float coinSize = labelPad*4;
+//		earnCoinsTable = new Table();
+//		Image coin = new Image(Assets.getCoin());
+//		Image coin2 = new Image(Assets.getCoin());
+//		earnCoinsTable.add(coin).height(coinSize).width(coinSize).left();
+//		Label earnCoins = new Label("  Earn Coins!  ", Assets.generateLabelStyle(32));
+//		earnCoins.setAlignment(Align.center);
+//		earnCoinsTable.add(earnCoins).center();
+//		earnCoinsTable.add(coin2).height(coinSize).width(coinSize).right();
+//		table.row();
+//		table.add(earnCoinsTable).colspan(2);
 		
 		tapToContinue = new Label("", Assets.generateLabelStyle(32));
 		table.row();

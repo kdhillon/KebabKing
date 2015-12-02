@@ -10,11 +10,11 @@ public class DrinkQuality extends PurchaseType {
 	// Specific types that you might own 
 	enum Quality implements Purchaseable{
 		// name, initial cost, daily cost, qual factor, description
-		LEVEL1 ("Bub Light", 	0,	 0,	 1, "beer_icon",	"The classic"), 
-		LEVEL2 ("Heimikan", 	150, 5, 1.1f, "beer_icon",	 "Imported! Wow!"),
-		LEVEL3 ("Rolling Log", 	500, 10, 1.2f, "beer_icon",	 "Goes down easy"), 
-		LEVEL4 ("Sandshark",	1000, 25, 1.3f, "beer_icon",  "Everybody loves Sandshark"),
-		LEVEL5 ("Catfish Ale", 2000, 40, 1.4f, "beer_icon",	 "The best of the best.");
+		LEVEL1 ("Bub Light", 	0,	 0,	 1, "customers/beer_icon",	"The classic"), 
+		LEVEL2 ("Heimikan", 	150, 5, 1.1f, "customers/beer_icon",	 "Imported! Wow!"),
+		LEVEL3 ("Rolling Log", 	500, 10, 1.2f, "customers/beer_icon",	 "Goes down easy"), 
+		LEVEL4 ("Sandshark",	1000, 25, 1.3f, "customers/beer_icon",  "Everybody loves Sandshark"),
+		LEVEL5 ("Catfish Ale", 2000, 40, 1.4f, "customers/beer_icon",	 "The best of the best.");
 
 		String name; 
 		float initialCost;

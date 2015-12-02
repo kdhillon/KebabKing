@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.chuanrchef.game.Purchases.Vanity.VanityDecoration;
 
 public class Background {
-	static final Color daySky = new Color(.1f, .3f, 1f, 1);
+	// c7ebff
+	static final Color daySky = new Color(.777f, .917f, 1, 1);
 	static final Color nightSky = new Color(.1f, .1f, .2f, 1);
 	static final float nightStartTime = 15; // when night transition starts
 	static final int CLOUD_COUNT = 3;

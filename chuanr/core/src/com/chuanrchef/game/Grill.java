@@ -201,10 +201,10 @@ public class Grill {
 			batch.setColor(Color.GRAY);
 		}
 		
-		TextureRegion fire = Assets.grillFire.getKeyFrame(time);
-		if (!active) {
-			fire = Assets.gray;
-		}
+//		TextureRegion fire = Assets.grillFire.getKeyFrame(time);
+//		if (!active) {
+//			fire = Assets.gray;
+//		}
 
 		int xCount = grillLeftX;
 		
@@ -325,7 +325,6 @@ public class Grill {
 			return;
 		}
 	}
-
 
 //	public void highlightTrash(SpriteBatch batch) {
 //		int trash_x = KitchenScreen.convertXWithBuffer(TRASH_X);
@@ -528,7 +527,6 @@ public class Grill {
 		}
 
 		// draw ghost meat under mouse when dragging meat off grill
-
 		// only if a meat from the grill is selected
 		if ((meatSelected() || selected == Selected.BEER) && ks.cm != null)
 			ks.cm.updateMousedOver(x, y);
@@ -768,8 +766,6 @@ public class Grill {
 			m.draw(batch, x, y);
 		}
 		//		System.out.println(meatBoxSelected);
-
-
 		// if placing meat on grill or moving meat
 		//		if (this.mousedOver() ) {
 

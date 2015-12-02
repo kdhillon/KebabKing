@@ -126,7 +126,7 @@ public class Inventory {
 	}
 
 	public boolean purchaseConsumable(Purchaseable item, PurchaseType type) {
-		if (!type.unlocked(item)) {
+		if (!type.isUnlocked(item)) {
 			System.out.println("Item not unlocked!");
 			return false;
 		}

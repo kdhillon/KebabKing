@@ -7,7 +7,7 @@ public class GrillSize extends PurchaseType {
 	// Specific Sizes that you might own 
 	enum Size implements Purchaseable{
 		// name, initial cost, daily cost, int size, description
-		Tiny("Small", 		0,	 0, 4,	"Fits just 4 kebabs!"), 
+//		Tiny("Small", 		0,	 0, 4,	"Fits just 4 kebabs!"), 
 		Small("Small", 		0,	 0, 6,	"Fits just 6 kebabs!"), 
 		Medium("Medium", 	20, 0, 8,	"Fits 8 whole kebabs!"),
 		Large("Large", 		500, 0, 10,	"Fits 10 kebabs! Wow!");

@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 // this class contains the user's current grill type
 public class GrillType extends PurchaseType {	
 	// Specific types that you might own 
-	enum Type implements Purchaseable{
+	enum Type implements Purchaseable {
 		// name, initial cost, daily cost, description
 		Regular("Standard", 	0,	 0, 	"Just your usual charcoal grill!"), 
 		Gas		("Gas", 		150, 5, 	"Cooks kebabs faster than charcoal! Don't burn them!"),

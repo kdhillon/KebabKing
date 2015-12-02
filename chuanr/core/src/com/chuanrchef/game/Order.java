@@ -2,9 +2,24 @@ package com.chuanrchef.game;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.chuanrchef.game.Customer.CustomerType;
 
 public class Order {
+	static final float ORDER_ROW_WIDTH = 1.25f;
+	static final float ORDER_ROW_HEIGHT = .675f;
+	static final float ICON_WIDTH  = 0.75f; // times unit height
+	static final float ICON_HEIGHT = 0.63f;
+	static final float ICON_OFFSET_X = 0.45f;
+	static final float ICON_OFFSET_Y = 0.02f;
+	static final float FONT_OFFSET_Y = 0.54f;
+	
 	// represents a food order 
 	// too keep things simpler, allow either only spicy or not, and max two types 
 	int chicken;
@@ -22,6 +37,9 @@ public class Order {
 	int raw; 			 // how many raw meats were given to this person
 	int burnt; 			 // how many chuanrs were burnt
 	int incorrect;		 // how many wrong chuanrs/beers were given to this person	
+	
+	Stage stage; // for drawing order
+	Table table;
 	
 	// generate a totally random order based on the given type
 	public Order(CustomerType type) {
@@ -66,13 +84,20 @@ public class Order {
 		
 		total = chicken + beef + lamb + beer;
 		remaining = total;
+		
+		this.stage = new Stage();
+//		stage.setDebugAll(true);
+		table = new Table();
+		stage.addActor(table);
+		updateTable();
 	}
 	
 	// returns total money received from this 
 	public float giveMeat(ArrayList<Meat> set) {
 		float revenue = 0;
 		for (Meat m : set) revenue += giveMeat(m);
-		System.out.println(incorrect);
+//		System.out.println(incorrect);
+		updateTable();
 		return revenue;
 	}
 	
@@ -124,14 +149,97 @@ public class Order {
 //	}
 	
 	public float giveBeer() {
-		System.out.println("giving beer!");
+//		System.out.println("giving beer!");
 		if (beer == 0) {
 			incorrect++;
 			return 0;
 		}
 		beer--;
 		remaining--;
+		updateTable();
 		return KitchenScreen.BEER_SELL_PRICE;
+	}
+	
+	// table should include the speech bubble, orders, everything
+	public void updateTable() {
+		table.clear();
+		
+		int tablePadLeft = ChuanrC.getGlobalX(0.025f);
+		int tablePadRight = ChuanrC.getGlobalX(0.01f);
+		int tablePadTop = ChuanrC.getGlobalY(0.008f);
+		int tablePadBottom = ChuanrC.getGlobalY(0.005f);
+		
+		int subTableWidth = ChuanrC.getGlobalX(0.095f);
+		int subTableHeight = ChuanrC.getGlobalY(0.03f);
+		int subTablePadY = ChuanrC.getGlobalY(0.003f);
+		
+		// should be a fixed tableWidth;
+		int tableWidth = subTableWidth + tablePadLeft + tablePadRight;
+ 		int tableHeight = getTotalTypes() * subTableHeight + tablePadTop + tablePadBottom + subTablePadY * getTotalTypes();
+		
+		table.setBackground(new TextureRegionDrawable(Assets.speech));
+		table.setSize(tableWidth, tableHeight);
+
+		Table orders = new Table();
+		
+		if (this.chicken > 0) {
+			orders.add(createSubTable(Meat.Type.CHICKEN, chickenSpicy, this.chicken)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
+			orders.row();
+		}
+		if (this.beef > 0) {
+			orders.add(createSubTable(Meat.Type.BEEF, beefSpicy, this.beef)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
+			orders.row();
+		}
+		if (this.lamb > 0) {
+			orders.add(createSubTable(Meat.Type.LAMB, lambSpicy, this.lamb)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
+			orders.row();
+		}
+		if (this.beer > 0) {
+			orders.add(createSubTable(Assets.beerIcon, false, this.beer)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
+			orders.row();
+		}
+		
+		table.add(orders).padTop(tablePadTop).padBottom(tablePadBottom).padLeft(tablePadLeft).padRight(tablePadRight);
+	}
+	
+	public Table createSubTable(TextureRegion icon, boolean spice, int quantity) {
+		Table subTable = new Table();
+		Label count = new Label("" + quantity, Assets.generateLabelStyleUIHeavy(26, true));
+		if (spice) {
+			count.setColor(new Color(1, 1, 1, 1));
+		}
+		else {
+			count.setColor(new Color(0, 0, 0, 1f));
+		}
+		subTable.add(count);
+		
+		int iconPad = ChuanrC.getGlobalX(0.01f);
+		
+		// Make sure same or less than above
+		int iconHeight = ChuanrC.getGlobalY(0.03f);
+		int iconWidth = icon.getRegionWidth() * iconHeight / icon.getRegionHeight();
+		subTable.add(new Image(icon)).width(iconWidth).height(iconHeight).padLeft(iconPad);
+		if (spice) subTable.setBackground(new TextureRegionDrawable(Assets.red));
+		
+//		int subTableWidth = ChuanrC.getGlobalX(0.13f);
+//		int subTableHeight = ChuanrC.getGlobalY(0.04f);
+//		subTable.setWidth(subTableWidth);
+//		subTable.setHeight(subTableHeight);
+		
+		return subTable;		
+	}
+	
+	public Table createSubTable(Meat.Type type, boolean spice, int quantity) {
+		return createSubTable(Assets.getIcon(type), spice, quantity);
+	}
+	
+	// draw this order
+	public void draw(float x, float y) {
+		int customerWidth = (int) (Customer.TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH);
+		int customerHeight = (int) (Customer.TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT);
+		
+		table.setPosition(x + customerWidth * 0.75f, y + customerHeight * 0.45f - getTotalTypes() * customerHeight * 0.075f);
+		stage.draw();
 	}
 	
 	/** 
@@ -166,6 +274,9 @@ public class Order {
 	
 	// returns number of different types of items remaining (1-3)
 	public int getTotalTypes() {
+		// TODO remove for testing
+//		return 3;
+		
 		int types = 0;
 		if (chicken > 0) types++;
 		if (beef > 0) types++;

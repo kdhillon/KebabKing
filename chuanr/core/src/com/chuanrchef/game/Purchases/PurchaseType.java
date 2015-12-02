@@ -18,7 +18,7 @@ public class PurchaseType {
 	protected HashSet<Purchaseable> unlocked; 	// items that have been fully unlocked and can be purchased
 	protected HashSet<Purchaseable> roundUnlocked; // items that can be unlocked based on round
 	protected Purchaseable currentQuality;
-	protected Purchaseable[] values; // contains Purchaseable.values()
+	public Purchaseable[] values; // contains Purchaseable.values()
 	protected TextureRegion icon;
 	
 	// TODO, actually use this in implementation
@@ -75,23 +75,23 @@ public class PurchaseType {
 	}
 
 //	@Override
-	public boolean unlocked(Purchaseable purchaseable) {
+	public boolean isUnlocked(Purchaseable purchaseable) {
 		return unlocked.contains(purchaseable);
 	}
 
 //	@Override
 	public void setCurrent(Purchaseable newCurrent) {
-		if (!unlocked(newCurrent)) throw new java.lang.AssertionError();
+		if (!isUnlocked(newCurrent)) throw new java.lang.AssertionError();
 		this.currentQuality = newCurrent;
 	}
 	
 	public void addToCurrent(Purchaseable toSelect) {
-		if (!unlocked(toSelect)) throw new java.lang.AssertionError();
+		if (!isUnlocked(toSelect)) throw new java.lang.AssertionError();
 		this.selected.add(toSelect);
 	}
 	
 	public void removeFromCurrent(Purchaseable toRemove) {
-		if (!unlocked(toRemove)) throw new java.lang.AssertionError();
+		if (!isUnlocked(toRemove)) throw new java.lang.AssertionError();
 		this.selected.remove(toRemove);
 	}
 	
@@ -99,8 +99,8 @@ public class PurchaseType {
 	public void unlockByRound(Purchaseable toUnlock) {
 		this.roundUnlocked.add(toUnlock);
 		
-		if (this.storeScreen != null)
-			this.storeScreen.resetTable(storeTable);
+//		if (this.storeScreen != null)
+//			this.storeScreen.resetTable(storeTable);
 		// TODO make an announcement!
 	}
 
@@ -131,7 +131,7 @@ public class PurchaseType {
 		return values[nextIndex];
 	}
 	
-	public boolean checkUnlockedRound(Purchaseable p) {
+	public boolean isUnlockedByRound(Purchaseable p) {
 		if (inventory.hasUnlockedByRound(p)) {
 			unlockByRound(p);
 			return true;
@@ -144,7 +144,7 @@ public class PurchaseType {
 		this.values = values;
 		for (Purchaseable p : values) {
 			if (p == null) throw new java.lang.NullPointerException();
-			if (checkUnlockedRound(p)) {
+			if (isUnlockedByRound(p)) {
 //				System.out.println(p.getName() + " added to unlockable");
 			}
 //			else System.out.println("Can't unlock " + p.getName() + " yet, required round is " + p.unlockAtRound());

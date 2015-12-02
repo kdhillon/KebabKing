@@ -35,19 +35,19 @@ public class CoinsTable extends Table {
 		entry.add(title);
 		entry.row();
 		
-		CoinsButton buy = new CoinsButton("Get Coins!", Assets.getBackButtonStyle(), op);
-		buy.getLabel().setTouchable(Touchable.disabled);
-		buy.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				PurchaseableOnline coinOp = ((CoinsButton) event.getTarget()).op;
-				buy(coinOp);
-			}
-		});
-		
-		entry.add(buy);
+//		CoinsButton buy = new CoinsButton("Get Coins!", Assets.getBackButtonStyle(), op);
+//		buy.getLabel().setTouchable(Touchable.disabled);
+//		buy.addListener(new InputListener() {
+//			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+//				return true;
+//			}
+//			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+//				PurchaseableOnline coinOp = ((CoinsButton) event.getTarget()).op;
+//				buy(coinOp);
+//			}
+//		});
+//		
+//		entry.add(buy);
 		return entry;
 	}
 	

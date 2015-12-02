@@ -1,6 +1,7 @@
 package com.chuanrchef.game.Purchases;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.chuanrchef.game.Assets;
 
 
 // user has one of these
@@ -10,16 +11,18 @@ public class MeatQuality extends PurchaseType {
 	enum Quality implements Purchaseable{
 		// name, initial cost, daily cost, qual factor, description
 		LEVEL1 ("Grade B Meat", 	0,	 0,	 1, 	"Pretty crappy meat!"), 
-		LEVEL2 ("Grade A Meat", 	150, 5, 1.1f,	 "Not too great; probably comes from animals!"),
+		LEVEL2 ("Grade A Meat", 	150, 5, 1.1f,	 "Delicious stuff. Still not sure where it came from, but tastes great. Animals."),
 		LEVEL3 ("Grade AA Meat", 	500, 10, 1.2f,	 "A bit better; still tastes kinda fishy."), 
 		LEVEL4 ("Grade AAA Meat",	1000, 25, 1.3f,  "Almost restaurant quality!"),
-		LEVEL5 ("Top Quality Meat", 2000, 40, 1.4f,	 "You can't find better!");
+		LEVEL5 ("Top Quality Meat", 2000, 40, 1.4f,	 "You can't find better!"),
+		LEVEL6 ("God Meat", 2000, 40, 1.4f,	 "Divine!");
 
 		String name; 
 		float initialCost;
 		float dailyCost;
 		String description;
 		float qualityFactor;
+		TextureRegion icon;
 
 		private Quality(String name, float initialCost, float dailyCost, float qualityFactor, String description) {
 			this.name = name;
@@ -27,6 +30,7 @@ public class MeatQuality extends PurchaseType {
 			this.dailyCost = dailyCost;
 			this.qualityFactor = qualityFactor;
 			this.description = description;
+			this.icon = Assets.getTextureRegion("market/Market_subMenus__template_element-06");
 		}
 		@Override
 		public String getName() {
@@ -46,7 +50,7 @@ public class MeatQuality extends PurchaseType {
 		}
 		@Override
 		public TextureRegion getIcon() {
-			return null;
+			return icon;
 		}
 		@Override
 		public String getDescription() {

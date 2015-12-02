@@ -1,696 +1,768 @@
 
 atlas1.png
-size: 2046,2046
+size: 2042,2018
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-BeefKebab_burnt
+SkyElement-02
   rotate: false
-  xy: 1941, 710
-  size: 87, 317
-  orig: 87, 317
+  xy: 804, 436
+  size: 579, 300
+  orig: 579, 300
   offset: 0, 0
   index: -1
-Cooler-21
+SkyElement-03
   rotate: false
-  xy: 1544, 141
-  size: 482, 408
-  orig: 482, 408
-  offset: 0, 0
-  index: -1
-Grill-03
-  rotate: false
-  xy: 1884, 1186
-  size: 112, 550
-  orig: 112, 550
-  offset: 0, 0
-  index: -1
-Grill-05
-  rotate: false
-  xy: 1714, 656
-  size: 225, 334
-  orig: 225, 334
-  offset: 0, 0
-  index: -1
-Kebab_Stick-27
-  rotate: false
-  xy: 2028, 1738
-  size: 5, 165
-  orig: 5, 165
-  offset: 0, 0
-  index: -1
-Kebab_Stick-28
-  rotate: false
-  xy: 2035, 1738
-  size: 5, 165
-  orig: 5, 165
-  offset: 0, 0
-  index: -1
-Policeman
-  rotate: false
-  xy: 2, 546
-  size: 1250, 1500
-  orig: 1250, 1500
+  xy: 1606, 1329
+  size: 433, 212
+  orig: 433, 212
   offset: 0, 0
   index: -1
 SkyElement-04
   rotate: false
-  xy: 1254, 551
+  xy: 2, 100
   size: 458, 439
   orig: 458, 439
   offset: 0, 0
   index: -1
 SkyElement-05
   rotate: false
-  xy: 1933, 43
+  xy: 2, 2
   size: 83, 96
   orig: 83, 96
   offset: 0, 0
   index: -1
-Top-Bar-Element-06
-  rotate: false
-  xy: 1952, 580
-  size: 83, 83
-  orig: 83, 83
-  offset: 0, 0
-  index: -1
-beef_sp_icon
-  rotate: false
-  xy: 1714, 554
-  size: 117, 100
-  orig: 117, 100
-  offset: 0, 0
-  index: -1
-beer_icon
-  rotate: false
-  xy: 1833, 554
-  size: 117, 100
-  orig: 117, 100
-  offset: 0, 0
-  index: -1
-chicken_sp_icon
-  rotate: false
-  xy: 1884, 1794
-  size: 117, 100
-  orig: 117, 100
-  offset: 0, 0
-  index: -1
-coals
-  rotate: false
-  xy: 2028, 1905
-  size: 18, 141
-  orig: 18, 141
-  offset: 0, 0
-  index: -1
-coin
-  rotate: false
-  xy: 1804, 11
-  size: 127, 128
-  orig: 127, 128
-  offset: 0, 0
-  index: -1
-cow_icon
-  rotate: false
-  xy: 1941, 665
-  size: 56, 43
-  orig: 56, 43
-  offset: 0, 0
-  index: -1
-face1
-  rotate: false
-  xy: 1884, 1029
-  size: 155, 155
-  orig: 155, 155
-  offset: 0, 0
-  index: -1
-fire
-  rotate: false
-  xy: 1884, 1896
-  size: 128, 150
-  orig: 128, 150
-  offset: 0, 0
-  index: -1
-graypixel
-  rotate: false
-  xy: 2, 2
-  size: 1, 1
-  orig: 1, 1
-  offset: 0, 0
-  index: -1
-icon_coin
-  rotate: false
-  xy: 2, 32
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-icon_map
-  rotate: false
-  xy: 516, 32
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-kebabking
-  rotate: false
-  xy: 1254, 992
-  size: 628, 1054
-  orig: 628, 1054
-  offset: 0, 0
-  index: -1
-lock
-  rotate: false
-  xy: 1544, 11
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: -1
-repulation
-  rotate: false
-  xy: 1884, 1743
-  size: 134, 49
-  orig: 134, 49
-  offset: 0, 0
-  index: -1
-sheep_icon
-  rotate: false
-  xy: 1933, 4
-  size: 56, 37
-  orig: 56, 37
-  offset: 0, 0
-  index: -1
-spicebox
-  rotate: false
-  xy: 1030, 32
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-stick_brown
-  rotate: false
-  xy: 1998, 1558
-  size: 30, 178
-  orig: 30, 178
-  offset: 0, 0
-  index: -1
-stick_gray
-  rotate: false
-  xy: 1998, 1378
-  size: 30, 178
-  orig: 30, 178
-  offset: 0, 0
-  index: -1
-teen_down
-  rotate: false
-  xy: 222, 8
-  size: 22, 22
-  orig: 22, 22
-  offset: 0, 0
-  index: -1
-tourist_down
-  rotate: false
-  xy: 198, 6
-  size: 22, 24
-  orig: 22, 24
-  offset: 0, 0
-  index: -1
-tourist_walk_down
-  rotate: false
-  xy: 2, 5
-  size: 47, 25
-  orig: 47, 25
-  offset: 0, 0
-  index: -1
-tourist_walk_left
-  rotate: false
-  xy: 51, 5
-  size: 47, 25
-  orig: 47, 25
-  offset: 0, 0
-  index: -1
-tourist_walk_right
-  rotate: false
-  xy: 149, 7
-  size: 47, 23
-  orig: 47, 23
-  offset: 0, 0
-  index: -1
-tourist_walk_up
-  rotate: false
-  xy: 100, 5
-  size: 47, 25
-  orig: 47, 25
-  offset: 0, 0
-  index: -1
-trash
-  rotate: false
-  xy: 1674, 11
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: -1
-whitepixel
-  rotate: false
-  xy: 5, 2
-  size: 1, 1
-  orig: 1, 1
-  offset: 0, 0
-  index: -1
-
-atlas12.png
-size: 2039,2032
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-Cooler-24
-  rotate: false
-  xy: 1661, 2
-  size: 241, 204
-  orig: 241, 204
-  offset: 0, 0
-  index: -1
-FatAmerican
-  rotate: false
-  xy: 605, 30
-  size: 600, 720
-  orig: 600, 720
-  offset: 0, 0
-  index: -1
-Grill-02
-  rotate: false
-  xy: 1207, 4
-  size: 225, 549
-  orig: 225, 549
-  offset: 0, 0
-  index: -1
-Grill-04
-  rotate: false
-  xy: 1434, 4
-  size: 225, 549
-  orig: 225, 549
-  offset: 0, 0
-  index: -1
-OldMan
-  rotate: false
-  xy: 2, 29
-  size: 601, 721
-  orig: 601, 721
-  offset: 0, 0
-  index: -1
-SkyElement-03
-  rotate: false
-  xy: 1606, 1820
-  size: 433, 212
-  orig: 433, 212
-  offset: 0, 0
-  index: -1
-Top-Bar-Element-05
-  rotate: false
-  xy: 1661, 208
-  size: 351, 204
-  orig: 351, 204
-  offset: 0, 0
-  index: -1
-Top-Bar-Element-07
-  rotate: false
-  xy: 1904, 21
-  size: 83, 83
-  orig: 83, 83
-  offset: 0, 0
-  index: -1
-Top-Bar-Element-08
-  rotate: false
-  xy: 1839, 754
-  size: 83, 83
-  orig: 83, 83
-  offset: 0, 0
-  index: -1
-beef_icon
-  rotate: false
-  xy: 1606, 1330
-  size: 387, 332
-  orig: 387, 332
-  offset: 0, 0
-  index: -1
 bg_cbd
   rotate: false
-  xy: 1207, 555
+  xy: 2, 541
   size: 800, 195
   orig: 800, 195
   offset: 0, 0
   index: -1
-cash_bg
-  rotate: false
-  xy: 1606, 1664
-  size: 402, 154
-  orig: 402, 154
-  offset: 0, 0
-  index: -1
 cbd
   rotate: false
-  xy: 2, 752
+  xy: 2, 738
   size: 800, 1280
   orig: 800, 1280
   offset: 0, 0
   index: -1
-chicken_icon
+face1
   rotate: false
-  xy: 1606, 996
-  size: 387, 332
-  orig: 387, 332
-  offset: 0, 0
-  index: -1
-coins_bg
-  rotate: false
-  xy: 1661, 414
-  size: 363, 139
-  orig: 363, 139
+  xy: 1606, 1172
+  size: 155, 155
+  orig: 155, 155
   offset: 0, 0
   index: -1
 face2
   rotate: false
-  xy: 1839, 839
+  xy: 462, 152
   size: 155, 155
   orig: 155, 155
-  offset: 0, 0
-  index: -1
-icon_ads
-  rotate: false
-  xy: 1606, 764
-  size: 231, 230
-  orig: 231, 230
-  offset: 0, 0
-  index: -1
-lamb_sp_icon
-  rotate: false
-  xy: 1904, 106
-  size: 117, 100
-  orig: 117, 100
-  offset: 0, 0
-  index: -1
-outskirts
-  rotate: false
-  xy: 804, 752
-  size: 800, 1280
-  orig: 800, 1280
-  offset: 0, 0
-  index: -1
-
-atlas13.png
-size: 2046,2004
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-BeefKebab_cooked
-  rotate: false
-  xy: 1914, 1687
-  size: 87, 317
-  orig: 87, 317
-  offset: 0, 0
-  index: -1
-BeefKebab_cookedSp
-  rotate: false
-  xy: 1942, 876
-  size: 87, 317
-  orig: 87, 317
-  offset: 0, 0
-  index: -1
-BeefKebab_raw
-  rotate: false
-  xy: 1959, 557
-  size: 87, 317
-  orig: 87, 317
-  offset: 0, 0
-  index: -1
-BeefKebab_rawSp
-  rotate: false
-  xy: 1959, 238
-  size: 87, 317
-  orig: 87, 317
-  offset: 0, 0
-  index: -1
-ChickenKebab_burnt
-  rotate: false
-  xy: 1800, 538
-  size: 157, 332
-  orig: 157, 332
-  offset: 0, 0
-  index: -1
-Cooler-22
-  rotate: false
-  xy: 1316, 314
-  size: 482, 408
-  orig: 482, 408
-  offset: 0, 0
-  index: -1
-OldWoman
-  rotate: false
-  xy: 714, 2
-  size: 600, 720
-  orig: 600, 720
-  offset: 0, 0
-  index: -1
-SkyElement-02
-  rotate: false
-  xy: 1316, 12
-  size: 579, 300
-  orig: 579, 300
   offset: 0, 0
   index: -1
 face3
   rotate: false
-  xy: 1800, 381
+  xy: 1606, 1015
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
-kebabking o
-  rotate: false
-  xy: 2, 45
-  size: 710, 677
-  orig: 710, 677
-  offset: 0, 0
-  index: -1
-lamb_icon
-  rotate: false
-  xy: 1606, 1195
-  size: 387, 332
-  orig: 387, 332
-  offset: 0, 0
-  index: -1
-paintbrush
-  rotate: false
-  xy: 1606, 1529
-  size: 306, 475
-  orig: 306, 475
-  offset: 0, 0
-  index: -1
-pause
-  rotate: false
-  xy: 1606, 872
-  size: 334, 321
-  orig: 334, 321
-  offset: 0, 0
-  index: -1
-suburbs
-  rotate: false
-  xy: 2, 724
-  size: 800, 1280
-  orig: 800, 1280
-  offset: 0, 0
-  index: -1
-university
-  rotate: false
-  xy: 804, 724
-  size: 800, 1280
-  orig: 800, 1280
-  offset: 0, 0
-  index: -1
-
-atlas14.png
-size: 1924,2001
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-ChickenKebab_cooked
-  rotate: false
-  xy: 2, 234
-  size: 157, 332
-  orig: 157, 332
-  offset: 0, 0
-  index: -1
-ChickenKebab_cookedSp
-  rotate: false
-  xy: 618, 1257
-  size: 157, 332
-  orig: 157, 332
-  offset: 0, 0
-  index: -1
-ChickenKebab_raw
-  rotate: false
-  xy: 161, 234
-  size: 157, 332
-  orig: 157, 332
-  offset: 0, 0
-  index: -1
-ChickenKebab_rawSp
-  rotate: false
-  xy: 777, 1257
-  size: 157, 332
-  orig: 157, 332
-  offset: 0, 0
-  index: -1
-Cooler-23
-  rotate: false
-  xy: 2, 568
-  size: 482, 408
-  orig: 482, 408
-  offset: 0, 0
-  index: -1
-Cooler_open-29
-  rotate: false
-  xy: 1162, 1591
-  size: 241, 204
-  orig: 241, 204
-  offset: 0, 0
-  index: -1
-Cooler_open-30
-  rotate: false
-  xy: 1683, 1797
-  size: 241, 204
-  orig: 241, 204
-  offset: 0, 0
-  index: -1
-Cooler_open-31
-  rotate: false
-  xy: 1129, 1385
-  size: 241, 204
-  orig: 241, 204
-  offset: 0, 0
-  index: -1
-Cooler_open-32
-  rotate: false
-  xy: 1405, 1591
-  size: 241, 204
-  orig: 241, 204
-  offset: 0, 0
-  index: -1
-LambKebab_burnt
-  rotate: false
-  xy: 486, 659
-  size: 84, 317
-  orig: 84, 317
-  offset: 0, 0
-  index: -1
-LambKebab_cooked
-  rotate: false
-  xy: 320, 249
-  size: 84, 317
-  orig: 84, 317
-  offset: 0, 0
-  index: -1
-LambKebab_cookedSp
-  rotate: false
-  xy: 406, 249
-  size: 84, 317
-  orig: 84, 317
-  offset: 0, 0
-  index: -1
-LambKebab_raw
-  rotate: false
-  xy: 572, 659
-  size: 84, 317
-  orig: 84, 317
-  offset: 0, 0
-  index: -1
-LambKebab_rawSp
-  rotate: false
-  xy: 658, 706
-  size: 84, 317
-  orig: 84, 317
-  offset: 0, 0
-  index: -1
-Top-Bar-Element-03
-  rotate: false
-  xy: 618, 1797
-  size: 555, 204
-  orig: 555, 204
-  offset: 0, 0
-  index: -1
-Top-Bar-Element-04
-  rotate: false
-  xy: 1175, 1797
-  size: 506, 204
-  orig: 506, 204
-  offset: 0, 0
-  index: -1
-Top-Bar-Element-09
-  rotate: false
-  xy: 618, 1591
-  size: 542, 204
-  orig: 542, 204
-  offset: 0, 0
-  index: -1
-TopBarElement01
-  rotate: false
-  xy: 1372, 1385
-  size: 221, 204
-  orig: 221, 204
-  offset: 0, 0
-  index: -1
-TopBarElement02
-  rotate: false
-  xy: 1648, 1591
-  size: 221, 204
-  orig: 221, 204
-  offset: 0, 0
-  index: -1
 face4
   rotate: false
-  xy: 1595, 1434
+  xy: 1763, 1172
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 face5
   rotate: false
-  xy: 1752, 1434
+  xy: 1606, 858
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 face_s
   rotate: false
-  xy: 744, 868
+  xy: 1763, 1015
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
-icon_food
+graypixel
   rotate: false
-  xy: 2, 2
+  xy: 1385, 477
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+icon_ads
+  rotate: false
+  xy: 462, 309
   size: 231, 230
   orig: 231, 230
   offset: 0, 0
   index: -1
-icon_grill
+outskirts
   rotate: false
-  xy: 618, 1025
-  size: 231, 230
-  orig: 231, 230
+  xy: 804, 738
+  size: 800, 1280
+  orig: 800, 1280
+  offset: 0, 0
+  index: -1
+paintbrush
+  rotate: false
+  xy: 1606, 1543
+  size: 306, 475
+  orig: 306, 475
   offset: 0, 0
   index: -1
 speech
   rotate: false
-  xy: 936, 1333
+  xy: 1385, 480
   size: 191, 256
   orig: 191, 256
   offset: 0, 0
   index: -1
+teen_down
+  rotate: false
+  xy: 695, 517
+  size: 22, 22
+  orig: 22, 22
+  offset: 0, 0
+  index: -1
+trash
+  rotate: false
+  xy: 1914, 1890
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+white_alpha
+  rotate: false
+  xy: 1578, 735
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+whitepixel
+  rotate: false
+  xy: 462, 149
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+
+atlas12.png
+size: 1604,1282
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+suburbs
+  rotate: false
+  xy: 2, 2
+  size: 800, 1280
+  orig: 800, 1280
+  offset: 0, 0
+  index: -1
+university
+  rotate: false
+  xy: 804, 2
+  size: 800, 1280
+  orig: 800, 1280
+  offset: 0, 0
+  index: -1
+
+atlas13.png
+size: 1246,1056
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+kebabking
+  rotate: false
+  xy: 2, 2
+  size: 628, 1054
+  orig: 628, 1054
+  offset: 0, 0
+  index: -1
 village2
   rotate: false
-  xy: 2, 978
+  xy: 632, 33
   size: 614, 1023
   orig: 614, 1023
+  offset: 0, 0
+  index: -1
+
+atlas14.png
+size: 2004,1757
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+customers/FatAmerican
+  rotate: false
+  xy: 1254, 314
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+customers/OldMan
+  rotate: false
+  xy: 1254, 1036
+  size: 601, 721
+  orig: 601, 721
+  offset: 0, 0
+  index: -1
+customers/Play_speechbubble_element-33
+  rotate: false
+  xy: 2, 53
+  size: 144, 202
+  orig: 144, 202
+  offset: 0, 0
+  index: -1
+customers/Play_speechbubble_element-38
+  rotate: false
+  xy: 1857, 1555
+  size: 144, 202
+  orig: 144, 202
+  offset: 0, 0
+  index: -1
+customers/Policeman
+  rotate: false
+  xy: 2, 257
+  size: 1250, 1500
+  orig: 1250, 1500
+  offset: 0, 0
+  index: -1
+customers/beef_icon
+  rotate: false
+  xy: 1254, 263
+  size: 55, 49
+  orig: 55, 49
+  offset: 0, 0
+  index: -1
+customers/beer_icon
+  rotate: false
+  xy: 2, 2
+  size: 55, 49
+  orig: 55, 49
+  offset: 0, 0
+  index: -1
+customers/chicken_icon
+  rotate: false
+  xy: 148, 206
+  size: 55, 49
+  orig: 55, 49
+  offset: 0, 0
+  index: -1
+customers/lamb_icon
+  rotate: false
+  xy: 1857, 1504
+  size: 55, 49
+  orig: 55, 49
+  offset: 0, 0
+  index: -1
+customers/red
+  rotate: false
+  xy: 2003, 1756
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+
+atlas15.png
+size: 602,722
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+customers/OldWoman
+  rotate: false
+  xy: 2, 2
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+
+atlas16.png
+size: 2016,962
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+grill/Cooler-21
+  rotate: false
+  xy: 2, 554
+  size: 482, 408
+  orig: 482, 408
+  offset: 0, 0
+  index: -1
+grill/Cooler-22
+  rotate: false
+  xy: 2, 144
+  size: 482, 408
+  orig: 482, 408
+  offset: 0, 0
+  index: -1
+grill/Cooler-23
+  rotate: false
+  xy: 486, 554
+  size: 482, 408
+  orig: 482, 408
+  offset: 0, 0
+  index: -1
+grill/Cooler-24
+  rotate: false
+  xy: 1775, 758
+  size: 241, 204
+  orig: 241, 204
+  offset: 0, 0
+  index: -1
+grill/Cooler_open-29
+  rotate: false
+  xy: 1197, 541
+  size: 241, 204
+  orig: 241, 204
+  offset: 0, 0
+  index: -1
+grill/Cooler_open-30
+  rotate: false
+  xy: 1181, 335
+  size: 241, 204
+  orig: 241, 204
+  offset: 0, 0
+  index: -1
+grill/Cooler_open-31
+  rotate: false
+  xy: 1181, 129
+  size: 241, 204
+  orig: 241, 204
+  offset: 0, 0
+  index: -1
+grill/Cooler_open-32
+  rotate: false
+  xy: 1440, 541
+  size: 241, 204
+  orig: 241, 204
+  offset: 0, 0
+  index: -1
+grill/Grill-02
+  rotate: false
+  xy: 486, 3
+  size: 225, 549
+  orig: 225, 549
+  offset: 0, 0
+  index: -1
+grill/Grill-03
+  rotate: false
+  xy: 940, 2
+  size: 112, 550
+  orig: 112, 550
+  offset: 0, 0
+  index: -1
+grill/Grill-04
+  rotate: false
+  xy: 713, 3
+  size: 225, 549
+  orig: 225, 549
+  offset: 0, 0
+  index: -1
+grill/Grill-05
+  rotate: false
+  xy: 970, 628
+  size: 225, 334
+  orig: 225, 334
+  offset: 0, 0
+  index: -1
+grill/Grill-XL-02
+  rotate: false
+  xy: 1054, 348
+  size: 125, 278
+  orig: 125, 278
+  offset: 0, 0
+  index: -1
+grill/Grill-XL-03
+  rotate: false
+  xy: 1054, 68
+  size: 125, 278
+  orig: 125, 278
+  offset: 0, 0
+  index: -1
+grill/Grill-XL-04
+  rotate: false
+  xy: 1424, 261
+  size: 125, 278
+  orig: 125, 278
+  offset: 0, 0
+  index: -1
+grill/Grill_legs1-25
+  rotate: false
+  xy: 1197, 747
+  size: 326, 215
+  orig: 326, 215
+  offset: 0, 0
+  index: -1
+grill/Grill_legs1-26
+  rotate: false
+  xy: 1525, 761
+  size: 248, 201
+  orig: 248, 201
+  offset: 0, 0
+  index: -1
+
+atlas17.png
+size: 1717,501
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+kebabs/BeefKebab_burnt
+  rotate: false
+  xy: 797, 184
+  size: 87, 317
+  orig: 87, 317
+  offset: 0, 0
+  index: -1
+kebabs/BeefKebab_cooked
+  rotate: false
+  xy: 886, 184
+  size: 87, 317
+  orig: 87, 317
+  offset: 0, 0
+  index: -1
+kebabs/BeefKebab_cookedSp
+  rotate: false
+  xy: 975, 184
+  size: 87, 317
+  orig: 87, 317
+  offset: 0, 0
+  index: -1
+kebabs/BeefKebab_raw
+  rotate: false
+  xy: 1064, 184
+  size: 87, 317
+  orig: 87, 317
+  offset: 0, 0
+  index: -1
+kebabs/BeefKebab_rawSp
+  rotate: false
+  xy: 1153, 184
+  size: 87, 317
+  orig: 87, 317
+  offset: 0, 0
+  index: -1
+kebabs/ChickenKebab_burnt
+  rotate: false
+  xy: 2, 169
+  size: 157, 332
+  orig: 157, 332
+  offset: 0, 0
+  index: -1
+kebabs/ChickenKebab_cooked
+  rotate: false
+  xy: 161, 169
+  size: 157, 332
+  orig: 157, 332
+  offset: 0, 0
+  index: -1
+kebabs/ChickenKebab_cookedSp
+  rotate: false
+  xy: 320, 169
+  size: 157, 332
+  orig: 157, 332
+  offset: 0, 0
+  index: -1
+kebabs/ChickenKebab_raw
+  rotate: false
+  xy: 479, 169
+  size: 157, 332
+  orig: 157, 332
+  offset: 0, 0
+  index: -1
+kebabs/ChickenKebab_rawSp
+  rotate: false
+  xy: 638, 169
+  size: 157, 332
+  orig: 157, 332
+  offset: 0, 0
+  index: -1
+kebabs/Kebab_Stick-27
+  rotate: false
+  xy: 2, 2
+  size: 45, 165
+  orig: 45, 165
+  offset: 0, 0
+  index: -1
+kebabs/Kebab_Stick-28
+  rotate: false
+  xy: 1672, 336
+  size: 45, 165
+  orig: 45, 165
+  offset: 0, 0
+  index: -1
+kebabs/LambKebab_burnt
+  rotate: false
+  xy: 1242, 184
+  size: 84, 317
+  orig: 84, 317
+  offset: 0, 0
+  index: -1
+kebabs/LambKebab_cooked
+  rotate: false
+  xy: 1328, 184
+  size: 84, 317
+  orig: 84, 317
+  offset: 0, 0
+  index: -1
+kebabs/LambKebab_cookedSp
+  rotate: false
+  xy: 1414, 184
+  size: 84, 317
+  orig: 84, 317
+  offset: 0, 0
+  index: -1
+kebabs/LambKebab_raw
+  rotate: false
+  xy: 1500, 184
+  size: 84, 317
+  orig: 84, 317
+  offset: 0, 0
+  index: -1
+kebabs/LambKebab_rawSp
+  rotate: false
+  xy: 1586, 184
+  size: 84, 317
+  orig: 84, 317
+  offset: 0, 0
+  index: -1
+
+atlas18.png
+size: 2036,2038
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+market/Market_menu_element-01
+  rotate: false
+  xy: 2, 475
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-02
+  rotate: false
+  xy: 942, 970
+  size: 845, 1068
+  orig: 845, 1068
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-03
+  rotate: false
+  xy: 942, 635
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-04
+  rotate: false
+  xy: 1277, 635
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-05
+  rotate: false
+  xy: 685, 140
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-06
+  rotate: false
+  xy: 1612, 635
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-07
+  rotate: false
+  xy: 2, 177
+  size: 681, 296
+  orig: 681, 296
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-08
+  rotate: false
+  xy: 2, 5
+  size: 300, 96
+  orig: 300, 96
+  offset: 0, 0
+  index: -1
+market/Market_menu_element-09
+  rotate: false
+  xy: 598, 122
+  size: 53, 53
+  orig: 53, 53
+  offset: 0, 0
+  index: -1
+market/Market_subMenus__template_element-02
+  rotate: false
+  xy: 1789, 1871
+  size: 167, 167
+  orig: 167, 167
+  offset: 0, 0
+  index: -1
+market/Market_subMenus__template_element-03
+  rotate: false
+  xy: 942, 475
+  size: 271, 73
+  orig: 271, 73
+  offset: 0, 0
+  index: -1
+market/Market_subMenus__template_element-04
+  rotate: false
+  xy: 1236, 560
+  size: 78, 73
+  orig: 78, 73
+  offset: 0, 0
+  index: -1
+market/Market_subMenus__template_element-05
+  rotate: false
+  xy: 1869, 1831
+  size: 41, 38
+  orig: 41, 38
+  offset: 0, 0
+  index: -1
+market/Market_subMenus__template_element-06
+  rotate: false
+  xy: 2, 103
+  size: 594, 72
+  orig: 594, 72
+  offset: 0, 0
+  index: -1
+market/back_button
+  rotate: false
+  xy: 942, 550
+  size: 292, 83
+  orig: 292, 83
+  offset: 0, 0
+  index: -1
+market/bluePixel
+  rotate: false
+  xy: 2, 2
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+market/darkGreen
+  rotate: false
+  xy: 1789, 1796
+  size: 78, 73
+  orig: 78, 73
+  offset: 0, 0
+  index: -1
+market/gray9patch
+  rotate: false
+  xy: 1316, 591
+  size: 45, 42
+  orig: 45, 42
+  offset: 0, 0
+  index: -1
+market/grayalpha
+  rotate: false
+  xy: 1020, 306
+  size: 167, 167
+  orig: 167, 167
+  offset: 0, 0
+  index: -1
+market/green
+  rotate: false
+  xy: 304, 28
+  size: 271, 73
+  orig: 271, 73
+  offset: 0, 0
+  index: -1
+market/green9patch
+  rotate: false
+  xy: 1789, 1752
+  size: 40, 42
+  orig: 40, 42
+  offset: 0, 0
+  index: -1
+market/jade
+  rotate: false
+  xy: 1958, 1965
+  size: 78, 73
+  orig: 78, 73
+  offset: 0, 0
+  index: -1
+market/question
+  rotate: false
+  xy: 1020, 231
+  size: 78, 73
+  orig: 78, 73
+  offset: 0, 0
+  index: -1
+
+atlas19.png
+size: 1373,497
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+topbar/Top-Bar-Element-03
+  rotate: false
+  xy: 2, 293
+  size: 555, 204
+  orig: 555, 204
+  offset: 0, 0
+  index: -1
+topbar/Top-Bar-Element-04
+  rotate: false
+  xy: 559, 293
+  size: 506, 204
+  orig: 506, 204
+  offset: 0, 0
+  index: -1
+topbar/Top-Bar-Element-05
+  rotate: false
+  xy: 546, 87
+  size: 351, 204
+  orig: 351, 204
+  offset: 0, 0
+  index: -1
+topbar/Top-Bar-Element-06
+  rotate: false
+  xy: 2, 2
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: -1
+topbar/Top-Bar-Element-07
+  rotate: false
+  xy: 1290, 414
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: -1
+topbar/Top-Bar-Element-08
+  rotate: false
+  xy: 1122, 208
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: -1
+topbar/Top-Bar-Element-09
+  rotate: false
+  xy: 2, 87
+  size: 542, 204
+  orig: 542, 204
+  offset: 0, 0
+  index: -1
+topbar/TopBarElement01
+  rotate: false
+  xy: 1067, 293
+  size: 221, 204
+  orig: 221, 204
+  offset: 0, 0
+  index: -1
+topbar/TopBarElement02
+  rotate: false
+  xy: 899, 87
+  size: 221, 204
+  orig: 221, 204
   offset: 0, 0
   index: -1

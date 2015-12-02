@@ -18,12 +18,11 @@ public class CustomerManager {
 	// could do an array of three "lines", at various x unit positions, that people wait in.
 	// start off with just one
 //	static final float[] LINE_POSITIONS = new float[] {4.5f};
-	static final float[] LINE_POSITIONS = new float[] {1f, 7.5f};
+	static final float[] LINE_POSITIONS = new float[] {0.75f, 7.2f};
 //	static final float[] LINE_POSITIONS = new float[] {0, 3.5f, 7f};
 
 	static final float PATH_Y = 10f; // out of 18
 	static final float GENERATE_BASE_TIME = 8;
-		
 	
 	static final float LINES_START_Y = 4.9f; // where should the people wait
 	static final int LINE_COUNT = LINE_POSITIONS.length;

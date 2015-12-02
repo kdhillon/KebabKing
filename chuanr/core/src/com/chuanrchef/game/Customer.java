@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.chuanrchef.game.Assets.CustomerTextures;
 
 public class Customer implements Comparable<Customer> {
@@ -319,7 +320,11 @@ public class Customer implements Comparable<Customer> {
 
 		// draw order
 		if (this.order != null) {
-			drawOrder(batch, x_pos, y_pos);
+//			drawOrder(batch, x_pos, y_pos);
+			batch.end();
+			// each character will have their own stage. Probably bad practice but definitely helps.
+			this.order.draw(x_pos, y_pos);
+			batch.begin();
 		}
 
 		// just for testing
@@ -364,91 +369,91 @@ public class Customer implements Comparable<Customer> {
 
 	// TODO THIS IS SHITTY CODE FIX THIS 
 	public void drawOrder(SpriteBatch batch, int x_pos, int y_pos) {
-		int order_x_pos = x_pos - 10;
-
-		//		Color temp = batch.getColor();
-		//		batch.setColor(Color.WHITE); 
-
-		float speechWidth = 1.25f * ORDER_ROW_WIDTH;
-		float speechHeight = 1.05f * ORDER_ROW_HEIGHT;
-
-		float speechXOffset = Customer.TEXTURE_WIDTH * SPEECH_X_OFFSET;
-		float speechYOffset = 0.98f;
-
-		if (order.getTotalTypes() == 1) {
-			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (speechHeight * KitchenScreen.UNIT_HEIGHT));
-		}
-		else if (order.getTotalTypes() == 2) {
-			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + 0.75 * speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (2 * speechHeight * KitchenScreen.UNIT_HEIGHT));
-
-		}
-		else if (order.getTotalTypes() == 3) {
-			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + 0.5 * speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (3 * speechHeight * KitchenScreen.UNIT_HEIGHT));
-		}
-		//		batch.setColor(temp);
-
-		boolean chickenDone = false;
-		boolean beefDone = false;
-		boolean lambDone = false;
-		for (int i = 0; i < order.getTotalTypes(); i++) {
-			TextureRegion icon;
-			int count;
-			boolean spicy = false;
-			// draw the item
-			if (order.chicken > 0 && !chickenDone) {
-				if (order.chickenSpicy) {
-					spicy = true;
-					icon = Assets.chickenSpicyIcon;
-				}
-				else icon = Assets.chickenIcon;
-				count = order.chicken;
-				chickenDone = true;
-			}
-			else if (order.beef > 0 && !beefDone) {
-				if (order.beefSpicy) {
-					icon = Assets.beefSpicyIcon;
-					spicy = true;
-				}
-				else icon = Assets.beefIcon;
-				count = order.beef;
-				beefDone = true;
-			}
-			else if (order.lamb > 0 && !lambDone) {
-				if (order.lambSpicy) {
-					icon = Assets.lambSpicyIcon;
-					spicy = true;
-				}
-				else icon = Assets.lambIcon;
-				count = order.lamb;
-				lambDone = true;
-			}
-			else {
-				icon = Assets.beerIcon;
-				count = order.beer;
-			}
-			int y_position;
-			if (order.getTotalTypes() == 1) 
-				y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-			else if (order.getTotalTypes() == 2) {
-				if (i == 0) 
-					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.5 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-				else 
-					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT* 0.75 + ICON_OFFSET_Y  * KitchenScreen.UNIT_HEIGHT);
-			}
-			else {
-				if (i == 0) 
-					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 0.5 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-				else if (i == 1)
-					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.2 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-				else 
-					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.9 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-			}
-			batch.draw(icon, order_x_pos + (Customer.TEXTURE_WIDTH + ICON_OFFSET_X)*KitchenScreen.UNIT_WIDTH, y_position, (int) (ICON_WIDTH * KitchenScreen.UNIT_WIDTH), (int) (ICON_HEIGHT * KitchenScreen.UNIT_HEIGHT));
-
-			if (spicy) Assets.fontOrder.setColor(Color.RED);
-			Assets.fontOrder.draw(batch, ""+count, (int) (order_x_pos + 1.02* KitchenScreen.UNIT_WIDTH * TEXTURE_WIDTH), (int) (y_position + FONT_OFFSET_Y * KitchenScreen.UNIT_HEIGHT));
-			Assets.fontOrder.setColor(Color.BLACK);
-		}
+//		int order_x_pos = x_pos - 10;
+//
+//		//		Color temp = batch.getColor();
+//		//		batch.setColor(Color.WHITE); 
+//
+//		float speechWidth = 1.25f * ORDER_ROW_WIDTH;
+//		float speechHeight = 1.05f * ORDER_ROW_HEIGHT;
+//
+//		float speechXOffset = Customer.TEXTURE_WIDTH * SPEECH_X_OFFSET;
+//		float speechYOffset = 0.98f;
+//
+//		if (order.getTotalTypes() == 1) {
+//			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (speechHeight * KitchenScreen.UNIT_HEIGHT));
+//		}
+//		else if (order.getTotalTypes() == 2) {
+//			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + 0.75 * speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (2 * speechHeight * KitchenScreen.UNIT_HEIGHT));
+//
+//		}
+//		else if (order.getTotalTypes() == 3) {
+//			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + 0.5 * speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (3 * speechHeight * KitchenScreen.UNIT_HEIGHT));
+//		}
+//		//		batch.setColor(temp);
+//
+//		boolean chickenDone = false;
+//		boolean beefDone = false;
+//		boolean lambDone = false;
+//		for (int i = 0; i < order.getTotalTypes(); i++) {
+//			TextureRegion icon;
+//			int count;
+//			boolean spicy = false;
+//			// draw the item
+//			if (order.chicken > 0 && !chickenDone) {
+//				if (order.chickenSpicy) {
+//					spicy = true;
+//					icon = Assets.chickenIcon;
+//				}
+//				else icon = Assets.chickenIcon;
+//				count = order.chicken;
+//				chickenDone = true;
+//			}
+//			else if (order.beef > 0 && !beefDone) {
+//				if (order.beefSpicy) {
+//					icon = Assets.beefSpicyIcon;
+//					spicy = true;
+//				}
+//				else icon = Assets.beefIcon;
+//				count = order.beef;
+//				beefDone = true;
+//			}
+//			else if (order.lamb > 0 && !lambDone) {
+//				if (order.lambSpicy) {
+//					icon = Assets.lambSpicyIcon;
+//					spicy = true;
+//				}
+//				else icon = Assets.lambIcon;
+//				count = order.lamb;
+//				lambDone = true;
+//			}
+//			else {
+//				icon = Assets.beerIcon;
+//				count = order.beer;
+//			}
+//			int y_position;
+//			if (order.getTotalTypes() == 1) 
+//				y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
+//			else if (order.getTotalTypes() == 2) {
+//				if (i == 0) 
+//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.5 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
+//				else 
+//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT* 0.75 + ICON_OFFSET_Y  * KitchenScreen.UNIT_HEIGHT);
+//			}
+//			else {
+//				if (i == 0) 
+//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 0.5 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
+//				else if (i == 1)
+//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.2 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
+//				else 
+//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.9 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
+//			}
+//			batch.draw(icon, order_x_pos + (Customer.TEXTURE_WIDTH + ICON_OFFSET_X)*KitchenScreen.UNIT_WIDTH, y_position, (int) (ICON_WIDTH * KitchenScreen.UNIT_WIDTH), (int) (ICON_HEIGHT * KitchenScreen.UNIT_HEIGHT));
+//
+//			if (spicy) Assets.fontOrder.setColor(Color.RED);
+//			Assets.fontOrder.draw(batch, ""+count, (int) (order_x_pos + 1.02* KitchenScreen.UNIT_WIDTH * TEXTURE_WIDTH), (int) (y_position + FONT_OFFSET_Y * KitchenScreen.UNIT_HEIGHT));
+//			Assets.fontOrder.setColor(Color.BLACK);
+//		}
 	}
 
 	public void highlight(SpriteBatch batch) {
@@ -457,8 +462,7 @@ public class Customer implements Comparable<Customer> {
 		int y_pos = (int) (this.position_y);
 
 		Color orig = batch.getColor();
-		Color myColor = Color.WHITE;
-		myColor.a = .3f;
+		Color myColor = new Color(1, 1, 1, 0.3f);
 		batch.setColor(myColor);
 		batch.draw(Assets.white, x_pos, y_pos, highlightWidth, highlightHeight);
 		myColor.a = 1f; // necessary for some reason
