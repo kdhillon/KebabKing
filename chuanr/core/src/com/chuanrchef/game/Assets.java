@@ -55,8 +55,12 @@ public class Assets {
 	static TextureRegion grillMid;
 	static TextureRegion grillLeft;
 	static TextureRegion grillRight;
-	static TextureRegion grillCoals;
-	static Animation grillFire;
+	static TextureRegion grillBgMid;
+	static TextureRegion grillBgLeft;
+	static TextureRegion grillBgRight;
+	
+//	static TextureRegion grillCoals;
+//	static Animation grillFire;
 
 	static public class CustomerTextures {
 		Animation idle;
@@ -428,9 +432,13 @@ public class Assets {
 		meatMap.put(Meat.Type.LAMB, generateKebabTextures("kebabs/LambKebab"));
 
 		grillMid = getTextureRegion("grill/Grill-03");
-		grillLeft = getTextureRegion("grill/Grill-02");
-		grillRight = getTextureRegion("grill/Grill-04");
+		grillLeft = getTextureRegion("grill/Grill-02_clr");
+		grillRight = getTextureRegion("grill/Grill-04_clr");
 
+		
+		grillBgMid = getTextureRegion("grill/mid_bg");
+		grillBgLeft = getTextureRegion("grill/left_bg");
+		grillBgRight = getTextureRegion("grill/right_bg");
 //		grillCoals = getTextureRegion("coals");
 //		
 //		grillFire = createAnimation("fire", GRILL_ANIMATION_TIME, 4);
@@ -717,8 +725,8 @@ public class Assets {
 		tbs.down = new TextureRegionDrawable(getTextureRegion("whitepixel"));
 		tbs.up =  new TextureRegionDrawable(getTextureRegion("whitepixel"));
 		tbs.font = Assets.generateChinaFont(fontSize, true);
-		tbs.fontColor = Color.BLACK;
-		tbs.disabledFontColor = Color.WHITE;
+		tbs.fontColor = new Color(0, 0, 0, 1);
+		tbs.disabledFontColor = new Color(1, 1, 1, 1);
 		tbs.disabled = new TextureRegionDrawable(getTextureRegion("market/bluePixel"));
 //		tbs.font = Assets.china32;
 		purchaseTypeButtonStyle = tbs;
@@ -828,7 +836,7 @@ public class Assets {
 		return getStyleFromRegion("topbar/TopBarElement01");
 	}
 	public static ButtonStyle getButtonStyleUnmuted() {
-		return getStyleFromRegion("topbar/TopBarElement01");
+		return getStyleFromRegion("topbar/soundon");
 	}
 	public static ButtonStyle getCoinPlusStyle() {
 		return getStyleFromRegion("icon_check");

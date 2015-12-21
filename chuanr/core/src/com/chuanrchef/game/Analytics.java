@@ -1,3 +1,4 @@
+package com.chuanrchef.game;
 //package com.chuanrchef.game;
 //
 //public class Analytics {

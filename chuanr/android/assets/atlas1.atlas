@@ -282,127 +282,148 @@ customers/OldWoman
   index: -1
 
 atlas16.png
-size: 2016,962
+size: 2032,1020
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 grill/Cooler-21
   rotate: false
-  xy: 2, 554
+  xy: 2, 612
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-22
   rotate: false
-  xy: 2, 144
+  xy: 2, 202
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-23
   rotate: false
-  xy: 486, 554
+  xy: 486, 612
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-24
   rotate: false
-  xy: 1775, 758
+  xy: 1167, 265
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-29
   rotate: false
-  xy: 1197, 541
+  xy: 1410, 264
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-30
   rotate: false
-  xy: 1181, 335
+  xy: 1653, 282
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-31
   rotate: false
-  xy: 1181, 129
+  xy: 1167, 59
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-32
   rotate: false
-  xy: 1440, 541
+  xy: 1410, 58
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
-grill/Grill-02
+grill/Grill-02_clr
   rotate: false
-  xy: 486, 3
+  xy: 486, 61
   size: 225, 549
   orig: 225, 549
   offset: 0, 0
   index: -1
 grill/Grill-03
   rotate: false
-  xy: 940, 2
+  xy: 1424, 470
   size: 112, 550
   orig: 112, 550
   offset: 0, 0
   index: -1
-grill/Grill-04
+grill/Grill-04_clr
   rotate: false
-  xy: 713, 3
+  xy: 713, 61
   size: 225, 549
   orig: 225, 549
   offset: 0, 0
   index: -1
 grill/Grill-05
   rotate: false
-  xy: 970, 628
+  xy: 940, 135
   size: 225, 334
   orig: 225, 334
   offset: 0, 0
   index: -1
 grill/Grill-XL-02
   rotate: false
-  xy: 1054, 348
+  xy: 1653, 2
   size: 125, 278
   orig: 125, 278
   offset: 0, 0
   index: -1
 grill/Grill-XL-03
   rotate: false
-  xy: 1054, 68
+  xy: 1780, 2
   size: 125, 278
   orig: 125, 278
   offset: 0, 0
   index: -1
 grill/Grill-XL-04
   rotate: false
-  xy: 1424, 261
+  xy: 1907, 208
   size: 125, 278
   orig: 125, 278
   offset: 0, 0
   index: -1
-grill/Grill_legs1-25
+grill/left_bg
   rotate: false
-  xy: 1197, 747
-  size: 326, 215
-  orig: 326, 215
+  xy: 970, 471
+  size: 225, 549
+  orig: 225, 549
   offset: 0, 0
   index: -1
-grill/Grill_legs1-26
+grill/legs_back
   rotate: false
-  xy: 1525, 761
-  size: 248, 201
-  orig: 248, 201
+  xy: 1652, 755
+  size: 326, 265
+  orig: 326, 265
+  offset: 0, 0
+  index: -1
+grill/legs_front
+  rotate: false
+  xy: 1652, 488
+  size: 326, 265
+  orig: 326, 265
+  offset: 0, 0
+  index: -1
+grill/mid_bg
+  rotate: false
+  xy: 1538, 470
+  size: 112, 550
+  orig: 112, 550
+  offset: 0, 0
+  index: -1
+grill/right_bg
+  rotate: false
+  xy: 1197, 471
+  size: 225, 549
+  orig: 225, 549
   offset: 0, 0
   index: -1
 
@@ -699,7 +720,7 @@ market/question
   index: -1
 
 atlas19.png
-size: 1373,497
+size: 1596,497
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -733,14 +754,14 @@ topbar/Top-Bar-Element-06
   index: -1
 topbar/Top-Bar-Element-07
   rotate: false
-  xy: 1290, 414
+  xy: 1122, 208
   size: 83, 83
   orig: 83, 83
   offset: 0, 0
   index: -1
 topbar/Top-Bar-Element-08
   rotate: false
-  xy: 1122, 208
+  xy: 1513, 414
   size: 83, 83
   orig: 83, 83
   offset: 0, 0
@@ -762,6 +783,13 @@ topbar/TopBarElement01
 topbar/TopBarElement02
   rotate: false
   xy: 899, 87
+  size: 221, 204
+  orig: 221, 204
+  offset: 0, 0
+  index: -1
+topbar/soundon
+  rotate: false
+  xy: 1290, 293
   size: 221, 204
   orig: 221, 204
   offset: 0, 0

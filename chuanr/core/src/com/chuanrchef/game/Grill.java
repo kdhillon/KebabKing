@@ -269,23 +269,23 @@ public class Grill {
 	public void tutDrawLeftGrill(SpriteBatch batch) {
 		// draw left
 		draw_x = (0 + GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH;
-		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
-		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillLeft, draw_x, draw_y, draw_width, draw_height); 
 	}
 
 	public void tutDrawGrill(int index, SpriteBatch batch) {
 		// draw middle
 		draw_x = (index + GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH;
-		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
-		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillMid, draw_x, draw_y, draw_width, draw_height);
 	}
 	
 	public void tutDrawRightGrill(SpriteBatch batch) {
 		draw_x = (5 + GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH;
-		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
-		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillFire.getKeyFrame(0), draw_x, draw_y, draw_width, draw_height); 
+//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(Assets.grillRight, draw_x, draw_y, draw_width, draw_height); 
 	}
 

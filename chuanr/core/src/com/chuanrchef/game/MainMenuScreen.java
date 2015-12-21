@@ -11,7 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+//import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.chuanrchef.game.Managers.Manager;
 

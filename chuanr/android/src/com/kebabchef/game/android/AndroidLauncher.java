@@ -1,5 +1,6 @@
 package com.kebabchef.game.android;
 
+//import android.content.Intent;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -15,13 +16,14 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		System.loadLibrary("gdx");
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
 		// Initialize all android managers
-		IABManagerAndroid iab = new IABManagerAndroid(this);
-		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
-		FileManagerAndroid file = new FileManagerAndroid(this);
-		AdsManagerAndroid ads = new AdsManagerAndroid(this);
+//		IABManagerAndroid iab = new IABManagerAndroid(this);
+//		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
+//		FileManagerAndroid file = new FileManagerAndroid(this);
+//		AdsManagerAndroid ads = new AdsManagerAndroid(this);
 //		FacebookManagerAndroid fb = new FacebookManagerAndroid(this);
 		
 //		Manager.initAndroid(iab, file, analytics, ads, fb);
@@ -32,17 +34,17 @@ public class AndroidLauncher extends AndroidApplication {
 		initialize(game, config);
 	}
 
-	// required for facebook login
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-	}
+//	// required for facebook login
+//	@Override
+//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		super.onActivityResult(requestCode, resultCode, data);
+//	}
 
 	// dispose of IAB for cleanliness
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		System.out.println("DESTROYING APP");
-		Manager.analytics.sendUserTiming("Total Activity Time", System.currentTimeMillis() - game.activityStartTime);
+//		Manager.analytics.sendUserTiming("Total Activity Time", System.currentTimeMillis() - game.activityStartTime);
 	}
 }

@@ -13,7 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+//import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -196,7 +198,7 @@ public class DrawUI {
 		if (master.getScreen() == master.kitchen) {
 			pauseButton.setVisible(true);
 			pauseButton.setTouchable(Touchable.enabled);
-			muteButton.setTouchable(Touchable.disabled);
+//			muteButton.setTouchable(Touchable.disabled);
 //			if (uiTable.getCell(muteButton) != null) {
 //				uiTable.getCell(muteButton).setActor(pauseButton).height(barHeight).width(barHeight).left().expandX();
 //			}
@@ -204,7 +206,7 @@ public class DrawUI {
 		else {
 			pauseButton.setVisible(false);
 			pauseButton.setTouchable(Touchable.disabled);
-			muteButton.setTouchable(Touchable.enabled);
+//			muteButton.setTouchable(Touchable.enabled);
 //			if (uiTable.getCell(pauseButton) != null) {
 //				uiTable.getCell(pauseButton).setActor(muteButton).height(barHeight).width(barHeight).left().expandX();
 //			}

@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+//import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.chuanrchef.game.Managers.Manager;
@@ -388,21 +389,24 @@ public class StoreScreen extends ScreenTemplate {
 		//			System.out.println("creating current with " + type.getCurrentSelected().getName());
 		//		}
 		// add section for currently selected item
-
 		updateSelectedPurchaseableTable(type.getCurrentSelected(), type);
 		int selectedPad = ChuanrC.getGlobalY(0.02f);
 		currentTypeTable.add(selectedPurchaseableTable).fillX().padBottom(selectedPad);
 
 		// now draw list of all purchaseable options
 		this.purchaseables = type.values;
-		this.currentPurchaseableIndex = 0;
+		this.currentPurchaseableIndex = -1;
+		for (int i = 0; i < purchaseables.length; i++) {
+			if (purchaseables[i] == type.getCurrentSelected()) this.currentPurchaseableIndex = i;
+		}
+		
 		this.purchaseableTables = new Table[purchaseables.length];
 
 		int purchaseablePad = ChuanrC.getGlobalY(0.01f);
 
 		Table purchaseableListTable = new Table();
 		for (int i = 0; i < purchaseables.length; i++) {
-			System.out.println("updating purchaseable table " + i);
+//			System.out.println("updating purchaseable table " + i);
 			purchaseableListTable.add(createPurchaseableTable(i)).expandX().left().padTop(purchaseablePad).fillX();
 			purchaseableListTable.row();
 		}
@@ -418,6 +422,7 @@ public class StoreScreen extends ScreenTemplate {
 	}
 
 	public void updatePurchaseableTable(int index) {
+//		System.out.println("updating purchaseable table with current purchasable index " + currentPurchaseableIndex);
 		Table table = purchaseableTables[index];
 		Purchaseable purchaseable = purchaseables[index];
 		PurchaseType type = types[currentTypeIndex];
@@ -462,7 +467,7 @@ public class StoreScreen extends ScreenTemplate {
 
 		TextureRegion half;
 		if (regWidth / regHeight > aspectButton) {
-			System.out.println("reg Width > regHeight" + regWidth + " , " + regHeight);
+//			System.out.println("reg Width > regHeight" + regWidth + " , " + regHeight);
 			float cropWidth = (aspectButton * regHeight);
 			half = new TextureRegion(full, (int) (regWidth/2 - cropWidth/2), 0, (int) cropWidth, full.getRegionHeight());
 		}
@@ -706,7 +711,7 @@ public class StoreScreen extends ScreenTemplate {
 		else {
 			System.out.println("successfully unlocked!");
 		}
-
+		
 		// must update everything now TODO
 		this.resetCurrentTable();
 	}

@@ -15,7 +15,7 @@ public class MeatQuality extends PurchaseType {
 		LEVEL3 ("Grade AA Meat", 	500, 10, 1.2f,	 "A bit better; still tastes kinda fishy."), 
 		LEVEL4 ("Grade AAA Meat",	1000, 25, 1.3f,  "Almost restaurant quality!"),
 		LEVEL5 ("Top Quality Meat", 2000, 40, 1.4f,	 "You can't find better!"),
-		LEVEL6 ("God Meat", 2000, 40, 1.4f,	 "Divine!");
+		LEVEL6 ("God Meat", 		2000, 40, 1.4f,	 "Divine!");
 
 		String name; 
 		float initialCost;
@@ -32,6 +32,7 @@ public class MeatQuality extends PurchaseType {
 			this.description = description;
 			this.icon = Assets.getTextureRegion("market/Market_subMenus__template_element-06");
 		}
+		
 		@Override
 		public String getName() {
 			return this.name;

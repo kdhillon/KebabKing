@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+//import com.badlogic.gdx.utils.Align;
 import com.chuanrchef.game.Grill.Selected;
 import com.chuanrchef.game.Meat.State;
 import com.chuanrchef.game.Meat.Type;
