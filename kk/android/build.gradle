@@ -3,7 +3,7 @@ android {
     compileSdkVersion 23
     defaultConfig {
         applicationId "com.chuanrchef.game"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"

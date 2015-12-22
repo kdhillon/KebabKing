@@ -59,7 +59,7 @@ public class Grill {
 //	static final float STAND_WIDTH;
 //	static final float STAND_X = .25f;
 	static final float STAND_Y = .09f;
-	static final float STAND_WIDTH = .4f;
+	static final float STAND_WIDTH = .3f;
 	static final float STAND_HEIGHT = .12f;
 
 	static final float FIRE_PAD_X = 0.01f;
@@ -249,7 +249,7 @@ public class Grill {
 		// draw middle
 		while (xCount < GRILL_WIDTH - grillLeftX - 4) {
 			draw_x = (xCount + GRILL_X) * KitchenScreen.UNIT_WIDTH;
-			batch.draw(fire, draw_x, draw_y, draw_width, draw_height - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+			batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 //			batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 			batch.draw(Assets.grillMid, draw_x, draw_y, draw_width, draw_height);
 			xCount++;
@@ -422,11 +422,13 @@ public class Grill {
 			batch.draw(Assets.beerBoxOpen, beer_x, beer_y, box_ver_width, box_ver_height);
 		else
 			batch.draw(Assets.beerBox, beer_x, beer_y, box_ver_width, box_ver_height);
+	
+		batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
 		
-		if (selected == Selected.SPICE)
-			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
-		else 
-			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
+		if (selected != Selected.SPICE)
+			batch.draw(Assets.paintBrushSide,	spice_x, spice_y, spice_width, spice_height);
+		 //		else 
+//			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
 
 //		batch.setColor(original);
 	}

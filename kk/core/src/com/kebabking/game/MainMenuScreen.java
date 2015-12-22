@@ -4,18 +4,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kebabking.game.Managers.Manager;
 
 public class MainMenuScreen extends ScreenTemplate {
+	static final float INIT_BG_ALPHA = 0.45f;
 	static final float FADEOUT_TIME = 1f; // it should take this many seconds to fade out towards countdown screen
 	static final float BUTTON_WIDTH = 0.32f;
 	static final float BUTTON_GAP = 0.1f;
@@ -28,9 +33,9 @@ public class MainMenuScreen extends ScreenTemplate {
 	Stage uiStage;
 	Table table;
 
-	TextButton startDay;
-	Image mute;
-	Image connectToFB;
+	Table startDay;
+//	Image mute;
+//	Image connectToFB;
 
 	SpriteBatch batch;
 	
@@ -39,6 +44,7 @@ public class MainMenuScreen extends ScreenTemplate {
 	boolean fadeout;
 	float fadeoutTimer; 
 	Color currentBatchColor; // alpha will change as fades out
+	float bgTint = INIT_BG_ALPHA;
 
 	public MainMenuScreen(KebabKing master) {	
 		this.master = master;
@@ -63,11 +69,11 @@ public class MainMenuScreen extends ScreenTemplate {
 		table = new Table();
 		uiStage.addActor(table);
 		table.setSize(KebabKing.getWidth(), KebabKing.getHeight());
-		table.setPosition(0, 0);
-		table.align(Align.center);
-		table.align(Align.top);
+//		table.setPosition(0, 0);
+//		table.align(Align.center);
+//		table.align(Align.top);
 
-		table.row();
+//		table.row();
 		//		String string1 = "Kebab";
 		//		String string2 = "Chef!";
 		//		if (!ChuanrC.english) {
@@ -76,23 +82,35 @@ public class MainMenuScreen extends ScreenTemplate {
 		//		}
 
 		//		Label title1 = new Label(string1, Assets.ls120);
-		float padTop = KebabKing.getGlobalY(.2f);
-		//		table.add(title1).padTop(padTop).colspan(2);
-		//		table.row();
-		//		Label title2 = new Label(string2, Assets.ls120);
-		//		table.add(title2).padTop(-.05f * ChuanrC.height).colspan(2);
-		Image title = new Image(Assets.title);
 		
-		float titleWidth = KebabKing.getGlobalX(0.6f);
-//		float titleHeight = titleWidth * (Assets.title.getRegionHeight()/Assets.title.getRegionWidth()); //(Assets.title.getRegionHeight() / Assets.title.getRegionWidth());
-	
-		table.add(title).padTop(padTop).colspan(2).size(titleWidth, titleWidth * 1.5f);
+		float padTop = KebabKing.getGlobalY(.08f);
+		float padBot = KebabKing.getGlobalY(.03f);
+		Table topBar = generateTopTable();
+		table.add(topBar).padTop(padTop).expandX().fillX().padBottom(padBot);
+		table.row();
+		
+		Image title = new Image(Assets.title);
+		float titleWidth = KebabKing.getGlobalX(0.45f);
+		float titleHeight = titleWidth * Assets.title.getRegionHeight() /Assets.title.getRegionWidth();
+		table.add(title).size(titleWidth, titleHeight).padBottom(KebabKing.getGlobalY(0.04f));
 
 		table.row();
 
-		startDay = new TextButton("Start Day!", Assets.getStartButtonStyle());
-		table.add(startDay).padTop(KebabKing.getGlobalY(.03f)).center().width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH)).padRight(KebabKing.getGlobalX(BUTTON_GAP));
+//		startDay = new TextButton("Start Day!", Assets.getStartButtonStyle());
+//		table.add(startDay).padTop(KebabKing.getGlobalY(.03f)).center().width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH)).padRight(KebabKing.getGlobalX(BUTTON_GAP));
 
+		startDay = new Table();
+		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
+		startDay.setBackground(new TextureRegionDrawable(bg));
+		
+		Label startLabel = new Label("\nPlay\n", Assets.generateLabelStyleUIChinaWhite(55));
+		startDay.add(startLabel).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
+		
+		float width = KebabKing.getGlobalX(0.55f);
+		float height = width * bg.getRegionHeight() / bg.getRegionWidth();
+		
+		table.add(startDay).center().width(width).height(height);
+		
 		startDay.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
 				System.out.println("touchdown");
@@ -108,8 +126,17 @@ public class MainMenuScreen extends ScreenTemplate {
 			}
 		});
 
-		TextButton upgrades = new TextButton("Market", Assets.getMarketButtonStyle());
-		table.add(upgrades).padTop(KebabKing.getGlobalY(.03f)).center().width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));
+		table.row();
+		
+		Table upgrades = new Table();
+		upgrades.setBackground(new TextureRegionDrawable(bg));
+		
+		float width2 = KebabKing.getGlobalX(0.7f);
+		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();
+		
+		Label marketLabel = new Label("\nMarket\n", Assets.generateLabelStyleUIChinaWhite(55));
+		upgrades.add(marketLabel).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
+		table.add(upgrades).center().width(width2).height(height2).padTop(KebabKing.getGlobalY(.015f)); //.width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));
 
 		upgrades.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
@@ -157,7 +184,26 @@ public class MainMenuScreen extends ScreenTemplate {
 		this.show();
 	}
 	
+	public Table generateTopTable() {
+		Table topBar = new Table();
+//		topBar.debugAll();
+		Table topLeft = new Table();
+		Table topRight = new Table();
+		topLeft.setBackground(new TextureRegionDrawable(Assets.white));
+		topRight.setBackground(new TextureRegionDrawable(Assets.white));
+		
+		Label topText = new Label("Kebab King", Assets.generateLabelStyleUIChinaWhite(60));
+		
+		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));
+		
+		float imagePadX = KebabKing.getGlobalX(0.1f);
+		topBar.add(topText).top().padLeft(imagePadX).padRight(imagePadX);
+		topBar.add(topRight).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));;
+		return topBar;
+	}
+	
 	public void reset() {
+		this.bgTint = INIT_BG_ALPHA;
 		this.currentBatchColor = new Color(1, 1, 1, 1);
 		this.fadeout = false;
 		this.fadeoutTimer = 0;
@@ -176,15 +222,15 @@ public class MainMenuScreen extends ScreenTemplate {
 		batch.begin();
 		bg.draw(batch);
 		
-		Color prev = batch.getColor();
+//		Color prev = batch.getColor();
 		batch.setColor(currentBatchColor);
 		cm.draw(batch);
-		batch.setColor(prev);
+		batch.setColor(Color.WHITE);
 	
 		grill.draw(batch);
 		
+		DrawUI.tintGrayAlpha(batch, bgTint);		
 		DrawUI.drawFullUI(delta, batch, getProfile());
-		
 		
 		// fix fading
 //		DrawUI.drawStars(batch, getProfile());
@@ -193,7 +239,7 @@ public class MainMenuScreen extends ScreenTemplate {
 		batch.end();
 		
 //		table.setColor(currentBatchColor);
-//		this.uiStage.getBatch().setColor(currentBatchColor);		
+//		this.uiStage.getBatch().setColor(currentBatchColor);	
 		uiStage.draw();
 //		table.setColor(prev);
 //		this.uiStage.getBatch().setColor(prev);		
@@ -265,8 +311,8 @@ public class MainMenuScreen extends ScreenTemplate {
 
 	@Override
 	public void show() {
-		if (this.startDay != null) 
-			startDay.setText("Start!");
+//		if (this.startDay != null) 
+//			startDay.setText("Start!");
 			//			startDay.setText("Start Day " + (getProfile().daysWorked + 1));
 
 		// this doesn't work well for some reason
@@ -276,6 +322,8 @@ public class MainMenuScreen extends ScreenTemplate {
 	
 	public void startFadeout() {
 		this.fadeout = true;
+		uiStage.getRoot().addAction(Actions.fadeOut(FADEOUT_TIME));
+
 		table.setTouchable(Touchable.disabled);
 	}
 	
@@ -284,6 +332,8 @@ public class MainMenuScreen extends ScreenTemplate {
 		this.currentBatchColor.a = 1 - (fadeoutTimer / FADEOUT_TIME);
 //		this.batch.setColor(currentBatchColor);
 		this.fadeoutTimer += delta;
+		
+		this.bgTint = INIT_BG_ALPHA * (1-(fadeoutTimer / FADEOUT_TIME));
 		
 		if (fadeoutTimer > FADEOUT_TIME) this.transition();
 	}
@@ -332,16 +382,16 @@ public class MainMenuScreen extends ScreenTemplate {
 //		master.deleteProfile();
 //	}
 	
-	public void toggleMusic() {
-		if (!getProfile().settings.muteMusic) {
-			getProfile().settings.muteMusic();
-			mute.setDrawable(Assets.volMute);
-		}
-		else {
-			getProfile().settings.unmuteMusic();
-			mute.setDrawable(Assets.volOn);
-		}
-	}
+//	public void toggleMusic() {
+//		if (!getProfile().settings.muteMusic) {
+//			getProfile().settings.muteMusic();
+//			mute.setDrawable(Assets.volMute);
+//		}
+//		else {
+//			getProfile().settings.unmuteMusic();
+//			mute.setDrawable(Assets.volOn);
+//		}
+//	}
 	
 	public void clickFacebook() {
 		if (!Manager.fb.isLoggedIn())

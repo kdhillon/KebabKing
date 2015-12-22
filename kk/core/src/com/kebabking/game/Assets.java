@@ -38,14 +38,15 @@ public class Assets {
 	
 	final static Color RED = new Color(211/256.0f, 90/256.0f, 68/256.0f, 1f);
 	
-	final static String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!@#$%^&*()/1234567890:-'\"><";
+	final static String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#$%^&*()/1234567890:;-'\">+=_[]{}<";
 	
 	public static AssetManager manager; // must be disposed
 //	
 //	public static BitmapFont topBarFont; // must be disposed
 
 	static Texture peppercornLogo; // must be disposed
-
+	static Texture kebabMain;
+	
 	static TextureAtlas atlas; // must be disposed after load
 	static TextureAtlas uiAtlas; // must be disposed
 
@@ -57,9 +58,10 @@ public class Assets {
 	static TextureRegion grillMid;
 	static TextureRegion grillLeft;
 	static TextureRegion grillRight;
-	static TextureRegion grillBgMid;
-	static TextureRegion grillBgLeft;
-	static TextureRegion grillBgRight;
+	
+//	static TextureRegion grillBgMid;
+//	static TextureRegion grillBgLeft;
+//	static TextureRegion grillBgRight;
 	
 //	static TextureRegion grillCoals;
 	static Animation grillFire;
@@ -115,6 +117,7 @@ public class Assets {
 	static TextureRegion skyStar;
 
 	static TextureRegion paintBrush;
+	static TextureRegion paintBrushSide;
 	static TextureRegion trashIcon;
 
 	static TextureRegionDrawable volOn;
@@ -129,20 +132,16 @@ public class Assets {
 	static TextureRegion purchaseableCheck;
 
 	static TextureRegion gray;
-//	static TextureRegion white;
+	static TextureRegion white;
 	static TextureRegion whiteAlpha;
+	static TextureRegion grayAlpha;
+	static TextureRegion grayAlphaLight;
 
-	static FreeTypeFontGenerator gang;
 	static FreeTypeFontParameter p;
-	
 	static FreeTypeFontGenerator worksans;
 	static FreeTypeFontGenerator worksansLight;
 	static FreeTypeFontGenerator worksansHeavy;
-	
 	static FreeTypeFontGenerator china;
-
-	static FreeTypeFontGenerator c1;
-	static FreeTypeFontGenerator c1p;
 
 	static BitmapFont timefont;
 	
@@ -163,7 +162,6 @@ public class Assets {
 	
 	static TextureRegion marketShelf;
 	static TextureRegion marketTitle;
-	static TextureRegion marketGray;
 	static TextureRegion marketLock;
 	static TextureRegion marketJade;
 	static TextureRegion purchaseableJade;
@@ -182,15 +180,22 @@ public class Assets {
 	
 	static Music music;
 	
-	static NinePatch green9Patch;
-	static NinePatch gray9Patch;
+//	static NinePatch green9Patch;
+	static NinePatch green9PatchSmall;
+//	static NinePatch gray9Patch;
 	static NinePatch gray9PatchSmall;
+	static NinePatch gray9PatchSmallFilled;
 	static NinePatch red9PatchSmall;
 	
 	static HashMap<String, LabelStyle> styles;
 
-	//	static Animation
-
+	// This loads peppercorn screen and preps stuff for second loader
+	public static void preLoad() {
+		
+//TODO		
+	}
+	
+	
 	// static class containing relevant images, etc
 	// should prepare animations and set regions to the appropriate size
 	public static void load() {		
@@ -200,8 +205,17 @@ public class Assets {
 		manager.load("atlas1.atlas", TextureAtlas.class);
 
 		//make sure to load logo first!!
+		kebabMain = new Texture(Gdx.files.internal("textures/screens/Main-02.png"));
 		peppercornLogo = new Texture(Gdx.files.internal("logo.png"));
+
+		p = new FreeTypeFontParameter();
+		p.characters = chars;
 		
+		worksans = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Medium.otf"));
+		worksansHeavy = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
+		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
+		china = new FreeTypeFontGenerator(Gdx.files.internal("data/CHINA.TTF"));
+
 		styles = new HashMap<String, LabelStyle>();
 		fonts = new ArrayList<BitmapFont>();
 	}
@@ -320,14 +334,6 @@ public class Assets {
 //		return generateLabelStyle(size, false);
 //	}
 
-//	public static LabelStyle generateLabelStyleGang(int size) {
-//		return generateLabelStyle(gang, Color.BLACK, size);
-//	}
-//	
-//	public static LabelStyle generateLabelStyleWhiteGang(int size) {
-//		return generateLabelStyle(gang, Color.WHITE, size);
-//	}
-
 	public static LabelStyle generateLabelStyleUI(int size) {
 		return generateLabelStyle(worksans, MainStoreScreen.FONT_COLOR, size);
 	}
@@ -337,6 +343,9 @@ public class Assets {
 	}
 	public static LabelStyle generateLabelStyleUIRed(int size) {
 		return generateLabelStyle(worksans, SummaryScreen.RED, size);		
+	}
+	public static LabelStyle generateLabelStyleUIWhite(int size) {
+		return generateLabelStyle(worksans, Color.WHITE, size);		
 	}
 //	public static LabelStyle generateLabelStyleUIDark(int size, boolean permanent) {
 //		p.size = size;
@@ -393,6 +402,10 @@ public class Assets {
 		manager.update();
 	}
 
+	public static float getLoadProgress() {
+		return manager.getProgress();
+	}
+	
 	public static boolean loadingComplete() {
 		if (manager.getProgress() >= 1) {
 			return true;
@@ -407,15 +420,17 @@ public class Assets {
 		speech = getTextureRegion("customers/Play_speechbubble_element-38");
 
 		gray = getTextureRegion("graypixel");
-//		white = getTextureRegion("whitepixel");
+		white = getTextureRegion("whitepixel");
 		whiteAlpha = getTextureRegion("white_alpha");
+		grayAlpha = getTextureRegion("gray_alpha");
+		grayAlphaLight = getTextureRegion("gray_alpha_light");
 
-		title = getTextureRegion("kebabking");
+		title = getTextureRegion("screens/Main-02");
 		//		start = getTexture("start");
 		//		store = getTexture("store");
 		//		quit = getTexture("quit");
 		
-		spiceBox = getTextureRegion("grill/Grill-05");
+		spiceBox = getTextureRegion("grill/grill-05");
 		
 		beefBox = getTextureRegion("grill/Cooler-21");
 		lambBox = getTextureRegion("grill/Cooler-23");
@@ -434,13 +449,13 @@ public class Assets {
 		meatMap.put(Meat.Type.BEEF,  generateKebabTextures("kebabs/BeefKebab"));
 		meatMap.put(Meat.Type.LAMB, generateKebabTextures("kebabs/LambKebab"));
 
-		grillMid = getTextureRegion("grill/Grill-03");
-		grillLeft = getTextureRegion("grill/Grill-02_clr");
-		grillRight = getTextureRegion("grill/Grill-04_clr");
+		grillMid = getTextureRegion("grill/grill-03");
+		grillLeft = getTextureRegion("grill/grill-02");
+		grillRight = getTextureRegion("grill/grill-04");
 
-		grillBgMid = getTextureRegion("grill/mid_bg");
-		grillBgLeft = getTextureRegion("grill/left_bg");
-		grillBgRight = getTextureRegion("grill/right_bg");
+//		grillBgMid = getTextureRegion("grill/mid_bg");
+//		grillBgLeft = getTextureRegion("grill/left_bg");
+//		grillBgRight = getTextureRegion("grill/right_bg");
 //		grillCoals = getTextureRegion("coals");
 //		
 		grillFire = createAnimation("grill/fire", GRILL_ANIMATION_TIME, 3, true);
@@ -460,7 +475,9 @@ public class Assets {
 		face5 = getTextureRegion("customers/face5");
 		faceSick = getTextureRegion("customers/face_s");
 
-		paintBrush = getTextureRegion("paintbrush");
+		paintBrush = getTextureRegion("grill/brush-48");
+		paintBrushSide = getTextureRegion("grill/brush-50");
+
 		trashIcon = getTextureRegion("trash");
 
 		cloud1 = getTextureRegion("background/SkyElement-02");
@@ -476,20 +493,9 @@ public class Assets {
 
 //		pause = getTextureRegion("pause");
 
-		gang = new FreeTypeFontGenerator(Gdx.files.internal("data/CarterOne.ttf"));
-		p = new FreeTypeFontParameter();
-		p.characters = chars;
-
-		worksans = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Medium.otf"));
-		worksansHeavy = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
-		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
-
-		china = new FreeTypeFontGenerator(Gdx.files.internal("data/CHINA.TTF"));
-		
 		
 		marketShelf = getTextureRegion("market/Market_menu_element-02");
 		marketTitle = getTextureRegion("market/Market_menu_element-08");
-		marketGray = getTextureRegion("market/grayalpha");
 		marketGreen = getTextureRegion("market/green");
 		marketDarkGreen = getTextureRegion("market/darkGreen");
 		marketJade = getTextureRegion("market/jade");
@@ -502,9 +508,11 @@ public class Assets {
 		red = getTextureRegion("screens/red");
 		yellow = getTextureRegion("topbar/yellow");
 		
-		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
-		gray9Patch = new NinePatch(getTextureRegion("market/gray9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
+//		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
+		green9PatchSmall = new NinePatch(getTextureRegion("market/green9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
+//		gray9Patch = new NinePatch(getTextureRegion("market/gray9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		gray9PatchSmall = new NinePatch(getTextureRegion("market/gray9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
+		gray9PatchSmallFilled = new NinePatch(getTextureRegion("market/gray9patchSmallFilled"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 		red9PatchSmall = new NinePatch(getTextureRegion("market/red9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 	
 		createUI();
@@ -844,7 +852,7 @@ public class Assets {
 	
 	public static ButtonStyle getButtonStylePurchaseableGreen() {
 		ButtonStyle bs = new ButtonStyle();
-		NinePatchDrawable np = new NinePatchDrawable(Assets.green9Patch);
+		NinePatchDrawable np = new NinePatchDrawable(Assets.green9PatchSmall);
 		bs.up = np;
 		bs.down = np;
 		return bs;
@@ -852,7 +860,7 @@ public class Assets {
 	
 	public static ButtonStyle getButtonStylePurchaseableGray() {
 		ButtonStyle bs = new ButtonStyle();
-		NinePatchDrawable np = new NinePatchDrawable(Assets.gray9Patch);
+		NinePatchDrawable np = new NinePatchDrawable(Assets.gray9PatchSmall);
 		bs.up = np;
 		bs.down = np;
 		return bs;

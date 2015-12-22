@@ -20,8 +20,10 @@ public class SummaryScreen extends ScreenTemplate {
 	// Time to display "Day Complete"
 	static float TIME_TO_WAIT = 2f;
 
-	static final float RED_BAR_HEIGHT = 0.015f;
+	static final float BAR_HEIGHT = 0.015f;
 	static final float NEG_PAD = 0.002f;
+	
+	static final float ALPHA_GOAL = 0.75f;
 	
 	Stage uiStage;
 
@@ -36,8 +38,9 @@ public class SummaryScreen extends ScreenTemplate {
 	Table bigTable;
 
 	float timeElapsed;
-	Label dayComplete;
-
+//	Label dayComplete;
+	Table dayComplete;
+	
 	float revenue;
 	float expenses;
 	float meatExpenses;
@@ -50,7 +53,11 @@ public class SummaryScreen extends ScreenTemplate {
 	// in case we want to have stars pop on.
 	Table starTable;
 	float currentStarCount;
+	
+	boolean dayCompleteDone = false; // used to switch to info from "day complete"
 
+	float alpha = 1;
+	
 	public SummaryScreen(KitchenScreen kitchen) {
 		this.batch = kitchen.batch;
 		this.bg = kitchen.bg;
@@ -60,14 +67,29 @@ public class SummaryScreen extends ScreenTemplate {
 		grill.deactivate(); // deactivate grill
 		cm.deactivate();
 		bg.deactivate();
-
-		dayComplete = new Label("Day Complete", Assets.generateLabelStyleUIChina(50));
-		if (kitchen.wasShutDown)
-			dayComplete.setText("You got shut down! Obey the Health Code!");
-		dayComplete.setPosition(0, KebabKing.getGlobalY(0.45f));
-		dayComplete.setWidth(KebabKing.getWidth());
-		dayComplete.setAlignment(Align.center);
-		dayComplete.setWrap(true);
+		
+//		dayComplete = new Label("Day Complete", Assets.generateLabelStyleUIChinaWhite(50));
+//		if (kitchen.wasShutDown)
+//			dayComplete.setText("You got shut down! Obey the Health Code!");
+//		dayComplete.setPosition(0, KebabKing.getGlobalY(0.45f));
+//		dayComplete.setWidth(KebabKing.getWidth());
+//		dayComplete.setAlignment(Align.center);
+//		dayComplete.setWrap(true);
+		
+		ScreenViewport viewport = new ScreenViewport();
+		uiStage = new Stage(viewport, batch);
+		
+		bigTable = new Table();
+		
+		bigTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
+		uiStage.addActor(bigTable);
+		
+//		float width = KebabKing.getGlobalX(0.5f);
+		float height = KebabKing.getGlobalY(0.15f);
+		dayComplete = getDayCompleteButton();
+		bigTable.add(dayComplete).center().height(height); //.width(width).height(height);
+		
+//		dayComplete.setPosition(0, KebabKing.getGlobalY(0.45f));
 
 		this.revenue = kitchen.moneyEarnedToday;
 		//		this.expenses = kitchen.moneySpentToday - refund;
@@ -90,25 +112,43 @@ public class SummaryScreen extends ScreenTemplate {
 
 		// save rating
 		this.rating = kitchen.calculateReputation();
-
-
-		initializeTable();
+	}
+	
+	public Table getDayCompleteButton() {
+		Table button = new Table();
+		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
+		button.setBackground(new TextureRegionDrawable(bg));
+		  
+		Label resume = new Label("    Day Complete    ", Assets.generateLabelStyleUIChinaWhite(48));
+		button.add(resume).center().padRight(KebabKing.getGlobalX(0.1f)).padBottom(KebabKing.getGlobalY(0.004f));
+	
+		button.addListener(new InputListener() {
+			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+				return true;
+			}
+			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+				skipWaiting();
+			}
+		});	
+		
+		return button;
+	}
+	
+	public Table getShutDownButton() {
+		return new Table();
+	}
+	
+	public void skipWaiting() {
+		timeElapsed = TIME_TO_WAIT;
 	}
 	
 	public void initializeTable() {
-		ScreenViewport viewport = new ScreenViewport();
-		uiStage = new Stage(viewport, batch);
-		bigTable = new Table();
-//		bigTable.debugAll();
-		bigTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
-		
-		uiStage.addActor(bigTable);
-		
+		bigTable.clear();
 		float topBarPadY = KebabKing.getGlobalY(0.02f);
 		
 		Table window = new Table();
-		window.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("whitepixel")));
-		bigTable.add(window).width(KebabKing.getGlobalX(0.8f)).height(KebabKing.getGlobalY(0.65f));
+		window.setBackground(new TextureRegionDrawable(Assets.white));
+		bigTable.add(window).width(KebabKing.getGlobalX(0.8f)).height(KebabKing.getGlobalY(0.65f)).top().padTop(KebabKing.getGlobalY(0.15f));
 		
 		Table topBar = generateTopTable();
 		window.add(topBar).top().expandX().fillX().padBottom(topBarPadY).padTop(topBarPadY);
@@ -154,7 +194,7 @@ public class SummaryScreen extends ScreenTemplate {
 		});	
 		
 		bigTable.row();
-		bigTable.add(nextRound).bottom().padTop(KebabKing.getGlobalY(0.00f));
+		bigTable.add(nextRound).top().expandY().padTop(KebabKing.getGlobalY(0.00f));
 	}
 	
 	public Table generateTopTable() {
@@ -178,11 +218,11 @@ public class SummaryScreen extends ScreenTemplate {
 		Label dailyAccounts = new Label("DAILY ACCOUNTS", Assets.generateLabelStyleUI(14));
 	
 		topCenter.add(dailyAccounts);
-		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(RED_BAR_HEIGHT));
+		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(BAR_HEIGHT));
 		
 		float imagePadX = KebabKing.getGlobalX(0.03f);
 		topBar.add(topCenter).top().padLeft(imagePadX).padRight(imagePadX);;;
-		topBar.add(topRight).expandX().fillX().height(KebabKing.getGlobalY(RED_BAR_HEIGHT));;
+		topBar.add(topRight).expandX().fillX().height(KebabKing.getGlobalY(BAR_HEIGHT));;
 		return topBar;
 	}
 	
@@ -322,23 +362,32 @@ public class SummaryScreen extends ScreenTemplate {
 		bg.draw(batch);
 		cm.draw(batch);
 		grill.draw(batch);
-		DrawUI.drawGray(batch);	
+		
+		DrawUI.tintWhiteAlpha(batch, alpha);	
 		DrawUI.drawFullUI(delta, batch, getProfile());
 
-		if (timeElapsed <= TIME_TO_WAIT) {
-			dayComplete.draw(batch, 1);			
+//		if (timeElapsed <= TIME_TO_WAIT) {
+//			dayComplete.draw(batch, 1);			
+//		}
+		
+		if (timeElapsed > TIME_TO_WAIT && !dayCompleteDone) {
+			dayCompleteDone = true;
+			initializeTable();
 		}
-
 		batch.end();
 
-		if (timeElapsed > TIME_TO_WAIT)
-			uiStage.draw();
+//		if (timeElapsed > TIME_TO_WAIT)
+		uiStage.draw();
 	}
 
 
 	// actually run a game loop
 	public void update(float delta) {	
 		this.timeElapsed += delta;
+		if (timeElapsed < TIME_TO_WAIT) {
+			alpha = (timeElapsed / TIME_TO_WAIT) * ALPHA_GOAL;
+		}
+		else alpha = ALPHA_GOAL;
 		uiStage.act();
 		bg.act(delta);
 		cm.act(delta);

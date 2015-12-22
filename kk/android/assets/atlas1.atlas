@@ -4,44 +4,65 @@ size: 1024,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+Main-02
+  rotate: false
+  xy: 632, 1283
+  size: 252, 383
+  orig: 252, 383
+  offset: 0, 0
+  index: -1
+gray_alpha
+  rotate: false
+  xy: 310, 609
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+gray_alpha_light
+  rotate: false
+  xy: 632, 1280
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
 graypixel
   rotate: false
-  xy: 2, 2
+  xy: 886, 1665
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 kebabking
   rotate: false
-  xy: 2, 482
+  xy: 2, 612
   size: 628, 1054
   orig: 628, 1054
   offset: 0, 0
   index: -1
 paintbrush
   rotate: false
-  xy: 2, 5
+  xy: 2, 135
   size: 306, 475
   orig: 306, 475
   offset: 0, 0
   index: -1
 trash
   rotate: false
-  xy: 632, 1408
+  xy: 2, 5
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 white_alpha
   rotate: false
-  xy: 310, 479
+  xy: 2, 2
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 whitepixel
   rotate: false
-  xy: 632, 1405
+  xy: 132, 132
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -107,7 +128,7 @@ background/forbidden
   orig: 938, 1563
   offset: 0, 0
   index: -1
-background/outskirts
+background/paddy
   rotate: false
   xy: 942, 2
   size: 938, 1563
@@ -116,15 +137,22 @@ background/outskirts
   index: -1
 
 atlas14.png
-size: 1024,2048
+size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-background/village2
+background/suburbs
   rotate: false
   xy: 2, 2
-  size: 614, 1023
-  orig: 614, 1023
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+background/subway
+  rotate: false
+  xy: 942, 2
+  size: 938, 1563
+  orig: 938, 1563
   offset: 0, 0
   index: -1
 
@@ -133,192 +161,199 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+background/urbancomplex
+  rotate: false
+  xy: 2, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+background/village
+  rotate: false
+  xy: 942, 542
+  size: 614, 1023
+  orig: 614, 1023
+  offset: 0, 0
+  index: -1
+
+atlas16.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 customers/American
   rotate: false
-  xy: 2, 1264
+  xy: 2, 1213
   size: 625, 750
   orig: 625, 750
   offset: 0, 0
   index: -1
 customers/FatAmerican
   rotate: false
-  xy: 1256, 1294
+  xy: 1256, 520
   size: 600, 720
   orig: 600, 720
   offset: 0, 0
   index: -1
 customers/FatMan
   rotate: false
-  xy: 2, 512
+  xy: 2, 461
   size: 625, 750
   orig: 625, 750
   offset: 0, 0
   index: -1
 customers/OldMan
   rotate: false
-  xy: 629, 541
+  xy: 1256, 1242
   size: 601, 721
   orig: 601, 721
   offset: 0, 0
   index: -1
-customers/OldWoman
-  rotate: false
-  xy: 1232, 542
-  size: 600, 720
-  orig: 600, 720
-  offset: 0, 0
-  index: -1
 customers/Play_speechbubble_element-38
   rotate: false
-  xy: 2, 308
+  xy: 2, 257
   size: 144, 202
   orig: 144, 202
   offset: 0, 0
   index: -1
+customers/Soldier
+  rotate: false
+  xy: 629, 1213
+  size: 625, 750
+  orig: 625, 750
+  offset: 0, 0
+  index: -1
 customers/Student
   rotate: false
-  xy: 629, 1264
+  xy: 629, 461
   size: 625, 750
   orig: 625, 750
   offset: 0, 0
   index: -1
 customers/beef_icon
   rotate: false
-  xy: 249, 304
+  xy: 1256, 469
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/beer_icon
   rotate: false
-  xy: 249, 253
+  xy: 619, 308
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/chicken_icon
   rotate: false
-  xy: 306, 304
+  xy: 2, 2
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/face1
   rotate: false
-  xy: 2, 206
+  xy: 2, 155
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face1 o
   rotate: false
-  xy: 1858, 1859
+  xy: 1859, 1808
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face2
   rotate: false
-  xy: 1858, 1443
+  xy: 1859, 1392
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face2 o
   rotate: false
-  xy: 148, 355
+  xy: 148, 304
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face3
   rotate: false
-  xy: 2, 104
+  xy: 619, 359
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face3 o
   rotate: false
-  xy: 1858, 1702
+  xy: 1859, 1651
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face4
   rotate: false
-  xy: 1858, 1341
+  xy: 2, 53
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face4 o
   rotate: false
-  xy: 305, 355
+  xy: 305, 304
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face5
   rotate: false
-  xy: 2, 2
+  xy: 1859, 1290
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face5 o
   rotate: false
-  xy: 1858, 1545
+  xy: 1859, 1494
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face_s
   rotate: false
-  xy: 148, 253
+  xy: 720, 359
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face_s o
   rotate: false
-  xy: 462, 355
+  xy: 462, 304
   size: 155, 155
   orig: 155, 155
   offset: 0, 0
   index: -1
 customers/lamb_icon
   rotate: false
-  xy: 306, 253
+  xy: 821, 410
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/red
   rotate: false
-  xy: 629, 537
+  xy: 2016, 1961
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 customers/red o
   rotate: false
-  xy: 1256, 1291
+  xy: 148, 301
   size: 1, 1
   orig: 1, 1
-  offset: 0, 0
-  index: -1
-
-atlas16.png
-size: 1024,1024
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-customers/Policeman
-  rotate: false
-  xy: 2, 2
-  size: 600, 720
-  orig: 600, 720
   offset: 0, 0
   index: -1
 
@@ -327,155 +362,154 @@ size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-grill/Cooler-21
+customers/OldWoman
   rotate: false
   xy: 2, 2
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+customers/Policeman
+  rotate: false
+  xy: 604, 2
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+
+atlas18.png
+size: 2048,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+grill/Cooler-21
+  rotate: false
+  xy: 2, 581
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-22
   rotate: false
-  xy: 486, 3
+  xy: 2, 171
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-23
   rotate: false
-  xy: 970, 3
+  xy: 486, 581
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-24
   rotate: false
-  xy: 1138, 422
+  xy: 1298, 785
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-29
   rotate: false
-  xy: 1742, 758
+  xy: 1541, 785
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-30
   rotate: false
-  xy: 1454, 210
+  xy: 1784, 785
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-31
   rotate: false
-  xy: 1454, 4
+  xy: 970, 518
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-32
   rotate: false
-  xy: 1697, 210
+  xy: 941, 312
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
-grill/Grill-02_clr
-  rotate: false
-  xy: 230, 413
-  size: 225, 549
-  orig: 225, 549
-  offset: 0, 0
-  index: -1
-grill/Grill-03
-  rotate: false
-  xy: 2, 412
-  size: 112, 550
-  orig: 112, 550
-  offset: 0, 0
-  index: -1
-grill/Grill-04_clr
-  rotate: false
-  xy: 457, 413
-  size: 225, 549
-  orig: 225, 549
-  offset: 0, 0
-  index: -1
-grill/Grill-05
-  rotate: false
-  xy: 1138, 628
-  size: 225, 334
-  orig: 225, 334
-  offset: 0, 0
-  index: -1
 grill/brush-48
   rotate: false
-  xy: 1940, 294
+  xy: 379, 49
   size: 67, 120
   orig: 67, 120
   offset: 0, 0
   index: -1
 grill/brush-49
   rotate: false
-  xy: 1742, 688
+  xy: 486, 244
   size: 121, 68
   orig: 121, 68
   offset: 0, 0
   index: -1
+grill/brush-50
+  rotate: false
+  xy: 1467, 616
+  size: 125, 167
+  orig: 125, 167
+  offset: 0, 0
+  index: -1
 grill/fire
   rotate: false
-  xy: 1365, 683
-  size: 375, 279
-  orig: 375, 279
+  xy: 2, 2
+  size: 375, 167
+  orig: 375, 167
   offset: 0, 0
   index: -1
-grill/fire o
+grill/grill-02
   rotate: false
-  xy: 1697, 88
-  size: 180, 120
-  orig: 180, 120
+  xy: 814, 301
+  size: 125, 278
+  orig: 125, 278
   offset: 0, 0
   index: -1
-grill/left_bg
+grill/grill-03
   rotate: false
-  xy: 684, 413
-  size: 225, 549
-  orig: 225, 549
+  xy: 1213, 444
+  size: 125, 278
+  orig: 125, 278
+  offset: 0, 0
+  index: -1
+grill/grill-04
+  rotate: false
+  xy: 1340, 505
+  size: 125, 278
+  orig: 125, 278
+  offset: 0, 0
+  index: -1
+grill/grill-05
+  rotate: false
+  xy: 1594, 616
+  size: 125, 167
+  orig: 125, 167
   offset: 0, 0
   index: -1
 grill/legs_back
   rotate: false
-  xy: 1381, 416
+  xy: 486, 314
   size: 326, 265
   orig: 326, 265
   offset: 0, 0
   index: -1
 grill/legs_front
   rotate: false
-  xy: 1709, 416
+  xy: 970, 724
   size: 326, 265
   orig: 326, 265
   offset: 0, 0
   index: -1
-grill/mid_bg
-  rotate: false
-  xy: 116, 412
-  size: 112, 550
-  orig: 112, 550
-  offset: 0, 0
-  index: -1
-grill/right_bg
-  rotate: false
-  xy: 911, 413
-  size: 225, 549
-  orig: 225, 549
-  offset: 0, 0
-  index: -1
 
-atlas18.png
+atlas19.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -600,7 +634,7 @@ kebabs/LambKebab_rawSp
   offset: 0, 0
   index: -1
 
-atlas19.png
+atlas110.png
 size: 1024,2048
 format: RGBA8888
 filter: Nearest,Nearest
@@ -656,7 +690,7 @@ market/Market_menu_element-08
   index: -1
 market/Market_menu_element-09
   rotate: false
-  xy: 849, 1468
+  xy: 849, 1637
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
@@ -677,14 +711,14 @@ market/Market_subMenus__template_element-03
   index: -1
 market/Market_subMenus__template_element-04
   rotate: false
-  xy: 849, 1598
+  xy: 849, 1767
   size: 78, 73
   orig: 78, 73
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-05
   rotate: false
-  xy: 904, 1439
+  xy: 904, 1608
   size: 41, 38
   orig: 41, 38
   offset: 0, 0
@@ -712,30 +746,30 @@ market/bluePixel
   index: -1
 market/darkGreen
   rotate: false
-  xy: 929, 1598
+  xy: 929, 1767
   size: 78, 73
   orig: 78, 73
   offset: 0, 0
   index: -1
 market/gray9patch
   rotate: false
-  xy: 904, 1479
+  xy: 904, 1648
   size: 45, 42
   orig: 45, 42
   offset: 0, 0
   index: -1
 market/gray9patchSmall
   rotate: false
-  xy: 993, 1500
+  xy: 993, 1669
   size: 23, 21
   orig: 23, 21
   offset: 0, 0
   index: -1
-market/grayalpha
+market/gray9patchSmallFilled
   rotate: false
-  xy: 849, 1673
-  size: 167, 167
-  orig: 167, 167
+  xy: 993, 1646
+  size: 23, 21
+  orig: 23, 21
   offset: 0, 0
   index: -1
 market/green
@@ -747,9 +781,16 @@ market/green
   index: -1
 market/green9patch
   rotate: false
-  xy: 951, 1479
+  xy: 951, 1648
   size: 40, 42
   orig: 40, 42
+  offset: 0, 0
+  index: -1
+market/green9patchSmall
+  rotate: false
+  xy: 972, 1623
+  size: 20, 21
+  orig: 20, 21
   offset: 0, 0
   index: -1
 market/icon_ads
@@ -761,75 +802,96 @@ market/icon_ads
   index: -1
 market/jade
   rotate: false
-  xy: 849, 1523
+  xy: 849, 1692
   size: 78, 73
   orig: 78, 73
   offset: 0, 0
   index: -1
 market/question
   rotate: false
-  xy: 929, 1523
+  xy: 929, 1692
   size: 78, 73
   orig: 78, 73
   offset: 0, 0
   index: -1
 market/red9patchSmall
   rotate: false
-  xy: 993, 1477
+  xy: 947, 1625
   size: 23, 21
   orig: 23, 21
   offset: 0, 0
   index: -1
 
-atlas110.png
+atlas111.png
 size: 1024,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-screens/Summary-02
+screens/Main-02
+  rotate: false
+  xy: 2, 64
+  size: 252, 383
+  orig: 252, 383
+  offset: 0, 0
+  index: -1
+screens/Main-03
+  rotate: false
+  xy: 793, 384
+  size: 206, 63
+  orig: 206, 63
+  offset: 0, 0
+  index: -1
+screens/Main-04
   rotate: false
   xy: 2, 2
+  size: 293, 60
+  orig: 293, 60
+  offset: 0, 0
+  index: -1
+screens/Summary-02
+  rotate: false
+  xy: 793, 333
   size: 102, 49
   orig: 102, 49
   offset: 0, 0
   index: -1
 screens/pause-01
   rotate: false
-  xy: 2, 473
+  xy: 2, 449
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
 screens/pause-02
   rotate: false
-  xy: 2, 53
+  xy: 554, 29
   size: 262, 248
   orig: 262, 248
   offset: 0, 0
   index: -1
 screens/pause-03
   rotate: false
-  xy: 2, 303
+  xy: 256, 279
   size: 535, 168
   orig: 535, 168
   offset: 0, 0
   index: -1
 screens/pause-04
   rotate: false
-  xy: 539, 334
+  xy: 256, 140
   size: 296, 137
   orig: 296, 137
   offset: 0, 0
   index: -1
 screens/red
   rotate: false
-  xy: 942, 2034
+  xy: 942, 2010
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 
-atlas111.png
+atlas112.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest

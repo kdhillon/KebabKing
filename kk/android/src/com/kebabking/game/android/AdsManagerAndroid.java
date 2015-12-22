@@ -10,6 +10,7 @@ public class AdsManagerAndroid implements AdsManager {
 //    UnityAdsListener adsListener;
 
     public AdsManagerAndroid(AndroidLauncher androidLauncher) {
+
 //        this.androidLauncher = androidLauncher;
 //        adsListener = new UnityAdsListener();
 //        UnityAds.init(androidLauncher, UNITY_GAME_ID, adsListener);

@@ -1,15 +1,6 @@
 package com.kebabking.game;
 
-import static com.kebabking.game.Customer.CustomerType.BUSINESSMAN;
-import static com.kebabking.game.Customer.CustomerType.FAT_AMERICAN;
-import static com.kebabking.game.Customer.CustomerType.FAT_MAN;
-import static com.kebabking.game.Customer.CustomerType.FOREIGNER;
-import static com.kebabking.game.Customer.CustomerType.GIRL;
-import static com.kebabking.game.Customer.CustomerType.OLD_MAN;
-import static com.kebabking.game.Customer.CustomerType.OLD_WOMAN;
-import static com.kebabking.game.Customer.CustomerType.POLICE;
-import static com.kebabking.game.Customer.CustomerType.STUDENT;
-import static com.kebabking.game.Customer.CustomerType.WOMAN;
+import static com.kebabking.game.Customer.CustomerType.*;
 
 import java.util.ArrayList;
 
@@ -111,7 +102,8 @@ public class Customer implements Comparable<Customer> {
 		FOREIGNER(		.8f, 	4, 	6, 		.9f, 	.75f, "American"),//
 		GIRL(			1f, 	1, 	3, 		0f, 	.75f, "OldMan"),
 		FAT_AMERICAN(	0.8f, 	6, 9, 		0.5f, 	.53f, "FatAmerican"),
-		;
+		SOLDIER(		0.8f, 	6, 9, 		0.5f, 	.53f, "Soldier"),
+;
 
 		Animation walkUp;
 		Animation walkDown;
@@ -155,8 +147,8 @@ public class Customer implements Comparable<Customer> {
 		}
 	}
 	
-	static final CustomerType[] genOrder = 	{FAT_MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, BUSINESSMAN, FOREIGNER, POLICE, GIRL, FAT_AMERICAN};
-
+	static final CustomerType[] genOrder = 	{FAT_MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, BUSINESSMAN, FOREIGNER, POLICE, GIRL, FAT_AMERICAN, SOLDIER};
+	
 	public Customer(float currentWaitFactor, CustomerManager cm) {
 		this.action = CustomerAction.PASS_START;
 		this.cm = cm;
@@ -331,8 +323,9 @@ public class Customer implements Comparable<Customer> {
 		}
 	}
 
+	// TODO Overhaul this
 	public void drawHappyness(SpriteBatch batch, int x_pos, int y_pos) {
-		int order_x_pos = x_pos - 10;
+		int happiness_x = x_pos - KebabKing.getGlobalX(0.05f);
 
 		//		float speechHeight = 0.6f * ORDER_ROW_HEIGHT;
 		//
@@ -361,7 +354,7 @@ public class Customer implements Comparable<Customer> {
 		}
 		if (this.sick) icon = Assets.faceSick;
 
-		batch.draw(icon, order_x_pos + width, y_position, (int) (width * 0.5), (int) (width * 0.5));
+		batch.draw(icon, happiness_x + width, y_position, (int) (width * 0.4f), (int) (width * 0.4f));
 	}
 
 	// TODO THIS IS SHITTY CODE FIX THIS 

@@ -442,12 +442,12 @@ public class StoreScreen extends ScreenTemplate {
 		int imagePadX, imagePadY;
 		
 		if (this.currentPurchaseableIndex == index) {
-			imagePadX = Assets.GREEN_9PATCH_OFFSET_X - 4;
-			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X * 2.5f);
+			imagePadX = Assets.GREEN_9PATCH_OFFSET_X/2 - 4;
+			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 2.5f);
 		}
 		else { 
-			imagePadX = Assets.GREEN_9PATCH_OFFSET_X / 3;
-			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X * 2.5f);
+			imagePadX = Assets.GREEN_9PATCH_OFFSET_X/2 / 3;
+			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 2.5f);
 		}
 						
 		TextureRegion full = purchaseable.getIcon();
@@ -493,10 +493,11 @@ public class StoreScreen extends ScreenTemplate {
 		Color color = MainStoreScreen.FONT_COLOR;
 		if (lockedByRound) {
 			color = MainStoreScreen.FONT_COLOR_GRAY;
-			button.add(new Image(Assets.marketGray)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
+			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
 		}
 		else if (locked) {
-			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
+			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
+			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
 		}
 		
 		Table info = new Table();

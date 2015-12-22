@@ -45,9 +45,7 @@ public class CountdownScreen extends ScreenTemplate  {
 		this.cm = master.cm;
 
 		this.batch = master.batch;
-		
-		
-		
+
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, batch);		
 //		uiStage.setDebugAll(true);
@@ -91,7 +89,7 @@ public class CountdownScreen extends ScreenTemplate  {
 	@Override
 	public void render(float delta) {
 		update(delta);
-
+		
 		batch.begin();
 		bg.draw(batch);
 		cm.draw(batch);
@@ -123,6 +121,10 @@ public class CountdownScreen extends ScreenTemplate  {
 		
 		// draw goal
 		if (!this.countingDown) {
+			
+			if (master.batch.getColor() != Color.WHITE)
+				master.batch.setColor(Color.WHITE);
+			
 			this.goalCountdown -= delta;
 			if (this.goalCountdown <= 0) {
 				table.clear();

@@ -29,7 +29,7 @@ public class DrawUI {
 	static final Color REPUTATION_FONT_COLOR = new Color(0f, .2f, .3f, 0.5f);
 	
 	static final float UI_BAR_HEIGHT = 0.06f; // 
-	static final float AD_BAR_HEIGHT = 0.02f; // 
+	static final float AD_BAR_HEIGHT = 0.015f; // 
 	
 //	static final float xStarOffset = 0.06f;
 //	static final float X_STAR_INIT = 0.12f;
@@ -71,6 +71,8 @@ public class DrawUI {
 	static Table adCampaignTable;
 	static Table bar;
 
+	static Color grayDraw;
+	
 	public static void setInput(InputProcessor ip) {
 		InputMultiplexer im = new InputMultiplexer();
 		im.addProcessor(DrawUI.uiStage);
@@ -80,6 +82,8 @@ public class DrawUI {
 	
 	public static void initializeUIBar(KebabKing master_in, SpriteBatch batch) {
 		master = master_in;
+		
+		grayDraw = new Color(0, 0, 0, 0);
 		
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, batch);		
@@ -196,8 +200,8 @@ public class DrawUI {
 		bar.setBackground(new TextureRegionDrawable(Assets.red));
 		uiTable.add(adCampaignTable).colspan(5).height(KebabKing.getGlobalY(AD_BAR_HEIGHT)).left();
 				
-		time = new Label("", Assets.generateLabelStyleUIChinaWhite(200));
-		time.setPosition(0, KebabKing.getHeight() - 4*barHeight);
+		time = new Label("", Assets.generateLabelStyleUIChinaWhite(300));
+		time.setPosition(0, KebabKing.getGlobalY(0.7f));
 		time.setWidth(KebabKing.getWidth());
 		time.setAlignment(Align.center);
 		
@@ -265,12 +269,34 @@ public class DrawUI {
 		
 	}
 	
-	public static void drawGray(SpriteBatch batch) {
+	public static void tintWhite(SpriteBatch batch) {
 		// draw gray fade over everything
 //		Color c = batch.getColor();
 //		batch.setColor(GRAY);
 		batch.draw(Assets.whiteAlpha, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
 //		batch.setColor(c);
+	}
+	
+	public static void tintGray(SpriteBatch batch) {
+		batch.draw(Assets.grayAlpha, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+	}
+	public static void tintGrayLight(SpriteBatch batch) {
+		batch.draw(Assets.grayAlphaLight, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+	}
+	
+	public static void tintGrayAlpha(SpriteBatch batch, float alpha) {
+		Color o = batch.getColor();
+		grayDraw.set(1, 1, 1, alpha);
+		batch.setColor(grayDraw);
+		batch.draw(Assets.gray, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+		batch.setColor(o);
+	}
+	public static void tintWhiteAlpha(SpriteBatch batch, float alpha) {
+		Color o = batch.getColor();
+		grayDraw.set(1, 1, 1, alpha);
+		batch.setColor(grayDraw);
+		batch.draw(Assets.white, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+		batch.setColor(o);
 	}
 //
 //	public static void drawCoins(SpriteBatch batch, Profile profile) {
@@ -364,13 +390,13 @@ public class DrawUI {
 			if (!adCampaignTable.isVisible()) {
 				adCampaignTable.setVisible(true);
 				Table labelTable = new Table();
-				labelTable.setBackground(new TextureRegionDrawable(Assets.yellow));
+				labelTable.setBackground(new TextureRegionDrawable(Assets.red));
 //				labelTable.debugAll();
 				//			labelTable.setBackground();
-				Label adCampaignLabel = new Label("AD CAMPAIGN", Assets.generateLabelStyleUIChina(16));
+				Label adCampaignLabel = new Label("AD CAMPAIGN: ", Assets.generateLabelStyleUIChinaWhite(16));
 				adCampaignLabel.setAlignment(Align.left);
 				labelTable.add(adCampaignLabel).left();
-				adCampaignTable.add(labelTable).left().width(KebabKing.getGlobalX(textWidth)).fillY().expandY();
+				adCampaignTable.add(labelTable).left().width(KebabKing.getGlobalX(textWidth)).height(KebabKing.getGlobalY(AD_BAR_HEIGHT));
 				adCampaignTable.add(bar).left().fillY().expandY();
 			}
 			// update length of bar
