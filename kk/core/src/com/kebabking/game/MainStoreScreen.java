@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kebabking.game.StoreScreen.TableType;
 
-public class MainStoreScreen extends ScreenTemplate {
+public class MainStoreScreen extends ActiveScreen {
 	static float UNITS_WIDTH = 12f;
 	static float UNITS_HEIGHT = 20f;
 	
@@ -40,15 +40,6 @@ public class MainStoreScreen extends ScreenTemplate {
 	static float MainIconWidth = 2.7f;
 	static float MainIconHeight = 2.7f;
 	
-	KebabKing master;
-
-	Background bg; 
-
-	Grill grill;
-	CustomerManager cm;
-
-	SpriteBatch batch;
-	
 	// This guy should have 6 or so additional screens it can go to?
 	// Or there should be one screen with the same layout, called StoreScreen.
 	// There is a table on that screen that just updates itself.
@@ -67,11 +58,7 @@ public class MainStoreScreen extends ScreenTemplate {
 	Table table;
 	
 	public MainStoreScreen(KebabKing master) {
-		this.master = master;
-		this.batch = master.batch;
-		this.bg = master.bg;
-		this.cm = master.cm;
-		this.grill = master.grill;
+		super(master);
 		
 		// initialize unit width and height, useful for making layouts
 		this.unitWidth = KebabKing.getWidth() / UNITS_WIDTH;
@@ -98,25 +85,9 @@ public class MainStoreScreen extends ScreenTemplate {
 
 	@Override
 	public void render(float delta) {
-//		storeScreen.switchTo(TableType.food);
-//		master.setScreen(storeScreen);
-//		return;
-		
-		update(delta);
-
-		batch.begin();
-		bg.draw(batch);
-		cm.draw(batch);
-		//		grill.draw(batch);
-		//		DrawUI.drawMoney(batch, getProfile());
-		//		DrawUI.drawCoins(batch, getProfile());
-		batch.end();
+		super.render(delta);
 
 		drawStore(batch);
-
-		batch.begin();
-		DrawUI.drawFullUI(delta, batch, master.profile);
-		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Keys.BACK)) {
 			clickBack();
@@ -127,13 +98,6 @@ public class MainStoreScreen extends ScreenTemplate {
 		uiStage.draw();
 	}
 
-	// actually run a game loop
-	public void update(float delta) {	
-				bg.act(delta);
-				cm.act(delta);
-		uiStage.act(delta);
-	}
-	
 	public void setupMainTable() {
 		mainTable = new Table();
 		

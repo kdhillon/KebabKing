@@ -47,7 +47,7 @@ public class CoinsTable extends Table {
 		return entry;
 	}
 	
-	private void buy(PurchaseableOnline op) {
-		master.makePurchase(op);
-	}
+//	private void buy(PurchaseableOnline op) {
+//		master.makePurchase(op);
+//	}
 }

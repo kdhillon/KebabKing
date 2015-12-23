@@ -6,6 +6,8 @@ import java.util.Arrays;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.kebabking.game.Purchases.Inventory;
 import com.kebabking.game.Purchases.LocationType;
+import com.kebabking.game.Purchases.PurchaseType;
+import com.kebabking.game.Purchases.Purchaseable;
 
 
 public class Profile {
@@ -207,12 +209,18 @@ public class Profile {
 		if (this.exp > this.getNextExp()) this.levelUp();
 	}
 	
-	public void levelUp() {
+	private void levelUp() {
 		while (this.exp > this.getNextExp()) {
 			this.level++;
 			this.exp -= this.getNextExp();
+			
+			System.out.println("You are now at level " + level + "!");
+			for (Purchaseable p : PurchaseType.allPurchaseables) {
+				if (p.unlockAtLevel() == this.level) {
+					DrawUI.addToUnlockDisplayQueue(p);
+				}
+			}
 		}
-		System.out.println("You are now at level " + level + "!");
 	}
 	
 	public int getNextExp() {

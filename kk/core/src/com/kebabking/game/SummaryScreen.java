@@ -1,7 +1,6 @@
 package com.kebabking.game;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -11,10 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-public class SummaryScreen extends ScreenTemplate {
+public class SummaryScreen extends ActiveScreen {
 	final static Color RED = new Color(193/256.0f, 39/256.0f, 45/256.0f, 1f);
 	
 	// Time to display "Day Complete"
@@ -25,18 +23,14 @@ public class SummaryScreen extends ScreenTemplate {
 	
 	static final float ALPHA_GOAL = 0.75f;
 	
+	static final int PROFIT_TO_EXP_RATE = 2;
+	
 	Stage uiStage;
 
-	KitchenScreen kitchen;
-
-	Background bg; 
-	Grill grill;
-	CustomerManager cm;
-
-	SpriteBatch batch;
-
 	Table bigTable;
-
+	
+	KitchenScreen kitchen;
+	
 	float timeElapsed;
 //	Label dayComplete;
 	Table dayComplete;
@@ -56,26 +50,16 @@ public class SummaryScreen extends ScreenTemplate {
 	
 	boolean dayCompleteDone = false; // used to switch to info from "day complete"
 
-	float alpha = 1;
+	float alpha = 0;
 	
-	public SummaryScreen(KitchenScreen kitchen) {
-		this.batch = kitchen.batch;
-		this.bg = kitchen.bg;
-		this.cm = kitchen.cm;
+	public SummaryScreen(KebabKing master, KitchenScreen kitchen) {
+		super(master);
 		this.kitchen = kitchen;
-		this.grill = kitchen.grill;
+
 		grill.deactivate(); // deactivate grill
 		cm.deactivate();
 		bg.deactivate();
-		
-//		dayComplete = new Label("Day Complete", Assets.generateLabelStyleUIChinaWhite(50));
-//		if (kitchen.wasShutDown)
-//			dayComplete.setText("You got shut down! Obey the Health Code!");
-//		dayComplete.setPosition(0, KebabKing.getGlobalY(0.45f));
-//		dayComplete.setWidth(KebabKing.getWidth());
-//		dayComplete.setAlignment(Align.center);
-//		dayComplete.setWrap(true);
-		
+
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, batch);
 		
@@ -97,6 +81,7 @@ public class SummaryScreen extends ScreenTemplate {
 		
 		// TODO this is legendary but a bit problematic
 		this.rent = kitchen.master.profile.getLocation().getDailyCost();
+		
 		// TODO make sure to catch negative money case (pay to play)
 		this.meatExpenses = kitchen.moneySpentToday - rent;
 
@@ -112,6 +97,9 @@ public class SummaryScreen extends ScreenTemplate {
 
 		// save rating
 		this.rating = kitchen.calculateReputation();
+		
+		this.grantExpForProfit(100);
+		
 	}
 	
 	public Table getDayCompleteButton() {
@@ -352,45 +340,42 @@ public class SummaryScreen extends ScreenTemplate {
 	}
 	
 	public void transitionToAd() {
+		// for now deactivate TODO add in
 		System.out.println("Transitioning to ads");
+//		boolean completed = Manager.ads.showAd();
+//		if (!completed) {
+//			System.out.println("Ad not completed!");
+//		}
+//		else
+//			System.out.println("Ad completed!!! :DDD");
+	}
+	
+	public void grantExpForProfit(float profit) {
+		this.getProfile().giveExp((int) (profit * PROFIT_TO_EXP_RATE)); 
 	}
 
 	public void render(float delta) {
-		update(delta);
-
-		batch.begin();
-		bg.draw(batch);
-		cm.draw(batch);
-		grill.draw(batch);
-		
-		DrawUI.tintWhiteAlpha(batch, alpha);	
-		DrawUI.drawFullUI(delta, batch, getProfile());
-
-//		if (timeElapsed <= TIME_TO_WAIT) {
-//			dayComplete.draw(batch, 1);			
-//		}
+		super.renderWhiteBg(delta, alpha);
 		
 		if (timeElapsed > TIME_TO_WAIT && !dayCompleteDone) {
 			dayCompleteDone = true;
 			initializeTable();
 		}
-		batch.end();
 
-//		if (timeElapsed > TIME_TO_WAIT)
 		uiStage.draw();
 	}
 
 
+	@Override
 	// actually run a game loop
-	public void update(float delta) {	
+	public void update(float delta, boolean ff) {
+		super.update(delta, ff);
 		this.timeElapsed += delta;
 		if (timeElapsed < TIME_TO_WAIT) {
 			alpha = (timeElapsed / TIME_TO_WAIT) * ALPHA_GOAL;
 		}
 		else alpha = ALPHA_GOAL;
 		uiStage.act();
-		bg.act(delta);
-		cm.act(delta);
 	}
 	
 	

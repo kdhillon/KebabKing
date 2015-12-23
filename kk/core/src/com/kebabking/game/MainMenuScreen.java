@@ -1,9 +1,6 @@
 package com.kebabking.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -13,31 +10,22 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kebabking.game.Managers.Manager;
 
-public class MainMenuScreen extends ScreenTemplate {
+public class MainMenuScreen extends ActiveScreen {
 	static final float INIT_BG_ALPHA = 0.45f;
 	static final float FADEOUT_TIME = 1f; // it should take this many seconds to fade out towards countdown screen
 	static final float BUTTON_WIDTH = 0.32f;
 	static final float BUTTON_GAP = 0.1f;
-
-	KebabKing master;
-	Background bg; 
-	Grill grill;
-	CustomerManager cm;
-
+	
 	Stage uiStage;
 	Table table;
 
 	Table startDay;
 //	Image mute;
 //	Image connectToFB;
-
-	SpriteBatch batch;
 	
 	boolean stageSet;
 	
@@ -47,12 +35,7 @@ public class MainMenuScreen extends ScreenTemplate {
 	float bgTint = INIT_BG_ALPHA;
 
 	public MainMenuScreen(KebabKing master) {	
-		this.master = master;
-		this.bg = master.bg;
-		this.grill = master.grill;
-		this.cm = master.cm;
-
-		this.batch = master.batch;
+		super(master);
 
 		fadeout = false;
 		fadeoutTimer = 0;
@@ -217,71 +200,20 @@ public class MainMenuScreen extends ScreenTemplate {
 			stageSet = true;
 		}
 
-		update(delta);
-
-		batch.begin();
-		bg.draw(batch);
+		super.renderGrayBg(delta, bgTint);
 		
-//		Color prev = batch.getColor();
-		batch.setColor(currentBatchColor);
-		cm.draw(batch);
-		batch.setColor(Color.WHITE);
-	
-		grill.draw(batch);
-		
-		DrawUI.tintGrayAlpha(batch, bgTint);		
-		DrawUI.drawFullUI(delta, batch, getProfile());
-		
-		// fix fading
-//		DrawUI.drawStars(batch, getProfile());
-//		DrawUI.drawMoney(batch, getProfile());
-		
-		batch.end();
-		
-//		table.setColor(currentBatchColor);
-//		this.uiStage.getBatch().setColor(currentBatchColor);	
 		uiStage.draw();
-//		table.setColor(prev);
-//		this.uiStage.getBatch().setColor(prev);		
-//		this.uiStage.getBatch().setColor(currentBatchColor);
-//		table.setColor(currentBatchColor);
 	}
 
+	@Override
 	// actually run a game loop
-	public void update(float delta) {
+	public void update(float delta, boolean ff) {
+		super.update(delta, ff);
 		uiStage.act(delta);
-
-		// just for testing
-		boolean fastForward = false;
-		if (Gdx.input.isKeyPressed(Keys.F))
-			fastForward = true;
 
 		grill.mousedOver = -1;
 //		grill.mousedOverTrash = false;
 		cm.mousedOver = null;
-
-		if (fastForward) {
-			bg.act(delta);
-			cm.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-		}
-		else {
-			bg.act(delta);
-			cm.act(delta);
-		}
 		
 		if (this.fadeout) this.fadeout(delta);
 
@@ -400,7 +332,7 @@ public class MainMenuScreen extends ScreenTemplate {
 		Manager.fb.inviteFriends();
 	}
 	
-	private Profile getProfile() {
-		return master.profile;
-	}
+//	private Profile getProfile() {
+//		return master.profile;
+//	}
 }

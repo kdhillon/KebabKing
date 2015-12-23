@@ -118,7 +118,7 @@ public class KebabKing extends Game {
 
 		bg.initialize(); // have to do  this after setScreen, so height and width work
 		
-		DrawUI.initializeUIBar(this, batch);
+		DrawUI.initialize(this, batch);
 		
 		long totalLoadTime = System.currentTimeMillis() - startTime;
 		Manager.analytics.sendUserTiming("Splash Load", totalLoadTime);
@@ -239,7 +239,7 @@ public class KebabKing extends Game {
 		kitchen.dispose();
 		pause.dispose();
 		
-		summary = new SummaryScreen(kitchen);
+		summary = new SummaryScreen(this, kitchen);
 //		summary = new SummaryScreen(kitchen);
 		if (profile.tutorialNeeded) profile.tutorialNeeded = false;
 		kitchen = null; // hopefully save some memory here
@@ -307,21 +307,6 @@ public class KebabKing extends Game {
 		Manager.analytics.sendEventHit("OnlinePurchase", "Coins", productID);
 
 		this.profile.coins += purchased.coins;
-	}
-
-	// go to pause screen
-	public void pause() {
-
-	}
-
-	// switch to store screen
-	public void store() {
-
-	}
-
-	// switch to main menu screen
-	public void menu() {
-
 	}
 	
 	public static void setWidth(int toSet) {

@@ -1,6 +1,5 @@
 package com.kebabking.game;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -13,27 +12,15 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /* new pause screen created for every kitchen screen */
-public class PauseScreen extends ScreenTemplate  {
+public class PauseScreen extends ActiveScreen  {
 	static String defaultDesc = "People are getting sick from your nasty ass meat! Luckily, you've got more options. Want to upgrade?";
-	
-	KebabKing master;
 	
 	Stage uiStage;
 
-	SpriteBatch batch;
-	Grill grill;
-	CustomerManager cm;
-	Background bg;
-	
 	Table bigTable;
 	
 	public PauseScreen(KebabKing master) {
-		this.master = master;
-
-		this.batch = master.batch;
-		this.bg = master.bg;
-		this.cm = master.cm;
-		this.grill = master.grill;
+		super(master);
 				
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, batch);	
@@ -133,19 +120,14 @@ public class PauseScreen extends ScreenTemplate  {
 		
 	@Override
 	public void render(float delta) {
-		uiStage.act(delta);
-
-		batch.begin();
-		bg.draw(batch);
-		cm.draw(batch);
-		grill.draw(batch);
-		
-		DrawUI.tintGray(batch);
-		DrawUI.drawFullUI(delta, batch, master.profile);
-		
-		batch.end();
+		super.renderGrayBg(delta);
 		
 		uiStage.draw();
+	}
+	
+	@Override
+	public void update(float delta, boolean ff) {
+		// do nothing because this is overridden
 	}
 
 	public void unpause() {

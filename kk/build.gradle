@@ -2,7 +2,9 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
         // For analytics (1.5.0-beta3 is the version currently on jcenter())
@@ -30,6 +32,11 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+
+        // Supersonic and other Ad Networks
+        maven { url "https://dl.bintray.com/supersonic/android-sdk" }
+        maven { url "https://dl.bintray.com/supersonic/android-adapters" }
+
     }
 }
 
@@ -59,8 +66,15 @@ project(":android") {
         // Keeping this at 8.3 is necessary for applying the plugin above
         // (may be deprecated, it seemed to work without the plugin)
         compile "com.google.android.gms:play-services-analytics:8.3.0"
+        compile "com.google.android.gms:play-services-ads:8.3.0"
+
+        // Kryo
         compile "com.esotericsoftware.kryo:kryo:2.24.0"
-        compile "com.supersonic:mediation:1.0.0"
+
+        // Ads
+        compile 'com.supersonic.sdk:mediationsdk:6.3.4@jar'
+        compile 'com.supersonic.adapters:adcolonyadapter:1.1.6@jar'
+
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"

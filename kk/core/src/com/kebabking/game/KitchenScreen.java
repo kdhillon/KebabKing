@@ -2,11 +2,9 @@ package com.kebabking.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class KitchenScreen extends ScreenTemplate {
+public class KitchenScreen extends ActiveScreen {
 	static final float COUNTDOWN_TIME = 10;
 	
 	static final int WIDTH  = 12; // approx. 3:4 ratio
@@ -18,8 +16,8 @@ public class KitchenScreen extends ScreenTemplate {
 //	static final float PAUSE_WIDTH = 2.1f; // this times unit width
 //	static final float PAUSE_HEIGHT = 1.5f;
 
-//	static final float DAY_LENGTH = 120; // 2 minutes per day
-	static final float DAY_LENGTH = 10; 
+	static final float DAY_LENGTH = 120; // 2 minutes per day
+//	static final float DAY_LENGTH = 10; 
 	
 //	static float TIME_TO_WAIT = 2f;
 	
@@ -30,16 +28,10 @@ public class KitchenScreen extends ScreenTemplate {
 	static final float BEER_SELL_PRICE = 5;
 	static final float BEER_BUY_PRICE = 3;
 
-	KebabKing master;
-
 	float time;
-	SpriteBatch batch;
-	Grill grill;
-	CustomerManager cm;
-	Background bg;
 	boolean wasShutDown;
 
-	boolean paused = false;
+//	boolean paused = false;
 
 	float initialMoney; // set to initial money for calculating profits?
 	
@@ -59,134 +51,57 @@ public class KitchenScreen extends ScreenTemplate {
 	// A new Kitchen Screen is created every time the player starts a new day.
 	// handles user input and the main render / update loop
 	public KitchenScreen(KebabKing master) {
+		super(master);
 		roundStartTime = System.currentTimeMillis();
 		
-		this.master = master;
-
-		this.batch = master.batch;
-		this.bg = master.bg;
 		this.bg.reset();
-		this.cm = master.cm;
-
+		this.grill.reset(this);
+		this.grill.tutorialMode = false;
+		
 		this.time = DAY_LENGTH;
 
-//		this.currentMoney = master.profile.cash;
-
-		grill = master.grill;
-		grill.reset(this);
-		grill.tutorialMode = false;
-		
 		tp = new TrashPile(this);
-
-		// clear cm for each day
-		
-		//		bg.activate();
 
 		setInputProcessor();
 
 		// required to have a smooth thing
 		this.render(0);
-		//		paused = true;
 	}
 
 	@Override
 	public void render(float delta) {
-
-		// shouldn't even need this boolean TODO delete
-		if (!paused) {
-			update(delta);
-		}
-
+		super.render(delta);
+		
 		batch.begin();
-		bg.draw(batch);
-		cm.draw(batch);
-		grill.draw(batch);
-		
-		if (time < COUNTDOWN_TIME) {
+		if (time < COUNTDOWN_TIME)
 			DrawUI.countdownTime(batch, time);
-		}
-		
-//		DrawUI.drawMoney(batch, currentMoney);
-////		DrawUI.drawStars(batch, profile);
-//		DrawUI.drawTime(batch, time);
-		DrawUI.drawFullUI(delta, batch, master.profile);
-//		drawPause();
 		batch.end();
 	}
 
+	@Override
 	// actually run a game loop
-	public void update(float delta) {
+	public void update(float delta, boolean ff) {		
+		super.update(delta, ff);
 		// just for testing
-		boolean fastForward = false;
-		if (Gdx.input.isKeyPressed(Keys.F))
-			fastForward = true;
 
 		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 			grill.holdInput(Gdx.input.getX(), Gdx.input.getY());
-//			this.checkPause(Gdx.input.getX(), Gdx.input.getY());
 		}
 		else {
 			grill.mousedOver = -1;
-//			grill.mousedOverTrash = false;
 			cm.mousedOver = null;
 		}
 
-		if (fastForward) {
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
-			bg.act(delta);
-			cm.act(delta);
-			grill.act(delta);
+		if (ff) {
 			this.time -= 8*delta;
 		}
 		else {
-			bg.act(delta);
-			cm.act(delta);
-
-			grill.act(delta);
-
 			// countdown
 			this.time -= delta;
 		}
 		if (this.time < 0) finishDay();
 	}
 	
-//	public void drawPause() {
-//		batch.draw(Assets.uiSkin.getRegion("icon_pause"), PAUSE_X * ChuanrC.width, PAUSE_Y * ChuanrC.height, PAUSE_WIDTH * UNIT_WIDTH, PAUSE_HEIGHT * UNIT_HEIGHT);
-//	}
-	
-//	public void checkPause(float x, float y) {
-//		y = ChuanrC.height - y;
-//		if (x > PAUSE_X * ChuanrC.width && x < PAUSE_X * ChuanrC.width + PAUSE_WIDTH * UNIT_WIDTH &&
-//				y > PAUSE_Y * ChuanrC.height && y < PAUSE_Y * ChuanrC.height + PAUSE_WIDTH * UNIT_HEIGHT) {
-//			master.kitchenPause();
-//		}
-//	}
-	
-//	/** this method happens every frame that ks is paused */
-//	public void pausedUpdate(float delta) {
-//		
-//	}
-
 	// converts 
 	public static int convertWidth(float width) {
 		return (int) (width * UNIT_WIDTH - 2*BUFFER);

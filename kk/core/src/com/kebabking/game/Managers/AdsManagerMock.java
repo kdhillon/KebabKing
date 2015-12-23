@@ -1,10 +1,11 @@
 package com.kebabking.game.Managers;
 
 public class AdsManagerMock implements AdsManager {
-	// TODO return info about ad completion.
+	/** return true if ad was completed, false otherwise */
 	@Override
-	public void showAd() {
+	public boolean showAd() {
 		System.out.println("showAd() mock");
+		return true;
 	}
 
 	// Stuff to do on pause/resume

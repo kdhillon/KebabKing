@@ -1,6 +1,7 @@
 package com.kebabking.game;
 
 import com.badlogic.gdx.Screen;
+import com.kebabking.game.Managers.Manager;
 
 public class ScreenTemplate implements Screen {
 
@@ -37,12 +38,14 @@ public class ScreenTemplate implements Screen {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
+		Manager.onPause();
 		System.out.println("pause(): " + this.getClass().toString());
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
+		Manager.onResume();
 		System.out.println("resume(): " + this.getClass().toString());
 	}
 

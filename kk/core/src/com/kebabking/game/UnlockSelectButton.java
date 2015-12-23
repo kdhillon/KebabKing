@@ -1,7 +1,6 @@
 package com.kebabking.game;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kebabking.game.Purchases.Inventory;
 import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.Purchaseable;

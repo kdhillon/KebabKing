@@ -9,14 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-public class CountdownScreen extends ScreenTemplate  {
+public class CountdownScreen extends ActiveScreen  {
 	static int COUNTDOWN_TIME = 0;
 	static float GOAL_TIME = 0f;
-	
-	KebabKing master;
-	Background bg; 
-	Grill grill;
-	CustomerManager cm;
 	
 	DailyGoal goal;
 
@@ -39,10 +34,7 @@ public class CountdownScreen extends ScreenTemplate  {
 	
 	// first displays daily goal for a few seconds, then counts down to start round
 	public CountdownScreen(KebabKing master) {	
-		this.master = master;
-		this.bg = master.bg;
-		this.grill = master.grill;
-		this.cm = master.cm;
+		super(master);
 
 		this.batch = master.batch;
 
@@ -87,29 +79,18 @@ public class CountdownScreen extends ScreenTemplate  {
 	}
 
 	@Override
-	public void render(float delta) {
-		update(delta);
-		
-		batch.begin();
-		bg.draw(batch);
-		cm.draw(batch);
-		grill.draw(batch);
-
-//		DrawUI.drawStars(batch, getProfile());
-//		DrawUI.drawMoney(batch, getProfile());
-		DrawUI.drawFullUI(delta, batch, master.profile);
-		batch.end();
-		
+	public void render(float delta) {		
+		super.render(delta);
 		uiStage.draw();
 	}
 
+	@Override
 	// actually run a game loop
-	public void update(float delta) {
+	public void update(float delta, boolean ff) {
 		uiStage.act(delta);
 
 		if (countingDown) {
-			bg.act(delta);
-			cm.act(delta);
+			super.update(delta, ff);
 			
 			color.set(1, 1, 1, countdown - (int) countdown);
 			

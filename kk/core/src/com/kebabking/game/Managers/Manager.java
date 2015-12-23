@@ -7,14 +7,14 @@ public class Manager {
     public static IABManager iab;
     public static FileManager file;
     public static AnalyticsManager analytics;
-//    public static AdsManager ads;
+    public static AdsManager ads;
     public static FacebookManager fb;
 
     public static void initDesktop() {
     	iab = new IABManagerMock();
     	file = new FileManagerDesktop();
     	analytics = new AnalyticsManagerMock();
-//    	ads = new AdsManagerMock();
+    	ads = new AdsManagerMock();
     	fb = new FacebookManagerMock();
     }
     
@@ -24,8 +24,21 @@ public class Manager {
     	iab = new IABManagerMock();
     	file = fileIn;
     	analytics = analyticsIn;
-//    	ads = adsIn;
+    	ads = adsIn;
     	fb = new FacebookManagerMock();;
+    }
+
+    public static void onResume() {
+//        iab.onResume();
+//        file.onResume();
+//        analytics.onResume();
+        fb.onResume();
+        ads.onResume();
+    }
+
+    public static void onPause() {
+        fb.onPause();
+        ads.onPause();
     }
 }
 

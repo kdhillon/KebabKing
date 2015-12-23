@@ -26,7 +26,7 @@ import com.kebabking.game.Purchases.Inventory;
 import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.Purchaseable;
 
-public class StoreScreen extends ScreenTemplate {
+public class StoreScreen extends ActiveScreen {
 	static float UNITS_WIDTH = 12f;
 	static float UNITS_HEIGHT = 20f;
 	static float TitleHeight = 2.15f;
@@ -63,15 +63,6 @@ public class StoreScreen extends ScreenTemplate {
 	static float SPPadBottom =  0.25f;
 
 	MainStoreScreen mainStoreScreen;
-
-	KebabKing master;
-
-	Background bg; 
-
-	Grill grill;
-	CustomerManager cm;
-
-	SpriteBatch batch;
 
 	Stage uiStage;
 	Table mainTable; // main table
@@ -131,11 +122,7 @@ public class StoreScreen extends ScreenTemplate {
 	// can only access storescreen from summary screen and main menu screen (direct transition after summary screen)
 	// uses scene2d for menus
 	public StoreScreen(KebabKing master, MainStoreScreen mainStoreScreen) {
-		this.master = master;
-		this.batch = master.batch;
-		this.bg = master.bg;
-		this.cm = master.cm;
-		this.grill = master.grill;
+		super(master);
 		this.mainStoreScreen = mainStoreScreen;
 
 		this.tableWidth = KebabKing.getWidth();
@@ -171,14 +158,14 @@ public class StoreScreen extends ScreenTemplate {
 
 		//		switchTo(TableType.)
 
-		master.profile.inventory.adCampaign.setTable(this, TableType.ads);
-		master.profile.inventory.meatQuality.setTable(this, TableType.food);
-		master.profile.inventory.drinkQuality.setTable(this, TableType.food);
-		master.profile.inventory.locationType.setTable(this, TableType.map);
-		master.profile.inventory.grillSpecs.getGrillSize().setTable(this, TableType.grill);
-		master.profile.inventory.grillSpecs.getType().setTable(this, TableType.grill);
-		master.profile.inventory.grillStand.setTable(this,  TableType.vanity);
-		master.profile.inventory.decorations.setTable(this,  TableType.vanity);
+//		master.profile.inventory.adCampaign.setTable(this, TableType.ads);
+//		master.profile.inventory.meatQuality.setTable(this, TableType.food);
+//		master.profile.inventory.drinkQuality.setTable(this, TableType.food);
+//		master.profile.inventory.locationType.setTable(this, TableType.map);
+//		master.profile.inventory.grillSpecs.getGrillSize().setTable(this, TableType.grill);
+//		master.profile.inventory.grillSpecs.getType().setTable(this, TableType.grill);
+//		master.profile.inventory.grillStand.setTable(this,  TableType.vanity);
+//		master.profile.inventory.decorations.setTable(this,  TableType.vanity);
 	}
 
 	public void initializeTables() {
@@ -224,21 +211,9 @@ public class StoreScreen extends ScreenTemplate {
 
 	@Override
 	public void render(float delta) {
-		update(delta);
-
-		batch.begin();
-		bg.draw(batch);
-		cm.draw(batch);
-		//		grill.draw(batch);
-		//		DrawUI.drawMoney(batch, getProfile());
-		//		DrawUI.drawCoins(batch, getProfile());
-		batch.end();
+		super.render(delta);
 
 		drawStore(batch);
-
-		batch.begin();
-		DrawUI.drawFullUI(delta, batch, master.profile);
-		batch.end();
 
 		if (Gdx.input.isKeyJustPressed(Keys.BACK)) {
 			clickBack();
@@ -247,13 +222,6 @@ public class StoreScreen extends ScreenTemplate {
 
 	public void drawStore(SpriteBatch batch) {
 		uiStage.draw();
-	}
-
-	// actually run a game loop
-	public void update(float delta) {	
-		bg.act(delta);
-		cm.act(delta);
-		uiStage.act(delta);
 	}
 
 	public Button newBackButton() {

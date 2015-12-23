@@ -5,6 +5,9 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.kebabking.game.KebabKing;
 import com.kebabking.game.Managers.Manager;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -16,14 +19,28 @@ public class AndroidLauncher extends AndroidApplication {
 		System.loadLibrary("gdx");
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
+		ConnectivityManager conMgr = (ConnectivityManager) this.getContext()
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		// CHECK NETWORK STATE
+		NetworkInfo i = conMgr.getActiveNetworkInfo();
+		if (i == null)
+			System.out.println("Internet Error: Could not be created!");
+		else if (!i.isConnected())
+			System.out.println("Internet Error: Is not connected!");
+		else if (!i.isAvailable())
+			System.out.println("Internet Error: Is not available!");
+		else {
+			System.out.println("Internet is available!");
+		}
+
 		// Initialize all android managers
 //		IABManagerAndroid iab = new IABManagerAndroid(this);
 		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
 		FileManagerAndroid file = new FileManagerAndroid(this);
-//		AdsManagerAndroid ads = new AdsManagerAndroid(this);
+		AdsManagerAndroid ads = new AdsManagerAndroid(this);
 //		FacebookManagerAndroid fb = new FacebookManagerAndroid(this);
 		
-		Manager.initAndroid(null, file, analytics, null, null);
+		Manager.initAndroid(null, file, analytics, ads, null);
 		
 		game = new KebabKing();
 

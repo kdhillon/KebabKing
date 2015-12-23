@@ -4,11 +4,13 @@ import java.util.HashSet;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.kebabking.game.Assets;
-import com.kebabking.game.StoreScreen;
 
 
 // Allows other purchase types to extend this for simplicity
 public class PurchaseType {
+	
+	// stores rounds at which purchaseables unlock
+	public static HashSet<Purchaseable> allPurchaseables = new HashSet<Purchaseable>();
 	
 	// might cause kryo errors
 	public transient Inventory inventory;
@@ -25,8 +27,8 @@ public class PurchaseType {
 	protected HashSet<Purchaseable> selected;
 	
 	// Only used for updating store screen on unlock
-	private transient StoreScreen storeScreen;
-	private transient StoreScreen.TableType storeTable;
+//	private transient StoreScreen storeScreen;
+//	private transient StoreScreen.TableType storeTable;
 	
 	// for kryo
 	public PurchaseType() {}
@@ -41,6 +43,9 @@ public class PurchaseType {
 		if (textureRegionName != null)
 			this.icon = Assets.getTextureRegion(textureRegionName);
 		setValues(values);
+		
+		for (Purchaseable p : values)
+			allPurchaseables.add(p);
 	}
 	
 	public void allowMultipleSelect() {
@@ -150,8 +155,8 @@ public class PurchaseType {
 		}
 	}
 	
-	public void setTable(StoreScreen screen, StoreScreen.TableType table) {
-		this.storeScreen = screen;
-		this.storeTable = table;
-	}
+//	public void setTable(StoreScreen screen, StoreScreen.TableType table) {
+//		this.storeScreen = screen;
+//		this.storeTable = table;
+//	}
 }

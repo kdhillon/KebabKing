@@ -236,11 +236,11 @@ public class TutorialScreen extends KitchenScreen {
 
 	@Override
 	// actually run a game loop
-	public void update(float delta) {	
+	public void update(float delta, boolean ff) {	
 		// force pause if you want
 
 		if (!tutPause) {
-			super.update(delta);
+			super.update(delta, ff);
 		}
 	}
 	

@@ -1,5 +1,7 @@
 package com.kebabking.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -13,9 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.kebabking.game.Purchases.Purchaseable;
 
 // make it draw a little bar at the top!
 
@@ -50,6 +54,8 @@ public class DrawUI {
 	
 	static Stage uiStage;
 	static KebabKing master;
+	
+	static Table bigTable;
 	static Table uiTable;
 	static Button pauseButton;
 	static Button muteButton;
@@ -66,12 +72,16 @@ public class DrawUI {
 	
 	static Label time;
 	
-	static Color color;
+	static Color countdownColor;
 	
 	static Table adCampaignTable;
 	static Table bar;
+	
+	static Table notificationTable;
 
 	static Color grayDraw;
+	
+	static ArrayList<Purchaseable> unlockDisplayQueue = new ArrayList<Purchaseable>();
 	
 	public static void setInput(InputProcessor ip) {
 		InputMultiplexer im = new InputMultiplexer();
@@ -80,7 +90,7 @@ public class DrawUI {
 		Gdx.input.setInputProcessor(im);
 	}
 	
-	public static void initializeUIBar(KebabKing master_in, SpriteBatch batch) {
+	public static void initialize(KebabKing master_in, SpriteBatch batch) {
 		master = master_in;
 		
 		grayDraw = new Color(0, 0, 0, 0);
@@ -91,6 +101,9 @@ public class DrawUI {
 		barHeight = KebabKing.getGlobalY(UI_BAR_HEIGHT);
 		adBarHeight += KebabKing.getGlobalY(AD_BAR_HEIGHT);
 		
+		bigTable = new Table();
+		bigTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
+		
 		uiTable = new Table();
 //		uiTable.debugAll();
 		
@@ -100,7 +113,9 @@ public class DrawUI {
 		
 		uiTable.padTop(KebabKing.getGlobalY(0.01f)).padLeft(KebabKing.getGlobalY(0.005f)).padRight(KebabKing.getGlobalY(0.005f));
 		
-		uiStage.addActor(uiTable);
+		bigTable.add(uiTable).top().height(barHeight + 5 + adBarHeight);
+		bigTable.debugAll();
+		uiStage.addActor(bigTable);
 			
 		// screen is divided into 9 regions follows:
 		
@@ -205,7 +220,18 @@ public class DrawUI {
 		time.setWidth(KebabKing.getWidth());
 		time.setAlignment(Align.center);
 		
-		color = new Color(1, 1, 1, 1);
+		countdownColor = new Color(1, 1, 1, 1);
+		
+		notificationTable = new Table();
+		
+		float notificationWidth = KebabKing.getGlobalX(0.7f);
+		float notificationHeight = KebabKing.getGlobalY(0.6f);
+		
+		bigTable.row();
+		bigTable.add(notificationTable).width(notificationWidth).height(notificationHeight).expandY().center();;
+		
+		prepareNotificationTable();
+		clearNotificationTable();
 	}
 
 	public static void drawFullUI(float delta, SpriteBatch batch, Profile profile) {
@@ -291,6 +317,7 @@ public class DrawUI {
 		batch.draw(Assets.gray, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
 		batch.setColor(o);
 	}
+	
 	public static void tintWhiteAlpha(SpriteBatch batch, float alpha) {
 		Color o = batch.getColor();
 		grayDraw.set(1, 1, 1, alpha);
@@ -322,9 +349,9 @@ public class DrawUI {
 	public static void countdownTime(SpriteBatch batch, float inputTime) {
 		time.setText("" + (int) (inputTime + 1));
 		
-		color.set(1,  1,  1, inputTime - (int) inputTime);
+		countdownColor.set(1,  1,  1, inputTime - (int) inputTime);
 	
-		time.setColor(color);
+		time.setColor(countdownColor);
 		time.draw(batch, 1);	
 	}
 	
@@ -382,7 +409,7 @@ public class DrawUI {
 			currentStarCount = starCount;
 		}
 	}
-	
+		
 	public static void updateAdCampaignBar() {
 		// draw a yellow
 		if (master.profile.inventory.campaignPercent() > 0) {
@@ -408,5 +435,27 @@ public class DrawUI {
 			// visibility is used as a boolean flag
 			adCampaignTable.setVisible(false);
 		}
+	}
+	
+	public static void prepareNotificationTable() {
+		notificationTable.setBackground(new TextureRegionDrawable(Assets.white));
+	}
+	
+	public static void clearNotificationTable() {
+		Drawable d = null;
+		notificationTable.setBackground(d);
+		notificationTable.clear();
+	}
+	
+	public static void addToUnlockDisplayQueue(Purchaseable p) {
+		unlockDisplayQueue.add(p);
+	}
+	
+	public static void drawUnlockWindows() {
+		
+	}
+	
+	public static void launchNextUnlockWindow() {
+		
 	}
 }
