@@ -1,7 +1,8 @@
+
 package com.kebabking.game;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -37,11 +38,21 @@ public class Assets {
 	final static int GREEN_9PATCH_OFFSET_Y_2 = GREEN_9PATCH_OFFSET_X + 4;
 	
 	final static Color RED = new Color(211/256.0f, 90/256.0f, 68/256.0f, 1f);
-	
-	final static String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#$%^&*()/1234567890:;-'\">+=_[]{}<";
-	
+
+	// this needs to be minimized for each font
+	// using a smaller character set really reduces memory usage.
+	// next step: optimize font usage. don't need to initialize them first and dispose anymore.
+	final static String lower = "abcdefghijklmnopqrstuvwxyz";
+	final static String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	final static String alpha = lower + upper;
+	final static String nums = "1234567890";
+	final static String allChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#$%^&*()/1234567890:;-'\">+=_[]{}<";
+//	final static String chars = "a";
+
 	public static AssetManager manager; // must be disposed
-//	
+//
+	public static BitmapFont arial;
+
 //	public static BitmapFont topBarFont; // must be disposed
 
 	static Texture peppercornLogo; // must be disposed
@@ -136,7 +147,10 @@ public class Assets {
 	static TextureRegion whiteAlpha;
 	static TextureRegion grayAlpha;
 	static TextureRegion grayAlphaLight;
+	
+	static TextureRegion notificationBG;
 
+	// I think keeping these around is killing memory consumption. see heapdump.
 	static FreeTypeFontParameter p;
 	static FreeTypeFontGenerator worksans;
 	static FreeTypeFontGenerator worksansLight;
@@ -152,13 +166,13 @@ public class Assets {
 	static LabelStyle descriptionLS;
 	static LabelStyle costLS;
 	static LabelStyle mainLS;
-	static TextButtonStyle backButtonStyle;
-	static TextButtonStyle mainButtonStyle;
-	static TextButtonStyle startButtonStyle;
-	static TextButtonStyle marketButtonStyle;
-	static TextButtonStyle purchaseTypeButtonStyle;
-	static TextButtonStyle facebookButtonStyle;
-	static TextButtonStyle unlockButtonStyle;
+//	static TextButtonStyle backButtonStyle;
+//	static TextButtonStyle mainButtonStyle;
+//	static TextButtonStyle startButtonStyle;
+//	static TextButtonStyle marketButtonStyle;
+	static ButtonStyle purchaseTypeButtonStyle;
+//	static TextButtonStyle facebookButtonStyle;
+//	static TextButtonStyle unlockButtonStyle;
 	
 	static TextureRegion marketShelf;
 	static TextureRegion marketTitle;
@@ -176,7 +190,7 @@ public class Assets {
 	static NinePatchDrawable roundUp;
 	
 	// currently allocated fonts, dispose after every screen
-	static ArrayList<BitmapFont> fonts;
+//	static ArrayList<BitmapFont> fonts;
 	
 	static Music music;
 	
@@ -187,14 +201,18 @@ public class Assets {
 	static NinePatch gray9PatchSmallFilled;
 	static NinePatch red9PatchSmall;
 	
+	// There should only be 4 labelstyles in here
 	static HashMap<String, LabelStyle> styles;
+	static HashMap<String, HashSet<Character>> charSets;
+	
+	// for testing
+	static int totalCharsForFonts = 0;
 
 	// This loads peppercorn screen and preps stuff for second loader
 	public static void preLoad() {
 		
 //TODO		
 	}
-	
 	
 	// static class containing relevant images, etc
 	// should prepare animations and set regions to the appropriate size
@@ -204,20 +222,82 @@ public class Assets {
 		// enqueue everything for loading, instead of just straight loading it. does it asynchronously.
 		manager.load("atlas1.atlas", TextureAtlas.class);
 
+		arial = new BitmapFont();
+
 		//make sure to load logo first!!
 		kebabMain = new Texture(Gdx.files.internal("textures/screens/Main-02.png"));
 		peppercornLogo = new Texture(Gdx.files.internal("logo.png"));
 
 		p = new FreeTypeFontParameter();
-		p.characters = chars;
-		
 		worksans = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Medium.otf"));
 		worksansHeavy = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
 		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
 		china = new FreeTypeFontGenerator(Gdx.files.internal("data/CHINA.TTF"));
 
 		styles = new HashMap<String, LabelStyle>();
-		fonts = new ArrayList<BitmapFont>();
+		charSets = new HashMap<String, HashSet<Character>>();
+//		fonts = new ArrayList<BitmapFont>();
+
+		registerFonts();
+	}
+	
+	public static void registerFonts() {
+//		int[] wsDarkFonts = {14, DrawUI.CASH_COINS_SIZE, StoreScreen.PURCHASEABLE_TITLE_SIZE, StoreScreen.SELECTED_PURCHASEABLE_TITLE_SIZE};
+//		for (int s : wsDarkFonts) {
+////			System.out.println(s);
+//			generateLabelStyleUI(s);
+//		}
+//
+//		int[] wsGrayFonts = {12, 14};
+//		for (int s : wsGrayFonts) {
+//			generateLabelStyleUIGray(s);
+//		}
+//
+//		int[] wsRed = {12, 24, 30};
+//		for (int s : wsRed) {
+//			generateLabelStyleUIRed(s);
+//		}
+		
+//		int[] wsWhite = {20, 32, 12, 24, 30, 14, DrawUI.CASH_COINS_SIZE, StoreScreen.PURCHASEABLE_TITLE_SIZE, StoreScreen.SELECTED_PURCHASEABLE_TITLE_SIZE};
+//		for (int s : wsWhite) {
+//			generateLabelStyleUIWhite(s);
+//		}
+
+//		int[] wsLightWhiteFonts = {32, 24, 18, 16, 22, 14};
+//		for (int s : wsLightWhiteFonts) {
+//			generateLabelStyleUILight(s);
+//		}
+
+//		int[] wsHeavyDarkFonts = {26, 14};
+//		for (int s : wsHeavyDarkFonts) {
+//			generateLabelStyleUIHeavy(s);
+//		}
+
+//		int[] wsHeavyWhiteFonts = {26, 14, 22, 16};
+//		for (int s : wsHeavyWhiteFonts) {
+//			generateLabelStyleUIHeavyWhite(s);
+//		}
+
+//		int[] wsHeavyGreen = {22, 16};
+//		for (int s : wsHeavyGreen) {
+//			generateLabelStyleUIHeavyGreen(s);
+//		}
+		
+		// for purchasetype buttons
+//		int[] chinaDark = { 30, 22, 18, 15};
+//		for (int s : chinaDark) {
+//			generateLabelStyleUIChina(s);
+//		}
+//																			// for purchasetype buttons
+//		int[] chinaWhite = {30, 100, 16, 60, 55, 44, 70, 50, 26, 28, 48,  			30, 22, 18, 15};
+//		for (int s : chinaWhite) {
+//			generateLabelStyleUIChinaWhite(s);
+//		}
+		
+//		worksans.dispose();
+//		worksansHeavy.dispose();
+//		worksansLight.dispose();
+//		china.dispose();
 	}
 
 	public static void createUI() {
@@ -334,18 +414,19 @@ public class Assets {
 //		return generateLabelStyle(size, false);
 //	}
 
-	public static LabelStyle generateLabelStyleUI(int size) {
-		return generateLabelStyle(worksans, MainStoreScreen.FONT_COLOR, size);
-	}
+	// force all to be white
+//	public static LabelStyle generateLabelStyleUI(int size) {
+//		return generateLabelStyle(worksans, MainStoreScreen.FONT_COLOR, size);
+//	}
 	
-	public static LabelStyle generateLabelStyleUIGray(int size) {
-		return generateLabelStyle(worksans, DrawUI.REPUTATION_FONT_COLOR, size);		
-	}
-	public static LabelStyle generateLabelStyleUIRed(int size) {
-		return generateLabelStyle(worksans, SummaryScreen.RED, size);		
-	}
-	public static LabelStyle generateLabelStyleUIWhite(int size) {
-		return generateLabelStyle(worksans, Color.WHITE, size);		
+//	public static LabelStyle generateLabelStyleUIGray(int size) {
+//		return generateLabelStyle(worksans, DrawUI.REPUTATION_FONT_COLOR, size);		
+//	}
+//	public static LabelStyle generateLabelStyleUIRed(int size) {
+//		return generateLabelStyle(worksans, SummaryScreen.RED, size);		
+//	}
+	public static LabelStyle generateLabelStyleUIWhite(int size, String chars) {
+		return generateLabelStyle(worksans, size, chars);		
 	}
 //	public static LabelStyle generateLabelStyleUIDark(int size, boolean permanent) {
 //		p.size = size;
@@ -356,45 +437,124 @@ public class Assets {
 //			fonts.add(ls.font);
 //		return ls;
 //	}
-	
-	public static LabelStyle generateLabelStyleUILight(int size) {
-		return generateLabelStyle(worksansLight, MainStoreScreen.FONT_COLOR, size);
+
+	public static LabelStyle generateLabelStyleUILight(int size, String chars) {
+		return generateLabelStyle(worksansLight, size, chars);
+//		return generateLabelStyle(worksansLight, MainStoreScreen.FONT_COLOR, size);
 	}
 	
-	public static LabelStyle generateLabelStyleUIHeavy(int size) {
-		return generateLabelStyle(worksansHeavy, MainStoreScreen.FONT_COLOR, size);
+//	public static LabelStyle generateLabelStyleUIHeavy(int size) {
+//		return generateLabelStyle(worksansHeavy, MainStoreScreen.FONT_COLOR, size);
+//	}
+	
+	public static LabelStyle generateLabelStyleUIHeavyWhite(int size, String chars) {
+		return generateLabelStyle(worksansHeavy, size, chars);
 	}
 	
-	public static LabelStyle generateLabelStyleUIHeavyWhite(int size) {
-		return generateLabelStyle(worksansHeavy, Color.WHITE, size);
+//	public static LabelStyle generateLabelStyleUIHeavyGreen(int size) {
+//		return generateLabelStyle(worksansHeavy, MainStoreScreen.FONT_COLOR_GREEN, size);
+//	}
+//	public static LabelStyle generateLabelStyleUIChina(int size) {
+//		return generateLabelStyle(china, Color.BLACK, size);
+//	}	
+	public static LabelStyle generateLabelStyleUIChinaWhite(int size, String chars) {
+		return generateLabelStyle(china, size, chars);
 	}
 	
-	public static LabelStyle generateLabelStyleUIHeavyGreen(int size) {
-		return generateLabelStyle(worksansHeavy, MainStoreScreen.FONT_COLOR_GREEN, size);
-	}
-	public static LabelStyle generateLabelStyleUIChina(int size) {
-		return generateLabelStyle(china, Color.BLACK, size);
-	}	
-	public static LabelStyle generateLabelStyleUIChinaWhite(int size) {
-		return generateLabelStyle(china, Color.WHITE, size);
-	}
-	
-	public static LabelStyle generateLabelStyleUIChinaRed(int size) {
-		return generateLabelStyle(china, RED, size);
-	}	
-	
-	public static LabelStyle generateLabelStyle(FreeTypeFontGenerator gen, Color color, int size) {
-		String name = "" + gen.hashCode() + size + color.hashCode();
-		if (styles.containsKey(name)) return styles.get(name);
+//	public static LabelStyle generateLabelStyleUIChinaRed(int size) {
+//		return generateLabelStyle(china, RED, size);
+//	}	
+
+	public static void registerStyle(FreeTypeFontGenerator gen, int size, String chars) {
+		// lets see how big it is if you only do one bitmap font
+		String name = "" + gen.hashCode() + size;// + color.hashCode();
 		
 		p.size = getFontSize(size);
+		
+//		System.out.println(p.size);
+		
+		p.characters = chars;
 		LabelStyle ls = new LabelStyle();
 		ls.font = gen.generateFont(p);
-		ls.fontColor = color;
+		ls.fontColor = Color.WHITE;
+		
+		// if replacing
+//		ls.font = arial;
+//		ls.fontColor = color;
 
+//		if (!styles.containsKey(name)) {
 		styles.put(name, ls);
-		System.out.println("label styles: " + styles.size());
-		return ls;
+		
+		HashSet<Character> charset = charSets.get(name);
+		if (charset == null) {
+			charset = new HashSet<Character>();
+		}
+		
+		for (int i = 0; i < chars.length(); i++) {
+			charset.add(chars.charAt(i));
+		}
+		
+		charSets.put(name, charset);
+		
+//		System.out.println("total font chars: " + totalCharsForFonts);
+	}
+
+	/**Generate label style with given font family, size, and characters. if chars is null, use all chars by default.
+	 * 
+	 * @param gen
+	 * @param size
+	 * @param chars
+	 * @return
+	 */
+	public static LabelStyle generateLabelStyle(FreeTypeFontGenerator gen, int size, String chars) {
+//		chars = Assets.allChars; //TODO remove this test
+		// best before was 28 label styles and 2548 font chars after summary
+		
+		// lets see how big it is if you only do one bitmap font
+		String name = "" + gen.hashCode() + size;// + color.hashCode();
+		if (styles.containsKey(name)) {
+//			LabelStyle copy = new LabelStyle(styles.get(name));
+//			copy.fontColor = color;
+			
+			HashSet<Character> existingCharset = charSets.get(name);
+			if (existingCharset == null) {
+				throw new java.lang.AssertionError();
+			}
+			
+			HashSet<Character> newCharset = new HashSet<Character>();
+			for (int i = 0; i < chars.length(); i++) {
+				newCharset.add(chars.charAt(i));
+			}
+			
+			if (existingCharset.equals(newCharset)) {
+//				System.out.println("Found identical existing charset");
+				return styles.get(name);				
+			}
+			else {
+				String newChars = "";
+				newCharset.addAll(existingCharset);
+				for (char c : newCharset) 
+					newChars += c;
+				totalCharsForFonts -= existingCharset.size();
+				registerStyle(gen, size, newChars);
+				totalCharsForFonts += newCharset.size();
+//				System.out.println("Updating " + gen.toString() + " " + size + " for " + newChars);
+				return styles.get(name);
+			}
+		}
+		else {
+//			else throw new java.lang.AssertionError("You need to register " + gen.toString() + " " + color.toString() + " " + size);
+//			System.out.println("Registering " + gen.toString() + " " + size + " for " + chars);
+			if (chars == null) {
+				registerStyle(gen, size, allChars);
+				totalCharsForFonts += allChars.length();
+			}
+			else {
+				registerStyle(gen, size, chars);
+				totalCharsForFonts += chars.length();
+			}
+			return styles.get(name);
+		}
 	}
 	
 	// continue loading
@@ -424,6 +584,8 @@ public class Assets {
 		whiteAlpha = getTextureRegion("white_alpha");
 		grayAlpha = getTextureRegion("gray_alpha");
 		grayAlphaLight = getTextureRegion("gray_alpha_light");
+		
+		notificationBG = getTextureRegion("screens/Summary-03");
 
 		title = getTextureRegion("screens/Main-02");
 		//		start = getTexture("start");
@@ -515,7 +677,7 @@ public class Assets {
 		gray9PatchSmallFilled = new NinePatch(getTextureRegion("market/gray9patchSmallFilled"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 		red9PatchSmall = new NinePatch(getTextureRegion("market/red9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 	
-		createUI();
+//		createUI();
 
 		loadSound();
 	}
@@ -543,8 +705,8 @@ public class Assets {
 		return kt;
 	}
 	
-	public static TextureRegion getStickTexture() {
-		return getTextureRegion("kebabs/Kebab_Stick-28");
+	public static TextureRegion getStickTexture(Profile profile) {
+		return profile.inventory.stickType.getCurrentSelected().getIcon();
 	}
 	
 	public static TextureRegion getMeatTexture(Meat meat) {
@@ -585,40 +747,40 @@ public class Assets {
 		return uiSkin.getDrawable("knob_02");
 	}
 	
-	public static LabelStyle getStoreTitleLS() {
-		if (storeTitle != null) return storeTitle;
-		
-		LabelStyle titleStyle = new LabelStyle();
-		titleStyle.background = uiSkin.getDrawable("button_05");
-		titleStyle.font = Assets.generateUIFont(60, true);
-		storeTitle = titleStyle;
-		return titleStyle;
-	}
-	public static LabelStyle getMarketLS() {
+//	public static LabelStyle getStoreTitleLS() {
+//		if (storeTitle != null) return storeTitle;
+//		
 //		LabelStyle titleStyle = new LabelStyle();
-//		titleStyle.background = uiSkin.getDrawable("textbox_01");
-//		titleStyle.font = Assets.getUIFont(50);
+//		titleStyle.background = uiSkin.getDrawable("button_05");
+//		titleStyle.font = Assets.generateUIFont(60, true);
+//		storeTitle = titleStyle;
 //		return titleStyle;
-		return getStoreTitleLS();
-	}
-	public static LabelStyle getPurchaseTypeTitleLS() {
-		if (purchaseTitle != null) return purchaseTitle;
-		LabelStyle titleStyle = new LabelStyle();
-		titleStyle.background = uiSkin.getDrawable("button_05");
-		titleStyle.font = Assets.generateUIFont(40, true);
-		purchaseTitle = titleStyle;
-		return titleStyle;
-	}
-	public static LabelStyle getPurchaseableTitleLS() {
-		if (purchaseableTitle != null) return purchaseableTitle;
-		
-		LabelStyle titleStyle = new LabelStyle();
-//		titleStyle.background = uiSkin.getDrawable("textbox_01");
-		titleStyle.font = Assets.generateUIFont(26, true);
-		purchaseableTitle = titleStyle;
-		return titleStyle;
-//		return ls32;
-	}
+//	}
+//	public static LabelStyle getMarketLS() {
+////		LabelStyle titleStyle = new LabelStyle();
+////		titleStyle.background = uiSkin.getDrawable("textbox_01");
+////		titleStyle.font = Assets.getUIFont(50);
+////		return titleStyle;
+//		return getStoreTitleLS();
+//	}
+//	public static LabelStyle getPurchaseTypeTitleLS() {
+//		if (purchaseTitle != null) return purchaseTitle;
+//		LabelStyle titleStyle = new LabelStyle();
+//		titleStyle.background = uiSkin.getDrawable("button_05");
+//		titleStyle.font = Assets.generateUIFont(40, true);
+//		purchaseTitle = titleStyle;
+//		return titleStyle;
+//	}
+//	public static LabelStyle getPurchaseableTitleLS() {
+//		if (purchaseableTitle != null) return purchaseableTitle;
+//		
+//		LabelStyle titleStyle = new LabelStyle();
+////		titleStyle.background = uiSkin.getDrawable("textbox_01");
+//		titleStyle.font = Assets.generateUIFont(26, true);
+//		purchaseableTitle = titleStyle;
+//		return titleStyle;
+////		return ls32;
+//	}
 //	public static LabelStyle getDescriptionLS() {
 //		if (descriptionLS != null) return descriptionLS;
 //		
@@ -635,44 +797,44 @@ public class Assets {
 //		mainLS = generateLabelStyleGang(40);
 //		return mainLS;
 //	}
-	public static TextButtonStyle getMainButtonStyle() {
-		if (mainButtonStyle != null) return mainButtonStyle;
-		
-		TextButtonStyle tbs = new TextButtonStyle();
-		tbs.down = uiSkin.getDrawable("button_01");
-		tbs.up = uiSkin.getDrawable("button_03");
-		tbs.font = Assets.generateUIFont(48, true);
-//		tbs.font = Assets.china48o;
-		mainButtonStyle = tbs;
-		return tbs;
-	}
-	public static TextButtonStyle getBackButtonStyle(int fontSize) {
-//		if (backButtonStyle != null) return backButtonStyle;
+//	public static TextButtonStyle getMainButtonStyle() {
+//		if (mainButtonStyle != null) return mainButtonStyle;
 //		
 //		TextButtonStyle tbs = new TextButtonStyle();
 //		tbs.down = uiSkin.getDrawable("button_01");
-//		tbs.up = uiSkin.getDrawable("button_02");
-//		tbs.font = Assets.generateUIFont(32, true);
-////		tbs.font = Assets.china32;
-//		backButtonStyle = tbs;
+//		tbs.up = uiSkin.getDrawable("button_03");
+//		tbs.font = Assets.generateUIFont(48, true);
+////		tbs.font = Assets.china48o;
+//		mainButtonStyle = tbs;
 //		return tbs;
-		return getTextStyleFromRegion("market/back_button", fontSize);
-	}
+//	}
+//	public static TextButtonStyle getBackButtonStyle(int fontSize) {
+////		if (backButtonStyle != null) return backButtonStyle;
+////		
+////		TextButtonStyle tbs = new TextButtonStyle();
+////		tbs.down = uiSkin.getDrawable("button_01");
+////		tbs.up = uiSkin.getDrawable("button_02");
+////		tbs.font = Assets.generateUIFont(32, true);
+//////		tbs.font = Assets.china32;
+////		backButtonStyle = tbs;
+////		return tbs;
+//		return getTextStyleFromRegion("market/back_button", fontSize);
+//	}
 	
-	public static TextButtonStyle getStartButtonStyle() {
-		if (startButtonStyle != null) return startButtonStyle;
-
-		TextButtonStyle tbs = new TextButtonStyle();
-		tbs.down = uiSkin.getDrawable("button_01");
-		tbs.up = uiSkin.getDrawable("button_02");
-		tbs.font = Assets.generateUIFont(36, true);
-//		tbs.font = Assets.china32;
-		startButtonStyle = tbs;
-		return tbs;
-	}
-	public static TextButtonStyle getMarketButtonStyle() {
-		return getStartButtonStyle();
-	}
+//	public static TextButtonStyle getStartButtonStyle() {
+//		if (startButtonStyle != null) return startButtonStyle;
+//
+//		TextButtonStyle tbs = new TextButtonStyle();
+//		tbs.down = uiSkin.getDrawable("button_01");
+//		tbs.up = uiSkin.getDrawable("button_02");
+//		tbs.font = Assets.generateUIFont(36, true);
+////		tbs.font = Assets.china32;
+//		startButtonStyle = tbs;
+//		return tbs;
+//	}
+//	public static TextButtonStyle getMarketButtonStyle() {
+//		return getStartButtonStyle();
+//	}
 	
 	public static ButtonStyle getSpecificMarketButtonStyle(TableType type) {
 //		if (marketButtonStyle != null) return marketButtonStyle;
@@ -685,22 +847,21 @@ public class Assets {
 //		marketButtonStyle = tbs;
 //		return tbs;
 		switch(type) {
-		case food:
-			return getStyleFromRegion("market/Market_menu_element-03");
-		case grill:
-			return getStyleFromRegion("market/Market_menu_element-04");
-		case map:
-			return getStyleFromRegion("market/Market_menu_element-05");
-		case ads:
-			return getStyleFromRegion("market/Market_menu_element-06");
-		case coins:
-			return getStyleFromRegion("market/Market_menu_element-07");
-		case vanity:
-			return null;
-		default:
-			return null;
+			case food:
+				return getStyleFromRegion("market/Market_menu_element-03");
+			case grill:
+				return getStyleFromRegion("market/Market_menu_element-04");
+			case map:
+				return getStyleFromRegion("market/Market_menu_element-05");
+			case ads:
+				return getStyleFromRegion("market/Market_menu_element-06");
+			case coins:
+				return getStyleFromRegion("market/Market_menu_element-07");
+			case vanity:
+				return null;
+			default:
+				return null;
 		}
-		
 	}
 	
 	public static TextureRegion getIcon(Meat.Type type) {
@@ -714,44 +875,42 @@ public class Assets {
 	
 	// basically normalizes all font sizes, converts from standard 480 width to current width
 	public static int getFontSize(int originalFont) {
-		return KebabKing.getGlobalX(originalFont / 480.0f);
+		// note that we use Gdx.graphics instead of KebabKing.getGlobalX
+		// because there's no guarantee that width will be set by this point.
+		return (int) (originalFont * Gdx.graphics.getWidth() / 480.0f);
 	}
 	
-	public static TextButtonStyle getPurchaseTypeButtonStyle(int fontSize) {
+	public static ButtonStyle getPurchaseTypeButtonStyle() {
 		if (purchaseTypeButtonStyle != null) return purchaseTypeButtonStyle;
 
-		TextButtonStyle tbs = new TextButtonStyle();
+		ButtonStyle tbs = new TextButtonStyle();
 		tbs.down = new TextureRegionDrawable(getTextureRegion("whitepixel"));
 		tbs.up =  new TextureRegionDrawable(getTextureRegion("whitepixel"));
-		tbs.font = Assets.generateChinaFont(fontSize, true);
-		tbs.fontColor = new Color(0, 0, 0, 1);
-		tbs.disabledFontColor = new Color(1, 1, 1, 1);
 		tbs.disabled = new TextureRegionDrawable(getTextureRegion("market/bluePixel"));
 //		tbs.font = Assets.china32;
-		purchaseTypeButtonStyle = tbs;
 		return tbs;
 	}
-	public static TextButtonStyle getFacebookButtonStyle() {
-		if (purchaseTypeButtonStyle != null) return purchaseTypeButtonStyle;
-
-		TextButtonStyle tbs = new TextButtonStyle();
-		tbs.down = uiSkin.getDrawable("button_01");
-		tbs.up = uiSkin.getDrawable("button_02");
-		tbs.font = Assets.generateUIFont(48, true);
-//		tbs.font = Assets.china32;
-		purchaseTypeButtonStyle = tbs;
-		return tbs;
-	}
-	public static TextButtonStyle getUnlockButtonStyle() {
-		if (unlockButtonStyle != null) return unlockButtonStyle;
-		TextButtonStyle tbs = new TextButtonStyle();
-//		tbs.font = Assets.china32;
-		tbs.font = Assets.generateUIFont(32, true);
-		tbs.down = Assets.uiSkin.getDrawable("button_01");
-		tbs.up = Assets.uiSkin.getDrawable("button_02");
-		unlockButtonStyle = tbs;
-		return tbs;
-	}
+//	public static TextButtonStyle getFacebookButtonStyle() {
+//		if (purchaseTypeButtonStyle != null) return purchaseTypeButtonStyle;
+//
+//		TextButtonStyle tbs = new TextButtonStyle();
+//		tbs.down = uiSkin.getDrawable("button_01");
+//		tbs.up = uiSkin.getDrawable("button_02");
+//		tbs.font = Assets.generateUIFont(48, true);
+////		tbs.font = Assets.china32;
+//		purchaseTypeButtonStyle = tbs;
+//		return tbs;
+//	}
+//	public static TextButtonStyle getUnlockButtonStyle() {
+//		if (unlockButtonStyle != null) return unlockButtonStyle;
+//		TextButtonStyle tbs = new TextButtonStyle();
+////		tbs.font = Assets.china32;
+//		tbs.font = Assets.generateUIFont(32, true);
+//		tbs.down = Assets.uiSkin.getDrawable("button_01");
+//		tbs.up = Assets.uiSkin.getDrawable("button_02");
+//		unlockButtonStyle = tbs;
+//		return tbs;
+//	}
 	public static ScrollPaneStyle getSPS() {
 		ScrollPaneStyle sps = new ScrollPaneStyle();
 //		sps.vScroll = uiSkin.getDrawable("scroll_back_ver");
@@ -761,25 +920,27 @@ public class Assets {
 		return sps;
 	}
 	
-	public static BitmapFont generateUIFont(int size, boolean permanent) {
-		// these are leaking hard!
-		p.size = getFontSize(size);
-		System.out.println(size + " size font");
-		BitmapFont toReturn = worksansLight.generateFont(p);
-		if (!permanent)
-			fonts.add(toReturn);
-		return toReturn;
-	}
+//	public static BitmapFont generateUIFont(int size, boolean permanent) {
+//		return arial;
+//		// these are leaking hard!
+////		p.size = getFontSize(size);
+////		System.out.println(size + " size font");
+////		BitmapFont toReturn = worksansLight.generateFont(p);
+////		if (!permanent)
+////			fonts.add(toReturn);
+////		return toReturn;
+//	}
 	
-	public static BitmapFont generateChinaFont(int size, boolean permanent) {
-		// these are leaking hard!
-		p.size = getFontSize(size);
-		System.out.println(size + " size font");
-		BitmapFont toReturn = china.generateFont(p);
-		if (!permanent)
-			fonts.add(toReturn);
-		return toReturn;
-	}
+//	public static BitmapFont generateChinaFont(int size, boolean permanent) {
+//		return arial;
+//		// these are leaking hard!
+////		p.size = getFontSize(size);
+////		System.out.println(size + " size font");
+////		BitmapFont toReturn = china.generateFont(p);
+////		if (!permanent)
+////			fonts.add(toReturn);
+////		return toReturn;
+//	}
 
 	public static NinePatchDrawable getDefaultIcon() {
 		return (NinePatchDrawable) uiSkin.getDrawable("textbox_02");
@@ -821,13 +982,13 @@ public class Assets {
 		bs.down = new TextureRegionDrawable(getTextureRegion(name));
 		return bs;
 	}
-	public static TextButtonStyle getTextStyleFromRegion(String name, int fontSize) {
-		TextButtonStyle bs = new TextButtonStyle();
-		bs.font = Assets.generateUIFont(fontSize, true);
-		bs.up = new TextureRegionDrawable(getTextureRegion(name));
-		bs.down = new TextureRegionDrawable(getTextureRegion(name));
-		return bs;
-	}
+//	public static TextButtonStyle getTextStyleFromRegion(String name, int fontSize) {
+//		TextButtonStyle bs = new TextButtonStyle();
+//		bs.font = Assets.generateUIFont(fontSize, true);
+//		bs.up = new TextureRegionDrawable(getTextureRegion(name));
+//		bs.down = new TextureRegionDrawable(getTextureRegion(name));
+//		return bs;
+//	}
 	public static ButtonStyle getPauseButtonStyle() {
 		return getStyleFromRegion("topbar/TopBarElement02");
 	}
@@ -867,11 +1028,11 @@ public class Assets {
 	}
 	
 	public static void deleteTempResources() {
-		for (BitmapFont bf : fonts) {
-			System.out.println("deleting font: " + bf.getLineHeight());
-			bf.dispose();
-		}
-		fonts.clear();
+//		for (BitmapFont bf : fonts) {
+//			System.out.println("deleting font: " + bf.getLineHeight());
+//			bf.dispose();
+//		}
+//		fonts.clear();
 	}
 }
 

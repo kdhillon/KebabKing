@@ -115,12 +115,21 @@ public class CustomerManager {
 		// decide whether to generate customers
 		generateCustomers();
 
-		Object[] array = customers.toArray();
-
-		for (Object o : array) {
-			Customer c = (Customer) o;
+		// This is slow and stupid
+		for (int i = 0; i < customers.size(); i++) {
+			Customer c = customers.get(i);
+			if (c == null) continue;
 			c.act(delta);
 		}
+//		for (Customer c : customers) {
+//			c.act(delta);
+//		}
+//		Object[] array = customers.toArray();
+//
+//		for (Object o : array) {
+//			Customer c = (Customer) o;
+//			c.act(delta);
+//		}
 
 		lastCustomer += delta;
 		
@@ -166,18 +175,23 @@ public class CustomerManager {
 			for (int j = 0; j < MAX_IN_LINE; j++) {
 				Customer c = lines[i][j];
 				if (c != null) {
-					int xPos = (int) (KebabKing.getGlobalX(c.position_x));
+					int xPos = (KebabKing.getGlobalX(c.position_x));
 					int yPos = (int) c.position_y;
 					if (x > xPos && x < xPos + Customer.TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH) {
 						if (y > yPos && y < yPos + Customer.TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT) {
 							mousedOver = c;
+							System.out.println("Moused over is " + mousedOver.type);
 							return;
 						}
 					}
 				}
 			}
 		}
+//		if (mousedOver == null) {
+//			System.out.println("Moused over is null");
+//		}
 	}
+
 
 	public void generateCustomers() {
 		// tutorial mode
@@ -224,6 +238,7 @@ public class CustomerManager {
 		}
 		lastCustomer = 0;
 		calcNextCustomer();
+		customers.trimToSize();
 		
 		SHOULD_ORDER = true;
 	}
@@ -286,6 +301,7 @@ public class CustomerManager {
 		// modify reputation
 
 		this.customers.remove(customer);
+		customers.trimToSize();
 	}
 
 	public void addToLine(Customer customer, int lineChoice) {

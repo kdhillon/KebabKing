@@ -2,55 +2,62 @@ package com.kebabking.game.Purchases;
 
 import java.util.HashSet;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.kebabking.game.Assets;
-
 
 // Allows other purchase types to extend this for simplicity
 public class PurchaseType {
-	
 	// stores rounds at which purchaseables unlock
 	public static HashSet<Purchaseable> allPurchaseables = new HashSet<Purchaseable>();
-	
-	// might cause kryo errors
-	public transient Inventory inventory;
-	protected String name = "Default name";
-	protected String description = "Default description";
-	protected HashSet<Purchaseable> unlocked; 	// items that have been fully unlocked and can be purchased
-	protected HashSet<Purchaseable> levelUnlocked; // items that can be unlocked based on level
-	protected Purchaseable currentQuality;
-	public Purchaseable[] values; // contains Purchaseable.values()
-	protected TextureRegion icon;
+	public transient Purchaseable[] values; // contains Purchaseable.values()
+//	protected transient static TextureRegion icon;
+//	protected transien
+	public String name;
+	public String description;
 	
 	// TODO, actually use this in implementation
 	protected boolean allowMultipleSelect; // can multiple purchaseables be "selected" at once?
-	protected HashSet<Purchaseable> selected;
+	protected HashSet<Integer> selected;
+
+	public Inventory inventory;
+	protected HashSet<Integer> unlocked; 	// items that have been fully unlocked and can be purchased
+	protected HashSet<Integer> levelUnlocked; // items that can be unlocked based on level
+//	protected Purchaseable currentQuality;
+	// just store the index
+	protected int current;
 	
 	// Only used for updating store screen on unlock
 //	private transient StoreScreen storeScreen;
 //	private transient StoreScreen.TableType storeTable;
 	
 	// for kryo
-	public PurchaseType() {}
+	public PurchaseType() {
+	}
+	
+	// create a new one
+	public PurchaseType(String name, String description, String textureRegionName, Purchaseable[] values) {
+		init(name, description, textureRegionName, values);
+	}
 	
 	// create a new one
 	public PurchaseType(Inventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
 		this.inventory = inventory;
-		unlocked = new HashSet<Purchaseable>();
-		levelUnlocked = new HashSet<Purchaseable>();
-		this.name = name;
-		this.description = description;
-		if (textureRegionName != null)
-			this.icon = Assets.getTextureRegion(textureRegionName);
+		init(name, description, textureRegionName, values);
 		setValues(values);
-		
+	}
+	
+	public void init(String name, String description, String textureRegionName, Purchaseable[] values) {
+		unlocked = new HashSet<Integer>();
+		levelUnlocked = new HashSet<Integer>();
+		this.name = name;
+//		if (textureRegionName != null)
+//			this.icon = Assets.getTextureRegion(textureRegionName);
+		this.values = values;
 		for (Purchaseable p : values)
 			allPurchaseables.add(p);
 	}
 	
 	public void allowMultipleSelect() {
 		this.allowMultipleSelect = true;
-		selected = new HashSet<Purchaseable>();
+		selected = new HashSet<Integer>();
 	}
 	
 //	@Override
@@ -64,34 +71,42 @@ public class PurchaseType {
 	}
 
 //	@Override
-	public TextureRegion getIcon() {
-		return null;
-	}
+//	public TextureRegion getIcon() {
+//		return icon;
+//	}
 
 //	@Override
 	public Purchaseable getCurrentSelected() {
-		return currentQuality;
+		return values[current];
 	}
 	
 //	@Override
 	public boolean availableForUnlock(Purchaseable purchaseable) {
-		return levelUnlocked.contains(purchaseable);
+		return levelUnlocked.contains(getIndexOf(purchaseable));
 	}
 
 //	@Override
 	public boolean isUnlocked(Purchaseable purchaseable) {
-		return unlocked.contains(purchaseable);
+		return unlocked.contains(getIndexOf(purchaseable));
 	}
 
 //	@Override
 	public void setCurrent(Purchaseable newCurrent) {
 		if (!isUnlocked(newCurrent)) throw new java.lang.AssertionError();
-		this.currentQuality = newCurrent;
+		this.current = getIndexOf(newCurrent);
+	}
+	
+	public int getIndexOf(Purchaseable p) {
+		for (int i = 0; i < values.length; i++) {
+			if (p == values[i])
+				return i;
+		}
+		return -1;
 	}
 	
 	public void addToCurrent(Purchaseable toSelect) {
 		if (!isUnlocked(toSelect)) throw new java.lang.AssertionError();
-		this.selected.add(toSelect);
+		this.selected.add(getIndexOf(toSelect));
 	}
 	
 	public void removeFromCurrent(Purchaseable toRemove) {
@@ -101,7 +116,7 @@ public class PurchaseType {
 	
 //	@Override
 	public void unlockByLevel(Purchaseable toUnlock) {
-		this.levelUnlocked.add(toUnlock);
+		this.levelUnlocked.add(getIndexOf(toUnlock));
 		
 //		if (this.storeScreen != null)
 //			this.storeScreen.resetTable(storeTable);
@@ -111,7 +126,7 @@ public class PurchaseType {
 //	@Override
 	public void unlock(Purchaseable toUnlock) {
 		if (!availableForUnlock(toUnlock)) throw new java.lang.AssertionError();
-		this.unlocked.add(toUnlock);
+		this.unlocked.add(getIndexOf(toUnlock));
 		this.setCurrent(toUnlock);
 	}
 	
@@ -135,7 +150,7 @@ public class PurchaseType {
 		return values[nextIndex];
 	}
 	
-	public boolean isUnlockedByLevel(Purchaseable p) {
+	public boolean unlockIfReady(Purchaseable p) {
 		if (inventory.hasUnlockedByLevel(p)) {
 			unlockByLevel(p);
 			return true;
@@ -148,10 +163,7 @@ public class PurchaseType {
 		this.values = values;
 		for (Purchaseable p : values) {
 			if (p == null) throw new java.lang.NullPointerException();
-			if (isUnlockedByLevel(p)) {
-//				System.out.println(p.getName() + " added to unlockable");
-			}
-//			else System.out.println("Can't unlock " + p.getName() + " yet, required level is " + p.unlockAtLevel());
+			unlockIfReady(p);
 		}
 	}
 	

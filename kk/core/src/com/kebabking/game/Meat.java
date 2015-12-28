@@ -5,10 +5,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 // represents a piece of meat on the grill
 public class Meat {
+	// TODO move this to separate loader
 	enum Type {  // buy	   sell     cook    burn
-		BEEF(		2, 		3.5f,		8,		8), 
-		CHICKEN(	2.5f,	4f,		5,		6),  
-		LAMB(		1.5f,	3f, 	7,		7);
+		BEEF(		2, 		3.5f,	8,		12), 
+		CHICKEN(	2.5f,	4f,		5,		8),  
+		LAMB(		1.5f,	3f, 	7,		10);
 		
 		float buyPrice;
 		float sellPrice;
@@ -58,68 +59,9 @@ public class Meat {
 			this.state = State.COOKED;
 	}
 	
-	public void draw(SpriteBatch batch, int x, int y) {
-		TextureRegion stickTexture = Assets.getStickTexture();
+	public void draw(SpriteBatch batch, int x, int y, Profile profile) {
+		TextureRegion stickTexture = Assets.getStickTexture(profile);
 		TextureRegion meatTexture = Assets.getMeatTexture(this);
-//		switch (state) {
-//		case RAW: 
-//			switch (type) {
-//			case CHICKEN:
-//				if (!this.spiced)
-//					toDraw = Assets.chuanrChickenRaw;	
-//				else
-//					toDraw = Assets.chuanrChickenRawSpice;
-//				break;
-//			case BEEF:
-//				if (!this.spiced)
-//					toDraw = Assets.chuanrBeefRaw;	
-//				else 
-//					toDraw = Assets.chuanrBeefRawSpice;
-//				break;
-//			case LAMB:
-//				if (!this.spiced)
-//					toDraw = Assets.chuanrLambRaw;	
-//				else 
-//					toDraw = Assets.chuanrLambRawSpice;
-//				break;
-//			}
-//			break;
-//		case COOKED:
-//			switch (type) {
-//			case CHICKEN:
-//				if (!this.spiced)
-//					toDraw = Assets.chuanrChickenCooked;
-//				else 
-//					toDraw = Assets.chuanrChickenCookedSpice;
-//				break;
-//			case BEEF:
-//				if (!this.spiced)
-//					toDraw = Assets.chuanrBeefCooked;
-//				else 
-//					toDraw = Assets.chuanrBeefCookedSpice;
-//				break;
-//			case LAMB:
-//				if (!this.spiced)
-//					toDraw = Assets.chuanrLambCooked;
-//				else 
-//					toDraw = Assets.chuanrLambCookedSpice;
-//				break;
-//			}
-//			break;
-//		case BURNT:
-//			switch (type) {
-//			case CHICKEN:
-//				toDraw = Assets.chuanrChickenBurnt;
-//				break;
-//			case BEEF:
-//				toDraw = Assets.chuanrBeefBurnt;
-//				break;
-//			case LAMB:
-//				toDraw = Assets.chuanrLambBurnt;
-//				break;
-//			}
-//			break;
-//		}
 		
 		// First draw meat
 		int width =  (int) (Grill.GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 

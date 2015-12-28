@@ -14,7 +14,6 @@ public class CoinsTable extends Table {
 	// create a table in which people can buy coins 
 	public CoinsTable(ChuanrC master) {
 		super();
-		System.out.println("RUNNING");
 		this.master = master;
 		Label title = new Label("Coins!", Assets.getStoreTitleLS());
 		title.setAlignment(Align.center);
@@ -30,9 +29,9 @@ public class CoinsTable extends Table {
 	private Table newTableEntry(PurchaseableOnline op) {
 		Table entry = new Table();
 		
-		Label title = new Label("" + op.coins + " Coins!", Assets.generateLabelStyle(30, true));
+//		Label title = new Label("" + op.coins + " Coins!", Assets.generateLabelStyle(30, true));
 		
-		entry.add(title);
+//		entry.add(title);
 		entry.row();
 		
 //		CoinsButton buy = new CoinsButton("Get Coins!", Assets.getBackButtonStyle(), op);

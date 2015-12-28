@@ -20,26 +20,26 @@ public class TutorialScreen extends KitchenScreen {
 	static float WELCOME2_WAIT = 2f;
 	static float TIME_TO_WAIT = 2f;
 	boolean tutPause;
-	
+
 	Label currentText;
 
 	Color GRAY = new Color(0.2f, 0.2f, 0.2f, 0.5f);
 //	int lambCount;
-	
+
 	float timeWaited;
 	float welcome1Wait;
 	float welcome2Wait;
-	
+
 	enum Step{
 		// woman first
 		// make wait, clickchicken, clickgrill, clickLamb, swipegrill, clickspice, swipegrill, wait2, clickmean, clickwoman, wait3
 		Welcome1, Welcome2, Wait1, ClickChicken, ClickGrill, ClickLamb, DragGrill, ClickSpice, ClickGrill3, Wait2, ClickMeat, ClickWoman, Wait3,
-		
+
 		//ClickLamb2, DragGrill, ClickSpice, DragGrill2, ClickBeer, ClickMan1, Wait4, ClickMeat2, ClickMan2
 	}
 
 	Step current;
-	
+
 	int meatReady;
 //	Meat beef;
 	Meat lamb1, lamb2, lamb3;
@@ -49,29 +49,29 @@ public class TutorialScreen extends KitchenScreen {
 	// handles user input and the main render / update loop
 	public TutorialScreen(KebabKing master) {
 		super(master);
-		
+
 		Manager.analytics.sendEventHit("Tutorial", "Start", "");
-		
+
 		System.out.println("STARTING TUTORIAL MODE");
 
 		current = Step.Welcome1;
-		currentText = new Label("Welcome to Kebab King!", Assets.generateLabelStyleUIChinaWhite(KebabKing.getGlobalX(64.0f / 480)));
+//		currentText = new Label("Welcome to Kebab King!", Assets.generateLabelStyleUIChinaWhite(KebabKing.getGlobalX(64.0f / 480)));
 //		currentText.debug();
 		// TODO fix this janky shit
 		currentText.setSize(KebabKing.getWidth(), KebabKing.getGlobalY(1.0f/4));
 		currentText.setPosition(0, (KebabKing.getHeight() - currentText.getHeight())*0.7f);
 		currentText.setAlignment(Align.center);
 		currentText.setWrap(true);
-		
+
 		grill.tutorialMode = true;
 		meatReady = 0;
-//		
+//
 //		lambCount = 0;
 		timeWaited = 0;
 	}
 
 	@Override
-	public void render(float delta) {	
+	public void render(float delta) {
 		super.render(delta);
 		// prevent countdown
 		this.time = 9999;
@@ -81,12 +81,12 @@ public class TutorialScreen extends KitchenScreen {
 		batch.begin();
 
 		if (tutPause) {
-			
+
 //			Color c = batch.getColor();
 //			this.batch.setColor(GRAY);
 			batch.draw(Assets.whiteAlpha, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
 //			this.batch.setColor(c);
-			
+
 			if (current == Step.ClickChicken)
 				grill.tutDrawChickenBox(batch, false);
 			else if (current == Step.ClickGrill) {
@@ -120,7 +120,7 @@ public class TutorialScreen extends KitchenScreen {
 			}
 			else if (current == Step.ClickSpice) {
 				grill.tutDrawSpiceBox(batch, false);
-				
+
 				if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 					grill.holdInput(Gdx.input.getX(), Gdx.input.getY());
 				}
@@ -134,7 +134,7 @@ public class TutorialScreen extends KitchenScreen {
 				grill.tutDrawGrill(4, batch);
 				grill.tutDrawRightGrill(batch);
 				grill.drawMeat(batch);
-				
+
 				if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 					grill.holdInput(Gdx.input.getX(), Gdx.input.getY());
 				}
@@ -142,11 +142,11 @@ public class TutorialScreen extends KitchenScreen {
 					grill.mousedOver = -1;
 //					grill.mousedOverTrash = false;
 				}
-				
+
 				if (lamb1.spiced && lamb2.spiced && lamb3.spiced) {
 					transitionToNext();
 				}
-				
+
 			}
 			else if (current == Step.ClickMeat) {
 				grill.tutDrawGrill(1, batch);
@@ -162,7 +162,7 @@ public class TutorialScreen extends KitchenScreen {
 					grill.mousedOver = -1;
 //					grill.mousedOverTrash = false;
 				}
-				
+
 				if (grill.selectedSet.contains(lamb1) && grill.selectedSet.contains(lamb2) && grill.selectedSet.contains(lamb3) && grill.selectedSet.contains(chicken)) {
 					transitionToNext();
 				}
@@ -188,7 +188,7 @@ public class TutorialScreen extends KitchenScreen {
 //				grill.tutDrawGrill(3, batch);
 //				grill.tutDrawGrill(4, batch);
 //				grill.tutDrawRightGrill(batch);
-				
+
 //				if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 //					grill.holdInput(Gdx.input.getX(), Gdx.input.getY());
 //				}
@@ -221,8 +221,8 @@ public class TutorialScreen extends KitchenScreen {
 				this.transitionToNext();
 			}
 		}
-		
-		
+
+
 		// always draw text
 //		currentText.drawDebug(shapes);
 		if (currentText != null) {
@@ -236,14 +236,14 @@ public class TutorialScreen extends KitchenScreen {
 
 	@Override
 	// actually run a game loop
-	public void update(float delta, boolean ff) {	
+	public void update(float delta, boolean ff) {
 		// force pause if you want
 
 		if (!tutPause) {
 			super.update(delta, ff);
 		}
 	}
-	
+
 	@Override
 	public Meat dropMeatOnGrill(Type type) {
 		Meat m = super.dropMeatOnGrill(type);
@@ -275,7 +275,7 @@ public class TutorialScreen extends KitchenScreen {
 	}
 
 	public void transitionToNext() {
-		
+
 		switch(current) {
 		case Welcome1:
 			currentText.setText("Welcome to Kebab King!");
@@ -288,14 +288,14 @@ public class TutorialScreen extends KitchenScreen {
 			currentText.setText("Tap the chest to grab some Chicken!");
 			break;
 		case ClickChicken:
-			
+
 			currentText.setText("Tap the grill to start cooking!");
 			break;
 		case ClickGrill:
 			grill.selected = Selected.NONE;
 			currentText.setText("Now grab some Lamb!");
 			break;
-		case ClickLamb: 
+		case ClickLamb:
 
 			currentText.setText("Tap or slide your finger on the grill!");
 			break;
@@ -307,7 +307,7 @@ public class TutorialScreen extends KitchenScreen {
 
 			break;
 		case ClickSpice:
-			
+
 			currentText.setText("Tap or slide the Lamb to spice them!");
 			break;
 		case ClickGrill3:
@@ -316,7 +316,7 @@ public class TutorialScreen extends KitchenScreen {
 			currentText.setText("Awesome! Now we wait...");
 			this.tutPause = false;
 			grill.disableTouch = true;
-			
+
 			grill.selectedSet.clear();
 			break;
 		case Wait2:
@@ -330,7 +330,7 @@ public class TutorialScreen extends KitchenScreen {
 			break;
 		case ClickWoman:
 			// for now, just finish day.
-			
+
 			currentText.setText("Great job!");
 			this.tutPause = false;
 			break;
@@ -340,7 +340,7 @@ public class TutorialScreen extends KitchenScreen {
 //			currentText.setText");
 //			this.tutPause = true;
 //			break;
-//		case ClickLamb2: 
+//		case ClickLamb2:
 //
 //			currentText.setText("Drag your finger to drop multiple kebabs!");
 //			break;
@@ -348,17 +348,17 @@ public class TutorialScreen extends KitchenScreen {
 //
 //			currentText.setText("The red number means he wants them spicy. Grab the spice brush!");
 //			break;
-//		case ClickSpice: 
+//		case ClickSpice:
 //
 //			currentText.setText("Slide over the meat to brush on some spice!");
 //			break;
-//		case DragGrill2: 
+//		case DragGrill2:
 //
 //			currentText.setText("Awesome! Now, while we wait for the meat to cook, grab a beer from the cooler!");
 //			break;
-//		case ClickBeer: 
+//		case ClickBeer:
 //
-//			currentText.setText("And give it to the thirsty customer!");		
+//			currentText.setText("And give it to the thirsty customer!");
 //			break;
 //		case ClickMan1:
 //
@@ -367,11 +367,11 @@ public class TutorialScreen extends KitchenScreen {
 //			break;
 //		case Wait4:
 //
-//			currentText.setText("Swipe all the kebabs to grab them!");			
+//			currentText.setText("Swipe all the kebabs to grab them!");
 //			this.tutPause = true;
 //			break;
 //		case ClickMeat2:
-//			
+//
 //			currentText.setText("Now serve the customer and make some cash!");
 //			break;
 //		case ClickMan2:
@@ -398,7 +398,7 @@ public class TutorialScreen extends KitchenScreen {
 	}
 
 	@Override
-	public void finishDay() {			
+	public void finishDay() {
 		super.finishDay();
 		Manager.analytics.sendEventHit("Tutorial", "End", "");
 

@@ -317,18 +317,18 @@ public class Assets {
 	 * @param size
 	 * @return
 	 */
-	public static LabelStyle generateLabelStyle(int size) {
-		return generateLabelStyle(size, false);
-	}
+//	public static LabelStyle generateLabelStyle(int size) {
+//		return generateLabelStyle(size, false);
+//	}
 
-	public static LabelStyle generateLabelStyle(int size, boolean permanent) {
-		p.size = size;
-		LabelStyle ls = new LabelStyle();
-		ls.font = gang.generateFont(p);
-		if (!permanent)
-			fonts.add(ls.font);
-		return ls;
-	}
+//	public static LabelStyle generateLabelStyle(int size, boolean permanent) {
+//		p.size = size;
+//		LabelStyle ls = new LabelStyle();
+//		ls.font = gang.generateFont(p);
+//		if (!permanent)
+//			fonts.add(ls.font);
+//		return ls;
+//	}
 
 	public static LabelStyle generateLabelStyleUI(int size, boolean permanent) {
 		p.size = size;
@@ -564,89 +564,89 @@ public class Assets {
 	}
 	
 	// ui methods for (hopefully) simplicity
-	public static Drawable getStoreBackground() {
-		return uiSkin.getDrawable("textbox_01");
-	}
-	public static Drawable getPurchaseableBackground() {
-		return uiSkin.getDrawable("button_01");
-	}
-	public static Drawable getPurchaseTypeBackground() {
-		return uiSkin.getDrawable("textbox_02");
-	}
-	public static Drawable getArrowLeftUp() {
-		return uiSkin.getDrawable("knob_04");
-	}
-	public static Drawable getArrowLeftDown() {
-		return uiSkin.getDrawable("knob_04");
-	}
-	public static Drawable getArrowRightUp() {
-		return uiSkin.getDrawable("knob_02");
-	}
-	public static Drawable getArrowRightDown() {
-		return uiSkin.getDrawable("knob_02");
-	}
+//	public static Drawable getStoreBackground() {
+//		return uiSkin.getDrawable("textbox_01");
+//	}
+//	public static Drawable getPurchaseableBackground() {
+//		return uiSkin.getDrawable("button_01");
+//	}
+//	public static Drawable getPurchaseTypeBackground() {
+//		return uiSkin.getDrawable("textbox_02");
+//	}
+//	public static Drawable getArrowLeftUp() {
+//		return uiSkin.getDrawable("knob_04");
+//	}
+//	public static Drawable getArrowLeftDown() {
+//		return uiSkin.getDrawable("knob_04");
+//	}
+//	public static Drawable getArrowRightUp() {
+//		return uiSkin.getDrawable("knob_02");
+//	}
+//	public static Drawable getArrowRightDown() {
+//		return uiSkin.getDrawable("knob_02");
+//	}
 	
-	public static LabelStyle getStoreTitleLS() {
-		if (storeTitle != null) return storeTitle;
-		
-		LabelStyle titleStyle = new LabelStyle();
-		titleStyle.background = uiSkin.getDrawable("button_05");
-		titleStyle.font = Assets.generateUIFont(60, true);
-		storeTitle = titleStyle;
-		return titleStyle;
-	}
-	public static LabelStyle getMarketLS() {
+//	public static LabelStyle getStoreTitleLS() {
+//		if (storeTitle != null) return storeTitle;
+//		
 //		LabelStyle titleStyle = new LabelStyle();
-//		titleStyle.background = uiSkin.getDrawable("textbox_01");
-//		titleStyle.font = Assets.getUIFont(50);
+//		titleStyle.background = uiSkin.getDrawable("button_05");
+//		titleStyle.font = Assets.generateUIFont(60, true);
+//		storeTitle = titleStyle;
 //		return titleStyle;
-		return getStoreTitleLS();
-	}
-	public static LabelStyle getPurchaseTypeTitleLS() {
-		if (purchaseTitle != null) return purchaseTitle;
-		LabelStyle titleStyle = new LabelStyle();
-		titleStyle.background = uiSkin.getDrawable("button_05");
-		titleStyle.font = Assets.generateUIFont(40, true);
-		purchaseTitle = titleStyle;
-		return titleStyle;
-	}
-	public static LabelStyle getPurchaseableTitleLS() {
-		if (purchaseableTitle != null) return purchaseableTitle;
-		
-		LabelStyle titleStyle = new LabelStyle();
-//		titleStyle.background = uiSkin.getDrawable("textbox_01");
-		titleStyle.font = Assets.generateUIFont(26, true);
-		purchaseableTitle = titleStyle;
-		return titleStyle;
-//		return ls32;
-	}
-	public static LabelStyle getDescriptionLS() {
-		if (descriptionLS != null) return descriptionLS;
-		
-		descriptionLS = generateLabelStyle(18, true);
-		return descriptionLS;
-	}
-	public static LabelStyle getCostLS() {
-		if (costLS != null) return costLS;
-		costLS = generateLabelStyle(24, true);
-		return costLS;
-	}
-	public static LabelStyle getMainLS() {
-		if (mainLS != null) return mainLS;
-		mainLS = generateLabelStyle(40, true);
-		return mainLS;
-	}
-	public static TextButtonStyle getMainButtonStyle() {
-		if (mainButtonStyle != null) return mainButtonStyle;
-		
-		TextButtonStyle tbs = new TextButtonStyle();
-		tbs.down = uiSkin.getDrawable("button_01");
-		tbs.up = uiSkin.getDrawable("button_03");
-		tbs.font = Assets.generateUIFont(48, true);
-//		tbs.font = Assets.china48o;
-		mainButtonStyle = tbs;
-		return tbs;
-	}
+//	}
+//	public static LabelStyle getMarketLS() {
+////		LabelStyle titleStyle = new LabelStyle();
+////		titleStyle.background = uiSkin.getDrawable("textbox_01");
+////		titleStyle.font = Assets.getUIFont(50);
+////		return titleStyle;
+//		return getStoreTitleLS();
+//	}
+//	public static LabelStyle getPurchaseTypeTitleLS() {
+//		if (purchaseTitle != null) return purchaseTitle;
+//		LabelStyle titleStyle = new LabelStyle();
+//		titleStyle.background = uiSkin.getDrawable("button_05");
+//		titleStyle.font = Assets.generateUIFont(40, true);
+//		purchaseTitle = titleStyle;
+//		return titleStyle;
+//	}
+//	public static LabelStyle getPurchaseableTitleLS() {
+//		if (purchaseableTitle != null) return purchaseableTitle;
+//		
+//		LabelStyle titleStyle = new LabelStyle();
+////		titleStyle.background = uiSkin.getDrawable("textbox_01");
+//		titleStyle.font = Assets.generateUIFont(26, true);
+//		purchaseableTitle = titleStyle;
+//		return titleStyle;
+////		return ls32;
+//	}
+//	public static LabelStyle getDescriptionLS() {
+//		if (descriptionLS != null) return descriptionLS;
+//		
+//		descriptionLS = generateLabelStyle(18, true);
+//		return descriptionLS;
+//	}
+//	public static LabelStyle getCostLS() {
+//		if (costLS != null) return costLS;
+//		costLS = generateLabelStyle(24, true);
+//		return costLS;
+//	}
+//	public static LabelStyle getMainLS() {
+//		if (mainLS != null) return mainLS;
+//		mainLS = generateLabelStyle(40, true);
+//		return mainLS;
+//	}
+//	public static TextButtonStyle getMainButtonStyle() {
+//		if (mainButtonStyle != null) return mainButtonStyle;
+//		
+//		TextButtonStyle tbs = new TextButtonStyle();
+//		tbs.down = uiSkin.getDrawable("button_01");
+//		tbs.up = uiSkin.getDrawable("button_03");
+//		tbs.font = Assets.generateUIFont(48, true);
+////		tbs.font = Assets.china48o;
+//		mainButtonStyle = tbs;
+//		return tbs;
+//	}
 	public static TextButtonStyle getBackButtonStyle(int fontSize) {
 //		if (backButtonStyle != null) return backButtonStyle;
 //		

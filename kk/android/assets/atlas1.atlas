@@ -101,14 +101,14 @@ background/SkyElement-05
   orig: 83, 96
   offset: 0, 0
   index: -1
-background/cbd
+background/birdsnest
   rotate: false
   xy: 2, 443
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
-background/drum
+background/cbd
   rotate: false
   xy: 942, 443
   size: 938, 1563
@@ -121,7 +121,27 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+background/drum
+  rotate: false
+  xy: 2, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
 background/forbidden
+  rotate: false
+  xy: 942, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+
+atlas14.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background/nightclub
   rotate: false
   xy: 2, 2
   size: 938, 1563
@@ -136,7 +156,7 @@ background/paddy
   offset: 0, 0
   index: -1
 
-atlas14.png
+atlas15.png
 size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
@@ -156,27 +176,40 @@ background/subway
   offset: 0, 0
   index: -1
 
-atlas15.png
+atlas16.png
 size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-background/urbancomplex
+background/university
   rotate: false
   xy: 2, 2
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
+background/urbancomplex
+  rotate: false
+  xy: 942, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+
+atlas17.png
+size: 1024,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 background/village
   rotate: false
-  xy: 942, 542
+  xy: 2, 2
   size: 614, 1023
   orig: 614, 1023
   offset: 0, 0
   index: -1
 
-atlas16.png
+atlas18.png
 size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
@@ -357,7 +390,7 @@ customers/red o
   offset: 0, 0
   index: -1
 
-atlas17.png
+atlas19.png
 size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -377,7 +410,7 @@ customers/Policeman
   offset: 0, 0
   index: -1
 
-atlas18.png
+atlas110.png
 size: 2048,1024
 format: RGBA8888
 filter: Nearest,Nearest
@@ -509,7 +542,7 @@ grill/legs_front
   offset: 0, 0
   index: -1
 
-atlas19.png
+atlas111.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -598,6 +631,13 @@ kebabs/Kebab_Stick-28
   orig: 45, 165
   offset: 0, 0
   index: -1
+kebabs/Kebab_Stick-29
+  rotate: false
+  xy: 49, 2
+  size: 45, 165
+  orig: 45, 165
+  offset: 0, 0
+  index: -1
 kebabs/LambKebab_burnt
   rotate: false
   xy: 1242, 184
@@ -634,7 +674,7 @@ kebabs/LambKebab_rawSp
   offset: 0, 0
   index: -1
 
-atlas110.png
+atlas112.png
 size: 1024,2048
 format: RGBA8888
 filter: Nearest,Nearest
@@ -822,76 +862,83 @@ market/red9patchSmall
   offset: 0, 0
   index: -1
 
-atlas111.png
-size: 1024,2048
+atlas113.png
+size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 screens/Main-02
   rotate: false
-  xy: 2, 64
+  xy: 837, 37
   size: 252, 383
   orig: 252, 383
   offset: 0, 0
   index: -1
 screens/Main-03
   rotate: false
-  xy: 793, 384
+  xy: 1091, 295
   size: 206, 63
   orig: 206, 63
   offset: 0, 0
   index: -1
 screens/Main-04
   rotate: false
-  xy: 2, 2
+  xy: 1091, 360
   size: 293, 60
   orig: 293, 60
   offset: 0, 0
   index: -1
-screens/Summary-02
+screens/Summary-02 (2)
   rotate: false
-  xy: 793, 333
-  size: 102, 49
-  orig: 102, 49
+  xy: 266, 149
+  size: 203, 101
+  orig: 203, 101
+  offset: 0, 0
+  index: -1
+screens/Summary-03
+  rotate: false
+  xy: 2, 422
+  size: 938, 1563
+  orig: 938, 1563
   offset: 0, 0
   index: -1
 screens/pause-01
   rotate: false
-  xy: 2, 449
+  xy: 942, 422
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
 screens/pause-02
   rotate: false
-  xy: 554, 29
+  xy: 2, 2
   size: 262, 248
   orig: 262, 248
   offset: 0, 0
   index: -1
 screens/pause-03
   rotate: false
-  xy: 256, 279
+  xy: 2, 252
   size: 535, 168
   orig: 535, 168
   offset: 0, 0
   index: -1
 screens/pause-04
   rotate: false
-  xy: 256, 140
+  xy: 539, 283
   size: 296, 137
   orig: 296, 137
   offset: 0, 0
   index: -1
 screens/red
   rotate: false
-  xy: 942, 2010
+  xy: 1882, 1983
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 
-atlas112.png
+atlas114.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest

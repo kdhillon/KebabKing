@@ -222,8 +222,8 @@ public class Customer implements Comparable<Customer> {
 		// if not on path, walk to stand. but for now, don't worry about this
 
 		// move down
-		if (this.action == CustomerAction.ARRIVE) {			
-			this.position_y -= KebabKing.getGlobalY(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
+		if (this.action == CustomerAction.ARRIVE) {		
+			this.position_y -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			if (this.position_y <= targetY) this.placeOrder();
 			CustomerManager.SHOULD_ORDER = true;
 		}
@@ -232,14 +232,14 @@ public class Customer implements Comparable<Customer> {
 			this.waitTime -= delta;
 			if (this.waitTime < 0) startLeaving();
 			else if (this.position_y > targetY){
-				this.position_y -= KebabKing.getGlobalY(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
+				this.position_y -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			}
 		}
 		else this.order = null;
 
 		// move up
 		if (this.action == CustomerAction.LEAVE) {			
-			this.position_y += KebabKing.getGlobalY(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
+			this.position_y += KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			//			System.out.println("leaving");
 			//			System.out.println(position_y + " " + targetY);
 			if (this.position_y >= targetY) this.finishLeaving();
@@ -666,7 +666,7 @@ public class Customer implements Comparable<Customer> {
 			return;
 		}
 
-		this.order = new Order(this.type);
+		this.order = new Order(this.type, this.cm.master.kitchen);
 		//		order.print();
 		this.action = CustomerAction.WAIT;
 		

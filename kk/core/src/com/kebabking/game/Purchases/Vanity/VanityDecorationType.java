@@ -17,5 +17,7 @@ public class VanityDecorationType extends PurchaseType {
 	}
 	
 	// for Kyro
-	public VanityDecorationType(){};
+	public VanityDecorationType(){
+		super("Decorations", description, null, VanityDecoration.decorations.items);
+	};
 }

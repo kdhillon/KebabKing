@@ -37,11 +37,13 @@ public class Order {
 	int burnt; 			 // how many chuanrs were burnt
 	int incorrect;		 // how many wrong chuanrs/beers were given to this person	
 	
+	KitchenScreen ks;
 	Stage stage; // for drawing order
 	Table table;
 	
 	// generate a totally random order based on the given type
-	public Order(CustomerType type) {
+	public Order(CustomerType type, KitchenScreen ks) {
+		this.ks = ks;
 		chickenSpicy = (Math.random() < .5);
 		beefSpicy = (Math.random() < .5);
 		lambSpicy = (Math.random() < .5);
@@ -156,7 +158,7 @@ public class Order {
 		beer--;
 		remaining--;
 		updateTable();
-		return KitchenScreen.BEER_SELL_PRICE;
+		return ks.getDrinkSellPrice();
 	}
 	
 	// table should include the speech bubble, orders, everything
@@ -203,12 +205,10 @@ public class Order {
 	
 	public Table createSubTable(TextureRegion icon, boolean spice, int quantity) {
 		Table subTable = new Table();
-		Label count;
-		if (spice) {
-			count = new Label("" + quantity, Assets.generateLabelStyleUIHeavyWhite(26));
-		}
-		else {
-			count = new Label("" + quantity, Assets.generateLabelStyleUIHeavy(26));
+		Label count;		
+		count = new Label("" + quantity, Assets.generateLabelStyleUIHeavyWhite(26, Assets.nums));
+		if (!spice) {
+			count.setColor(MainStoreScreen.FONT_COLOR);
 		}
 		subTable.add(count);
 		

@@ -1,6 +1,6 @@
 package com.kebabking.game;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -19,6 +19,7 @@ public class MainMenuScreen extends ActiveScreen {
 	static final float FADEOUT_TIME = 1f; // it should take this many seconds to fade out towards countdown screen
 	static final float BUTTON_WIDTH = 0.32f;
 	static final float BUTTON_GAP = 0.1f;
+	static final float DISPOSE_SPLASH_TIME = 1;
 	
 	Stage uiStage;
 	Table table;
@@ -31,15 +32,18 @@ public class MainMenuScreen extends ActiveScreen {
 	
 	boolean fadeout;
 	float fadeoutTimer; 
-	Color currentBatchColor; // alpha will change as fades out
+//	Color currentBatchColor; // alpha will change as fades out
 	float bgTint = INIT_BG_ALPHA;
+	
+	// dispose the splash screen after a few seconds
+	public boolean disposedSplash = false;
 
 	public MainMenuScreen(KebabKing master) {	
 		super(master);
 
 		fadeout = false;
 		fadeoutTimer = 0;
-		currentBatchColor = new Color(1, 1, 1, 1);
+//		currentBatchColor = new Color(1, 1, 1, 1);
 		
 		// update everything else after resize has been called
 	}
@@ -86,7 +90,7 @@ public class MainMenuScreen extends ActiveScreen {
 		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
 		startDay.setBackground(new TextureRegionDrawable(bg));
 		
-		Label startLabel = new Label("\nPlay\n", Assets.generateLabelStyleUIChinaWhite(55));
+		Label startLabel = new Label("\nPLAY\n", Assets.generateLabelStyleUIChinaWhite(55, "\nPLAY\n"));
 		startDay.add(startLabel).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
 		
 		float width = KebabKing.getGlobalX(0.55f);
@@ -117,7 +121,7 @@ public class MainMenuScreen extends ActiveScreen {
 		float width2 = KebabKing.getGlobalX(0.7f);
 		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();
 		
-		Label marketLabel = new Label("\nMarket\n", Assets.generateLabelStyleUIChinaWhite(55));
+		Label marketLabel = new Label("\nMARKET\n", Assets.generateLabelStyleUIChinaWhite(55, "\nMARKET"));
 		upgrades.add(marketLabel).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
 		table.add(upgrades).center().width(width2).height(height2).padTop(KebabKing.getGlobalY(.015f)); //.width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));
 
@@ -163,7 +167,6 @@ public class MainMenuScreen extends ActiveScreen {
 //			}
 //		});
 		
-		
 		this.show();
 	}
 	
@@ -175,7 +178,7 @@ public class MainMenuScreen extends ActiveScreen {
 		topLeft.setBackground(new TextureRegionDrawable(Assets.white));
 		topRight.setBackground(new TextureRegionDrawable(Assets.white));
 		
-		Label topText = new Label("Kebab King", Assets.generateLabelStyleUIChinaWhite(60));
+		Label topText = new Label("Kebab King", Assets.generateLabelStyleUIChinaWhite(60, "Kebab King"));
 		
 		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));
 		
@@ -187,22 +190,16 @@ public class MainMenuScreen extends ActiveScreen {
 	
 	public void reset() {
 		this.bgTint = INIT_BG_ALPHA;
-		this.currentBatchColor = new Color(1, 1, 1, 1);
+//		this.currentBatchColor = new Color(1, 1, 1, 1);
 		this.fadeout = false;
 		this.fadeoutTimer = 0;
 	}
 
 	@Override
-	public void render(float delta) {
-		// have to do this every frame for some reason?
-		if (!stageSet && DrawUI.uiStage != null) {
-			DrawUI.setInput(uiStage);
-			stageSet = true;
-		}
-
-		super.renderGrayBg(delta, bgTint);
+	public void render(float delta) {		
+		super.renderGrayAlpha(delta, bgTint, uiStage);
 		
-		uiStage.draw();
+//		uiStage.draw();
 	}
 
 	@Override
@@ -214,6 +211,12 @@ public class MainMenuScreen extends ActiveScreen {
 		grill.mousedOver = -1;
 //		grill.mousedOverTrash = false;
 		cm.mousedOver = null;
+
+		if (!this.disposedSplash && timeElapsed > DISPOSE_SPLASH_TIME) {
+			master.disposeSplash();
+			disposedSplash = true;
+			System.out.println("Disposing splash " + timeElapsed);
+		}
 		
 		if (this.fadeout) this.fadeout(delta);
 
@@ -230,8 +233,8 @@ public class MainMenuScreen extends ActiveScreen {
 
 	public void transition() {
 		this.master.startCountdown();
+//		this.master.startDay();
 	}
-
 
 	// This is a duplicate method.
 	// TODO try to put this only in one parent (create a parent screen for everything to implement)
@@ -243,12 +246,13 @@ public class MainMenuScreen extends ActiveScreen {
 
 	@Override
 	public void show() {
+		super.show();
 //		if (this.startDay != null) 
 //			startDay.setText("Start!");
 			//			startDay.setText("Start Day " + (getProfile().daysWorked + 1));
 
 		// this doesn't work well for some reason
-//		Gdx.input.setInputProcessor(uiStage);
+		Gdx.input.setInputProcessor(uiStage);
 		stageSet = false;
 	}
 	
@@ -261,7 +265,7 @@ public class MainMenuScreen extends ActiveScreen {
 	
 	// changes batch color
 	public void fadeout(float delta) {
-		this.currentBatchColor.a = 1 - (fadeoutTimer / FADEOUT_TIME);
+//		this.currentBatchColor.a = 1 - (fadeoutTimer / FADEOUT_TIME);
 //		this.batch.setColor(currentBatchColor);
 		this.fadeoutTimer += delta;
 		

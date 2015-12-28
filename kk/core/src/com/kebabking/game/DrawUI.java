@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -28,6 +29,7 @@ public class DrawUI {
 	static final Color WHITE = new Color(1, 1, 1, 1);
 	static final Color GRAY = new Color(.2f, .2f, .2f, .5f);
 //	static final Color DARK_GRAY = new Color(.2f, .2f, .2f, .9f);
+	static final int CASH_COINS_SIZE = 18;
 	
 	static final Color FONT_COLOR = new Color(0f, .2f, .3f, 1);
 	static final Color REPUTATION_FONT_COLOR = new Color(0f, .2f, .3f, 0.5f);
@@ -79,7 +81,12 @@ public class DrawUI {
 	
 	static Table notificationTable;
 
-	static Color grayDraw;
+	static Color tintColor;
+
+	// each image can only be in one place at a time. So we need 5 star images. 
+	static Image[] star;
+	static Image halfStar; // only need one of these
+	static Image[] grayStar; // need 5 of these (really 4 but whatever);
 	
 	static ArrayList<Purchaseable> unlockDisplayQueue = new ArrayList<Purchaseable>();
 	
@@ -93,7 +100,7 @@ public class DrawUI {
 	public static void initialize(KebabKing master_in, SpriteBatch batch) {
 		master = master_in;
 		
-		grayDraw = new Color(0, 0, 0, 0);
+		tintColor = new Color(0, 0, 0, 0);
 		
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, batch);		
@@ -113,8 +120,8 @@ public class DrawUI {
 		
 		uiTable.padTop(KebabKing.getGlobalY(0.01f)).padLeft(KebabKing.getGlobalY(0.005f)).padRight(KebabKing.getGlobalY(0.005f));
 		
-		bigTable.add(uiTable).top().height(barHeight + 5 + adBarHeight);
-		bigTable.debugAll();
+		bigTable.add(uiTable).top().height(barHeight + 5 + adBarHeight).expandY();
+//		bigTable.debugAll();
 		uiStage.addActor(bigTable);
 			
 		// screen is divided into 9 regions follows:
@@ -153,31 +160,42 @@ public class DrawUI {
 		});
 		setProperMuteStyle(master.profile);
 		uiTable.add(muteButton).height(barHeight).width(mute_size).left().expandX();
-		
+
+		star = new Image[5];
+		for (int i = 0; i < 5; i++) {
+			star[i] =  new Image(Assets.getStar());
+		}
+		halfStar = new Image(Assets.getHalfStar());
+		grayStar = new Image[5];
+		for (int i = 0; i < 5; i++) {
+			grayStar[i] = new Image(Assets.getGrayStar());
+		}
+
 		reputationTable = new Table();
 		reputationTable.setBackground(new TextureRegionDrawable(Assets.getReputationBG()));
 
 //		int REPUTATION_TEXT_SIZE = (int) (barHeight * 0.20f);
 //		System.out.println("REPUTATION TEXT SIZE: " + REPUTATION_TEXT_SIZE);
-		Label reputationLabel = new Label("REPUTATION", Assets.generateLabelStyleUIGray(12));
+		Label reputationLabel = new Label("REPUTATION", Assets.generateLabelStyleUIWhite(12, "REPUTATION"));
+		reputationLabel.setColor(REPUTATION_FONT_COLOR);
 		reputationTable.add(reputationLabel).center();
 		reputationTable.row();
 
 		starTable = new Table();
 		reputationTable.add(starTable).width(starTableWidth * STAR_TABLE_SIZE_FACTOR).center();
-		
+		updateStars(master.profile.getCurrentReputation());
 		
 //		starTable.setBackground(Assets.getTopBarBG());
 		uiTable.add(reputationTable).expandX(); //width(starTableWidth).
 		
-		int TEXT_SIZE = (int) (barHeight * 0.35f);
+//		int TEXT_SIZE = (int) (barHeight * 0.35f);
 
 		// make it permanent
-		coins = new Label("", Assets.generateLabelStyleUI(TEXT_SIZE));
-		cash = new Label("", Assets.generateLabelStyleUI(TEXT_SIZE));
+		coins = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + ".$"));
+		cash = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + ".$"));
 		coins.setColor(FONT_COLOR);
 		cash.setColor(FONT_COLOR);
-	
+
 		Table cashTable = new Table();
 //		Label cash_l = new Label("$", Assets.generateLabelStyle(TEXT_SIZE));
 //		cashTable.add(cash_l);
@@ -215,7 +233,7 @@ public class DrawUI {
 		bar.setBackground(new TextureRegionDrawable(Assets.red));
 		uiTable.add(adCampaignTable).colspan(5).height(KebabKing.getGlobalY(AD_BAR_HEIGHT)).left();
 				
-		time = new Label("", Assets.generateLabelStyleUIChinaWhite(300));
+		time = new Label("", Assets.generateLabelStyleUIChinaWhite(100, Assets.nums));
 		time.setPosition(0, KebabKing.getGlobalY(0.7f));
 		time.setWidth(KebabKing.getWidth());
 		time.setAlignment(Align.center);
@@ -223,15 +241,17 @@ public class DrawUI {
 		countdownColor = new Color(1, 1, 1, 1);
 		
 		notificationTable = new Table();
-		
-		float notificationWidth = KebabKing.getGlobalX(0.7f);
-		float notificationHeight = KebabKing.getGlobalY(0.6f);
-		
+		notificationTable.debug();
+//		
+		float notificationWidth = KebabKing.getGlobalX(0.9f);
+		float notificationHeight = KebabKing.getGlobalY(0.8f);
+//		
+		bigTable.debug();
 		bigTable.row();
-		bigTable.add(notificationTable).width(notificationWidth).height(notificationHeight).expandY().center();;
+		bigTable.add(notificationTable).width(notificationWidth).height(notificationHeight).expandY().bottom().padBottom((KebabKing.getHeight() - notificationHeight)/2);;
 		
-		prepareNotificationTable();
-		clearNotificationTable();
+		prepareNotificationTable("Title", "Description", "fuckyou.png");
+//		clearNotificationTable();
 	}
 
 	public static void drawFullUI(float delta, SpriteBatch batch, Profile profile) {
@@ -252,14 +272,15 @@ public class DrawUI {
 //				uiTable.getCell(pauseButton).setActor(muteButton).height(barHeight).width(barHeight).left().expandX();
 //			}
 		}
-		
-		coins.setText(""+profile.coins);
-		cash.setText(""+profile.cash);
-		
-		// only call this when necessary! after rounds or purchases basically.
-		updateStars(profile.getCurrentReputation());
-		
-		updateAdCampaignBar();
+
+		// This generates the string every frame, not good.
+		// TODO optimize
+		coins.setText(profile.coinsString);
+		cash.setText(profile.cashString);
+
+		if (profile.inventory.adCampaign != null)
+			updateAdCampaignBar(profile.inventory.adCampaign.getCurrentSelected().getName());
+		else updateAdCampaignBar(null);
 		
 		batch.end();
 		uiStage.act(delta);
@@ -295,36 +316,49 @@ public class DrawUI {
 		
 	}
 	
-	public static void tintWhite(SpriteBatch batch) {
-		// draw gray fade over everything
-//		Color c = batch.getColor();
-//		batch.setColor(GRAY);
-		batch.draw(Assets.whiteAlpha, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
-//		batch.setColor(c);
+//	public static void tintWhite(SpriteBatch batch) {
+//		// draw gray fade over everything
+////		Color c = batch.getColor();
+////		batch.setColor(GRAY);
+//		batch.draw(Assets.whiteAlpha, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+////		batch.setColor(c);
+//	}
+//	
+//	public static void tintGray(SpriteBatch batch) {
+//		batch.draw(Assets.grayAlpha, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+//	}
+//	public static void tintGrayLight(SpriteBatch batch) {
+//		batch.draw(Assets.grayAlphaLight, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+//	}
+	
+	public static void tint(SpriteBatch batch, TextureRegion tint, float alpha) {
+		if (alpha < 1) {
+			Color o = batch.getColor();
+			tintColor.set(1, 1, 1, alpha);
+			batch.setColor(tintColor);
+			batch.draw(tint, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+			batch.setColor(o);
+		}
+		else {
+			batch.draw(tint, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+		}
 	}
 	
-	public static void tintGray(SpriteBatch batch) {
-		batch.draw(Assets.grayAlpha, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
-	}
-	public static void tintGrayLight(SpriteBatch batch) {
-		batch.draw(Assets.grayAlphaLight, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
-	}
-	
-	public static void tintGrayAlpha(SpriteBatch batch, float alpha) {
-		Color o = batch.getColor();
-		grayDraw.set(1, 1, 1, alpha);
-		batch.setColor(grayDraw);
-		batch.draw(Assets.gray, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
-		batch.setColor(o);
-	}
-	
-	public static void tintWhiteAlpha(SpriteBatch batch, float alpha) {
-		Color o = batch.getColor();
-		grayDraw.set(1, 1, 1, alpha);
-		batch.setColor(grayDraw);
-		batch.draw(Assets.white, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
-		batch.setColor(o);
-	}
+//	public static void tintGrayAlpha(SpriteBatch batch, float alpha) {
+//		Color o = batch.getColor();
+//		grayDraw.set(1, 1, 1, alpha);
+//		batch.setColor(grayDraw);
+//		batch.draw(Assets.gray, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+//		batch.setColor(o);
+//	}
+//	
+//	public static void tintWhiteAlpha(SpriteBatch batch, float alpha) {
+//		Color o = batch.getColor();
+//		grayDraw.set(1, 1, 1, alpha);
+//		batch.setColor(grayDraw);
+//		batch.draw(Assets.white, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+//		batch.setColor(o);
+//	}
 //
 //	public static void drawCoins(SpriteBatch batch, Profile profile) {
 //		drawCoins(batch, profile.coins);	
@@ -375,12 +409,23 @@ public class DrawUI {
 //			batch.draw(Assets.starHalf, ChuanrC.width * xStar, yStar, starWidth, starHeight);				
 //		}
 //	}
+
+	public static void updateStars() {
+		updateStars(master.profile.getCurrentReputation());
+	}
+	
+	// round to nearest 0.5
 	public static void updateStars(float starCount) {
+		System.out.println("star count o : " + starCount);
+		starCount = ((int) Math.round(starCount * 2)) / 2f;
+		System.out.println("rounded count : " + starCount);
 		if (currentStarCount != starCount) {
 			starTable.clear();
+//			starTable.debug();
 			
 			// calculate number of gray stars
 			int grayStars = (int) (5 - starCount);
+			System.out.println(starCount + " stars " + grayStars);
 					
 			// star width is determined by size of star area
 			float starHeight = KebabKing.getGlobalY(STAR_HEIGHT);
@@ -388,40 +433,40 @@ public class DrawUI {
 			float rightPad = KebabKing.getGlobalX(STAR_PAD);
 			float leftPad = KebabKing.getGlobalX(STAR_PAD);
 			
+			// each "image" can only be in one place at a time.
 			while (starCount >= 1) {
-				Image star = new Image(Assets.getStar());
-				starTable.add(star).height(starHeight).padRight(rightPad).padLeft(leftPad).expand();
+				starTable.add(star[(int) starCount]).height(starHeight).width(starHeight).padRight(rightPad).padLeft(leftPad).expand();
 				starCount--;
 			}
 			
 			// draw half star
 			if (starCount > 0) {
-				Image star = new Image(Assets.getHalfStar());
-				starTable.add(star).height(starHeight).padRight(rightPad).padLeft(leftPad).expand();
+				starTable.add(halfStar).height(starHeight).width(starHeight).padRight(rightPad).padLeft(leftPad).expand();
 			}
 			
-			// draw gray stars
+			// draw gray stars (necessary)
 			for (int i = 0; i < grayStars; i++) {
-				Image star = new Image(Assets.getGrayStar());
-				starTable.add(star).height(starHeight).padRight(rightPad).padLeft(leftPad).expand();
+				starTable.add(grayStar[i]).height(starHeight).width(starHeight).padRight(rightPad).padLeft(leftPad).expand();
 			}
 			
 			currentStarCount = starCount;
 		}
 	}
 		
-	public static void updateAdCampaignBar() {
+	public static void updateAdCampaignBar(String labelText) {
 		// draw a yellow
 		if (master.profile.inventory.campaignPercent() > 0) {
-			float textWidth = 0.2f;
+			float textWidth = labelText.length() * 0.02f;
 			if (!adCampaignTable.isVisible()) {
+				System.out.println("UPDATING AD CAMPAIGN BAR");
+
 				adCampaignTable.setVisible(true);
 				Table labelTable = new Table();
-				labelTable.setBackground(new TextureRegionDrawable(Assets.red));
+				labelTable.setBackground(new TextureRegionDrawable(Assets.gray));
 //				labelTable.debugAll();
 				//			labelTable.setBackground();
-				Label adCampaignLabel = new Label("AD CAMPAIGN: ", Assets.generateLabelStyleUIChinaWhite(16));
-				adCampaignLabel.setAlignment(Align.left);
+				Label adCampaignLabel = new Label(labelText + ": ", Assets.generateLabelStyleUIChinaWhite(16, Assets.alpha + " :"));
+				adCampaignLabel.setAlignment(Align.center);
 				labelTable.add(adCampaignLabel).left();
 				adCampaignTable.add(labelTable).left().width(KebabKing.getGlobalX(textWidth)).height(KebabKing.getGlobalY(AD_BAR_HEIGHT));
 				adCampaignTable.add(bar).left().fillY().expandY();
@@ -430,15 +475,40 @@ public class DrawUI {
 			float barWidth = 1-textWidth - master.profile.inventory.campaignPercent();
 			bar.setWidth(KebabKing.getGlobalX(barWidth));
 		}
-		else {
+		else if (adCampaignTable.isVisible()) {
 			adCampaignTable.clear();
 			// visibility is used as a boolean flag
 			adCampaignTable.setVisible(false);
 		}
 	}
 	
-	public static void prepareNotificationTable() {
-		notificationTable.setBackground(new TextureRegionDrawable(Assets.white));
+	public static void prepareNotificationTable(String titleText, String messageText, String iconString) {
+		notificationTable.setBackground(new TextureRegionDrawable(Assets.notificationBG));
+		Table subTable = new Table();
+		float padX = 0.1f;
+		float padTop = 0.1f;
+		float padBot = 0.15f;
+		notificationTable.add(subTable).padLeft(KebabKing.getGlobalX(padX)).padRight(KebabKing.getGlobalX(padX)).padTop(KebabKing.getGlobalY(padTop)).padBottom(KebabKing.getGlobalY(padBot)).expand().fill();//.top();
+		Label title = new Label(titleText, Assets.generateLabelStyleUIWhite(40, Assets.alpha));
+		title.setColor(MainStoreScreen.FONT_COLOR);
+		subTable.add(title).top().expandX();
+		
+		Label message = new Label(messageText, Assets.generateLabelStyleUIWhite(24, Assets.allChars));
+		message.setColor(MainStoreScreen.FONT_COLOR);
+		subTable.row();
+		message.setAlignment(Align.left);
+		message.setWrap(true);
+		subTable.add(message).expandX().expandY().top().left();
+		
+		message.addListener(new InputListener() {
+			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+				return true;
+			}
+			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+				System.out.println("clearing");
+				clearNotificationTable();
+			}
+		});
 	}
 	
 	public static void clearNotificationTable() {

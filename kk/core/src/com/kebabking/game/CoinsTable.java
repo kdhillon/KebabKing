@@ -2,7 +2,6 @@ package com.kebabking.game;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
 import com.kebabking.game.OnlinePurchaseManager.PurchaseableOnline;
 
 public class CoinsTable extends Table {
@@ -11,11 +10,11 @@ public class CoinsTable extends Table {
 	// create a table in which people can buy coins 
 	public CoinsTable(KebabKing master) {
 		super();
-		System.out.println("RUNNING");
+//		System.out.println("RUNNING");
 		this.master = master;
-		Label title = new Label("Coins!", Assets.getStoreTitleLS());
-		title.setAlignment(Align.center);
-		this.add(title).height(KebabKing.getGlobalY(StoreScreen.TitleHeight / StoreScreen.UNITS_HEIGHT));
+//		Label title = new Label("Coins!", Assets.gen);
+//		title.setAlignment(Align.center);
+//		this.add(title).height(KebabKing.getGlobalY(StoreScreen.TitleHeight / StoreScreen.UNITS_HEIGHT));
 		this.row();
 		for (PurchaseableOnline op : OnlinePurchaseManager.PurchaseableOnline.values()) {
 			this.add(newTableEntry(op));
@@ -26,9 +25,9 @@ public class CoinsTable extends Table {
 	private Table newTableEntry(PurchaseableOnline op) {
 		Table entry = new Table();
 		
-		Label title = new Label("" + op.coins + " Coins!", Assets.generateLabelStyleUIChinaWhite(30));
+//		Label title = new Label("" + op.coins + " Coins!", Assets.generateLabelStyleUIChinaWhite(30, Assets.nums + " Coins!"));
 		
-		entry.add(title);
+//		entry.add(title);
 		entry.row();
 		
 //		CoinsButton buy = new CoinsButton("Get Coins!", Assets.getBackButtonStyle(), op);

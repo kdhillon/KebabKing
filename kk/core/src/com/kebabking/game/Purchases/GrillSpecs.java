@@ -20,7 +20,7 @@ public class GrillSpecs {
 	}
 	
 	public int getSize() {
-		return ((GrillSize.Size) grillSize.currentQuality).size;
+		return ((GrillSize.Size) grillSize.getCurrentSelected()).size;
 	}
 	
 	public GrillSize getGrillSize() {

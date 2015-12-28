@@ -13,8 +13,10 @@ import com.kebabking.game.Purchases.Purchaseable;
 public class Profile {
 	static final float STARTING_CASH = 99999;
 	static final int STARTING_COINS = 999;
-	static final float MAX_MONEY = 100000;
+	static final float MAX_MONEY = Float.POSITIVE_INFINITY;
 	static final float MIN_MONEY = 0;
+	static final int MIN_COINS = 0;
+	static final int MAX_COINS = Integer.MAX_VALUE;
 	static final float START_REP = 2.5f;
 		
 	static final int MAX_LEVEL = 1000;
@@ -29,9 +31,10 @@ public class Profile {
 	Inventory inventory; 	// items that have been unlocked or purchased!
 
 	boolean tutorialNeeded;
-	float cash; 			// current cash
-	int coins; 				// special currency!
-	
+	private float cash; 			// current cash
+	private int coins; 				// special currency!
+	public String cashString;
+	public String coinsString;
 	
 	public int daysWorked;		// starts at 0
 	
@@ -56,8 +59,13 @@ public class Profile {
 		this.master = master;
 		this.cash = STARTING_CASH;
 		this.coins = STARTING_COINS;
+		this.updateCashString();
+		this.updateCoinsString();
 		this.daysWorked = 0;
 		this.currentReputation = START_REP;
+
+		// only call this when necessary! after rounds or purchases basically.
+
 //		this.tutorialNeeded = true;
 		
 		// for now, disable tutorial
@@ -68,7 +76,13 @@ public class Profile {
 				
 		resetCustomerDistribution();
 	}
-	
+
+	public void updateCoinsString() {
+		this.coinsString = coins + "";
+	}
+	public void updateCashString() {
+		this.cashString = cash + "";
+	}
 	public static void init() {
 		EXP_TABLE = new int[MAX_LEVEL];
 		EXP_TABLE[0] = 100;
@@ -86,13 +100,31 @@ public class Profile {
 	public void giveMoney(float money) {
 		validateMoney();
 		this.cash += money;
+		this.updateCashString();
 		validateMoney();
+	}
+
+	public void giveCoins(int coins) {
+		validateCoins();
+		this.coins += coins;
+		this.updateCoinsString();
+		this.validateCoins();
 	}
 	
 	public void endDay() {
 		daysWorked++;
+		// save here!
+
 		// unlock everything that should be unlocked based on days?
 		// two levels of unlock - unlock by round, then unlock by money?
+		
+		try {
+			master.save();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void updateRepuation(float dayReputation) {
@@ -112,6 +144,8 @@ public class Profile {
 		System.out.println(currentReputation);
 		
 		currentReputation = sum;
+		DrawUI.updateStars(getCurrentReputation());
+		System.out.println("NEW REPUTATION: " + currentReputation);
 	}
 	
 	public float getCurrentReputation() {
@@ -127,7 +161,11 @@ public class Profile {
 			throw new java.util.InputMismatchException("money out of range");
 		}
 	}
-	
+	public void validateCoins() {
+		if (this.coins < MIN_COINS || this.cash > MAX_COINS) {
+			throw new java.util.InputMismatchException("cash out of range");
+		}
+	}
 //	 Just big and small for now
 	public int grillSize() {
 		if (inventory.grillSpecs == null) {
@@ -174,6 +212,7 @@ public class Profile {
 		dailyExpenses += inventory.meatQuality.getCurrentSelected().getDailyCost();
 //		dailyExpenses += inventory.
 		this.cash -= dailyExpenses;
+		this.updateCashString();
 	}
 	
 	public LocationType.Location getLocation() {
@@ -191,11 +230,13 @@ public class Profile {
 	public void spendCoins(int coins) {
 		this.coins -= coins;
 		if (coins < 0) throw new java.lang.AssertionError();
+		updateCoinsString();
 	}
 	
 	public void spendCash(float cash) {
 		this.cash -= cash;
 		if (cash < 0) throw new java.lang.AssertionError();
+		updateCashString();
 	}
 	
 	public TextureRegion getLocationBG() {

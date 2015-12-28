@@ -52,7 +52,7 @@ public class PauseScreen extends ActiveScreen  {
 		topLeft.setBackground(new TextureRegionDrawable(Assets.white));
 		topRight.setBackground(new TextureRegionDrawable(Assets.white));
 		
-		Label topText = new Label("PAUSED", Assets.generateLabelStyleUIChinaWhite(50));
+		Label topText = new Label("PAUSED", Assets.generateLabelStyleUIChinaWhite(50, "PAUSED"));
 		
 		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));
 		
@@ -65,7 +65,7 @@ public class PauseScreen extends ActiveScreen  {
 	public Table generateTextTable() {
 		Table textTable = new Table();
 		
-		Label text = new Label(defaultDesc, Assets.generateLabelStyleUIWhite(20));
+		Label text = new Label(defaultDesc, Assets.generateLabelStyleUIWhite(20, Assets.allChars));
 		text.setAlignment(Align.center);
 		text.setWrap(true);
 		
@@ -75,7 +75,7 @@ public class PauseScreen extends ActiveScreen  {
 		Table jadeButton = new Table();
 		TextureRegion jade = Assets.getTextureRegion("screens/pause-02");
 		jadeButton.setBackground(new TextureRegionDrawable(jade));
-		Label ok = new Label("OK", Assets.generateLabelStyleUIChinaWhite(70));
+		Label ok = new Label("OK", Assets.generateLabelStyleUIChinaWhite(70, "OK"));
 		jadeButton.add(ok).top().padTop(KebabKing.getGlobalY(0.01f)).expandY();
 		
 		float width = KebabKing.getGlobalX(0.25f);
@@ -99,7 +99,7 @@ public class PauseScreen extends ActiveScreen  {
 		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
 		button.setBackground(new TextureRegionDrawable(bg));
 		
-		Label resume = new Label("\nRESUME\n", Assets.generateLabelStyleUIChinaWhite(44));
+		Label resume = new Label("\nRESUME\n", Assets.generateLabelStyleUIChinaWhite(44, "\nRESUME\n"));
 		button.add(resume).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
 	
 		button.addListener(new InputListener() {
@@ -120,9 +120,9 @@ public class PauseScreen extends ActiveScreen  {
 		
 	@Override
 	public void render(float delta) {
-		super.renderGrayBg(delta);
+		super.renderGrayBg(delta, uiStage);
 		
-		uiStage.draw();
+//		uiStage.draw();
 	}
 	
 	@Override

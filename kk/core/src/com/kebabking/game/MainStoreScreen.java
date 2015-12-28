@@ -3,7 +3,6 @@ package com.kebabking.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -25,8 +23,8 @@ public class MainStoreScreen extends ActiveScreen {
 	static float BACK_BUTTON_HEIGHT = 0.05f;
 	static float BACK_BOTTOM_PAD = 0.01f;
 	
-	static Color FONT_COLOR = new Color(0.3f, 0.2f, 0.2f, 1); 
-	static Color FONT_COLOR_GRAY = new Color(0.7f, 0.6f, 0.6f, 1); 
+	static Color FONT_COLOR = new Color(0.22f, 0.2f, 0.2f, 1); 
+	static Color FONT_COLOR_GRAY = new Color(0.22f, 0.2f, 0.2f, 0.8f); 
 	static Color FONT_COLOR_GREEN = new Color(0.223f, 0.707f, 0.289f, 1); 
 
 	static float TitlePad = 0.15f;
@@ -85,26 +83,28 @@ public class MainStoreScreen extends ActiveScreen {
 
 	@Override
 	public void render(float delta) {
-		super.render(delta);
+		super.renderWhiteAlpha(delta, .6f, uiStage);
 
-		drawStore(batch);
+//		drawStore(batch);
 
 		if (Gdx.input.isKeyJustPressed(Keys.BACK)) {
 			clickBack();
 		}
 	}
 	
-	public void drawStore(SpriteBatch batch) {
-		uiStage.draw();
+	@Override
+	// needed for scroll panes
+	public void update(float delta, boolean ff) {
+		super.update(delta, ff);
+		uiStage.act(delta);
 	}
+	
+//	public void drawStore(SpriteBatch batch) {
+//	}
 
 	public void setupMainTable() {
 		mainTable = new Table();
-		
-		// first, draw a transparent background over mainTable;
-		mainTable.setBackground(new TextureRegionDrawable(Assets.whiteAlpha));
 		mainTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
-		
 //		mainTable.debugAll();
 		
 		// add title
@@ -117,7 +117,7 @@ public class MainStoreScreen extends ActiveScreen {
 		
 		// add text below title
 		String text = "welcome to the bazaar";
-		Label label = new Label(text, Assets.generateLabelStyleUILight(32));
+		Label label = new Label(text, Assets.generateLabelStyleUILight(32, "welcome to the bazaar"));
 		label.setColor(FONT_COLOR);
 		mainTable.add(label).center().expandY().top();
 		mainTable.row();
@@ -168,17 +168,21 @@ public class MainStoreScreen extends ActiveScreen {
 		// TODO make back button a global thing...? like a part of the big layout
 	}
 	
-	public void addBackButton(Button button, Table table) {
+	public void addBackButton(Table button, Table table) {
+//		System.out.println("ASDFJALSDJFLKASJDFJASDFJKALSDFJKASDJFLAJSKLDFJASDKLFJALKSDFJALSDFKASDJFAKJSDF");
 		int backPad = KebabKing.getGlobalY(0.01f);
 		table.add(button).bottom().right().expandX().width(KebabKing.getGlobalX(BACK_BUTTON_WIDTH)).height(KebabKing.getGlobalY(BACK_BUTTON_HEIGHT)).padBottom(KebabKing.getGlobalY(BACK_BOTTOM_PAD)).padTop(backPad);
 	}
 	
-	public Button newBackButtonInit() {
-		TextButton backButton = new TextButton("back", Assets.getBackButtonStyle(25));
+	public Table newBackButtonInit() {
+		Table backButton = new Table();
+		Label back = new Label("back", Assets.generateLabelStyleUIWhite(32, "back"));
+		backButton.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("market/back_button")));
+		backButton.add(back);
 		return backButton;
 	}
-	public Button newBackButton() {
-		Button backButton = newBackButtonInit();
+	public Table newBackButton() {
+		Table backButton = newBackButtonInit();
 		
 		backButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {

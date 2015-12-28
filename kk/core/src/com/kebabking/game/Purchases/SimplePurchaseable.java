@@ -10,10 +10,18 @@ public class SimplePurchaseable implements Purchaseable {
 	float dailyCost;
 	int unlockAtLevel;
 	String description;
-	TextureRegion icon;
+	transient TextureRegion icon;
+	String textureName;
 	
-	public SimplePurchaseable(String name, float cashToUnlock, int unlockAtLevel, String description, String iconFull) {
-		this(name, cashToUnlock, 0, 0.0f, unlockAtLevel, description, iconFull);
+	// for Kryo
+	public SimplePurchaseable() {
+		if (textureName != null && textureName != "") {
+			this.icon = Assets.getTextureRegion(textureName);
+		}
+	}
+	
+	public SimplePurchaseable(String name, float cashToUnlock, int coinsToUnlock, int unlockAtLevel, String description, String iconFull) {
+		this(name, cashToUnlock, coinsToUnlock, 0.0f, unlockAtLevel, description, iconFull);
 	}
 	
 	public SimplePurchaseable(String name, float cashToUnlock, int coinsToUnlock, float dailyCost, int unlockAtLevel, String description, String iconFull) {
@@ -22,6 +30,7 @@ public class SimplePurchaseable implements Purchaseable {
 		this.cashToUnlock = cashToUnlock;
 		this.dailyCost = dailyCost;
 		this.description = description;
+		this.textureName = iconFull;
 		this.unlockAtLevel = unlockAtLevel;
 		if (iconFull != null && !iconFull.equals(""))
 			this.icon = Assets.getTextureRegion(iconFull);

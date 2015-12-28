@@ -11,12 +11,14 @@ public class VanityGrillStandType extends PurchaseType {
 	
 	// TODO add a boolean to purchasetype that makes it so you can toggle all items, instead of having "current"
 	public VanityGrillStandType(Inventory inventory) {
-		super(inventory, "Grill Stand", description, null, VanityGrillStand.stands.items);
+		super(inventory, "GRILL STAND", description, null, VanityGrillStand.stands.items);
 		// allow null purchaseable to be current.
 		this.unlock(VanityGrillStand.stands.first());
 	}
 	
 	// for Kyro
-	public VanityGrillStandType(){};
+	public VanityGrillStandType(){
+		super("GRILL STAND", description, null, VanityGrillStand.stands.items);
+	};
 
 }

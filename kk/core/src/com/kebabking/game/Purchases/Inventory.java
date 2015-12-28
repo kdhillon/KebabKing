@@ -12,9 +12,11 @@ public class Inventory {
 	// class that contains all information about purchased items
 	// remember to make this expandable, so that there are no problems when updates are released
 	Profile profile;
-
+	
 	public MeatQuality meatQuality;
 	public DrinkQuality drinkQuality;
+	
+	public StickType stickType;
 
 	// Info about grill
 	public GrillSpecs grillSpecs; // contains two relevant items, can remove later
@@ -62,6 +64,8 @@ public class Inventory {
 		decorations = new VanityDecorationType(this);
 		
 		grillStand = new VanityGrillStandType(this);
+		
+		stickType = new StickType(this);
 	}
 
 	public float getCash() {

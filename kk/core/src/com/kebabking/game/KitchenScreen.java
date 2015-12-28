@@ -2,7 +2,6 @@ package com.kebabking.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.InputAdapter;
 
 public class KitchenScreen extends ActiveScreen {
 	static final float COUNTDOWN_TIME = 10;
@@ -16,8 +15,8 @@ public class KitchenScreen extends ActiveScreen {
 //	static final float PAUSE_WIDTH = 2.1f; // this times unit width
 //	static final float PAUSE_HEIGHT = 1.5f;
 
-	static final float DAY_LENGTH = 120; // 2 minutes per day
-//	static final float DAY_LENGTH = 10; 
+//	static final float DAY_LENGTH = 120; // 2 minutes per day
+	static final float DAY_LENGTH = 10; 
 	
 //	static float TIME_TO_WAIT = 2f;
 	
@@ -25,8 +24,6 @@ public class KitchenScreen extends ActiveScreen {
 	static int UNIT_HEIGHT;
 
 	// probably shouldn't be here but thats ok
-	static final float BEER_SELL_PRICE = 5;
-	static final float BEER_BUY_PRICE = 3;
 
 	float time;
 	boolean wasShutDown;
@@ -47,6 +44,8 @@ public class KitchenScreen extends ActiveScreen {
 	int kebabsTrashed = 0;
 	
 	TrashPile tp;
+
+	boolean stillHolding;
 	
 	// A new Kitchen Screen is created every time the player starts a new day.
 	// handles user input and the main render / update loop
@@ -62,7 +61,7 @@ public class KitchenScreen extends ActiveScreen {
 
 		tp = new TrashPile(this);
 
-		setInputProcessor();
+//		setInputProcessor();
 
 		// required to have a smooth thing
 		this.render(0);
@@ -71,7 +70,7 @@ public class KitchenScreen extends ActiveScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		
+
 		batch.begin();
 		if (time < COUNTDOWN_TIME)
 			DrawUI.countdownTime(batch, time);
@@ -85,9 +84,17 @@ public class KitchenScreen extends ActiveScreen {
 		// just for testing
 
 		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+			stillHolding = true;
 			grill.holdInput(Gdx.input.getX(), Gdx.input.getY());
 		}
 		else {
+			// this is breaking everything.
+			// this is being called too early.
+			// hack solution: force a release if one wasn't registered already
+			if (stillHolding) {
+				grill.release(Gdx.input.getX(), Gdx.input.getY());
+				stillHolding = false;
+			}
 			grill.mousedOver = -1;
 			cm.mousedOver = null;
 		}
@@ -100,6 +107,13 @@ public class KitchenScreen extends ActiveScreen {
 			this.time -= delta;
 		}
 		if (this.time < 0) finishDay();
+	}
+	
+	public float getDrinkBuyPrice() {
+		return master.profile.inventory.drinkQuality.getBuyPrice();
+	}
+	public float getDrinkSellPrice() {
+		return master.profile.inventory.drinkQuality.getSellPrice();
 	}
 	
 	// converts 
@@ -142,21 +156,17 @@ public class KitchenScreen extends ActiveScreen {
 	}
 
 	public boolean canAfford(float price) {
-		return  master.profile.cash >= price;
+		return  master.profile.getCash() >= price;
 	}
 
 	public void earnMoney(float money) {
 		this.moneyEarnedToday += money;
-		this.master.profile.cash += money;
-		//		System.out.println("money: " + currentMoney);
+		this.master.profile.giveMoney(money);
 	}
 
 	public void spendMoney(float money) {
-		System.out.println("Spending " + money);
-		master.profile.cash -= money;
+		master.profile.spendCash(money);
 		moneySpentToday += money;
-		if (master.profile.cash < 0) throw new java.lang.AssertionError("Money < 0!");
-		//		System.out.println("money: " + currentMoney);
 	}
 
 	public static int getUnitX(int x) {
@@ -185,7 +195,8 @@ public class KitchenScreen extends ActiveScreen {
 		// out of 10
 		int reputation = (int) (2.0 * cm.totalSatisfaction / cm.totalCustomers + 0.5);		
 
-		if (cm.totalCustomers == 0) return master.profile.currentReputation;
+//		if (cm.totalCustomers == 0) return master.profile.currentReputation;
+		if (cm.totalCustomers == 0) return 0.5f;
 		
 		// out of 5
 		float rep = reputation / 2.0f;
@@ -195,26 +206,28 @@ public class KitchenScreen extends ActiveScreen {
 
 		return rep;
 	}
-	
-	public void setInputProcessor() {
-		DrawUI.setInput(new InputAdapter () {
-			public boolean touchDown (int x, int y, int pointer, int button) {
-//				super.touchDown(x, y, pointer, button);
-				grill.touchInput(x, y); // handle all types of clicks the same.
-				return true; // return true to indicate the event was handled
-			}
-			public boolean touchUp (int x, int y, int pointer, int button) {
-//				super.touchUp(x, y, pointer, button);
-				grill.release(x, y);
-				return true; // return true to indicate the event was handled
-			};
-		});
-	}
+
+//	// this is really untrustworthy if we have a UIStage on top.
+//	public void setInputProcessor() {
+//		DrawUI.setInput(new InputAdapter () {
+//			public boolean touchDown (int x, int y, int pointer, int button) {
+////				super.touchDown(x, y, pointer, button);
+//				grill.touchInput(x, y); // handle all types of clicks the same.
+//				return true; // return true to indicate the event was handled
+//			}
+//			public boolean touchUp (int x, int y, int pointer, int button) {
+////				super.touchUp(x, y, pointer, button);
+/////				grill.release(x, y);
+//				// don't trust this for now. finicky
+//				return true; // return true to indicate the event was handled
+//			};
+//		});
+//	}
 	
 	@Override
 	public void show() {
 		super.show();
-		this.setInputProcessor();
+//		this.setInputProcessor();
 	}
 	
 }

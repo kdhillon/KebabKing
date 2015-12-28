@@ -24,7 +24,11 @@ public class FileManagerDesktop implements FileManager {
 
 	@Override
 	public boolean saveFileExists() {
-		return Gdx.files.local(KebabKing.SAVE_FILENAME).exists();
+		System.out.println("Searching for save file on disk...");
+		boolean saveExists = Gdx.files.local(KebabKing.SAVE_FILENAME).exists();
+		if (!saveExists) System.out.println("No save found on disk!");
+		else System.out.println("Save found on disk!");
+		return saveExists;
 	}
 
 	@Override

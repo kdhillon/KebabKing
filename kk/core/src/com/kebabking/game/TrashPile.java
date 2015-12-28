@@ -3,7 +3,7 @@ package com.kebabking.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TrashPile {
-	static final boolean DRAW_TRASH_PILE = true;
+	static final boolean DRAW_TRASH_PILE = false;
 
 	static final int TRASH_PILE_SMALL = 2;
 	static final int TRASH_PILE_MED = 4;

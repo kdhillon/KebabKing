@@ -80,10 +80,12 @@ public class AdCampaign extends PurchaseType {
 	};
 	
 	// for Kryo
-	public AdCampaign(){};
+	public AdCampaign(){
+		super("ADS", "Ad campaigns", null, Campaign.values());
+	};
 	
 	public AdCampaign(Inventory inventory) {
-		super(inventory, "Ads", "Ad campaigns", null, Campaign.values());
+		super(inventory, "ADS", "AD CAMPAIGNS", null, Campaign.values());
 		unlock(Campaign.LEVEL0);
 	}
 }

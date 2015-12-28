@@ -2,11 +2,11 @@ android {
     buildToolsVersion "23.0.2"
     compileSdkVersion 23
     defaultConfig {
-        applicationId "com.chuanrchef.game"
+        applicationId "com.kebabchef.game.android"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 7
+        versionName "0.82"
         // This is crucial for preventing DexDebug errors
         multiDexEnabled true
     }

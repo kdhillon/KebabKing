@@ -12,34 +12,34 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class CountdownScreen extends ActiveScreen  {
 	static int COUNTDOWN_TIME = 0;
 	static float GOAL_TIME = 0f;
-	
+
 	DailyGoal goal;
 
 	Stage uiStage;
 	Table table;
-	Label countdownLabel;
+//	Label countdownLabel;
 	Label goalTitle;
 	Label goalLabel;
 	Label rewardLabel;
 
 	SpriteBatch batch;
-	
+
 	float goalCountdown;
-	
+
 	boolean countingDown;
 	float countdown;
 	int countdownInt;
-	
+
 	Color color;
-	
+
 	// first displays daily goal for a few seconds, then counts down to start round
-	public CountdownScreen(KebabKing master) {	
+	public CountdownScreen(KebabKing master) {
 		super(master);
 
 		this.batch = master.batch;
 
 		ScreenViewport viewport = new ScreenViewport();
-		uiStage = new Stage(viewport, batch);		
+		uiStage = new Stage(viewport, batch);
 //		uiStage.setDebugAll(true);
 
 		table = new Table();
@@ -50,14 +50,14 @@ public class CountdownScreen extends ActiveScreen  {
 		table.align(Align.top);
 
 		table.row();
-		
+
 		goal = new DailyGoal();
-		
-		this.countdownLabel = new Label("", Assets.generateLabelStyleUIChinaWhite(200));
-//		
+
+//		this.countdownLabel = new Label("", Assets.generateLabelStyleUIChinaWhite(200));
+//
 //		goalTitle = new Label("Daily Goal:", Assets.generateLabelStyle(48));
 //		table.add(goalTitle).bottom().expandY();
-//		table.row();		
+//		table.row();
 //		this.goalLabel = new Label(goal.toString(), Assets.generateLabelStyle(32));
 //		table.add(goalLabel).bottom();
 //		table.row();
@@ -72,14 +72,14 @@ public class CountdownScreen extends ActiveScreen  {
 		if (master.profile.tutorialNeeded) {
 			this.countdown = 0;
 		}
-		
+
 		color = new Color(1, 1, 1, 1);
-		
+
 		master.cm.reset();
 	}
 
 	@Override
-	public void render(float delta) {		
+	public void render(float delta) {
 		super.render(delta);
 		uiStage.draw();
 	}
@@ -91,33 +91,33 @@ public class CountdownScreen extends ActiveScreen  {
 
 		if (countingDown) {
 			super.update(delta, ff);
-			
+
 			color.set(1, 1, 1, countdown - (int) countdown);
-			
-			countdownLabel.setColor(color);
-			this.countdownLabel.setText("" + (int) (countdown + 1));
+
+//			countdownLabel.setColor(color);
+//			this.countdownLabel.setText("" + (int) (countdown + 1));
 		}
-		
+
 //		System.out.println("goalCountdown: " + goalCountdown + ", countdown: " + countdown);
-		
+
 		// draw goal
 		if (!this.countingDown) {
-			
+
 			if (master.batch.getColor() != Color.WHITE)
 				master.batch.setColor(Color.WHITE);
-			
+
 			this.goalCountdown -= delta;
 			if (this.goalCountdown <= 0) {
 				table.clear();
-				table.add(countdownLabel).expand().center().padTop(KebabKing.getGlobalY(1.0f / 4));
+//				table.add(countdownLabel).expand().center().padTop(KebabKing.getGlobalY(1.0f / 4));
 				table.row();
-			
+
 				table.add(goalTitle).bottom();
 				table.row();
 				table.add(goalLabel).bottom();
 				table.row();
 				table.add(rewardLabel).bottom().padBottom(KebabKing.getGlobalY(0.15f));
-			
+
 				this.countingDown = true;
 			}
 		}

@@ -19,11 +19,19 @@ public class VanityItem implements Purchaseable {
 	int priceInCoins;
 	String description;
 	transient TextureRegion region;
+	String regionName;
 		
+	// for Kryo
+	public VanityItem() {
+		if (regionName != null) 
+			region = Assets.getTextureRegion(regionName);
+	}
+	
 	public VanityItem(String name, int priceInCoins, String description, String region) {
 		this.name = name;
 		this.priceInCoins = priceInCoins;
 		this.description = description;
+		this.regionName = region;
 		
 		if (region != null && !region.isEmpty())
 			this.region = Assets.getTextureRegion(region);

@@ -12,7 +12,7 @@ import com.esotericsoftware.kryo.io.Output;
 import com.kebabking.game.Managers.Manager;
 
 public class KebabKing extends Game {
-	public static final boolean FORCE_NEW = false;
+	public static final boolean FORCE_NEW = true;
 	public static final String SAVE_FILENAME = "cc.sav";
 	public static final boolean ENGLISH = true;
 
@@ -33,6 +33,9 @@ public class KebabKing extends Game {
 	Grill grill;
 	CustomerManager cm;
 
+	// this should be disposed a few seconds after loading mainscreen
+	SplashScreen splash;
+	
 	// these three screens are permanent
 	MainMenuScreen mainMenu;
 	MainStoreScreen store;
@@ -48,6 +51,7 @@ public class KebabKing extends Game {
 
 	// Summary Screens are temporary
 
+
 	@Override
 	public void create () {
 		System.out.println("local storage path " + Gdx.files.getLocalStoragePath());
@@ -59,19 +63,20 @@ public class KebabKing extends Game {
 
 		// load splash screen first to load assets!
 		System.out.println("loading splash");
-		SplashScreen splash = new SplashScreen(this);
+		splash = new SplashScreen(this);
 		this.setScreen(splash);
 		
 		// allow catching of back button on Android
         Gdx.input.setCatchBackKey(true);
 	}
 
-
-	public void initialize(long startTime) {
+	public void initializeAssets() {
 		long finalAssetStart = System.currentTimeMillis();
 		Assets.finalizeLoading();
 		Manager.analytics.sendUserTiming("Asset Finalization", System.currentTimeMillis() - finalAssetStart);
-		
+	}
+
+	public void initializeProfile() {
 		// load this from device in the future (only thing that needs to be saved)
 		if (saveFileExists()) {
 			long loadStartTime = System.currentTimeMillis();
@@ -93,13 +98,16 @@ public class KebabKing extends Game {
 			this.profile = new Profile(this);
 //			this.TUTORIAL_MODE = true;
 		}
+	}
+
+	public void initializeRemaining(long startTime) {
+		long finalRemainingStart = System.currentTimeMillis();
 
 		// initialize new spritebatch
 		this.batch = new SpriteBatch();
 
-		
-		// load background which will always be present  
-		bg = new Background(profile); 
+		// load background which will always be present
+		bg = new Background(profile);
 
 		// load grill which will always be present
 		grill = new Grill(profile);
@@ -117,12 +125,23 @@ public class KebabKing extends Game {
 		store = new MainStoreScreen(this);
 
 		bg.initialize(); // have to do  this after setScreen, so height and width work
-		
+
 		DrawUI.initialize(this, batch);
-		
+		Manager.analytics.sendUserTiming("Remaining Finalization", System.currentTimeMillis() - finalRemainingStart);
+
 		long totalLoadTime = System.currentTimeMillis() - startTime;
 		Manager.analytics.sendUserTiming("Splash Load", totalLoadTime);
 		Manager.analytics.sendEventHit("App", "Started");
+	}
+
+	public void initialize(long startTime) {
+		initializeAssets();
+		initializeProfile();
+		initializeRemaining(startTime);
+	}
+	
+	public void disposeSplash() {
+		splash.specialDispose();
 	}
 
 	public void save() throws FileNotFoundException {	
@@ -306,7 +325,7 @@ public class KebabKing extends Game {
 		
 		Manager.analytics.sendEventHit("OnlinePurchase", "Coins", productID);
 
-		this.profile.coins += purchased.coins;
+		this.profile.giveCoins(purchased.coins);
 	}
 	
 	public static void setWidth(int toSet) {
@@ -327,5 +346,8 @@ public class KebabKing extends Game {
 	}
 	public static int getGlobalY(float percentY) {
 		return (int) (percentY * height);
+	}
+	public static float getGlobalYFloat(float percentY) {
+		return (percentY * height);
 	}
 }
