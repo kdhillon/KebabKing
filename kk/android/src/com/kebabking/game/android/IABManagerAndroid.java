@@ -2,12 +2,17 @@
 // https://github.com/libgdx/libgdx/wiki/Setting-Up-Google-In-App-Billing
 package com.kebabking.game.android;
 
+import android.content.Intent;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.kebabking.game.OnlinePurchaseManager;
 import com.kebabking.game.Managers.IABManager;
 import com.google.android.gms.analytics.ecommerce.Product;
 import com.google.android.gms.analytics.ecommerce.ProductAction;
+import com.kebabking.game.android.util.IabHelper;
+import com.kebabking.game.android.util.IabResult;
+import com.kebabking.game.android.util.Inventory;
 
 /**
  * Created by Kyle on 11/8/2015.
@@ -36,21 +41,36 @@ public class IABManagerAndroid implements IABManager {
                     Log.d(TAG, "Problem setting up In-app Billing: " + result);
                 }
                 // Hooray, IAB is fully set up!
+                System.out.println("IAB helper set up successfully");
             }
         });
     }
 
+    private String getPackageName() {
+        return "com.kebabchef.game.android";
+    }
+
     public void makePurchase(String productID) {
+        // first step: query purchased items and make sure our item is not there
+        String purchaseToken = "inapp:"+getPackageName()+":android.test.purchased";
+        try {
+            int response = iabHelper.getService().consumePurchase(3, getPackageName(),purchaseToken);
+            System.out.println("Consumption response: " + response);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Attempting to make purchase " + productID);
         com.kebabking.game.android.util.IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener
                 = new com.kebabking.game.android.util.IabHelper.OnIabPurchaseFinishedListener() {
             public void onIabPurchaseFinished(com.kebabking.game.android.util.IabResult result, com.kebabking.game.android.util.Purchase purchase)
             {
-                if (purchase == null || purchase.getDeveloperPayload() != DEVELOPER_PAYLOAD ||
+                if (purchase == null ||
                         result.isFailure()) {
                     Log.d(TAG, "Error purchasing: " + result);
-                    return;
                 }
                 else  {
+                    System.out.println("Consuming purchase");
                     // before I skipped the important consume step
                     consumePurchase(purchase);
                 }
@@ -61,6 +81,26 @@ public class IABManagerAndroid implements IABManager {
         iabHelper.launchPurchaseFlow(androidLauncher, productID, REQUEST_CODE, mPurchaseFinishedListener, "");
     }
 
+    private void consumeIfAlreadyOwned(final String productID) {
+//        IabHelper.QueryInventoryFinishedListener mGotInventoryListener
+//                = new IabHelper.QueryInventoryFinishedListener() {
+//            public void onQueryInventoryFinished(IabResult result,
+//                                                 Inventory inventory) {
+//
+//                if (result.isFailure()) {
+//                    // handle error here
+//                    System.out.println("Inventory could not be queried");
+//                }
+//                else {
+//                    if (inventory.hasPurchase(productID)) {
+//                        System.out.println("You already own " + productID + ", consuming now");
+//                        consumePurchase(inventory.getPurchase(productID));
+//                    }
+//                }
+//            }
+//        };
+    }
+
     private void consumePurchase(com.kebabking.game.android.util.Purchase purchase) {
         com.kebabking.game.android.util.IabHelper.OnConsumeFinishedListener mConsumeFinishedListener =
                 new com.kebabking.game.android.util.IabHelper.OnConsumeFinishedListener() {
@@ -68,7 +108,8 @@ public class IABManagerAndroid implements IABManager {
                         if (result.isSuccess()) {
                             // provision the in-app purchase to the user
                             // (for example, credit 50 gold coins to player's character)
-                            confirmPurchase(purchase);
+                            System.out.println("Confirming purchase");
+                            handlePurchaseSuccess(purchase);
                         }
                         else {
                             // handle error
@@ -83,24 +124,31 @@ public class IABManagerAndroid implements IABManager {
                 mConsumeFinishedListener);
     }
 
-    private void confirmPurchase(com.kebabking.game.android.util.Purchase purchase) {
-        androidLauncher.game.confirmPurchase(purchase.getSku());
-
-        Product product =  new Product()
-                .setId(purchase.getSku())
-                .setName(purchase.getSku())
-                .setCategory(purchase.getItemType())
+    private void handlePurchaseSuccess(com.kebabking.game.android.util.Purchase purchase) {
+        OnlinePurchaseManager.handlePurchaseSuccess(purchase.getSku());
+//        System.out.println("Purchase success " + purchase.getSku() + " ");
+//        Product product =  new Product()
+//                .setId(purchase.getSku())
+//                .setName(purchase.getSku())
+//                .setCategory(purchase.getItemType())
 //	    .setBrand("Google")
 //	    .setVariant("black")
-                .setPrice(OnlinePurchaseManager.getPurchaseableForID(purchase.getSku()).price)
+//                .setPrice(OnlinePurchaseManager.getPurchaseableForID(purchase.getSku()).price)
 //	    .setCouponCode("APPARELSALE")
-                .setQuantity(1);
+//                .setQuantity(1);
 
-        ProductAction productAction = new ProductAction(ProductAction.ACTION_PURCHASE)
-                .setTransactionId(purchase.getOrderId())
-                .setTransactionAffiliation("Google Play");
+//        ProductAction productAction = new ProductAction(ProductAction.ACTION_PURCHASE)
+//                .setTransactionId(purchase.getOrderId())
+//                .setTransactionAffiliation("Google Play");
 
 //        Manager.analytics.sendPaymentHit(product, productAction);
+    }
+
+    protected boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("attempting to handle activity result");
+        boolean b = iabHelper.handleActivityResult(requestCode, resultCode, data);
+        System.out.println("handle activity result: " + b);
+        return b;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.kebabking.game;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kebabking.game.Customer.CustomerType;
@@ -21,7 +22,7 @@ public class CustomerManager {
 	static final float[] LINE_POSITIONS = new float[] {0.75f, 7.2f};
 //	static final float[] LINE_POSITIONS = new float[] {0, 3.5f, 7f};
 
-	static final float PATH_Y = 10f; // out of 18
+	static final float PATH_Y = 9.9f; // out of 18
 	static final float GENERATE_BASE_TIME = 8;
 	
 	static final float LINES_START_Y = 4.9f; // where should the people wait
@@ -42,7 +43,7 @@ public class CustomerManager {
 	boolean tutSecondCustomer;
 	boolean shouldAddSecondCustomer;
 
-	int maxAtOnce; // number of people in  lines at one time
+//	int maxAtOnce; // number of people in  lines at one time
 
 	boolean generatePoliceNext;
 	
@@ -77,7 +78,7 @@ public class CustomerManager {
 		//		customers = new ArrayList<Customer>();
 		customers = new ArrayList<Customer>();
 
-		this.maxAtOnce = (profile.daysWorked + 3);
+//		this.maxAtOnce = 4;
 
 		lines = new Customer[LINE_COUNT][MAX_IN_LINE];
 		peopleInLine = new int[LINE_COUNT];
@@ -87,7 +88,7 @@ public class CustomerManager {
 
 	public void reset() {
 		// clear everything
-		this.customers.clear();
+//		this.customers.clear();
 		lines = new Customer[LINE_COUNT][MAX_IN_LINE];
 		peopleInLine = new int[LINE_COUNT];	
 		this.lastCustomer = 0;
@@ -115,7 +116,6 @@ public class CustomerManager {
 		// decide whether to generate customers
 		generateCustomers();
 
-		// This is slow and stupid
 		for (int i = 0; i < customers.size(); i++) {
 			Customer c = customers.get(i);
 			if (c == null) continue;
@@ -153,7 +153,11 @@ public class CustomerManager {
 			SHOULD_ORDER = false;
 		}
 
-		for (Customer c : customers) {
+		// This is expensive when called every frame
+		// solution, update iterator when customer removed or added
+		for (int i = 0; i < customers.size(); i++) {
+			Customer c = customers.get(i);
+			if (c == null) continue;
 			c.draw(batch);
 		}
 
@@ -213,14 +217,25 @@ public class CustomerManager {
 		}
 		
 		// decide whether to create a customer this frame
-		if (customers.size() == 0) {
+		if (needCustomer()) {
 			addCustomer();
 			return;
 		}
-		
-		if (lastCustomer > nextCustomer) addCustomer();
+		else if (lastCustomer > nextCustomer) addCustomer();
 
 		//TODO make this based on location you're in.
+	}
+	
+	public boolean needCustomer() {
+		if (customers.size() == 0) return true;
+		if (customers.size() > 2) return false;
+		if (active) {
+			for (Customer c : customers) {
+				if (!c.createdBeforeActive) return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public void addCustomer() {

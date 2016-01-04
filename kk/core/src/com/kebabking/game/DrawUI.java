@@ -1,6 +1,7 @@
 package com.kebabking.game;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -15,8 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -29,7 +33,7 @@ public class DrawUI {
 	static final Color WHITE = new Color(1, 1, 1, 1);
 	static final Color GRAY = new Color(.2f, .2f, .2f, .5f);
 //	static final Color DARK_GRAY = new Color(.2f, .2f, .2f, .9f);
-	static final int CASH_COINS_SIZE = 18;
+	static final int CASH_COINS_SIZE = 20;
 	
 	static final Color FONT_COLOR = new Color(0f, .2f, .3f, 1);
 	static final Color REPUTATION_FONT_COLOR = new Color(0f, .2f, .3f, 0.5f);
@@ -39,6 +43,8 @@ public class DrawUI {
 	
 //	static final float xStarOffset = 0.06f;
 //	static final float X_STAR_INIT = 0.12f;
+	
+	static final float WHITE_ALPHA = 0.75f;
 	
 	static final float STAR_HEIGHT = 0.028f;
 	static final float STAR_TABLE_SIZE_FACTOR = 0.9f;
@@ -56,6 +62,8 @@ public class DrawUI {
 	
 	static Stage uiStage;
 	static KebabKing master;
+
+	static InputProcessor pausedIP; // this is the stage that's happening in the background when a notification is launched
 	
 	static Table bigTable;
 	static Table uiTable;
@@ -80,7 +88,8 @@ public class DrawUI {
 	static Table bar;
 	
 	static Table notificationTable;
-
+	static Table subTable;
+	static boolean notificationActive;
 	static Color tintColor;
 
 	// each image can only be in one place at a time. So we need 5 star images. 
@@ -88,13 +97,28 @@ public class DrawUI {
 	static Image halfStar; // only need one of these
 	static Image[] grayStar; // need 5 of these (really 4 but whatever);
 	
-	static ArrayList<Purchaseable> unlockDisplayQueue = new ArrayList<Purchaseable>();
+	static LinkedList<Queue<Purchaseable>> unlockDisplayQueue = new LinkedList<Queue<Purchaseable>>();
+	
+	static boolean campaignActive;
+
+	static String currentString;
+	static int prevTime;
+	
+	// for unlock notifications
+//	static SummaryScreen summaryScreen;
 	
 	public static void setInput(InputProcessor ip) {
-		InputMultiplexer im = new InputMultiplexer();
-		im.addProcessor(DrawUI.uiStage);
-		im.addProcessor(ip);
-		Gdx.input.setInputProcessor(im);
+		pausedIP = ip;
+		if (ip == null || notificationActive) {
+			Gdx.input.setInputProcessor(uiStage);
+		}
+		else {
+			System.out.println("setting input proc");
+			InputMultiplexer im = new InputMultiplexer();
+			im.addProcessor(uiStage);
+			im.addProcessor(ip);
+			Gdx.input.setInputProcessor(im);
+		}
 	}
 	
 	public static void initialize(KebabKing master_in, SpriteBatch batch) {
@@ -201,8 +225,8 @@ public class DrawUI {
 //		cashTable.add(cash_l);
 //		cashTable.debugAll();
 		cashTable.setBackground(new TextureRegionDrawable(Assets.getCashBG()));
-		cashTable.add(cash).right().expand().padTop(bars_pad_top).padRight(coins_bg_size * .1f);
-		cash.setAlignment(Align.right);
+		cashTable.add(cash).center().expand().padTop(bars_pad_top).padLeft(coins_bg_size * 0.4f);
+		cash.setAlignment(Align.center);
 		uiTable.add(cashTable).width(cash_bg_size).height(barHeight);
 		
 		Table coinsTable = new Table();
@@ -210,7 +234,7 @@ public class DrawUI {
 		coinsTable.setBackground(new TextureRegionDrawable(Assets.getCoinsBG()));
 //		Label coins_l = new Label("Coins: ", Assets.generateLabelStyle(TEXT_SIZE));
 //		coinsTable.add(coins_l);
-		coinsTable.add(coins).right().expand().padTop(bars_pad_top).padRight(coins_bg_size * 0.1f);
+		coinsTable.add(coins).center().expand().padTop(bars_pad_top).padLeft(coins_bg_size * 0.4f);
 //		Button coinPlus = new Button();
 //		coinPlus.setStyle(Assets.getCoinPlusStyle());
 //		coinPlus.addListener(new InputListener() {
@@ -223,7 +247,7 @@ public class DrawUI {
 //		});
 //		
 //		coinsTable.add(coinPlus).right().padTop(bars_pad_top + 0.1f*barHeight).width(plusSize).height(plusSize);
-		coins.setAlignment(Align.right);
+		coins.setAlignment(Align.center);
 		uiTable.add(coinsTable).width(coins_bg_size).height(barHeight);
 		
 		uiTable.row();
@@ -241,17 +265,21 @@ public class DrawUI {
 		countdownColor = new Color(1, 1, 1, 1);
 		
 		notificationTable = new Table();
-		notificationTable.debug();
+//		notificationTable.debug();
 //		
 		float notificationWidth = KebabKing.getGlobalX(0.9f);
 		float notificationHeight = KebabKing.getGlobalY(0.8f);
 //		
-		bigTable.debug();
+//		bigTable.debug();
 		bigTable.row();
 		bigTable.add(notificationTable).width(notificationWidth).height(notificationHeight).expandY().bottom().padBottom((KebabKing.getHeight() - notificationHeight)/2);;
 		
-		prepareNotificationTable("Title", "Description", "fuckyou.png");
-//		clearNotificationTable();
+//		launchUnlockNotification(new Purchaseable[] {master.profile.inventory.locationType.values[0], 
+//								master.profile.inventory.drinkQuality.values[1],
+//								master.profile.inventory.grillSpecs.getGrillSize().values[2]
+//		});
+//		launchUnlockNotification(new Purchaseable[] {master.profile.inventory.locationType.values[2], 
+//		});
 	}
 
 	public static void drawFullUI(float delta, SpriteBatch batch, Profile profile) {
@@ -278,9 +306,17 @@ public class DrawUI {
 		coins.setText(profile.coinsString);
 		cash.setText(profile.cashString);
 
-		if (profile.inventory.adCampaign != null)
-			updateAdCampaignBar(profile.inventory.adCampaign.getCurrentSelected().getName());
-		else updateAdCampaignBar(null);
+		if (profile.inventory.adCampaign.getActive() != null) {
+			updateAdCampaignBar(profile.inventory.adCampaign.getActive().getName());
+			campaignActive = true;
+		}
+		else if (campaignActive) {
+			campaignActive = false;
+			updateAdCampaignBar(null);
+			
+			// hacky, but should work.
+			master.store.storeScreen.campaignEnded();
+		}
 		
 		batch.end();
 		uiStage.act(delta);
@@ -381,7 +417,12 @@ public class DrawUI {
 //	}
 //
 	public static void countdownTime(SpriteBatch batch, float inputTime) {
-		time.setText("" + (int) (inputTime + 1));
+		int currentTime = (int) (inputTime + 1);
+		if (currentTime != prevTime || currentString  == null) {
+			currentString = "" + currentTime;
+			prevTime = currentTime;
+		}
+		time.setText(currentString);
 		
 		countdownColor.set(1,  1,  1, inputTime - (int) inputTime);
 	
@@ -482,50 +523,301 @@ public class DrawUI {
 		}
 	}
 	
-	public static void prepareNotificationTable(String titleText, String messageText, String iconString) {
+	public static void launchAdSuccessNotification(int coins) {
+		// TODO
+		System.out.println("launching ad success notification for " + coins + " coins");
+		prepareNotification();
+		prepareAdSuccessNotificationTable(coins);
+	}
+
+	public static void launchAdNotAvailableNotification() {
+		if (notificationActive) {
+			throw new java.lang.AssertionError();
+		};
+		prepareNotification();
+		prepareAdNotAvailableNotificationTable();
+	}
+	
+	private static void prepareNotification() {
+		notificationActive = true;
+		Gdx.input.setInputProcessor(uiStage);
+
 		notificationTable.setBackground(new TextureRegionDrawable(Assets.notificationBG));
-		Table subTable = new Table();
-		float padX = 0.1f;
+		subTable = new Table();
+		float padX = 0.114f;
 		float padTop = 0.1f;
-		float padBot = 0.15f;
+		float padBot = 0.1f;
 		notificationTable.add(subTable).padLeft(KebabKing.getGlobalX(padX)).padRight(KebabKing.getGlobalX(padX)).padTop(KebabKing.getGlobalY(padTop)).padBottom(KebabKing.getGlobalY(padBot)).expand().fill();//.top();
-		Label title = new Label(titleText, Assets.generateLabelStyleUIWhite(40, Assets.alpha));
-		title.setColor(MainStoreScreen.FONT_COLOR);
-		subTable.add(title).top().expandX();
-		
-		Label message = new Label(messageText, Assets.generateLabelStyleUIWhite(24, Assets.allChars));
-		message.setColor(MainStoreScreen.FONT_COLOR);
+
+		Table topTable = SummaryScreen.generateTopTable();
+		float topBarPadY = KebabKing.getGlobalY(0.02f);
+		subTable.add(topTable).top().expandX().fillX().padBottom(topBarPadY).padTop(topBarPadY);
 		subTable.row();
-		message.setAlignment(Align.left);
-		message.setWrap(true);
-		subTable.add(message).expandX().expandY().top().left();
+	}
+	
+	public static void launchUnlockNotification(Queue<Purchaseable> available) {
+		if (notificationActive) enqueueUnlockNotification(available);
+		else {
+//			launchNotification(unlocked.getName(), unlocked.getDescription(), unlocked.getIcon(), true, unlocked.unlockAtLevel());
+			prepareNotification();
+			prepareUnlockNotificationTable(available);
+		}
+	}
+
+	private static void exitNotification() {
+		notificationActive = false;
+		clearNotificationTable();
+		setInput(pausedIP);
 		
-		message.addListener(new InputListener() {
+		if (unlockDisplayQueue.size() > 0) {
+			launchUnlockNotification(unlockDisplayQueue.pop());
+		}
+	}
+
+	private static void prepareAdSuccessNotificationTable(int coins) {
+		Label youveEarned = new Label("Thanks for watching!\n You've earned:", Assets.generateLabelStyleUILight(24, "Thanks for watching!\n You've earned:"));
+		youveEarned.setAlignment(Align.center);
+		youveEarned.setColor(MainStoreScreen.FONT_COLOR);
+		subTable.add(youveEarned).center().expandX().fillX().padTop(KebabKing.getGlobalY(0.06f)).top();
+		
+		subTable.row();
+		Table jadeTable = new Table();
+
+		Label count = new Label(coins + "x", Assets.generateLabelStyleUIWhite(44, Assets.nums + "x"));
+		count.setColor(MainStoreScreen.FONT_COLOR);
+
+		jadeTable.add(count).expandX().right();
+		
+		float jadeWidth = KebabKing.getGlobalX(0.2f);
+		float jadeHeight = jadeWidth;
+		Image jadeIcon = new Image(Assets.getTextureRegion("market/Jeweler-09"));
+		jadeTable.add(jadeIcon).width(jadeWidth).height(jadeHeight).expandX().left().padLeft(-KebabKing.getGlobalX(0.04f));
+		
+		subTable.add(jadeTable).top().expandY().padTop(KebabKing.getGlobalY(0.025f));
+		
+		addContinueButton();
+	}
+
+	private static void prepareAdNotAvailableNotificationTable() {
+		Label noVideos = new Label("No videos available!\n Check your internet \nconnection.", Assets.generateLabelStyleUILight(24, "No videos available!\n Check your internet connection."));
+		noVideos.setAlignment(Align.center);
+		noVideos.setColor(MainStoreScreen.FONT_COLOR);
+		subTable.add(noVideos).center().expandX().fillX().padTop(KebabKing.getGlobalY(0.08f)).top().expandY();
+		
+		subTable.row();
+		
+		addContinueButton();
+	}
+	
+	private static void prepareUnlockNotificationTable(Queue<Purchaseable> available) {
+
+//		float subTableWidth = (notificationTable.getWidth() - KebabKing.getGlobalX(2 * padX));
+//		subTable.debugAll();
+		
+		// add daily accounts thing.
+
+	
+		float unlocksTableWidth = KebabKing.getGlobalX(0.52f);
+		
+		// contains youve unlocked and all unlocks
+		Table unlocksTable = new Table();
+		unlocksTable.setBackground(new NinePatchDrawable(Assets.gray9PatchSmall));
+		
+		Table topPart = new Table();
+		
+		LabelStyle lite = Assets.generateLabelStyleUILight(16, "You reached Nnew available upgrades:" + Assets.nums);
+		Label youveUnlocked = new Label("You reached", lite); 
+		youveUnlocked.setAlignment(Align.center);
+		youveUnlocked.setColor(MainStoreScreen.FONT_COLOR);
+		topPart.add(youveUnlocked).center().expandX().width(unlocksTableWidth).fillX();
+		topPart.row();
+		
+//		if (unlock) {
+		Label levelLabel = new Label("LEVEL " + available.peek().unlockAtLevel(), Assets.generateLabelStyleUIChinaWhite(44, Assets.nums + "LEVEL"));
+		levelLabel.setColor(MainStoreScreen.FONT_COLOR);
+		levelLabel.setAlignment(Align.center);
+		topPart.add(levelLabel).center().expandX().width(unlocksTableWidth).fillX();		
+		
+		unlocksTable.add(topPart).top();
+		unlocksTable.row();
+		
+		subTable.add(unlocksTable).top().expandY().expandX().width(unlocksTableWidth);//.fillX();
+	
+		Table bottomPart = new Table();
+//		bottomPart.debug();
+		
+		String toPrint = "New upgrade available:";
+		if (available.size() > 1) {
+			toPrint = available.size() + " new upgrades available:";
+		}
+		Label newAvailable = new Label(toPrint, lite);
+		newAvailable.setColor(MainStoreScreen.FONT_COLOR);
+		newAvailable.setAlignment(Align.left);
+		
+		float padY = KebabKing.getGlobalYFloat(0.02f);
+		bottomPart.add(newAvailable).left().expandX().padTop(padY).padBottom(padY);
+		bottomPart.row();
+		
+		Table unlockedList = new Table();
+		ScrollPane sp = new ScrollPane(unlockedList, Assets.getSPS());
+		sp.setScrollingDisabled(true, false);
+		
+		bottomPart.add(sp).expandX().expandY();
+		
+		for (Purchaseable p : available) {
+			Table item = generateUnlockItemTable(p);
+			unlockedList.add(item).width(unlocksTableWidth).left().padLeft(KebabKing.getGlobalX(0.08f)).padBottom(KebabKing.getGlobalY(0.015f));
+			unlockedList.row();
+		}
+		
+		unlocksTable.add(bottomPart).top().expandY().expandX().fillX();
+
+		Table goToMarket = getBlueButton("MARKET", 34);
+		subTable.row();
+		subTable.add(goToMarket).height(KebabKing.getGlobalY(0.08f)).bottom().width(KebabKing.getGlobalX(0.5f));
+		goToMarket.setTouchable(Touchable.enabled);
+		goToMarket.addListener(new InputListener() {
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				return true;
+			}
+
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("goToMarket");
+				master.toStoreFrom(master.summary);
+				DrawUI.exitNotification();
+			}
+		});
+		
+		addContinueButton();
+	}
+
+	public static void addContinueButton() {
+		Table continueButton = getBlueButton("CONTINUE", 34, "screens/pause-04");
+		continueButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+//				event.handle();
+//				event.stop();
 				return true;
 			}
 			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				System.out.println("clearing");
-				clearNotificationTable();
+				DrawUI.exitNotification();
 			}
 		});
+
+		notificationTable.row();
+		notificationTable.add(continueButton).top().height(KebabKing.getGlobalYFloat(0.07f));
 	}
 	
-	public static void clearNotificationTable() {
+	public static Table generateUnlockItemTable(Purchaseable purchaseable) {
+		int imagePadX, imagePadY;
+		Table table = new Table();
+		Table button = new Table();
+		button.setBackground(new NinePatchDrawable(Assets.gray9PatchSmall));
+
+		int buttonHeight = KebabKing.getGlobalX(0.15f);
+		int buttonWidth = buttonHeight;
+		
+		imagePadX = Assets.GREEN_9PATCH_OFFSET_X/2 / 3;
+		imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 2.5f);
+
+		TextureRegion full = purchaseable.getIcon();
+		if (full == null) {
+			full = Assets.questionMark;
+		}
+
+		int iconWidth = buttonWidth - imagePadX;
+		int iconHeight = buttonHeight - imagePadY;
+
+		// if the icon is wider than long, crop out appropriate part of image
+
+		// crop to that aspect ratio
+		int regWidth = full.getRegionWidth();
+		int regHeight = full.getRegionHeight(); 
+		float aspectButton = (iconWidth) * 1.0f / (iconHeight); 
+
+		TextureRegion half;
+		if (regWidth / regHeight > aspectButton) {
+			//			System.out.println("reg Width > regHeight" + regWidth + " , " + regHeight);
+			float cropWidth = (aspectButton * regHeight);
+			half = new TextureRegion(full, (int) (regWidth/2 - cropWidth/2), 0, (int) cropWidth, full.getRegionHeight());
+		}
+		// TODO when region is taller than wide, make this cleverly allow less vertical padding so it fits well inside the box
+		else {
+			float cropHeight = regHeight/aspectButton;
+			half = new TextureRegion(full, 0, (int) (regHeight/2 - cropHeight/2), full.getRegionWidth(), (int) cropHeight);
+		}
+		Image icon = new Image(half);		
+		button.add(icon).center().width(iconWidth).height(iconHeight);
+
+		table.add(button).width(buttonWidth).height(buttonHeight).left();
+
+		Table info = new Table();
+//		info.debugAll();
+		
+		float wid = KebabKing.getGlobalX(0.3f);
+		
+		Label type = new Label(purchaseable.getTypeName(), Assets.generateLabelStyleUIWhite(12, Assets.upper));
+		type.setColor(MainStoreScreen.FONT_COLOR);
+		type.setAlignment(Align.left);
+		type.setWrap(true);
+		info.add(type).left().expandX().width(wid);
+		info.row();
+		
+		Label name = new Label(purchaseable.getName(), Assets.generateLabelStyleUILight(18, Assets.alpha));
+		name.setColor(MainStoreScreen.FONT_COLOR);
+		name.setAlignment(Align.left);
+		name.setWrap(true);
+		info.add(name).left().expandX().width(wid);
+		info.row();
+
+		Label desc = new Label(purchaseable.getDescription(), Assets.generateLabelStyleUILight(14, Assets.allChars));
+		desc.setColor(MainStoreScreen.FONT_COLOR);
+		desc.setAlignment(Align.left);
+		desc.setWrap(true);
+		info.add(desc).left().expandX().width(wid);
+		info.row();
+		
+		int infoPad = KebabKing.getGlobalX(0.03f);
+		table.add(info).expandX().left().padLeft(infoPad).fillX();
+		return table;
+	}
+	
+	public static void resize() {
+		if (bigTable != null)
+			bigTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
+	}
+	
+	private static void clearNotificationTable() {
 		Drawable d = null;
 		notificationTable.setBackground(d);
 		notificationTable.clear();
 	}
 	
-	public static void addToUnlockDisplayQueue(Purchaseable p) {
+	public static void enqueueUnlockNotification(Queue<Purchaseable> p) {
 		unlockDisplayQueue.add(p);
 	}
 	
-	public static void drawUnlockWindows() {
+	public static Table getBlueButton(String text, int size) {
+		Table button = new Table();
+		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
+		button.setBackground(new TextureRegionDrawable(bg));
 		
+		button.setTouchable(Touchable.enabled);
+		Label resume = new Label(text, Assets.generateLabelStyleUIChinaWhite(size, text));
+		button.add(resume).center().padRight(KebabKing.getGlobalX(0.025f * size / 24)).padBottom(KebabKing.getGlobalY(0.004f * size / 24));
+		
+		return button;
 	}
 	
-	public static void launchNextUnlockWindow() {
+	public static Table getBlueButton(String text, int size, String region) {
+		Table button = new Table();
+		TextureRegion bg = Assets.getTextureRegion(region);
+		button.setBackground(new TextureRegionDrawable(bg));
 		
+		button.setTouchable(Touchable.enabled);
+		Label resume = new Label(text, Assets.generateLabelStyleUIChinaWhite(size, text));
+		button.add(resume).center();
+		
+		return button;
 	}
 }

@@ -70,7 +70,7 @@ import java.util.List;
  */
 public class IabHelper {
     // Is debug logging enabled?
-    boolean mDebugLog = false;
+    boolean mDebugLog = true;
     String mDebugTag = "IabHelper";
 
     // Is setup done?
@@ -682,6 +682,10 @@ public class IabHelper {
         queryInventoryAsync(querySkuDetails, null, listener);
     }
 
+
+    public IInAppBillingService getService() {
+        return mService;
+    }
 
     /**
      * Consumes a given in-app product. Consuming can only be done on an item

@@ -1,61 +1,40 @@
 
 atlas1.png
-size: 1024,2048
+size: 256,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-Main-02
-  rotate: false
-  xy: 632, 1283
-  size: 252, 383
-  orig: 252, 383
-  offset: 0, 0
-  index: -1
 gray_alpha
   rotate: false
-  xy: 310, 609
+  xy: 2, 5
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 gray_alpha_light
   rotate: false
-  xy: 632, 1280
+  xy: 132, 135
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 graypixel
   rotate: false
-  xy: 886, 1665
+  xy: 2, 2
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
-kebabking
-  rotate: false
-  xy: 2, 612
-  size: 628, 1054
-  orig: 628, 1054
-  offset: 0, 0
-  index: -1
-paintbrush
-  rotate: false
-  xy: 2, 135
-  size: 306, 475
-  orig: 306, 475
-  offset: 0, 0
-  index: -1
 trash
   rotate: false
-  xy: 2, 5
+  xy: 2, 8
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 white_alpha
   rotate: false
-  xy: 2, 2
+  xy: 5, 5
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -161,6 +140,26 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+background/shanghai
+  rotate: false
+  xy: 2, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+background/smallcity
+  rotate: false
+  xy: 942, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+
+atlas16.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 background/suburbs
   rotate: false
   xy: 2, 2
@@ -176,36 +175,23 @@ background/subway
   offset: 0, 0
   index: -1
 
-atlas16.png
+atlas17.png
 size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-background/university
+background/summerpalace
   rotate: false
   xy: 2, 2
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
-background/urbancomplex
+background/temple
   rotate: false
   xy: 942, 2
   size: 938, 1563
   orig: 938, 1563
-  offset: 0, 0
-  index: -1
-
-atlas17.png
-size: 1024,2048
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-background/village
-  rotate: false
-  xy: 2, 2
-  size: 614, 1023
-  orig: 614, 1023
   offset: 0, 0
   index: -1
 
@@ -214,335 +200,521 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+background/terracotta
+  rotate: false
+  xy: 2, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+background/university
+  rotate: false
+  xy: 942, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+
+atlas19.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background/urbancomplex
+  rotate: false
+  xy: 2, 2
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+background/village
+  rotate: false
+  xy: 942, 542
+  size: 614, 1023
+  orig: 614, 1023
+  offset: 0, 0
+  index: -1
+
+atlas110.png
+size: 2048,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background/icon/birdsnest
+  rotate: false
+  xy: 518, 154
+  size: 256, 133
+  orig: 256, 133
+  offset: 0, 0
+  index: -1
+background/icon/cbd
+  rotate: false
+  xy: 518, 289
+  size: 256, 135
+  orig: 256, 135
+  offset: 0, 0
+  index: -1
+background/icon/drum
+  rotate: false
+  xy: 1292, 307
+  size: 256, 117
+  orig: 256, 117
+  offset: 0, 0
+  index: -1
+background/icon/forbidden
+  rotate: false
+  xy: 2, 140
+  size: 256, 139
+  orig: 256, 139
+  offset: 0, 0
+  index: -1
+background/icon/nightclub
+  rotate: false
+  xy: 776, 295
+  size: 256, 129
+  orig: 256, 129
+  offset: 0, 0
+  index: -1
+background/icon/paddy
+  rotate: false
+  xy: 776, 166
+  size: 256, 127
+  orig: 256, 127
+  offset: 0, 0
+  index: -1
+background/icon/shanghai
+  rotate: false
+  xy: 260, 288
+  size: 256, 136
+  orig: 256, 136
+  offset: 0, 0
+  index: -1
+background/icon/smallcity
+  rotate: false
+  xy: 2, 2
+  size: 256, 136
+  orig: 256, 136
+  offset: 0, 0
+  index: -1
+background/icon/suburbs
+  rotate: false
+  xy: 2, 281
+  size: 256, 143
+  orig: 256, 143
+  offset: 0, 0
+  index: -1
+background/icon/subway
+  rotate: false
+  xy: 260, 150
+  size: 256, 136
+  orig: 256, 136
+  offset: 0, 0
+  index: -1
+background/icon/summerpalace
+  rotate: false
+  xy: 518, 24
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+background/icon/temple
+  rotate: false
+  xy: 1034, 299
+  size: 256, 125
+  orig: 256, 125
+  offset: 0, 0
+  index: -1
+background/icon/terracotta
+  rotate: false
+  xy: 1034, 64
+  size: 256, 107
+  orig: 256, 107
+  offset: 0, 0
+  index: -1
+background/icon/university
+  rotate: false
+  xy: 776, 40
+  size: 256, 124
+  orig: 256, 124
+  offset: 0, 0
+  index: -1
+background/icon/urbancomplex
+  rotate: false
+  xy: 260, 14
+  size: 256, 134
+  orig: 256, 134
+  offset: 0, 0
+  index: -1
+background/icon/village
+  rotate: false
+  xy: 1034, 173
+  size: 256, 124
+  orig: 256, 124
+  offset: 0, 0
+  index: -1
+
+atlas111.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 customers/American
   rotate: false
-  xy: 2, 1213
-  size: 625, 750
-  orig: 625, 750
+  xy: 605, 1134
+  size: 600, 720
+  orig: 600, 720
   offset: 0, 0
   index: -1
 customers/FatAmerican
   rotate: false
-  xy: 1256, 520
+  xy: 605, 412
   size: 600, 720
   orig: 600, 720
   offset: 0, 0
   index: -1
 customers/FatMan
   rotate: false
-  xy: 2, 461
-  size: 625, 750
-  orig: 625, 750
+  xy: 1207, 1134
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+customers/Girl
+  rotate: false
+  xy: 2, 1133
+  size: 601, 721
+  orig: 601, 721
+  offset: 0, 0
+  index: -1
+customers/Man
+  rotate: false
+  xy: 1207, 412
+  size: 600, 720
+  orig: 600, 720
   offset: 0, 0
   index: -1
 customers/OldMan
   rotate: false
-  xy: 1256, 1242
+  xy: 2, 410
   size: 601, 721
   orig: 601, 721
   offset: 0, 0
   index: -1
 customers/Play_speechbubble_element-38
   rotate: false
-  xy: 2, 257
+  xy: 2, 206
   size: 144, 202
   orig: 144, 202
   offset: 0, 0
   index: -1
-customers/Soldier
-  rotate: false
-  xy: 629, 1213
-  size: 625, 750
-  orig: 625, 750
-  offset: 0, 0
-  index: -1
-customers/Student
-  rotate: false
-  xy: 629, 461
-  size: 625, 750
-  orig: 625, 750
-  offset: 0, 0
-  index: -1
 customers/beef_icon
   rotate: false
-  xy: 1256, 469
+  xy: 148, 257
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/beer_icon
   rotate: false
-  xy: 619, 308
+  xy: 249, 359
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/chicken_icon
   rotate: false
-  xy: 2, 2
+  xy: 1809, 1601
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/face1
   rotate: false
-  xy: 2, 155
+  xy: 1809, 1754
   size: 99, 100
   orig: 99, 100
-  offset: 0, 0
-  index: -1
-customers/face1 o
-  rotate: false
-  xy: 1859, 1808
-  size: 155, 155
-  orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face2
   rotate: false
-  xy: 1859, 1392
+  xy: 2, 104
   size: 99, 100
   orig: 99, 100
-  offset: 0, 0
-  index: -1
-customers/face2 o
-  rotate: false
-  xy: 148, 304
-  size: 155, 155
-  orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face3
   rotate: false
-  xy: 619, 359
+  xy: 148, 308
   size: 99, 100
   orig: 99, 100
-  offset: 0, 0
-  index: -1
-customers/face3 o
-  rotate: false
-  xy: 1859, 1651
-  size: 155, 155
-  orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face4
   rotate: false
-  xy: 2, 53
+  xy: 1809, 1652
   size: 99, 100
   orig: 99, 100
-  offset: 0, 0
-  index: -1
-customers/face4 o
-  rotate: false
-  xy: 305, 304
-  size: 155, 155
-  orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face5
   rotate: false
-  xy: 1859, 1290
+  xy: 1910, 1754
   size: 99, 100
   orig: 99, 100
-  offset: 0, 0
-  index: -1
-customers/face5 o
-  rotate: false
-  xy: 1859, 1494
-  size: 155, 155
-  orig: 155, 155
   offset: 0, 0
   index: -1
 customers/face_s
   rotate: false
-  xy: 720, 359
+  xy: 2, 2
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
-customers/face_s o
-  rotate: false
-  xy: 462, 304
-  size: 155, 155
-  orig: 155, 155
-  offset: 0, 0
-  index: -1
 customers/lamb_icon
   rotate: false
-  xy: 821, 410
+  xy: 1910, 1703
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/red
   rotate: false
-  xy: 2016, 1961
+  xy: 103, 202
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 customers/red o
   rotate: false
-  xy: 148, 301
+  xy: 2011, 1853
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 
-atlas19.png
-size: 2048,1024
+atlas112.png
+size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 customers/OldWoman
   rotate: false
-  xy: 2, 2
+  xy: 2, 724
   size: 600, 720
   orig: 600, 720
   offset: 0, 0
   index: -1
 customers/Policeman
   rotate: false
+  xy: 2, 2
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+customers/Soldier
+  rotate: false
+  xy: 604, 724
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
+customers/Student
+  rotate: false
   xy: 604, 2
   size: 600, 720
   orig: 600, 720
   offset: 0, 0
   index: -1
+customers/Woman
+  rotate: false
+  xy: 1206, 724
+  size: 600, 720
+  orig: 600, 720
+  offset: 0, 0
+  index: -1
 
-atlas110.png
-size: 2048,1024
+atlas113.png
+size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 grill/Cooler-21
   rotate: false
-  xy: 2, 581
+  xy: 1048, 1582
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-22
   rotate: false
-  xy: 2, 171
+  xy: 2, 451
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-23
   rotate: false
-  xy: 486, 581
+  xy: 1532, 1582
   size: 482, 408
   orig: 482, 408
   offset: 0, 0
   index: -1
 grill/Cooler-24
   rotate: false
-  xy: 1298, 785
+  xy: 1048, 1376
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-29
   rotate: false
-  xy: 1541, 785
+  xy: 2, 245
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-30
   rotate: false
-  xy: 1784, 785
+  xy: 525, 863
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-31
   rotate: false
-  xy: 970, 518
+  xy: 1291, 1376
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/Cooler_open-32
   rotate: false
-  xy: 941, 312
+  xy: 2, 39
   size: 241, 204
   orig: 241, 204
   offset: 0, 0
   index: -1
 grill/brush-48
   rotate: false
-  xy: 379, 49
+  xy: 1048, 1254
   size: 67, 120
   orig: 67, 120
   offset: 0, 0
   index: -1
-grill/brush-49
-  rotate: false
-  xy: 486, 244
-  size: 121, 68
-  orig: 121, 68
-  offset: 0, 0
-  index: -1
 grill/brush-50
   rotate: false
-  xy: 1467, 616
+  xy: 245, 2
   size: 125, 167
   orig: 125, 167
   offset: 0, 0
   index: -1
 grill/fire
   rotate: false
-  xy: 2, 2
+  xy: 525, 1069
   size: 375, 167
   orig: 375, 167
   offset: 0, 0
   index: -1
 grill/grill-02
   rotate: false
-  xy: 814, 301
+  xy: 245, 171
   size: 125, 278
   orig: 125, 278
   offset: 0, 0
   index: -1
 grill/grill-03
   rotate: false
-  xy: 1213, 444
+  xy: 372, 171
   size: 125, 278
   orig: 125, 278
   offset: 0, 0
   index: -1
 grill/grill-04
   rotate: false
-  xy: 1340, 505
+  xy: 768, 789
   size: 125, 278
   orig: 125, 278
   offset: 0, 0
   index: -1
 grill/grill-05
   rotate: false
-  xy: 1594, 616
+  xy: 372, 2
   size: 125, 167
   orig: 125, 167
   offset: 0, 0
   index: -1
-grill/legs_back
+grill/grill_stand-01
   rotate: false
-  xy: 486, 314
-  size: 326, 265
-  orig: 326, 265
+  xy: 2, 1615
+  size: 521, 375
+  orig: 521, 375
   offset: 0, 0
   index: -1
-grill/legs_front
+grill/grill_stand-02
   rotate: false
-  xy: 970, 724
-  size: 326, 265
-  orig: 326, 265
+  xy: 2, 1238
+  size: 521, 375
+  orig: 521, 375
+  offset: 0, 0
+  index: -1
+grill/grill_stand-03
+  rotate: false
+  xy: 525, 1615
+  size: 521, 375
+  orig: 521, 375
+  offset: 0, 0
+  index: -1
+grill/grill_stand-04
+  rotate: false
+  xy: 2, 861
+  size: 521, 375
+  orig: 521, 375
+  offset: 0, 0
+  index: -1
+grill/grill_stand-05
+  rotate: false
+  xy: 525, 1238
+  size: 521, 375
+  orig: 521, 375
+  offset: 0, 0
+  index: -1
+grill/grill_stand_thumb-06
+  rotate: false
+  xy: 1534, 1413
+  size: 167, 167
+  orig: 167, 167
+  offset: 0, 0
+  index: -1
+grill/grill_stand_thumb-07
+  rotate: false
+  xy: 1703, 1413
+  size: 167, 167
+  orig: 167, 167
+  offset: 0, 0
+  index: -1
+grill/grill_stand_thumb-08
+  rotate: false
+  xy: 902, 1069
+  size: 167, 167
+  orig: 167, 167
+  offset: 0, 0
+  index: -1
+grill/grill_stand_thumb-09
+  rotate: false
+  xy: 895, 900
+  size: 167, 167
+  orig: 167, 167
+  offset: 0, 0
+  index: -1
+grill/grill_stand_thumb-10
+  rotate: false
+  xy: 1872, 1413
+  size: 167, 167
+  orig: 167, 167
   offset: 0, 0
   index: -1
 
-atlas111.png
+atlas114.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest
@@ -674,95 +846,255 @@ kebabs/LambKebab_rawSp
   offset: 0, 0
   index: -1
 
-atlas112.png
-size: 1024,2048
+atlas115.png
+size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+market/Jeweler-08
+  rotate: false
+  xy: 1013, 55
+  size: 638, 584
+  orig: 638, 584
+  offset: 0, 0
+  index: -1
+market/Jeweler-09
+  rotate: false
+  xy: 258, 29
+  size: 127, 115
+  orig: 127, 115
+  offset: 0, 0
+  index: -1
+market/Jeweler-10
+  rotate: false
+  xy: 387, 29
+  size: 127, 115
+  orig: 127, 115
+  offset: 0, 0
+  index: -1
+market/Jeweler-11
+  rotate: false
+  xy: 516, 42
+  size: 193, 102
+  orig: 193, 102
+  offset: 0, 0
+  index: -1
+market/Jeweler-12
+  rotate: false
+  xy: 2, 481
+  size: 938, 1563
+  orig: 938, 1563
+  offset: 0, 0
+  index: -1
+market/Jeweler-13
+  rotate: false
+  xy: 2, 19
+  size: 126, 125
+  orig: 126, 125
+  offset: 0, 0
+  index: -1
+market/Jeweler-14
+  rotate: false
+  xy: 130, 19
+  size: 126, 125
+  orig: 126, 125
+  offset: 0, 0
+  index: -1
+market/Market-menu_element-03
+  rotate: false
+  xy: 2, 146
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
+market/Market-menu_element-04
+  rotate: false
+  xy: 337, 146
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
+market/Market-menu_element-05
+  rotate: false
+  xy: 672, 146
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
+market/Market-menu_element-06
+  rotate: false
+  xy: 942, 641
+  size: 333, 333
+  orig: 333, 333
+  offset: 0, 0
+  index: -1
 market/Market_menu_element-02
   rotate: false
-  xy: 2, 941
+  xy: 1013, 976
   size: 845, 1068
   orig: 845, 1068
   offset: 0, 0
   index: -1
-market/Market_menu_element-03
-  rotate: false
-  xy: 685, 606
-  size: 333, 333
-  orig: 333, 333
-  offset: 0, 0
-  index: -1
-market/Market_menu_element-04
-  rotate: false
-  xy: 2, 308
-  size: 333, 333
-  orig: 333, 333
-  offset: 0, 0
-  index: -1
-market/Market_menu_element-05
-  rotate: false
-  xy: 337, 308
-  size: 333, 333
-  orig: 333, 333
-  offset: 0, 0
-  index: -1
-market/Market_menu_element-06
-  rotate: false
-  xy: 672, 271
-  size: 333, 333
-  orig: 333, 333
-  offset: 0, 0
-  index: -1
-market/Market_menu_element-07
-  rotate: false
-  xy: 2, 643
-  size: 681, 296
-  orig: 681, 296
-  offset: 0, 0
-  index: -1
 market/Market_menu_element-08
   rotate: false
-  xy: 235, 210
+  xy: 711, 48
   size: 300, 96
   orig: 300, 96
   offset: 0, 0
   index: -1
 market/Market_menu_element-09
   rotate: false
-  xy: 849, 1637
+  xy: 942, 1991
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-02
   rotate: false
-  xy: 849, 1842
+  xy: 1860, 1877
   size: 167, 167
   orig: 167, 167
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-03
   rotate: false
-  xy: 235, 135
+  xy: 1653, 518
   size: 271, 73
   orig: 271, 73
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-04
   rotate: false
-  xy: 849, 1767
+  xy: 1860, 1802
   size: 78, 73
   orig: 78, 73
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-05
   rotate: false
-  xy: 904, 1608
+  xy: 516, 2
   size: 41, 38
   orig: 41, 38
   offset: 0, 0
   index: -1
+market/back_button
+  rotate: false
+  xy: 1653, 593
+  size: 292, 83
+  orig: 292, 83
+  offset: 0, 0
+  index: -1
+market/bluePixel
+  rotate: false
+  xy: 2, 16
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+market/darkGreen
+  rotate: false
+  xy: 1940, 1802
+  size: 78, 73
+  orig: 78, 73
+  offset: 0, 0
+  index: -1
+market/gray9patch
+  rotate: false
+  xy: 711, 4
+  size: 45, 42
+  orig: 45, 42
+  offset: 0, 0
+  index: -1
+market/gray9patchSmall
+  rotate: false
+  xy: 258, 6
+  size: 23, 21
+  orig: 23, 21
+  offset: 0, 0
+  index: -1
+market/gray9patchSmallFilled
+  rotate: false
+  xy: 283, 6
+  size: 23, 21
+  orig: 23, 21
+  offset: 0, 0
+  index: -1
+market/gray9patchSmallFilledCut
+  rotate: false
+  xy: 308, 6
+  size: 23, 21
+  orig: 23, 21
+  offset: 0, 0
+  index: -1
+market/green
+  rotate: false
+  xy: 1653, 443
+  size: 271, 73
+  orig: 271, 73
+  offset: 0, 0
+  index: -1
+market/green9patch
+  rotate: false
+  xy: 758, 4
+  size: 40, 42
+  orig: 40, 42
+  offset: 0, 0
+  index: -1
+market/green9patchSmall
+  rotate: false
+  xy: 383, 6
+  size: 20, 21
+  orig: 20, 21
+  offset: 0, 0
+  index: -1
+market/icon_ads
+  rotate: false
+  xy: 1653, 211
+  size: 231, 230
+  orig: 231, 230
+  offset: 0, 0
+  index: -1
+market/jade
+  rotate: false
+  xy: 1860, 1727
+  size: 78, 73
+  orig: 78, 73
+  offset: 0, 0
+  index: -1
+market/jadeBox
+  rotate: false
+  xy: 1277, 678
+  size: 681, 296
+  orig: 681, 296
+  offset: 0, 0
+  index: -1
+market/limeGreen9patchSmallFilled
+  rotate: false
+  xy: 333, 6
+  size: 23, 21
+  orig: 23, 21
+  offset: 0, 0
+  index: -1
+market/question
+  rotate: false
+  xy: 1940, 1727
+  size: 78, 73
+  orig: 78, 73
+  offset: 0, 0
+  index: -1
+market/red9patchSmall
+  rotate: false
+  xy: 358, 6
+  size: 23, 21
+  orig: 23, 21
+  offset: 0, 0
+  index: -1
+
+atlas116.png
+size: 1024,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 market/Market_subMenus__template_element-06
   rotate: false
   xy: 2, 2
@@ -770,175 +1102,91 @@ market/Market_subMenus__template_element-06
   orig: 594, 72
   offset: 0, 0
   index: -1
-market/back_button
-  rotate: false
-  xy: 537, 186
-  size: 292, 83
-  orig: 292, 83
-  offset: 0, 0
-  index: -1
-market/bluePixel
-  rotate: false
-  xy: 1018, 2008
-  size: 1, 1
-  orig: 1, 1
-  offset: 0, 0
-  index: -1
-market/darkGreen
-  rotate: false
-  xy: 929, 1767
-  size: 78, 73
-  orig: 78, 73
-  offset: 0, 0
-  index: -1
-market/gray9patch
-  rotate: false
-  xy: 904, 1648
-  size: 45, 42
-  orig: 45, 42
-  offset: 0, 0
-  index: -1
-market/gray9patchSmall
-  rotate: false
-  xy: 993, 1669
-  size: 23, 21
-  orig: 23, 21
-  offset: 0, 0
-  index: -1
-market/gray9patchSmallFilled
-  rotate: false
-  xy: 993, 1646
-  size: 23, 21
-  orig: 23, 21
-  offset: 0, 0
-  index: -1
-market/green
-  rotate: false
-  xy: 508, 111
-  size: 271, 73
-  orig: 271, 73
-  offset: 0, 0
-  index: -1
-market/green9patch
-  rotate: false
-  xy: 951, 1648
-  size: 40, 42
-  orig: 40, 42
-  offset: 0, 0
-  index: -1
-market/green9patchSmall
-  rotate: false
-  xy: 972, 1623
-  size: 20, 21
-  orig: 20, 21
-  offset: 0, 0
-  index: -1
-market/icon_ads
-  rotate: false
-  xy: 2, 76
-  size: 231, 230
-  orig: 231, 230
-  offset: 0, 0
-  index: -1
-market/jade
-  rotate: false
-  xy: 849, 1692
-  size: 78, 73
-  orig: 78, 73
-  offset: 0, 0
-  index: -1
-market/question
-  rotate: false
-  xy: 929, 1692
-  size: 78, 73
-  orig: 78, 73
-  offset: 0, 0
-  index: -1
-market/red9patchSmall
-  rotate: false
-  xy: 947, 1625
-  size: 23, 21
-  orig: 23, 21
-  offset: 0, 0
-  index: -1
 
-atlas113.png
+atlas117.png
 size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 screens/Main-02
   rotate: false
-  xy: 837, 37
+  xy: 685, 85
   size: 252, 383
   orig: 252, 383
   offset: 0, 0
   index: -1
 screens/Main-03
   rotate: false
-  xy: 1091, 295
+  xy: 1501, 405
   size: 206, 63
   orig: 206, 63
   offset: 0, 0
   index: -1
 screens/Main-04
   rotate: false
-  xy: 1091, 360
+  xy: 1203, 269
   size: 293, 60
   orig: 293, 60
   offset: 0, 0
   index: -1
 screens/Summary-02 (2)
   rotate: false
-  xy: 266, 149
+  xy: 939, 117
   size: 203, 101
   orig: 203, 101
   offset: 0, 0
   index: -1
 screens/Summary-03
   rotate: false
-  xy: 2, 422
-  size: 938, 1563
-  orig: 938, 1563
+  xy: 2, 470
+  size: 1012, 1563
+  orig: 1012, 1563
+  offset: 0, 0
+  index: -1
+screens/jadeBox
+  rotate: false
+  xy: 2, 172
+  size: 681, 296
+  orig: 681, 296
   offset: 0, 0
   index: -1
 screens/pause-01
   rotate: false
-  xy: 942, 422
+  xy: 1016, 470
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
 screens/pause-02
   rotate: false
-  xy: 2, 2
+  xy: 939, 220
   size: 262, 248
   orig: 262, 248
   offset: 0, 0
   index: -1
 screens/pause-03
   rotate: false
-  xy: 2, 252
+  xy: 2, 2
   size: 535, 168
   orig: 535, 168
   offset: 0, 0
   index: -1
 screens/pause-04
   rotate: false
-  xy: 539, 283
+  xy: 1203, 331
   size: 296, 137
   orig: 296, 137
   offset: 0, 0
   index: -1
 screens/red
   rotate: false
-  xy: 1882, 1983
+  xy: 1956, 2031
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 
-atlas114.png
+atlas118.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.kebabking.game.Purchases.Vanity.VanityDecoration;
 
 public class Background {
 	// c7ebff
@@ -157,22 +156,22 @@ public class Background {
 		batch.setColor(orig);
 		// draw the background filling entire screen
 		
-		drawVanityDecorations(batch);
+//		drawVanityDecorations(batch);
 	
 	}
 	
 	// draw background vanity decorations
-	public void drawVanityDecorations(SpriteBatch batch) {
-		
-//		for (VanityDecoration d : profile.inventory.decorations.getAll()) {
-//			
-		VanityDecoration d = (VanityDecoration) profile.inventory.decorations.getCurrentSelected();
-		if (d != null)
-			batch.draw(d.getTexture(), KebabKing.getGlobalX(d.x), KebabKing.getGlobalY(d.y), KebabKing.getGlobalX(d.width), KebabKing.getGlobalY(d.height));
-//		}
-		
-		// for now, just draw currently selected
-	}
+//	public void drawVanityDecorations(SpriteBatch batch) {
+//		
+////		for (VanityDecoration d : profile.inventory.decorations.getAll()) {
+////			
+//		VanityDecoration d = (VanityDecoration) profile.inventory.decorations.getCurrentSelected();
+//		if (d != null)
+//			batch.draw(d.getTexture(), KebabKing.getGlobalX(d.x), KebabKing.getGlobalY(d.y), KebabKing.getGlobalX(d.width), KebabKing.getGlobalY(d.height));
+////		}
+//		
+//		// for now, just draw currently selected
+//	}
 	
 	public void initialize() {
 		this.clouds = new Cloud[CLOUD_COUNT];

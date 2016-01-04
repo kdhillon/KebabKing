@@ -18,7 +18,7 @@ public class Customer implements Comparable<Customer> {
 	// if their order was what they wanted, cooked properly, your reputation increases, otherwise, it decreases
 	// if the meat given to them was undercooked, your reputation goes down and your sickness level goes up
 	// if they leave before their order is complete, your reputation decreases.
-
+	static final float BASE_HUNGER_FACTOR = 0.1f;
 	static final float BASE_WAIT_TIME = 90; // customers will stick around for this time, 
 	static final float BASE_WALK_SPEED_X = .2f; // avg customer moves this much of the screen every second
 	static final float BASE_WALK_SPEED_Y = .18f;
@@ -60,6 +60,8 @@ public class Customer implements Comparable<Customer> {
 	boolean tutorialFirst; // only true if special customer, first
 	boolean tutorialSecond; // only true if special customer, second
 
+	boolean createdBeforeActive;
+	
 	Order order; 
 	float waitTime; 		// amount of time this customer will wait, counts down
 	float originalWaitTime;	// original wait time, fixed
@@ -79,6 +81,8 @@ public class Customer implements Comparable<Customer> {
 
 	boolean policeShutdown; // if this is a policeman who is going to shut down stand
 
+	boolean wantsChuanr;
+	
 	// reference to the parent cm.
 	transient CustomerManager cm;
 
@@ -92,17 +96,18 @@ public class Customer implements Comparable<Customer> {
 
 	public enum CustomerType {
 					// pat, 	min,max, 	beer, 	speed
-		OLD_MAN(		1, 		1, 	3, 		.1f, 	.55f, "OldMan"),
-		OLD_WOMAN(		1.2f, 	1,	3, 		.05f, 	.55f, "OldWoman"),
-		STUDENT(		.8f, 	3,	6, 		.9f, 	.8f, "Student"), //
-		FAT_MAN(		1, 		6, 	9, 		.7f,	 .5f, "FatMan"), //
-		WOMAN(			1, 		2,	4, 		.2f, 	.7f, "OldWoman"),
-		BUSINESSMAN(	.8f, 	2,	6, 		.4f, 	.9f, "OldMan"),
-		POLICE(			.8f, 	2, 	6, 		.3f, 	.75f, "Policeman"),
-		FOREIGNER(		.8f, 	4, 	6, 		.9f, 	.75f, "American"),//
-		GIRL(			1f, 	1, 	3, 		0f, 	.75f, "OldMan"),
-		FAT_AMERICAN(	0.8f, 	6, 9, 		0.5f, 	.53f, "FatAmerican"),
-		SOLDIER(		0.8f, 	6, 9, 		0.5f, 	.53f, "Soldier"),
+		OLD_MAN(		1, 		1, 	5, 		.2f, 	.55f, "OldMan", "old men"),
+		OLD_WOMAN(		1.2f, 	1,	3, 		.05f, 	.55f, "OldWoman", "old women"),
+		STUDENT(		.8f, 	2,	8, 		.8f, 	.8f, "Student", "students"), //
+		FAT_MAN(		1, 		3, 	9, 		.6f,	 .5f, "FatMan", "fat men"), //
+		WOMAN(			1, 		2,	4, 		.2f, 	.7f, "Woman", "women"),
+		MAN(			1, 		2, 	7, 		.5f, 	.55f, "Man", "men"),
+		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, "OldMan", "businessmen"),
+		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, "Policeman", "police"),
+		SOLDIER(		.8f, 	2,	7, 		.4f, 	.53f, "Soldier", "soldiers"),
+		GIRL(			1f, 	2, 	6, 		.05f, 	.75f, "Girl", "girls"),
+		TOURIST(		1f, 	3, 	9, 		.4f, 	.53f, "FatAmerican", "tourists"),
+		FOREIGNER(		.8f, 	3, 	8, 		.5f, 	.75f, "American", "foreigners"),//
 ;
 
 		Animation walkUp;
@@ -116,6 +121,8 @@ public class Customer implements Comparable<Customer> {
 		int minOrder;
 		int maxOrder;
 		float beerFactor;
+		public String plural;
+		
 		/**
 		 * 
 		 * @param patience: relative amount of time they're willing to wait, a factor
@@ -132,7 +139,7 @@ public class Customer implements Comparable<Customer> {
 		//			this.beerFactor = beerFactor;	
 		//		}
 
-		private CustomerType(float patienceFactor, int minOrder, int maxOrder, float beerFactor, float speed, String prefix) {
+		private CustomerType(float patienceFactor, int minOrder, int maxOrder, float beerFactor, float speed, String prefix, String plural) {
 			CustomerTextures ct = Assets.generateCustomerTextures(prefix, speed);
 			this.idle = ct.idle;
 			this.walkUp = ct.up;
@@ -144,10 +151,10 @@ public class Customer implements Comparable<Customer> {
 			this.minOrder = minOrder;
 			this.maxOrder = maxOrder;
 			this.beerFactor = beerFactor;	
+			this.plural = plural;
 		}
 	}
-	
-	static final CustomerType[] genOrder = 	{FAT_MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, BUSINESSMAN, FOREIGNER, POLICE, GIRL, FAT_AMERICAN, SOLDIER};
+	static final CustomerType[] genOrder = 	{MAN, FAT_MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, GIRL, TOURIST, FOREIGNER, POLICE, SOLDIER, BUSINESSMAN};
 	
 	public Customer(float currentWaitFactor, CustomerManager cm) {
 		this.action = CustomerAction.PASS_START;
@@ -170,9 +177,23 @@ public class Customer implements Comparable<Customer> {
 		this.originalWaitTime = waitTime;
 
 		// decide which line to go in
+		// TODO remove
 		this.lineChoice = chooseLine();
+		
 		//		System.out.println("line choice: " + this.lineChoice);
 		this.initTimeOffset = (float) (Math.random() * 10);
+		
+		if (!cm.active) {
+//			System.out.println("customer created before active");
+			createdBeforeActive = true;
+		}
+		
+		if (cm.active) {
+			// this should be between 0 and 1
+			float probability = cm.profile.currentReputation * BASE_HUNGER_FACTOR;
+			double random = Math.random() ;
+			wantsChuanr = random < probability;
+		}
 	}
 
 	public CustomerType generateCustomerType() {
@@ -184,14 +205,14 @@ public class Customer implements Comparable<Customer> {
 //		}
 		
 		// do this based off profile
-		float[] spread = cm.profile.currentCustomerSpread;
+		double[] spread = cm.profile.currentCustomerSpread;
 
 		// first calculate total from Profile
 		float sum = 0;
-		for (float f : spread) sum += f;
+		for (double f : spread) sum += f;
 
 		// calculate probabilities (normalize)
-		float[] probs = new float[spread.length];
+		double[] probs = new double[spread.length];
 		probs[0] = spread[0] / sum;
 		for (int i = 1; i < probs.length; i++) {
 			probs[i] = (spread[i] / sum) + probs[i - 1];
@@ -461,7 +482,7 @@ public class Customer implements Comparable<Customer> {
 
 	// move to Customer Manager
 	public void makeDecision() {
-		if (!cm.active) {
+		if (!cm.active || this.createdBeforeActive) {
 			action = CustomerAction.PASS_END;
 			return;
 		}
@@ -473,7 +494,7 @@ public class Customer implements Comparable<Customer> {
 		}
 
 		// for now, angry police always shut you down
-		float policeShutdownProb = 1;
+		float policeShutdownProb = 0.2f;
 		if (this.policeShutdown && Math.random() < policeShutdownProb) {
 			
 			if (cm.totalPeopleInLines() == CustomerManager.MAX_IN_LINE) {
@@ -491,16 +512,12 @@ public class Customer implements Comparable<Customer> {
 		// if 2 star, base 30%
 		// if 1 star, base 15%
 
-		// this should be between 0 and 1
-		float probability = cm.profile.currentReputation * 0.20f;
-		double random = Math.random() ;
-		boolean wantsChuanr = random < probability;
-
 		//		System.out.println("random: " + random + ", probability: " + probability + ", decision: " + wantsChuanr)
 		
-		// TODO remove isPolice check here
+		float maxAtOnce = cm.master.profile.getCurrentReputation();
+		
 		if (cm.peopleInLine(lineChoice) >= CustomerManager.MAX_IN_LINE ||
-				cm.totalPeopleInLines() >= cm.maxAtOnce ||
+				cm.totalPeopleInLines() >= maxAtOnce - 1 ||
 				!wantsChuanr) {
 			action = CustomerAction.PASS_END;
 		}

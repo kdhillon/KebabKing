@@ -39,7 +39,7 @@ public class VanityItem implements Purchaseable {
 	
 	public static void initialize() {
 		VanityDecoration.initialize();
-		VanityGrillStand.initialize();
+//		VanityGrillStand.initialize();
 	}
 
 	@Override
@@ -79,6 +79,10 @@ public class VanityItem implements Purchaseable {
 	
 	public TextureRegion getTexture() {
 		return region;
+	}
+	
+	public String getTypeName() {
+		return "VANITY";
 	}
 	
 //	// should be implemented by inheriting classes

@@ -2,6 +2,8 @@ package com.kebabking.game.Purchases;
 
 // this class contains the user's current grill Size
 public class StickType extends PurchaseType {	
+	static String name = "KEBAB STICK";
+	static String desc = "Change your kebab sticks!";
 
 	// Specific Sizes that you might own 
 	// Using a static class allows us to extend simplepurchaseable, but still basically be an enum.
@@ -18,19 +20,18 @@ public class StickType extends PurchaseType {
 		private Type() {};
 		
 		private Type(String name, float cash, int coins, int unlockAtLevel, String texture, String description) {
-			super(name, cash, coins, unlockAtLevel, description, "kebabs/" + texture);
+			super(StickType.name, name, cash, coins, unlockAtLevel, description, "kebabs/" + texture);
 		}
 	};
 
-	static String desc = "Change your kebab sticks!";
 	
 	public StickType(Inventory inventory) {
-		super(inventory, "KEBAB STICK", desc, null, Type.values);
+		super(inventory, name, desc, null, Type.values);
 		unlock(values[0]);
 	}
 	
 	// for kryo
 	public StickType() {
-		super("KEBAB STICK", desc, null, Type.values);
+		super(name, desc, null, Type.values);
 	};
 }

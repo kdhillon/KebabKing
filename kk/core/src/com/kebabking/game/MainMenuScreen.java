@@ -1,27 +1,26 @@
 package com.kebabking.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kebabking.game.Managers.Manager;
 
 public class MainMenuScreen extends ActiveScreen {
+	public static int daysPlayedThisSession = 0;
+	public static int marketClicksThisSession = 0;
+
 	static final float INIT_BG_ALPHA = 0.45f;
 	static final float FADEOUT_TIME = 1f; // it should take this many seconds to fade out towards countdown screen
 	static final float BUTTON_WIDTH = 0.32f;
 	static final float BUTTON_GAP = 0.1f;
 	static final float DISPOSE_SPLASH_TIME = 1;
 	
-	Stage uiStage;
 	Table table;
 
 	Table startDay;
@@ -39,18 +38,18 @@ public class MainMenuScreen extends ActiveScreen {
 	public boolean disposedSplash = false;
 
 	public MainMenuScreen(KebabKing master) {	
-		super(master);
+		super(master, true);
 
 		fadeout = false;
 		fadeoutTimer = 0;
 //		currentBatchColor = new Color(1, 1, 1, 1);
 		
 		// update everything else after resize has been called
+		initializeStage();
+
 	}
 
-	public void initializeStage() {
-		ScreenViewport viewport = new ScreenViewport();
-		uiStage = new Stage(viewport, batch);		
+	public void initializeStage() {	
 //		uiStage.setDebugAll(true);
 
 		table = new Table();
@@ -82,17 +81,10 @@ public class MainMenuScreen extends ActiveScreen {
 		table.add(title).size(titleWidth, titleHeight).padBottom(KebabKing.getGlobalY(0.04f));
 
 		table.row();
-
-//		startDay = new TextButton("Start Day!", Assets.getStartButtonStyle());
-//		table.add(startDay).padTop(KebabKing.getGlobalY(.03f)).center().width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH)).padRight(KebabKing.getGlobalX(BUTTON_GAP));
-
-		startDay = new Table();
-		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
-		startDay.setBackground(new TextureRegionDrawable(bg));
 		
-		Label startLabel = new Label("\nPLAY\n", Assets.generateLabelStyleUIChinaWhite(55, "\nPLAY\n"));
-		startDay.add(startLabel).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
+		startDay = DrawUI.getBlueButton("PLAY", 55);
 		
+		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");		
 		float width = KebabKing.getGlobalX(0.55f);
 		float height = width * bg.getRegionHeight() / bg.getRegionWidth();
 		
@@ -115,14 +107,11 @@ public class MainMenuScreen extends ActiveScreen {
 
 		table.row();
 		
-		Table upgrades = new Table();
-		upgrades.setBackground(new TextureRegionDrawable(bg));
+		Table upgrades = DrawUI.getBlueButton("MARKET", 55);
 		
 		float width2 = KebabKing.getGlobalX(0.7f);
 		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();
 		
-		Label marketLabel = new Label("\nMARKET\n", Assets.generateLabelStyleUIChinaWhite(55, "\nMARKET"));
-		upgrades.add(marketLabel).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
 		table.add(upgrades).center().width(width2).height(height2).padTop(KebabKing.getGlobalY(.015f)); //.width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));
 
 		upgrades.addListener(new InputListener() {
@@ -136,6 +125,7 @@ public class MainMenuScreen extends ActiveScreen {
 //						|| y < event.getTarget().getY() || y > event.getTarget().getY() + event.getTarget().getHeight()) return;
 				System.out.println("touched");
 				master.mainToStore();
+				marketClicksThisSession++;
 			}
 		});	
 
@@ -193,12 +183,18 @@ public class MainMenuScreen extends ActiveScreen {
 //		this.currentBatchColor = new Color(1, 1, 1, 1);
 		this.fadeout = false;
 		this.fadeoutTimer = 0;
+		table.setTouchable(Touchable.enabled);
+		
+		// later on, TODO, don't fade out grill
+		uiStage.addAction(Actions.fadeIn(0));
+
+		DrawUI.setInput(uiStage);
 	}
 
 	@Override
 	public void render(float delta) {		
-		super.renderGrayAlpha(delta, bgTint, uiStage);
-		
+		super.renderGrayAlpha(delta, bgTint);
+//		System.out.println("rendering " + bgTint);
 //		uiStage.draw();
 	}
 
@@ -234,6 +230,7 @@ public class MainMenuScreen extends ActiveScreen {
 	public void transition() {
 		this.master.startCountdown();
 //		this.master.startDay();
+		daysPlayedThisSession++;
 	}
 
 	// This is a duplicate method.
@@ -241,24 +238,23 @@ public class MainMenuScreen extends ActiveScreen {
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
-		initializeStage();
 	}
 
 	@Override
 	public void show() {
 		super.show();
+
 //		if (this.startDay != null) 
 //			startDay.setText("Start!");
 			//			startDay.setText("Start Day " + (getProfile().daysWorked + 1));
-
-		// this doesn't work well for some reason
-		Gdx.input.setInputProcessor(uiStage);
+		// initialie uiStage here
+//		Gdx.input.setInputProcessor(uiStage);
 		stageSet = false;
 	}
 	
 	public void startFadeout() {
 		this.fadeout = true;
-		uiStage.getRoot().addAction(Actions.fadeOut(FADEOUT_TIME));
+		uiStage.addAction(Actions.fadeOut(FADEOUT_TIME));
 
 		table.setTouchable(Touchable.disabled);
 	}
@@ -309,10 +305,6 @@ public class MainMenuScreen extends ActiveScreen {
 //			}
 //		});	
 //	}
-	
-	public void purchaseCoins(OnlinePurchaseManager.PurchaseableOnline choice) {
-		this.master.makePurchase(choice);
-	}
 	
 //	public void deleteSave() {
 //		master.deleteProfile();

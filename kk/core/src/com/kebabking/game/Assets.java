@@ -45,7 +45,7 @@ public class Assets {
 	final static String lower = "abcdefghijklmnopqrstuvwxyz";
 	final static String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	final static String alpha = lower + upper;
-	final static String nums = "1234567890";
+	final static String nums = "1234567890.$";
 	final static String allChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#$%^&*()/1234567890:;-'\">+=_[]{}<";
 //	final static String chars = "a";
 
@@ -183,6 +183,7 @@ public class Assets {
 	static TextureRegion marketDarkGreen;
 	static TextureRegion questionMark;
 	static TextureRegion jadeBox;
+	static TextureRegion jadeBoxPlay;
 	
 	static TextureRegion red;
 	static TextureRegion yellow;
@@ -196,9 +197,11 @@ public class Assets {
 	
 //	static NinePatch green9Patch;
 	static NinePatch green9PatchSmall;
+	static NinePatch limeGreen9PatchSmallFilled;
 //	static NinePatch gray9Patch;
 	static NinePatch gray9PatchSmall;
 	static NinePatch gray9PatchSmallFilled;
+	static NinePatch gray9PatchSmallFilledCut;
 	static NinePatch red9PatchSmall;
 	
 	// There should only be 4 labelstyles in here
@@ -225,7 +228,7 @@ public class Assets {
 		arial = new BitmapFont();
 
 		//make sure to load logo first!!
-		kebabMain = new Texture(Gdx.files.internal("textures/screens/Main-02.png"));
+		kebabMain = new Texture(Gdx.files.internal("Main-02.png"));
 		peppercornLogo = new Texture(Gdx.files.internal("logo.png"));
 
 		p = new FreeTypeFontParameter();
@@ -665,16 +668,19 @@ public class Assets {
 		purchaseableCheck = getTextureRegion("market/Market_subMenus__template_element-05");
 		purchaseableJade = getTextureRegion("market/Market_subMenus__template_element-04");
 		questionMark = getTextureRegion("market/question");
-		jadeBox = getTextureRegion("market/Market_menu_element-07");
+		jadeBox = getTextureRegion("market/jadeBox");
+		jadeBox = getTextureRegion("screens/jadeBox");
 
 		red = getTextureRegion("screens/red");
 		yellow = getTextureRegion("topbar/yellow");
 		
 //		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		green9PatchSmall = new NinePatch(getTextureRegion("market/green9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
+		limeGreen9PatchSmallFilled = new NinePatch(getTextureRegion("market/limeGreen9patchSmallFilled"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 //		gray9Patch = new NinePatch(getTextureRegion("market/gray9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		gray9PatchSmall = new NinePatch(getTextureRegion("market/gray9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 		gray9PatchSmallFilled = new NinePatch(getTextureRegion("market/gray9patchSmallFilled"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
+		gray9PatchSmallFilledCut = new NinePatch(getTextureRegion("market/gray9patchSmallFilledCut"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 		red9PatchSmall = new NinePatch(getTextureRegion("market/red9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 	
 //		createUI();
@@ -848,15 +854,15 @@ public class Assets {
 //		return tbs;
 		switch(type) {
 			case food:
-				return getStyleFromRegion("market/Market_menu_element-03");
+				return getStyleFromRegion("market/Market-menu_element-03");
 			case grill:
-				return getStyleFromRegion("market/Market_menu_element-04");
+				return getStyleFromRegion("market/Market-menu_element-04");
 			case map:
-				return getStyleFromRegion("market/Market_menu_element-05");
+				return getStyleFromRegion("market/Market-menu_element-05");
 			case ads:
-				return getStyleFromRegion("market/Market_menu_element-06");
-			case coins:
-				return getStyleFromRegion("market/Market_menu_element-07");
+				return getStyleFromRegion("market/Market-menu_element-06");
+			case jade:
+				return getStyleFromRegion("market/jadeBox");
 			case vanity:
 				return null;
 			default:

@@ -21,8 +21,11 @@ public class PurchaseType {
 	protected HashSet<Integer> unlocked; 	// items that have been fully unlocked and can be purchased
 	protected HashSet<Integer> levelUnlocked; // items that can be unlocked based on level
 //	protected Purchaseable currentQuality;
-	// just store the index
+	
+	// just store the index. If consumable, this should be -1 unless something is active
 	protected int current;
+	
+	public  boolean consumable;
 	
 	// Only used for updating store screen on unlock
 //	private transient StoreScreen storeScreen;
@@ -34,25 +37,37 @@ public class PurchaseType {
 	
 	// create a new one
 	public PurchaseType(String name, String description, String textureRegionName, Purchaseable[] values) {
-		init(name, description, textureRegionName, values);
+		init(name, description, textureRegionName, values, false);
 	}
 	
 	// create a new one
 	public PurchaseType(Inventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
 		this.inventory = inventory;
-		init(name, description, textureRegionName, values);
+		init(name, description, textureRegionName, values, false);
 		setValues(values);
 	}
 	
-	public void init(String name, String description, String textureRegionName, Purchaseable[] values) {
+	// create a new one (with consumable option)
+	public PurchaseType(Inventory inventory, String name, String description, String textureRegionName, Purchaseable[] values, boolean consumable) {
+		this.inventory = inventory;
+		init(name, description, textureRegionName, values, consumable);
+		setValues(values);
+	}
+	
+	public void init(String name, String description, String textureRegionName, Purchaseable[] values, boolean consumable) {
 		unlocked = new HashSet<Integer>();
 		levelUnlocked = new HashSet<Integer>();
 		this.name = name;
+		this.description = description;
 //		if (textureRegionName != null)
 //			this.icon = Assets.getTextureRegion(textureRegionName);
 		this.values = values;
 		for (Purchaseable p : values)
 			allPurchaseables.add(p);
+		
+		this.consumable = consumable;
+		current = 0;
+		if (consumable) current = -1;
 	}
 	
 	public void allowMultipleSelect() {
@@ -77,6 +92,9 @@ public class PurchaseType {
 
 //	@Override
 	public Purchaseable getCurrentSelected() {
+		if (this.consumable) {
+			if (current < 0) return null;
+		}
 		return values[current];
 	}
 	
@@ -89,10 +107,13 @@ public class PurchaseType {
 	public boolean isUnlocked(Purchaseable purchaseable) {
 		return unlocked.contains(getIndexOf(purchaseable));
 	}
-
-//	@Override
+	
 	public void setCurrent(Purchaseable newCurrent) {
-		if (!isUnlocked(newCurrent)) throw new java.lang.AssertionError();
+		if (newCurrent == null) {
+			throw new java.lang.AssertionError();
+		}
+		if (!consumable && !isUnlocked(newCurrent)) throw new java.lang.AssertionError();
+		if (!availableForUnlock(newCurrent)) throw new java.lang.AssertionError();
 		this.current = getIndexOf(newCurrent);
 	}
 	
@@ -128,6 +149,19 @@ public class PurchaseType {
 		if (!availableForUnlock(toUnlock)) throw new java.lang.AssertionError();
 		this.unlocked.add(getIndexOf(toUnlock));
 		this.setCurrent(toUnlock);
+	}
+	
+	public Purchaseable getActive() {
+		if (!this.consumable) throw new java.lang.AssertionError();
+		return getCurrentSelected();
+	}
+	
+	public void activateConsumable(Purchaseable p) {
+		if (p == null) {
+			current = -1;
+			return;
+		}
+		this.setCurrent(p);
 	}
 	
 //	@Override

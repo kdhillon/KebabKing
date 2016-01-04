@@ -3,6 +3,9 @@ package com.kebabking.game.Purchases;
 // user has one of these
 // later: split this into separate ones for chicken beef, lamb
 public class DrinkQuality extends PurchaseType {
+	static String name = "DRINK QUALITY";
+	static String desc = "Upgrade the quality of your drinks!";
+	
 	// Specific types that you might own 
 	static class Quality extends SimplePurchaseable {
 		public static final Quality[] values = new Quality[] {
@@ -14,7 +17,6 @@ public class DrinkQuality extends PurchaseType {
 		new Quality ("Guinnist", 	500,20, 20, 1.5f, "beer_icon",	 "Bonnie Irish Stout"),
 		new Quality ("Harpspear", 	1000,30, 24, 1.7f, "beer_icon", "The best of the best."),
 		new Quality ("Trappist", 	5000,40, 32, 2f,  "beer_icon",	 "Made by Monks! Holy beer!"),
-
 		};
 		
 		float qualityFactor;
@@ -23,19 +25,19 @@ public class DrinkQuality extends PurchaseType {
 		public Quality() {}
 
 		private Quality(String name, float cash, int coins, int unlockAt, float qualityFactor, String iconName, String description) {
-			super(name, cash, coins, unlockAt, description, "customers/" + iconName);		
+			super(DrinkQuality.name, name, cash, coins, unlockAt, description, "customers/" + iconName);		
 			this.qualityFactor = qualityFactor;
 		}
 	};
 
 	public DrinkQuality(Inventory inventory) {
-		super(inventory, "DRINK QUALITY", "Upgrade the quality of your drinks!", null, Quality.values);
+		super(inventory, name, desc, null, Quality.values);
 		unlock(Quality.values[0]);
 	}
 	
 	// for kryo
 	public DrinkQuality() {
-		super("DRINK QUALITY", "Upgrade the quality of your drinks!", null, Quality.values);
+		super(name, desc, null, Quality.values);
 	};
 	
 	// TODO implement this

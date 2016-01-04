@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
@@ -19,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 //import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kebabking.game.Managers.Manager;
 import com.kebabking.game.Purchases.Inventory;
 import com.kebabking.game.Purchases.PurchaseType;
@@ -70,17 +68,16 @@ public class StoreScreen extends ActiveScreen {
 
 	MainStoreScreen mainStoreScreen;
 
-	Stage uiStage;
 	Table mainTable; // main table
 
 	Table foodTable;
 	Table grillTable;
 	Table mapTable;
 	Table adsTable;
-	Table coinsTable;
+	Table jadeTable;
 	Table vanityTable;
 
-	public enum TableType {food, grill, map, ads, coins, vanity}; // keeps track of which table is currently selected
+	public enum TableType {food, grill, map, ads, jade, vanity}; // keeps track of which table is currently selected
 
 	TableType currentTable;
 
@@ -128,7 +125,7 @@ public class StoreScreen extends ActiveScreen {
 	// can only access storescreen from summary screen and main menu screen (direct transition after summary screen)
 	// uses scene2d for menus
 	public StoreScreen(KebabKing master, MainStoreScreen mainStoreScreen) {
-		super(master);
+		super(master, true);
 		this.mainStoreScreen = mainStoreScreen;
 
 		this.tableWidth = KebabKing.getWidth();
@@ -138,10 +135,6 @@ public class StoreScreen extends ActiveScreen {
 		//		this.unitWidth = ChuanrC.getWidth() / UNITS_WIDTH;
 		//		this.unitHeight = ChuanrC.getHeight() / UNITS_HEIGHT;
 		//
-		ScreenViewport viewport = new ScreenViewport();
-		uiStage = new Stage(viewport, batch);		
-
-		//		uiStage.setDebugAll(true);
 
 		mainTable = new Table();
 		//		mainTable.debugAll();
@@ -203,19 +196,23 @@ public class StoreScreen extends ActiveScreen {
 		case ads:
 			adsTable = createTable("Ads", new PurchaseType[] {master.profile.inventory.adCampaign});
 			break;
-		case vanity:
-			vanityTable = createTable("Vanity", new PurchaseType[] {master.profile.inventory.decorations, });
-			break;
-		case coins:
+//		case vanity:
+//			vanityTable = createTable("Vanity", new PurchaseType[] {master.profile.inventory.decorations, });
+//			break;
+		case jade:
 			//coinsTable = createTable("Coins", new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.grillSpecs.getType(), master.profile.inventory.grillSpecs.getGrillSize()});
-			coinsTable = new CoinsTable(master);
+			jadeTable = new JewelerTable(master);
 			break;
 		}
 	}
 
 	@Override
 	public void render(float delta) {
-		super.renderWhiteAlpha(delta, 0.6f, uiStage);
+//		System.out.println("rendering store table");
+		if (this.currentTable == TableType.jade) 
+			super.renderGrayAlpha(delta, 0.8f);
+		else
+			super.renderWhiteAlpha(delta, DrawUI.WHITE_ALPHA);
 
 //		drawStore(batch);
 
@@ -255,6 +252,9 @@ public class StoreScreen extends ActiveScreen {
 	}
 
 	public void updatePurchaseTypeTable(PurchaseType type) {
+		// if ads table, create special top table
+		if (type == master.profile.inventory.adCampaign) this.selectPurchaseable(-1);
+		
 		if (this.currentTypeTable == null) this.currentTypeTable = new Table();
 		this.currentTypeTable.clear();
 
@@ -282,6 +282,7 @@ public class StoreScreen extends ActiveScreen {
 		}
 		currentTypeTable.row();
 		ScrollPane sp = new ScrollPane(purchaseableListTable, Assets.getSPS());
+		sp.setScrollingDisabled(true, false);
 		currentTypeTable.add(sp).expandX().fillX();
 	}
 
@@ -350,7 +351,7 @@ public class StoreScreen extends ActiveScreen {
 		Image icon = new Image(half);		
 		button.add(icon).center().width(iconWidth).height(iconHeight);
 
-		if (this.currentPurchaseableIndex == index) {
+		if (this.currentPurchaseableIndex == index && index > 0) {
 			Image check = new Image(Assets.purchaseableCheck);
 			int checkWidth = (int) (buttonWidth/4.0f);
 			int checkHeight = (int) (buttonHeight/4.0f);
@@ -360,13 +361,23 @@ public class StoreScreen extends ActiveScreen {
 
 		boolean lockedByRound = !type.unlockIfReady(purchaseable);
 		boolean locked = !type.isUnlocked(purchaseable);
+		
+		boolean consumable = type.consumable;
+		boolean consumableActive = false;
+		// for now, assume ad campaign
+		if (consumable && master.profile.inventory.adCampaign.getActive() != null) {
+			consumableActive = true;
+//			lockedByRound = true;
+//			locked = true;
+		}
 
 		Color color = MainStoreScreen.FONT_COLOR;
-		if (lockedByRound) {
+		if (lockedByRound || (consumableActive && this.currentPurchaseableIndex != index)) {
 			color = MainStoreScreen.FONT_COLOR_GRAY;
 			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
+			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
 		}
-		else if (locked) {
+		else if (locked && !consumable) {
 			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
 			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
 		}
@@ -380,27 +391,29 @@ public class StoreScreen extends ActiveScreen {
 		pTitle.setAlignment(Align.left);
 		info.add(pTitle).left();
 
-		Label pPrice1 = new Label("$" + floatToString(purchaseable.getDailyCost()), Assets.generateLabelStyleUIHeavyWhite(DAILY_COST_SIZE, Assets.nums + "$"));
-		pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
-		if (purchaseable.getDailyCost() <= 0) {
-			pPrice1.setText(" ");
-		}
-		//		pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
-		pPrice1.setAlignment(Align.right);
-		info.add(pPrice1).right().expandX().fillX().bottom();
+		if (!lockedByRound) {
+			Label pPrice1 = new Label("$" + floatToString(purchaseable.getDailyCost()), Assets.generateLabelStyleUIHeavyWhite(DAILY_COST_SIZE, Assets.nums + "$"));
+			pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
+			if (purchaseable.getDailyCost() <= 0) {
+				pPrice1.setText(" ");
+			}
+			//		pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
+			pPrice1.setAlignment(Align.right);
+			info.add(pPrice1).right().expandX().fillX().bottom();
 
-		Label pPrice2 = new Label(" / DAY", Assets.generateLabelStyleUIHeavyWhite(PER_DAY_SIZE, " / DAY"));
-		pPrice2.setColor(MainStoreScreen.FONT_COLOR_GREEN);
-		if (purchaseable.getDailyCost() <= 0) {
-			pPrice2.setText(" ");
+			Label pPrice2 = new Label(" / DAY", Assets.generateLabelStyleUIHeavyWhite(PER_DAY_SIZE, " / DAY"));
+			pPrice2.setColor(MainStoreScreen.FONT_COLOR_GREEN);
+			if (purchaseable.getDailyCost() <= 0) {
+				pPrice2.setText(" ");
+			}
+			pPrice2.setAlignment(Align.right);
+			info.add(pPrice2).right().bottom().padBottom(KebabKing.getGlobalY(0.002f));
 		}
-		pPrice2.setAlignment(Align.right);
-		info.add(pPrice2).right().bottom().padBottom(KebabKing.getGlobalY(0.002f));
 
 		info.row();
 
 		// if locked but not by round
-		if (locked && !lockedByRound) {
+		if (locked && !lockedByRound && !consumableActive) {
 			// add unlock button
 			// create unlock button
 			int unlockHeight = KebabKing.getGlobalY(0.04f);
@@ -425,7 +438,7 @@ public class StoreScreen extends ActiveScreen {
 		table.add(info).expandX().left().padLeft(infoPad).fillX();
 
 		// Should not be able to select a table if it hasn't been unlocked by cash or by round
-		if (!locked) {
+		if (!locked && !consumable) {
 			table.addListener(new InputListener() {
 				public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
 					return true;
@@ -460,7 +473,9 @@ public class StoreScreen extends ActiveScreen {
 				index = i;
 		}
 		if (index == -1) throw new java.lang.AssertionError();
-		this.selectPurchaseable(index);
+		
+		if (!types[currentTypeIndex].consumable)
+			this.selectPurchaseable(index);
 	}
 
 	//	// switches the table in the current table to the next one, left or right
@@ -475,13 +490,27 @@ public class StoreScreen extends ActiveScreen {
 	//		setCurrentPurchaseableTable(ssb.scroll, next, ssb.type);
 	//	}
 
+	// you shouldn't be able to select consumables
 	public void selectPurchaseable(int index) {
+		if (index < 0) {
+			updateSelectedPurchaseableTable(null, types[currentTypeIndex]);
+			return;
+		}
+		
 		int oldSelected = currentPurchaseableIndex;
 		this.currentPurchaseableIndex = index;
 		this.updatePurchaseableTable(oldSelected);
 		this.updatePurchaseableTable(index);
 		this.currentPurchaseableTable = this.purchaseableTables[index];
 		this.updateSelectedPurchaseableTable(purchaseables[index], types[currentTypeIndex]);
+		types[currentTypeIndex].setCurrent(this.purchaseables[this.currentPurchaseableIndex]);
+		
+		// hacky
+		if (types[currentTypeIndex] == master.profile.inventory.locationType) {
+			// note that this replaces any existing ad campaign.
+			System.out.println("resettting distribution");
+			master.profile.updateCustomerDistribution();
+		}
 	}
 
 	//	public void setCurrentPurchaseableTable(Table scrollAndNext, Purchaseable purchaseable, PurchaseType type) {
@@ -525,26 +554,59 @@ public class StoreScreen extends ActiveScreen {
 		// it's actually two buttons next to each other
 		// one says "unlock", the other says "$10" or "jade 10"
 		Table bothButtons = new Table();
-		Label unlock = new Label("UNLOCK", Assets.generateLabelStyleUIChinaWhite(UNLOCK_SIZE, "UNLOCK"));
+		String toWrite = "UNLOCK";
+		if (type.consumable) {
+			toWrite = "ACTIVATE";
+		}
+		Label unlock = new Label(toWrite, Assets.generateLabelStyleUIChinaWhite(UNLOCK_SIZE, "UNLOCK ACTIVATE"));
 		unlock.setTouchable(Touchable.disabled);
 		Table unlockTable = new Table();
-		unlockTable.setBackground(new TextureRegionDrawable(Assets.marketGreen));
-		unlockTable.add(unlock).padLeft(KebabKing.getGlobalX(0.01f)).padRight(KebabKing.getGlobalX(0.01f));
-		bothButtons.add(unlockTable).width(KebabKing.getGlobalX(0.2f));
+		
+		if (master.profile.inventory.canAffordUnlock(purchaseable))
+			unlockTable.setBackground(new TextureRegionDrawable(Assets.marketGreen));
+		else
+			unlockTable.setBackground(new TextureRegionDrawable(Assets.gray));
+			
+		unlockTable.add(unlock).padLeft(KebabKing.getGlobalX(0.01f)).padRight(KebabKing.getGlobalX(0.01f)).fill();
+		bothButtons.add(unlockTable).width(KebabKing.getGlobalX(0.2f)).fill();
 
 		Table priceTable = new Table();
-		Label price = new Label("", Assets.generateLabelStyleUIChinaWhite(26, Assets.nums + "$"));
-		price.setTouchable(Touchable.disabled);
-		if (purchaseable.coinsToUnlock() > 0) {
-			priceTable.add(new Image(Assets.marketJade)).width(height);
-			price.setText("" + purchaseable.coinsToUnlock() + "");
-		}
-		else {
-			price.setText("$" + purchaseable.cashToUnlock() + "");
-		}
-		priceTable.setBackground(new TextureRegionDrawable(Assets.marketDarkGreen));
-		priceTable.add(price).padLeft(KebabKing.getGlobalX(0.01f)).padRight(KebabKing.getGlobalX(0.01f));;
+		
+		if (purchaseable.cashToUnlock() > 0 || purchaseable.coinsToUnlock() <= 0) {
+			Table priceCashTable = new Table();
+			Label priceCash = new Label("", Assets.generateLabelStyleUIChinaWhite(26, Assets.nums + "$"));
+			priceCash.setTouchable(Touchable.disabled);
+			
+			if (master.profile.getCash() >= purchaseable.cashToUnlock()) {
+				priceCashTable.setBackground(new TextureRegionDrawable(Assets.marketDarkGreen));
+			}
+			else {
+				priceCashTable.setBackground(new TextureRegionDrawable(Assets.gray));			
+			}
 
+			priceCash.setText("$" + purchaseable.cashToUnlock() + "");
+			priceCashTable.add(priceCash).padLeft(KebabKing.getGlobalX(0.01f)).padRight(KebabKing.getGlobalX(0.01f));
+			priceTable.add(priceCashTable).expand().fill();;
+		}
+	
+		if (purchaseable.coinsToUnlock() > 0) {
+			Table priceCoinsTable = new Table();
+			Label priceCoins = new Label("", Assets.generateLabelStyleUIChinaWhite(26, Assets.nums + "$"));
+			priceCoins.setTouchable(Touchable.disabled);
+			
+			if (master.profile.getCoins() >= purchaseable.coinsToUnlock()) {
+				priceCoinsTable.setBackground(new TextureRegionDrawable(Assets.marketDarkGreen));
+			}
+			else {
+				priceCoinsTable.setBackground(new TextureRegionDrawable(Assets.gray));			
+			}
+			
+			priceCoinsTable.add(new Image(Assets.marketJade)).width(height);
+			priceCoins.setText("" + purchaseable.coinsToUnlock() + "");
+			priceCoinsTable.add(priceCoins).padLeft(KebabKing.getGlobalX(-0.005f)).padRight(KebabKing.getGlobalX(0.01f));
+			priceTable.add(priceCoinsTable).expandX().fill();;
+		}
+		
 		bothButtons.add(priceTable);//.padLeft(padLeft);
 
 		button.add(bothButtons);
@@ -569,9 +631,16 @@ public class StoreScreen extends ActiveScreen {
 	}
 
 	public void attemptUnlock(PurchaseType type, Purchaseable purchaseable) {
-		boolean success = this.master.profile.inventory.unlock(purchaseable, type);
-		if (!success) unlockFail(purchaseable);
-		else unlockSuccess(purchaseable, type);
+		if (type.consumable) {
+			boolean success = this.master.profile.inventory.purchaseConsumable(purchaseable, type);
+			System.out.println(purchaseable.getName() + " consumed: " + success);
+			if (success) unlockSuccess(purchaseable, type);
+		}
+		else {
+			boolean success = this.master.profile.inventory.unlock(purchaseable, type);
+			if (!success) unlockFail(purchaseable);
+			else unlockSuccess(purchaseable, type);
+		}
 
 	}
 
@@ -589,10 +658,17 @@ public class StoreScreen extends ActiveScreen {
 		}
 
 		// must update everything now TODO
-		this.resetCurrentTable();
+//		this.resetCurrentTable();
+		updatePurchaseTypeTable(types[currentTypeIndex]); 
+		
+		// reset the customer distribution
+		if (types[currentTypeIndex] == master.profile.inventory.locationType) {
+			master.profile.updateCustomerDistribution();
+		}
 	}
 
 	public void unlockFail(Purchaseable purchaseable) {
+//		DrawUI.launchNotification("Sorry", "You can't afford " + purchaseable.getName(), null);
 		System.out.println("You can't afford that!");
 	}
 
@@ -606,18 +682,18 @@ public class StoreScreen extends ActiveScreen {
 		Table table = selectedPurchaseableTable;
 
 		table.clear();
-		if (purchaseable == null) {
-			// TODO create "none" table
-			return table;
-			//				throw new java.lang.AssertionError();
-		}
+		
 		table.top();
 		//
 		// first add image
 		int imageHeight = KebabKing.getGlobalY(0.1f);
 
 		// note this is a fixed value, corresponding to the green part of the image
-		TextureRegion iconReg = purchaseable.getIcon();
+		TextureRegion iconReg;
+		if (purchaseable != null)
+			iconReg = purchaseable.getIcon();
+		else iconReg = type.values[0].getIcon();
+		
 		if (iconReg == null)
 			iconReg = Assets.questionMark;
 		int regHeight = 1;
@@ -639,12 +715,25 @@ public class StoreScreen extends ActiveScreen {
 
 		table.add(icon).width(imageWidth).height(imageHeight).padTop(iconPad);
 		table.row();
-		Label title = new Label(purchaseable.getName(), Assets.generateLabelStyleUIWhite(SELECTED_PURCHASEABLE_TITLE_SIZE, Assets.alpha));
+		String titleText;
+		if (purchaseable != null) titleText = purchaseable.getName();
+		else {
+			// TODO handle this better if more consumables added
+//			titleText = type.getName();
+			titleText = "Ad Campaigns";
+		}
+		
+		Label title = new Label(titleText, Assets.generateLabelStyleUIWhite(SELECTED_PURCHASEABLE_TITLE_SIZE, Assets.alpha));
 		title.setColor(MainStoreScreen.FONT_COLOR);
 		table.add(title);
 		table.row();
-		Label description = new Label(purchaseable.getDescription(), Assets.generateLabelStyleUILight(SELECTED_PURCHASEABLE_DESCRIPTION_SIZE, Assets.allChars));
-		description.setWrap(false);
+		
+		String descText;
+		if (purchaseable != null) descText = purchaseable.getDescription();
+		else descText = type.getDescription();
+		
+		Label description = new Label(descText, Assets.generateLabelStyleUILight(SELECTED_PURCHASEABLE_DESCRIPTION_SIZE, Assets.allChars));
+		description.setWrap(true);
 		description.setAlignment(Align.center);
 		description.setColor(MainStoreScreen.FONT_COLOR);
 		table.add(description).width(mainWidth);
@@ -819,8 +908,8 @@ public class StoreScreen extends ActiveScreen {
 			newTable = adsTable;
 			name = "Ads";
 			break;
-		case coins:
-			newTable = coinsTable;
+		case jade:
+			newTable = jadeTable;
 			name = "Coins";
 			break;
 		case vanity:
@@ -835,6 +924,16 @@ public class StoreScreen extends ActiveScreen {
 		//		table.row();
 		mainTable.add(newTable).expandY().top();
 		mainTable.row();
+		
+		if (newTable == jadeTable) {
+//			mainTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
+			mainTable.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("market/Jeweler-12")));
+		}
+		else {
+			TextureRegionDrawable nu = null;
+			mainTable.setBackground(nu);
+		}
+
 
 		Table back = newBackButton();
 		mainStoreScreen.addBackButton(back, mainTable);
@@ -853,13 +952,9 @@ public class StoreScreen extends ActiveScreen {
 	public Profile getProfile() {
 		return master.profile;
 	}
-
-	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-		// need to replace whatever input processor was being used previously
-		System.out.println("storescreen");
-
-		DrawUI.setInput(uiStage);
+	
+	public void campaignEnded() {
+		System.out.println("campaign ended, updating purchase type table for ad campaign");
+		updatePurchaseTypeTable(master.profile.inventory.adCampaign);
 	}
 }

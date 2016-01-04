@@ -1,13 +1,9 @@
 package com.kebabking.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class CountdownScreen extends ActiveScreen  {
 	static int COUNTDOWN_TIME = 0;
@@ -15,14 +11,13 @@ public class CountdownScreen extends ActiveScreen  {
 
 	DailyGoal goal;
 
-	Stage uiStage;
 	Table table;
 //	Label countdownLabel;
 	Label goalTitle;
 	Label goalLabel;
 	Label rewardLabel;
 
-	SpriteBatch batch;
+//	SpriteBatch batch;
 
 	float goalCountdown;
 
@@ -34,12 +29,8 @@ public class CountdownScreen extends ActiveScreen  {
 
 	// first displays daily goal for a few seconds, then counts down to start round
 	public CountdownScreen(KebabKing master) {
-		super(master);
+		super(master, true);
 
-		this.batch = master.batch;
-
-		ScreenViewport viewport = new ScreenViewport();
-		uiStage = new Stage(viewport, batch);
 //		uiStage.setDebugAll(true);
 
 		table = new Table();
@@ -131,12 +122,5 @@ public class CountdownScreen extends ActiveScreen  {
 
 	public void transition() {
 		this.master.startDay();
-	}
-
-	@Override
-	public void show() {
-		super.show();
-		// this doesn't work well for some reason
-		Gdx.input.setInputProcessor(uiStage);
 	}
 }

@@ -12,6 +12,7 @@ public class SimplePurchaseable implements Purchaseable {
 	String description;
 	transient TextureRegion icon;
 	String textureName;
+	String typeName;
 	
 	// for Kryo
 	public SimplePurchaseable() {
@@ -20,11 +21,12 @@ public class SimplePurchaseable implements Purchaseable {
 		}
 	}
 	
-	public SimplePurchaseable(String name, float cashToUnlock, int coinsToUnlock, int unlockAtLevel, String description, String iconFull) {
-		this(name, cashToUnlock, coinsToUnlock, 0.0f, unlockAtLevel, description, iconFull);
+	public SimplePurchaseable(String typeName, String name, float cashToUnlock, int coinsToUnlock, int unlockAtLevel, String description, String iconFull) {
+		this(typeName, name, cashToUnlock, coinsToUnlock, 0.0f, unlockAtLevel, description, iconFull);
 	}
 	
-	public SimplePurchaseable(String name, float cashToUnlock, int coinsToUnlock, float dailyCost, int unlockAtLevel, String description, String iconFull) {
+	public SimplePurchaseable(String typeName, String name, float cashToUnlock, int coinsToUnlock, float dailyCost, int unlockAtLevel, String description, String iconFull) {
+		this.typeName = typeName;
 		this.name = name;
 		this.coinsToUnlock = coinsToUnlock;
 		this.cashToUnlock = cashToUnlock;
@@ -72,5 +74,8 @@ public class SimplePurchaseable implements Purchaseable {
 	}
 
 	
-	
+	@Override
+	public String getTypeName() {
+		return typeName;
+	}
 }

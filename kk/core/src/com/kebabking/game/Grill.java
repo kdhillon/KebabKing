@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.kebabking.game.Purchases.Vanity.VanityGrillStand;
+import com.kebabking.game.Purchases.GrillStand;
 
 // contains information for the grill, the "trash", spice box, and ice chests
 //
@@ -23,6 +23,11 @@ import com.kebabking.game.Purchases.Vanity.VanityGrillStand;
 //		Dragging the spice brush onto the meat spices it.
 
 public class Grill {
+	public static int kebabsTrashedThisSession = 0;
+	public static int kebabsServedThisSession = 0;
+
+	static final float TIME_TO_TRASH = 0.5f;
+
 	static final boolean DISABLE_DRAG_TO_PLACE = true;
 
 	static final int GRILL_X = 0;
@@ -58,9 +63,9 @@ public class Grill {
 
 	//	static final float STAND_WIDTH;
 	//	static final float STAND_X = .25f;
-	static final float STAND_Y = .09f;
-	static final float STAND_WIDTH = .3f;
-	static final float STAND_HEIGHT = .12f;
+	static final float STAND_Y = .05f;
+	static final float STAND_WIDTH = .5f;
+	static final float STAND_HEIGHT = .18f;
 
 	static final float FIRE_PAD_X = 0.01f;
 	static final float FIRE_PAD_TOP = 0.005f;
@@ -71,6 +76,9 @@ public class Grill {
 	private int draw_x;
 	private int draw_y;
 
+	private float trashWidth;
+	private float trashHeight;	
+	
 	private float time;
 
 	private int grillLeftX;
@@ -119,6 +127,8 @@ public class Grill {
 	//			this.size = size;
 	//		}
 	//	}
+	
+	float trashHoldTime = 0;
 
 	public Grill(Profile profile) {
 		//		this.grillType = profile.grillType;
@@ -158,6 +168,9 @@ public class Grill {
 
 		draw_x = (grillLeftX + GRILL_X) * KitchenScreen.UNIT_WIDTH;
 		draw_y = (int) ((grillLeftY + GRILL_Y) * KitchenScreen.UNIT_HEIGHT);
+		
+		trashWidth = KebabKing.getGlobalX(0.15f);
+		trashHeight = trashWidth;
 	}
 
 	public void activate() {
@@ -191,7 +204,7 @@ public class Grill {
 		this.time += delta;
 	}
 
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, float delta) {
 		// this is required for now.
 		this.updateSize();
 
@@ -209,7 +222,7 @@ public class Grill {
 
 		drawGrill(batch);
 
-		drawStandFront(batch);
+//		drawStandFront(batch);
 
 		drawBoxes(batch);
 
@@ -225,10 +238,16 @@ public class Grill {
 
 		// draw trash icon if throwing away
 		if (trashHover()) {
-			hoverTrash = true;
-			drawTrashIcon(batch);
+			trashHoldTime += delta;
+			if (trashHoldTime > TIME_TO_TRASH) {
+				hoverTrash = true;
+				drawTrashIcon(batch);
+			}
 		}
-		else hoverTrash = false;
+		else {
+			this.trashHoldTime = 0;
+			hoverTrash = false;
+		}
 	}
 
 	public void drawGrill(SpriteBatch batch) {
@@ -279,9 +298,6 @@ public class Grill {
 	}
 
 	public void drawTrashIcon(SpriteBatch batch) {
-		float trashWidth = 40;
-		float trashHeight = 40;
-
 		batch.draw(Assets.trashIcon, Gdx.input.getX() - trashWidth/2, KebabKing.getHeight() - Gdx.input.getY() - trashHeight/8, trashWidth, trashHeight);
 	}
 
@@ -363,16 +379,16 @@ public class Grill {
 		ks.tp.draw(batch);
 	}
 
-	public void drawStandFront(SpriteBatch batch) {
-		VanityGrillStand stand = (VanityGrillStand) profile.inventory.grillStand.getCurrentSelected();
-		if (stand.front != null) {
-			batch.draw(stand.front, KitchenScreen.convertWidth(getGrillCenter()) - KebabKing.getGlobalX(STAND_WIDTH/2), KebabKing.getGlobalY(STAND_Y), 
-					KebabKing.getGlobalX(STAND_WIDTH), KebabKing.getGlobalY(STAND_HEIGHT));
-		}
-		//		System.out.println(getGrillCenter());
-	}
+//	public void drawStandFront(SpriteBatch batch) {
+//		VanityGrillStand stand = (VanityGrillStand) profile.inventory.grillStand.getCurrentSelected();
+//		if (stand.front != null) {
+//			batch.draw(stand.front, KitchenScreen.convertWidth(getGrillCenter()) - KebabKing.getGlobalX(STAND_WIDTH/2), KebabKing.getGlobalY(STAND_Y), 
+//					KebabKing.getGlobalX(STAND_WIDTH), KebabKing.getGlobalY(STAND_HEIGHT));
+//		}
+//		//		System.out.println(getGrillCenter());
+//	}
 	public void drawStandBack(SpriteBatch batch) {
-		VanityGrillStand stand = (VanityGrillStand) profile.inventory.grillStand.getCurrentSelected();
+		GrillStand.Stand stand = (GrillStand.Stand) profile.inventory.grillStand.getCurrentSelected();
 		if (stand.back != null) {
 			batch.draw(stand.back, KitchenScreen.convertWidth(getGrillCenter()) - KebabKing.getGlobalX(STAND_WIDTH/2), KebabKing.getGlobalY(STAND_Y), 
 					KebabKing.getGlobalX(STAND_WIDTH), KebabKing.getGlobalY(STAND_HEIGHT));
@@ -561,6 +577,7 @@ public class Grill {
 			//			System.out.println("Mousing over grill " + mousedOver + " at " + x + ", " + y);
 		}
 		else {
+//			if (selected )
 			//			System.out.println("Not mousing over grill at " + x + ", " + y);
 		}
 		// if moused over grill and spice is selected then spice whatever is there
@@ -681,6 +698,8 @@ public class Grill {
 		// drop meat on customers
 		else if (meatSelected() && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null) {
 			ks.earnMoney(ks.cm.mousedOver.giveMeat(selectedSet));
+			int served = selectedSet.size();
+			kebabsServedThisSession += served;
 			removeSelected(); // deletes selected meat from grill;
 			select(Selected.NONE);
 		}
@@ -938,8 +957,10 @@ public class Grill {
 
 	// trashes meat from grill
 	public void trashSelected() {
-		ks.kebabsTrashed += removeSelected(); 
-		System.out.println("Kebabs trashed: " + ks.kebabsTrashed);		
+		int removed = removeSelected();
+		ks.kebabsTrashed += removed;
+		System.out.println("Kebabs trashed: " + ks.kebabsTrashed);
+		kebabsTrashedThisSession += removed;
 	}
 
 	private boolean canFitAt(int index, Meat piece) {

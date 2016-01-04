@@ -43,7 +43,6 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
-
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -57,7 +56,7 @@ project(":android") {
     apply plugin: "android"
 
     // for analytics
-    apply plugin: 'com.google.gms.google-services'
+  //  apply plugin: 'com.google.gms.google-services'
     // see https://developers.google.com/analytics/devguides/collection/android/v4/
 
     configurations { natives }
@@ -65,8 +64,11 @@ project(":android") {
     dependencies {
         // Keeping this at 8.3 is necessary for applying the plugin above
         // (may be deprecated, it seemed to work without the plugin)
-        compile "com.google.android.gms:play-services-analytics:8.3.0"
-        compile "com.google.android.gms:play-services-ads:8.3.0"
+     //   compile "com.google.android.gms:play-services:8.4.0"
+        compile "com.google.android.gms:play-services-auth:8.4.0"
+        compile "com.google.android.gms:play-services-analytics:8.4.0"
+        compile "com.google.android.gms:play-services-ads:8.4.0"
+        compile "com.google.android.gms:play-services-base:8.4.0"
 
         // Kryo
         compile "com.esotericsoftware.kryo:kryo:2.24.0"
@@ -74,6 +76,8 @@ project(":android") {
         // Ads
         compile 'com.supersonic.sdk:mediationsdk:6.3.4@jar'
         compile 'com.supersonic.adapters:adcolonyadapter:1.1.6@jar'
+//     compile 'com.supersonic.adapters:applovinadapter:1.1.5@jar'
+        compile files('libs/chartboost.jar')
 
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"

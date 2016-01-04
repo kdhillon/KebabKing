@@ -18,14 +18,26 @@ public class Manager {
     	fb = new FacebookManagerMock();
     }
     
-    // How to do this cleanly? TODO
     // For now, pass everything in already initialized...
     public static void initAndroid(IABManager iabIn, FileManager fileIn, AnalyticsManager analyticsIn, AdsManager adsIn, FacebookManager facebookIn) {
-    	iab = new IABManagerMock();
+    	if (iabIn == null) iab = new IABManagerMock();
+        else iab = iabIn;
     	file = fileIn;
     	analytics = analyticsIn;
-    	ads = adsIn;
-    	fb = new FacebookManagerMock();;
+    	if (adsIn == null)
+            ads = new AdsManagerMock();
+        else ads = adsIn;
+    	if (facebookIn == null)
+            fb = new FacebookManagerMock();
+        else fb = facebookIn;
+    }
+
+    public static void onStart() {
+        ads.onStart();
+    }
+
+    public static void onStop() {
+        ads.onStop();
     }
 
     public static void onResume() {
@@ -39,6 +51,10 @@ public class Manager {
     public static void onPause() {
         fb.onPause();
         ads.onPause();
+    }
+
+    public static void onDestroy() {
+        ads.onDestroy();
     }
 }
 

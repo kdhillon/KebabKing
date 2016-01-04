@@ -15,8 +15,8 @@ public class KitchenScreen extends ActiveScreen {
 //	static final float PAUSE_WIDTH = 2.1f; // this times unit width
 //	static final float PAUSE_HEIGHT = 1.5f;
 
-//	static final float DAY_LENGTH = 120; // 2 minutes per day
-	static final float DAY_LENGTH = 10; 
+	static float DAY_LENGTH = 120; // 2 minutes per day
+//	static final float DAY_LENGTH = 10;
 	
 //	static float TIME_TO_WAIT = 2f;
 	
@@ -50,16 +50,22 @@ public class KitchenScreen extends ActiveScreen {
 	// A new Kitchen Screen is created every time the player starts a new day.
 	// handles user input and the main render / update loop
 	public KitchenScreen(KebabKing master) {
-		super(master);
+		super(master, false);
 		roundStartTime = System.currentTimeMillis();
 		
 		this.bg.reset();
 		this.grill.reset(this);
 		this.grill.tutorialMode = false;
+
+		if (KebabKing.TEST_MODE) {
+			System.out.println("setting day length to 10");
+			DAY_LENGTH = 10;
+		}
 		
 		this.time = DAY_LENGTH;
 
 		tp = new TrashPile(this);
+		
 
 //		setInputProcessor();
 
@@ -224,10 +230,10 @@ public class KitchenScreen extends ActiveScreen {
 //		});
 //	}
 	
-	@Override
-	public void show() {
-		super.show();
-//		this.setInputProcessor();
-	}
+//	@Override
+//	public void show() {
+//		super.show();
+////		this.setInputProcessor();
+//	}
 	
 }

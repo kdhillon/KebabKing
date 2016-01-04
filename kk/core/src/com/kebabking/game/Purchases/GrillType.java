@@ -2,6 +2,9 @@ package com.kebabking.game.Purchases;
 
 // this class contains the user's current grill type
 public class GrillType extends PurchaseType {	
+	static String name = "GRILL TYPE";
+	static String grillTypeDescription = "Change your grill type!";
+	
 	// Specific types that you might own 
 	static class Type extends SimplePurchaseable {
 		public static final Type[] values = new Type[]{
@@ -16,19 +19,18 @@ public class GrillType extends PurchaseType {
 		private Type() {}
 		
 		private Type(String name, float cash, int coins, int unlockAtLevel, String description) {
-			super(name, cash, coins, unlockAtLevel, description, "");
+			super(GrillType.name, name, cash, coins, unlockAtLevel, description, "");
 		}
 	};
-	static String grillTypeDescription = "Change your grill type!";
 
 	public GrillType(Inventory inventory) {
-		super(inventory, "GRILL TYPE", grillTypeDescription, null, Type.values);
+		super(inventory, name, grillTypeDescription, null, Type.values);
 		unlock(Type.values[0]);
 	}
 	
 	// for kryo
 	public GrillType() {
-		super("GRILL TYPE", grillTypeDescription, null, Type.values);
+		super(name, grillTypeDescription, null, Type.values);
 	};
 }
 

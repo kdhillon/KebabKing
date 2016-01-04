@@ -12,7 +12,8 @@ import com.esotericsoftware.kryo.io.Output;
 import com.kebabking.game.Managers.Manager;
 
 public class KebabKing extends Game {
-	public static final boolean FORCE_NEW = true;
+	public static final boolean TEST_MODE = false;
+	public static final boolean FORCE_NEW = TEST_MODE;
 	public static final String SAVE_FILENAME = "cc.sav";
 	public static final boolean ENGLISH = true;
 
@@ -49,6 +50,7 @@ public class KebabKing extends Game {
 	// timing variables
 	public long activityStartTime;
 
+	ActiveScreen marketFromThis;
 	// Summary Screens are temporary
 
 
@@ -65,7 +67,11 @@ public class KebabKing extends Game {
 		System.out.println("loading splash");
 		splash = new SplashScreen(this);
 		this.setScreen(splash);
-		
+
+		// set up iab and ads
+		OnlinePurchaseManager.init(this);
+		AdsHandler.init(this);
+
 		// allow catching of back button on Android
         Gdx.input.setCatchBackKey(true);
 	}
@@ -106,6 +112,8 @@ public class KebabKing extends Game {
 		// initialize new spritebatch
 		this.batch = new SpriteBatch();
 
+		DrawUI.initialize(this, batch);
+
 		// load background which will always be present
 		bg = new Background(profile);
 
@@ -126,7 +134,6 @@ public class KebabKing extends Game {
 
 		bg.initialize(); // have to do  this after setScreen, so height and width work
 
-		DrawUI.initialize(this, batch);
 		Manager.analytics.sendUserTiming("Remaining Finalization", System.currentTimeMillis() - finalRemainingStart);
 
 		long totalLoadTime = System.currentTimeMillis() - startTime;
@@ -144,7 +151,9 @@ public class KebabKing extends Game {
 		splash.specialDispose();
 	}
 
-	public void save() throws FileNotFoundException {	
+	public void save() throws FileNotFoundException {
+		if (TEST_MODE) return;
+
 		// open android fileoutputstream in internal storage
 		//		FileOutputStream internal = openFileOutput("filename.sav", Context.MODE_PRIVATE);
 		
@@ -258,6 +267,14 @@ public class KebabKing extends Game {
 		kitchen.dispose();
 		pause.dispose();
 		
+		// TODO just to be safe, save at end day
+		try {
+			save();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		summary = new SummaryScreen(this, kitchen);
 //		summary = new SummaryScreen(kitchen);
 		if (profile.tutorialNeeded) profile.tutorialNeeded = false;
@@ -288,19 +305,38 @@ public class KebabKing extends Game {
 //		this.setScreen(store);
 //	}
 	
-	public void storeToMain() {
-		mainMenu.reset();
-		this.setScreen(mainMenu);
-		bg.setToDay();
+	public void leaveStore() {
+		// go to summary screen
+		if (marketFromThis != null) {
+			this.setScreen(marketFromThis);
+			marketFromThis = null;
+		}
+		else {
+			mainMenu.reset();
+			this.setScreen(mainMenu);
+			bg.setToDay();
+		}
 	}
+	
+//	public void storeToMain() {
+//		mainMenu.reset();
+//		this.setScreen(mainMenu);
+//		bg.setToDay();
+//	}
 
 	public void summaryToMain() {		
 		if (summary != null) summary.dispose();
+		System.out.println("summary to main");
 		mainMenu.reset();
 		this.setScreen(mainMenu);
 		bg.setToDay();
 	}
 
+	public void toStoreFrom(ActiveScreen screen) {
+		this.marketFromThis = screen;
+		this.setScreen(store);
+	}
+	
 	public void mainToStore() {
 		this.setScreen(store);
 	}
@@ -310,24 +346,6 @@ public class KebabKing extends Game {
 //		Analytics.init(ps);
 //	}
 
-	public void makePurchase(OnlinePurchaseManager.PurchaseableOnline choice) {
-		Manager.iab.makePurchase(choice.productID);
-	}
-	
-	// confirm that user has purchased specified product
-	public void confirmPurchase(String productID) {
-		OnlinePurchaseManager.PurchaseableOnline purchased = OnlinePurchaseManager.getPurchaseableForID(productID);
-		if (purchased == null) {
-			System.out.println("Error: purchased invalid");
-			return;
-		}
-		System.out.println("You just purchased " + purchased.coins + " coins!");		
-		
-		Manager.analytics.sendEventHit("OnlinePurchase", "Coins", productID);
-
-		this.profile.giveCoins(purchased.coins);
-	}
-	
 	public static void setWidth(int toSet) {
 		width = toSet;
 	}

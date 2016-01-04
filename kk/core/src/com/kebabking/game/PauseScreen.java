@@ -3,27 +3,21 @@ package com.kebabking.game;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-//import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /* new pause screen created for every kitchen screen */
 public class PauseScreen extends ActiveScreen  {
-	static String defaultDesc = "People are getting sick from your nasty ass meat! Luckily, you've got more options. Want to upgrade?";
+//	static String defaultDesc = "People are getting sick from your nasty ass meat! Luckily, you've got more options. Want to upgrade?";
+	static String defaultDesc = "Hope you're enjoying Kebab King!";
 	
-	Stage uiStage;
 
 	Table bigTable;
 	
 	public PauseScreen(KebabKing master) {
-		super(master);
-				
-		ScreenViewport viewport = new ScreenViewport();
-		uiStage = new Stage(viewport, batch);	
+		super(master, true);	
 		
 		bigTable = new Table();
 		bigTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
@@ -78,9 +72,9 @@ public class PauseScreen extends ActiveScreen  {
 		Label ok = new Label("OK", Assets.generateLabelStyleUIChinaWhite(70, "OK"));
 		jadeButton.add(ok).top().padTop(KebabKing.getGlobalY(0.01f)).expandY();
 		
-		float width = KebabKing.getGlobalX(0.25f);
-		float height = width * jade.getRegionHeight() / jade.getRegionWidth();
-		textTable.add(jadeButton).width(width).height(height).padTop(KebabKing.getGlobalY(0.01f));
+//		float width = KebabKing.getGlobalX(0.25f);
+//		float height = width * jade.getRegionHeight() / jade.getRegionWidth();
+//		textTable.add(jadeButton).width(width).height(height).padTop(KebabKing.getGlobalY(0.01f));
 		
 		jadeButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
@@ -95,13 +89,8 @@ public class PauseScreen extends ActiveScreen  {
 	}
 	
 	public Table generateResumeButton() {
-		Table button = new Table();
-		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
-		button.setBackground(new TextureRegionDrawable(bg));
+		Table button = DrawUI.getBlueButton("RESUME" , 44);
 		
-		Label resume = new Label("\nRESUME\n", Assets.generateLabelStyleUIChinaWhite(44, "\nRESUME\n"));
-		button.add(resume).center().padRight(KebabKing.getGlobalX(0.025f)).padBottom(KebabKing.getGlobalY(0.004f));
-	
 		button.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
 				return true;
@@ -120,7 +109,7 @@ public class PauseScreen extends ActiveScreen  {
 		
 	@Override
 	public void render(float delta) {
-		super.renderGrayBg(delta, uiStage);
+		super.renderGrayBg(delta);
 		
 //		uiStage.draw();
 	}
@@ -132,11 +121,6 @@ public class PauseScreen extends ActiveScreen  {
 
 	public void unpause() {
 		master.kitchenUnpause();
-	}
-	
-	@Override
-	public void show() {
-		DrawUI.setInput(uiStage);
 	}
 	
 	@Override

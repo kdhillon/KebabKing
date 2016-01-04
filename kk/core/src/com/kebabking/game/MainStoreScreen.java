@@ -5,14 +5,12 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kebabking.game.StoreScreen.TableType;
 
 public class MainStoreScreen extends ActiveScreen {
@@ -44,7 +42,6 @@ public class MainStoreScreen extends ActiveScreen {
 	
 	// The reason is that this screen is very different from the other screens
 	StoreScreen storeScreen;
-	Stage uiStage;
 	
 	Table mainTable;
 	
@@ -56,17 +53,13 @@ public class MainStoreScreen extends ActiveScreen {
 	Table table;
 	
 	public MainStoreScreen(KebabKing master) {
-		super(master);
+		super(master, true);
 		
 		// initialize unit width and height, useful for making layouts
 		this.unitWidth = KebabKing.getWidth() / UNITS_WIDTH;
 		this.unitHeight = KebabKing.getHeight() / UNITS_HEIGHT;
 		
 		this.storeScreen = new StoreScreen(master, this);
-		
-		ScreenViewport viewport = new ScreenViewport();
-		uiStage = new Stage(viewport, batch);		
-//		uiStage.setDebugAll(true);
 		
 		table = new Table();
 //				table.debugAll();
@@ -83,7 +76,7 @@ public class MainStoreScreen extends ActiveScreen {
 
 	@Override
 	public void render(float delta) {
-		super.renderWhiteAlpha(delta, .6f, uiStage);
+		super.renderWhiteAlpha(delta, DrawUI.WHITE_ALPHA);
 
 //		drawStore(batch);
 
@@ -116,8 +109,8 @@ public class MainStoreScreen extends ActiveScreen {
 		mainTable.row();
 		
 		// add text below title
-		String text = "welcome to the bazaar";
-		Label label = new Label(text, Assets.generateLabelStyleUILight(32, "welcome to the bazaar"));
+		String text = "welcome to the market";
+		Label label = new Label(text, Assets.generateLabelStyleUILight(32, text));
 		label.setColor(FONT_COLOR);
 		mainTable.add(label).center().expandY().top();
 		mainTable.row();
@@ -135,9 +128,9 @@ public class MainStoreScreen extends ActiveScreen {
 		
 		// This is the padding between buttons.
 		float SHELF_MIDDLE_PERCENTAGE_X = 1.0f/19.65f;
-		float SHELF_MIDDLE_PERCENTAGE_Y = 1.0f/26.7f;
+		float SHELF_MIDDLE_PERCENTAGE_Y = 1.0f/31.7f;
 		float buttonPadX = SHELF_MIDDLE_PERCENTAGE_X * shelf_width/2;
-		float buttonPadY = SHELF_MIDDLE_PERCENTAGE_Y * shelf_width/2;
+		float buttonPadY = SHELF_MIDDLE_PERCENTAGE_Y * shelf_height/2;
 		
 		float buttonWidth = 1.0f/2.54f * shelf_width;
 		float buttonHeight = 1.0f/3.2f * shelf_height;
@@ -149,7 +142,10 @@ public class MainStoreScreen extends ActiveScreen {
 		Button grillButton = generateButton(TableType.grill);
 		Button mapButton = generateButton(TableType.map);
 		Button adsButton = generateButton(TableType.ads);
-		Button coinsButton = generateButton(TableType.coins);
+		
+		Table coinsButton = generateButton(TableType.jade);
+		Label earnJade = new Label("\nGET JADE\n", Assets.generateLabelStyleUIChinaWhite(26, "GETJADE \n"));
+		coinsButton.add(earnJade).bottom().padBottom(KebabKing.getGlobalY(0.018f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
 
 		shelf.add(foodButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonsPadTop).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
 		shelf.add(grillButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonsPadTop).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
@@ -157,6 +153,7 @@ public class MainStoreScreen extends ActiveScreen {
 		shelf.add(mapButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
 		shelf.add(adsButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
 		shelf.row();
+		
 		// TODO add Play button directly on top of coinsbutton
 		shelf.add(coinsButton).width(buttonWidth * 2).height(buttonHeight * 0.9f).center().top().expandY().padTop(buttonPadY*2f).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX).colspan(2);
 		
@@ -198,10 +195,11 @@ public class MainStoreScreen extends ActiveScreen {
 	public Button generateButton(final TableType type) {
 		Button button = new Button(Assets.getSpecificMarketButtonStyle(type));
 		button.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				return true;
 			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				// switch to 
 				switchTo(type);
 			}
@@ -210,19 +208,17 @@ public class MainStoreScreen extends ActiveScreen {
 	}
 	
 	public void switchTo(TableType type) {
+//		if (type == TableType.coins) {
+//			Manager.iab.makePurchase("android.test.purchased");
+//
+//			return;
+//		}
 		storeScreen.switchTo(type);
 		master.setScreen(storeScreen);
 	}
 	
 	public void clickBack() {
-		master.storeToMain();
+		master.leaveStore();
 	}
 
-	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-		// need to replace whatever input processor was being used previously
-		System.out.println("storescreen");
-		DrawUI.setInput(uiStage);
-	}
 }

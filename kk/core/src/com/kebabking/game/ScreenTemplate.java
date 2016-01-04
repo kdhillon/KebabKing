@@ -21,6 +21,8 @@ public class ScreenTemplate implements Screen {
 			KitchenScreen.UNIT_WIDTH = (int) (KebabKing.getWidth() / KitchenScreen.WIDTH);
 			KitchenScreen.UNIT_HEIGHT = (int) (KebabKing.getHeight() / KitchenScreen.HEIGHT);
 		}
+		
+		DrawUI.resize();
 	}
 
 	@Override
@@ -38,14 +40,12 @@ public class ScreenTemplate implements Screen {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		Manager.onPause();
 		System.out.println("pause(): " + this.getClass().toString());
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		Manager.onResume();
 		System.out.println("resume(): " + this.getClass().toString());
 	}
 

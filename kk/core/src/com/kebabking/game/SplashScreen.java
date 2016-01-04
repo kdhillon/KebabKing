@@ -13,10 +13,19 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 // load this screen while rest of game is loading
 public class SplashScreen extends ScreenTemplate  {	
-	static float FadeInTime = 1.0f;
+//	static float FadeInTime = 1.0f;
+//	static float TransitionTime = 1.5f;
+	static float FadeInTime = 1;
 	static float TransitionTime = 1.5f;
 	static boolean LoadingStarted = false;
 	static boolean LoadingFinished = false;
+	
+	
+	static boolean gate1 = false;
+	static boolean gate2 = false;
+	static boolean gate3 = false;
+	static boolean gate4 = false;
+
 	
 //	static float FadeInTime = 2f;
 //	static float TransitionTime = 2f;
@@ -95,58 +104,78 @@ public class SplashScreen extends ScreenTemplate  {
 		}
 		
 		// Second screen
-		if (fadeInComplete) {
+		if (fadeInComplete && Assets.loadingComplete()) {
 			Gdx.gl.glClearColor((51f/256), 51f/256, 51f/256, 1);
 
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			
 			uiStage.draw();
-
-			// not done with loading textures
-			if (!Assets.loadingComplete()) {
-				// hacky but why not
-				if (!firstSwitch && currentTime > TransitionTime + 0.4) {
-					firstSwitch = true;
-					loadText.setText(getLoadText());
-				}
-				if (!secondSwitch && currentTime > TransitionTime + 1.0) {
-					secondSwitch = true;
-					loadText.setText(getLoadText());
-				}
+			
+			if (!gate1) {
+				gate1 = true;
+				loadText.setText(getLoadText());
 			}
-			else {
-				// initialize Loader thread
-				if (!LoadingStarted) {
-					LoadingStarted = true;
-					this.loadTime = System.currentTimeMillis() - this.loadTime;
-					AssetLoader t = new AssetLoader();
-					Thread loaderThread = new Thread(t);
-					try {
-						loaderThread.join();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					loaderThread.start();
-					System.out.println("starting load thread");
-				}
-				else {
-					if (!LoadingFinished) {
-						System.out.println("Setting load text: " + loadText.getText());
-						try {
-							Thread.sleep((long) (Math.random() * 500 + 1000));
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					else {
-						master.initializeProfile();
-						master.initializeRemaining(startTime);
-						this.dispose();
-					}
-				}
+			else if (!gate2) {
+				master.initializeAssets();
+				gate2 = true;
+				loadText.setText(getLoadText());
 			}
+			else if (!gate3) {
+				master.initializeProfile();
+				gate3 = true;
+				loadText.setText(getLoadText());
+			}
+			else if (!gate4) {
+				master.initializeRemaining(startTime);
+				loadText.setText(getLoadText());
+//				this.dispose();
+			}
+			
+//			// not done with loading textures
+//			if (!Assets.loadingComplete()) {
+//				// hacky but why not
+//				if (!firstSwitch && currentTime > TransitionTime + 0.4) {
+//					firstSwitch = true;
+//					loadText.setText(getLoadText());
+//				}
+//				if (!secondSwitch && currentTime > TransitionTime + 1.0) {
+//					secondSwitch = true;
+//					loadText.setText(getLoadText());
+//				}
+//			}
+//			else {
+//				// initialize Loader thread
+//				if (!LoadingStarted) {
+//					LoadingStarted = true;
+//					this.loadTime = System.currentTimeMillis() - this.loadTime;
+//					AssetLoader t = new AssetLoader();
+//					Thread loaderThread = new Thread(t);
+//					try {
+//						loaderThread.join();
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					loaderThread.start();
+//					System.out.println("starting load thread");
+//				}
+//				else {
+//					if (!LoadingFinished) {
+//						System.out.println("Setting load text: " + loadText.getText());
+//						try {
+//							Thread.sleep((long) (Math.random() * 500 + 1000));
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//					else {
+//						master.initializeProfile();
+//						master.initializeRemaining(startTime);
+//						this.dispose();
+//					}
+//				}
+//			}
 		}
 
 		Gdx.gl.glClearColor((51f/256), 51f/256, 51f/256, 1);
@@ -223,7 +252,8 @@ public class SplashScreen extends ScreenTemplate  {
 		System.out.println("Disposing");
 		Assets.totalCharsForFonts -= Assets.allChars.length();
 		System.out.println("total font chars (after disposing splash): " + Assets.totalCharsForFonts);
-		loadText.getStyle().font.dispose();
+		// both of these are used later.
+//		loadText.getStyle().font.dispose();
 //		title.getStyle().font.dispose();
 		logo.dispose();
 		kebab.dispose();

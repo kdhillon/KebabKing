@@ -2,10 +2,19 @@ package com.kebabking.game.android;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.chartboost.sdk.Chartboost;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.kebabking.game.Grill;
 import com.kebabking.game.KebabKing;
+import com.kebabking.game.KitchenScreen;
+import com.kebabking.game.MainMenuScreen;
+import com.kebabking.game.Managers.AdsManager;
 import com.kebabking.game.Managers.Manager;
+import com.kebabking.game.SummaryScreen;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -32,15 +41,18 @@ public class AndroidLauncher extends AndroidApplication {
 		else {
 			System.out.println("Internet is available!");
 		}
+		GoogleApiAvailability gaa = GoogleApiAvailability.getInstance();
+		int playServicesAvailable = gaa.isGooglePlayServicesAvailable(this.getContext());
+		System.out.println("Google API availability = " + playServicesAvailable);
 
 		// Initialize all android managers
-//		IABManagerAndroid iab = new IABManagerAndroid(this);
+		IABManagerAndroid iab = new IABManagerAndroid(this);
 		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
 		FileManagerAndroid file = new FileManagerAndroid(this);
-		AdsManagerAndroid ads = new AdsManagerAndroid(this);
+		AdsManager ads = new AdsManagerChartboost(this);
 //		FacebookManagerAndroid fb = new FacebookManagerAndroid(this);
 		
-		Manager.initAndroid(null, file, analytics, ads, null);
+		Manager.initAndroid(iab, file, analytics, ads, null);
 		
 		game = new KebabKing();
 
@@ -54,11 +66,52 @@ public class AndroidLauncher extends AndroidApplication {
 //		super.onActivityResult(requestCode, resultCode, data);
 //	}
 
+	@Override
+	protected  void onResume() {
+		super.onResume();
+		Manager.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Manager.onPause();
+		Manager.analytics.sendEventHit("Ads", "ads watched this session", "", (long) SummaryScreen.adsWatchedThisSession);
+		Manager.analytics.sendEventHit("Game", "kebabs trashed this session", "", (long) Grill.kebabsTrashedThisSession);
+		Manager.analytics.sendEventHit("Game", "kebabs served this session", "", (long) Grill.kebabsServedThisSession);
+		Manager.analytics.sendEventHit("Game", "days played this session", "", (long) MainMenuScreen.daysPlayedThisSession);
+		Manager.analytics.sendEventHit("Game", "market clicks this session", "", (long) MainMenuScreen.marketClicksThisSession);
+	}
+
+	// required for iab helper
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		System.out.println("on activity result");
+		if (Manager.iab != null)
+			if (((IABManagerAndroid) Manager.iab).handleActivityResult(requestCode, resultCode, data))
+			return;
+//		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	// dispose of IAB for cleanliness
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		Manager.onDestroy();
 		System.out.println("DESTROYING APP");
 //		Manager.analytics.sendUserTiming("Total Activity Time", System.currentTimeMillis() - game.activityStartTime);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		Manager.onStart();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		Manager.onStop();
 	}
 }

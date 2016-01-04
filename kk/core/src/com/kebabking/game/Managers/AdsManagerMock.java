@@ -1,11 +1,14 @@
 package com.kebabking.game.Managers;
 
+import com.kebabking.game.AdsHandler;
+
 public class AdsManagerMock implements AdsManager {
 	/** return true if ad was completed, false otherwise */
 	@Override
-	public boolean showAd() {
+	public void showAd() {
 		System.out.println("showAd() mock");
-		return true;
+		AdsHandler.handleAdWatched();
+//		AdsHandler.handleAdNotAvailable();
 	}
 
 	// Stuff to do on pause/resume
@@ -15,5 +18,16 @@ public class AdsManagerMock implements AdsManager {
 
 	@Override
 	public void onPause() {
+	}
+
+	@Override
+	public void onStart() {
+	}
+
+	@Override
+	public void onStop() {
+	}
+	@Override
+	public void onDestroy() {
 	}
 }

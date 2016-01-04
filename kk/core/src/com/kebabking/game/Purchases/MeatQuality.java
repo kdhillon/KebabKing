@@ -2,6 +2,8 @@ package com.kebabking.game.Purchases;
 
 //later: split this into separate ones for chicken beef, lamb
 public class MeatQuality extends PurchaseType {
+	static String name = "MEAT QUALITY";
+	static String desc = "Upgrade the quality of your drinks!";
 	
 	// Specific types that you might own 
 	static class Quality extends SimplePurchaseable {
@@ -20,19 +22,19 @@ public class MeatQuality extends PurchaseType {
 		private Quality(){}
 
 		private Quality(String name, float cash, int coins, int unlockAt, float qualityFactor, String description) {
-			super(name, cash, coins, unlockAt, description, "market/Market_subMenus__template_element-06");			
+			super(MeatQuality.name, name, cash, coins, unlockAt, description, "market/Market_subMenus__template_element-06");			
 			this.qualityFactor = qualityFactor;
 		}
 	};
 
 	public MeatQuality(Inventory inventory) {
-		super(inventory, "MEAT QUALITY", "Upgrade the quality of your drinks!", null, Quality.values);
+		super(inventory, name, desc, null, Quality.values);
 		unlock(Quality.values[0]);
 	}
 	
 	// for kryo
 	public MeatQuality() {
-		super("MEAT QUALITY", "Upgrade the quality of your drinks!", null, Quality.values);
+		super(name, desc, null, Quality.values);
 	};
 }
 

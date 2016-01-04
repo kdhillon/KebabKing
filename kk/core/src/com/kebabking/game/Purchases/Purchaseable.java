@@ -17,4 +17,6 @@ public interface Purchaseable {
 	public TextureRegion getIcon();
 	
 	public String getDescription();
+	
+	public String getTypeName();
 }

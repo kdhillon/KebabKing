@@ -5,8 +5,9 @@ android {
         applicationId "com.kebabchef.game.android"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 7
-        versionName "0.82"
+        /// this is what actually stores the important version information
+        versionCode 14
+        versionName "0.94"
         // This is crucial for preventing DexDebug errors
         multiDexEnabled true
     }
@@ -23,6 +24,17 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFile 'proguard-project.txt'
+        }
+        debug {
+            minifyEnabled false
+            proguardFile 'proguard-project.txt'
+        }
     }
 }
 

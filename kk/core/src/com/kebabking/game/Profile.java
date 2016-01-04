@@ -2,8 +2,10 @@ package com.kebabking.game;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.kebabking.game.Managers.Manager;
 import com.kebabking.game.Purchases.Inventory;
 import com.kebabking.game.Purchases.LocationType;
 import com.kebabking.game.Purchases.PurchaseType;
@@ -11,8 +13,9 @@ import com.kebabking.game.Purchases.Purchaseable;
 
 
 public class Profile {
-	static final float STARTING_CASH = 99999;
-	static final int STARTING_COINS = 999;
+	static final int FIRST_LEVEL_EXP = 200;
+	static final float STARTING_CASH = 50;
+	static final int STARTING_JADE = 0;
 	static final float MAX_MONEY = Float.POSITIVE_INFINITY;
 	static final float MIN_MONEY = 0;
 	static final int MIN_COINS = 0;
@@ -23,7 +26,7 @@ public class Profile {
 	
 	static int[] EXP_TABLE;
 
-	static final float EXP_RATE = 1;
+	static final float EXP_RATE = 1f;
 		
 	transient KebabKing master;
 	
@@ -39,15 +42,18 @@ public class Profile {
 	public int daysWorked;		// starts at 0
 	
 	int exp = 0;
-	int level = 1;
+	public int level = 1;
 	
 	float customerPatienceFactor = 1;
 	float[] pastFiveDaysReputation = {START_REP, START_REP, START_REP, START_REP, START_REP};
 	float currentReputation;
 	float sicknessFactor;
 	
-	float[] currentCustomerSpread; 		// modified during ad campaigns
+	double[] currentCustomerSpread; 		// modified during ad campaigns
 	public float boost;						// what is the percent increase in total people, after normalization?
+	Customer.CustomerType[] currentBoosted;
+	private float bonus; // should only be used for resettting customer distribution
+	
 	
 	public Profile() {
 		init();
@@ -58,7 +64,14 @@ public class Profile {
 		init();
 		this.master = master;
 		this.cash = STARTING_CASH;
-		this.coins = STARTING_COINS;
+		this.coins = STARTING_JADE;
+		
+//		if (KebabKing.TEST_MODE) {
+//			this.cash = 999999;
+//			this.coins = 9999;
+//
+//		}
+		
 		this.updateCashString();
 		this.updateCoinsString();
 		this.daysWorked = 0;
@@ -75,6 +88,11 @@ public class Profile {
 		this.settings = new Settings();
 				
 		resetCustomerDistribution();
+		
+		// this will crash
+		if (KebabKing.TEST_MODE) {
+//			this.giveExp(1000000);
+		}
 	}
 
 	public void updateCoinsString() {
@@ -85,7 +103,7 @@ public class Profile {
 	}
 	public static void init() {
 		EXP_TABLE = new int[MAX_LEVEL];
-		EXP_TABLE[0] = 100;
+		EXP_TABLE[0] = FIRST_LEVEL_EXP;
 		for (int i = 1; i < MAX_LEVEL; i++) {
 			EXP_TABLE[i] = (int) (EXP_TABLE[i-1] * 1.05);
 		}
@@ -109,6 +127,10 @@ public class Profile {
 		this.coins += coins;
 		this.updateCoinsString();
 		this.validateCoins();
+
+		// always save when you receive jade, even if it's in the middle of the round
+		// (TODO fix later when we add the jeweler)
+		save();
 	}
 	
 	public void endDay() {
@@ -127,7 +149,7 @@ public class Profile {
 		
 	}
 	
-	public void updateRepuation(float dayReputation) {
+	public void addRepuation(float dayReputation) {
 		// slide everything back
 		for (int i = 0; i < pastFiveDaysReputation.length - 1; i++) {
 			pastFiveDaysReputation[i] = pastFiveDaysReputation[i+1];
@@ -174,30 +196,49 @@ public class Profile {
 		}
 		return inventory.grillSpecs.getSize();
 	}
+	
+	// this reapplies any existing ad campaign
+	public void updateCustomerDistribution() {
+		if (boost == 1) resetCustomerDistribution();
+		else {
+			updateCustomerDistribution(currentBoosted, bonus);
+		}
+	}
 
+	
+	// this ends the existing ad campaign
 	public void resetCustomerDistribution() {
 		this.currentCustomerSpread = Arrays.copyOf(this.getLocation().originalCustomerSpread, this.getLocation().originalCustomerSpread.length);
 		this.boost = 1;
+		this.bonus = 1;
+		this.currentBoosted = null;
 	}
 	
-	public void updateCustomerDistribution(Customer.CustomerType type, float bonus) {
+	public void updateCustomerDistribution(Customer.CustomerType[] types, float bonus) {
 		this.currentCustomerSpread = Arrays.copyOf(this.getLocation().originalCustomerSpread, this.getLocation().originalCustomerSpread.length);
-		int nonZeroCustomers = 0;
-		for (int i = 0; i < currentCustomerSpread.length; i++) {
-			if (currentCustomerSpread[i] != 0) nonZeroCustomers++;
-		}
+//		int nonZeroCustomers = 0;
+//		for (int i = 0; i < currentCustomerSpread.length; i++) {
+//			if (currentCustomerSpread[i] != 0) nonZeroCustomers++;
+//		}
 		
-		if (type != null) {
-			int i = Customer.getIndexOf(type);
-			currentCustomerSpread[i] *= bonus;
-			this.boost = bonus / nonZeroCustomers;
+		this.currentBoosted = types;
+		this.bonus = bonus;
+		
+		if (types != null) {
+			for (int i = 0; i < types.length; i++) {
+				int j = Customer.getIndexOf(types[i]);
+				currentCustomerSpread[j] *= bonus;
+			}
+			
+//			this.boost = 1 + (bonus - 1) / nonZeroCustomers;
+			System.out.println("PROFILE: setting boost: " + boost);
 		}
 		else {
 			for (int i = 0; i < currentCustomerSpread.length; i++) {
 				currentCustomerSpread[i] *= bonus;
 			}
-			this.boost = bonus;
 		}
+		this.boost = bonus;
 	}
 	
 	
@@ -245,7 +286,7 @@ public class Profile {
 	}
 	
 	public void giveExp(int exp) {
-		System.out.println("Granting " + exp + " exp");
+//		System.out.println("Granting " + exp + " exp");
 		this.exp += exp * EXP_RATE;
 		if (this.exp > this.getNextExp()) this.levelUp();
 	}
@@ -256,11 +297,19 @@ public class Profile {
 			this.exp -= this.getNextExp();
 			
 			System.out.println("You are now at level " + level + "!");
+
+			Manager.analytics.sendEventHit("Player", "Level " + level + " reached at round", "", (long)this.daysWorked);
+
+			LinkedList<Purchaseable> unlocked = new LinkedList<Purchaseable>();
 			for (Purchaseable p : PurchaseType.allPurchaseables) {
 				if (p.unlockAtLevel() == this.level) {
-					DrawUI.addToUnlockDisplayQueue(p);
+					// TODO enable
+					unlocked.add(p);
+//					master.store.storeScreen.initializeTables();
 				}
 			}
+			if (unlocked.size() > 0) 
+				DrawUI.launchUnlockNotification(unlocked);
 		}
 	}
 	
