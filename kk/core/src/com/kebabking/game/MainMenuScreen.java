@@ -227,7 +227,8 @@ public class MainMenuScreen extends ActiveScreen {
 //		}
 	}
 
-	public void transition() {
+	public void startDay() {
+	
 		this.master.startCountdown();
 //		this.master.startDay();
 		daysPlayedThisSession++;
@@ -253,6 +254,11 @@ public class MainMenuScreen extends ActiveScreen {
 	}
 	
 	public void startFadeout() {
+		if (master.profile.violationActive() && !DrawUI.notificationActive) {
+			DrawUI.launchPoliceNotification();
+			return;
+		}
+		
 		this.fadeout = true;
 		uiStage.addAction(Actions.fadeOut(FADEOUT_TIME));
 
@@ -267,7 +273,7 @@ public class MainMenuScreen extends ActiveScreen {
 		
 		this.bgTint = INIT_BG_ALPHA * (1-(fadeoutTimer / FADEOUT_TIME));
 		
-		if (fadeoutTimer > FADEOUT_TIME) this.transition();
+		if (fadeoutTimer > FADEOUT_TIME) this.startDay();
 	}
 	
 	public void load() {
@@ -321,12 +327,12 @@ public class MainMenuScreen extends ActiveScreen {
 //		}
 //	}
 	
-	public void clickFacebook() {
-		if (!Manager.fb.isLoggedIn())
-			Manager.fb.login();		
-		else 
-		Manager.fb.inviteFriends();
-	}
+//	public void clickFacebook() {
+//		if (!Manager.fb.isLoggedIn())
+//			Manager.fb.login();
+//		else
+//		Manager.fb.inviteFriends();
+//	}
 	
 //	private Profile getProfile() {
 //		return master.profile;

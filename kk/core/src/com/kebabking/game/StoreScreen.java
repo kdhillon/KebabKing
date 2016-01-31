@@ -1,39 +1,26 @@
 package com.kebabking.game;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 //import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kebabking.game.Managers.Manager;
-import com.kebabking.game.Purchases.Inventory;
 import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.Purchaseable;
 
+
+/// this class mananges and switches between the 6 different tables displayed by mainStoreScreen 
 public class StoreScreen extends ActiveScreen {
 	static float UNITS_WIDTH = 12f;
 	static float UNITS_HEIGHT = 20f;
 	static float TitleHeight = 2.15f;
-	static int SELECTED_PURCHASEABLE_TITLE_SIZE = 35;
-	static int PURCHASEABLE_TITLE_SIZE = 24;
-	static int SELECTED_PURCHASEABLE_DESCRIPTION_SIZE = 18;
-	static int PURCHASEABLE_DESCRIPTION_SIZE = 16;
-	static int DAILY_COST_SIZE = 22;
-	static int PER_DAY_SIZE = 16;
-	static int UNLOCK_SIZE = 26;
 
 	//	static float BackButtonHeight = 1.5f;
 	//	static float BackButtonPad = 0.4f;
@@ -70,13 +57,18 @@ public class StoreScreen extends ActiveScreen {
 
 	Table mainTable; // main table
 
-	Table foodTable;
-	Table grillTable;
-	Table mapTable;
-	Table adsTable;
-	Table jadeTable;
+	StoreSubtable foodTable;
+	StoreSubtable grillTable;
+	StoreSubtable mapTable;
+	StoreSubtable adsTable;
+	JewelerTable jadeTable;
 	Table vanityTable;
-
+	
+	// tables should be created only when they're first opened.
+	//		this means initializing the first purchasetype table for each one
+	//		subsequent ones can be initialized when they are switched to?
+	// otherwise they should be null
+	
 	public enum TableType {food, grill, map, ads, jade, vanity}; // keeps track of which table is currently selected
 
 	TableType currentTable;
@@ -102,19 +94,30 @@ public class StoreScreen extends ActiveScreen {
 	float buttonWidth, buttonHeight;
 
 	TextButtonStyle tbs;
+//
+//	PurchaseType[] types;
+//	Button[] typeButtons;
+//	int currentTypeIndex;
+//	Table currentTypeTable;
 
-	PurchaseType[] types;
-	Button[] typeButtons;
-	int currentTypeIndex;
-	Table currentTypeTable;
-
-	Table selectedPurchaseableTable;
-	Purchaseable[] purchaseables;
+//	Table selectedPurchaseableTable;
+//	Purchaseable[] purchaseables;
 	// currently selected purchaseable
-	int currentPurchaseableIndex;
-	Table currentPurchaseableTable;
-	Table[] purchaseableTables;
-
+//	int currentPurchaseableIndex;
+//	Table currentPurchaseableTable;
+//	Table[] purchaseableTables;
+	
+	PurchaseType[] foodTypes = new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.drinkQuality,};
+	PurchaseType[] grillTypes = new PurchaseType[] {master.profile.inventory.grillSize, master.profile.inventory.grillStand, master.profile.inventory.stickType};
+	PurchaseType[] locationTypes = new PurchaseType[] {master.profile.inventory.locationType};
+	PurchaseType[] adTypes = new PurchaseType[] {master.profile.inventory.adCampaign};
+	
+	PurchaseType[][] allTypes = new PurchaseType[][] {foodTypes, grillTypes, locationTypes, adTypes};
+	
+	// maps from the above tables to the corresponding subtables
+	HashMap<PurchaseType[], StoreSubtable> typeTables = new HashMap<PurchaseType[], StoreSubtable>();
+	HashMap<PurchaseType[], TableType> typeEnums = new HashMap<PurchaseType[], TableType>();
+	
 	// assume screen is 480x800 (6/10)
 	// divide into grid of size 12/20.
 	//	float unitWidth; // 
@@ -148,21 +151,22 @@ public class StoreScreen extends ActiveScreen {
 		// add title
 		mainTable.row();
 
-		//		setupMainTable();
-		//		switchTo(TableType.main);
-
 		initializeTables();
-
-		//		switchTo(TableType.)
-
-		//		master.profile.inventory.adCampaign.setTable(this, TableType.ads);
-		//		master.profile.inventory.meatQuality.setTable(this, TableType.food);
-		//		master.profile.inventory.drinkQuality.setTable(this, TableType.food);
-		//		master.profile.inventory.locationType.setTable(this, TableType.map);
-		//		master.profile.inventory.grillSpecs.getGrillSize().setTable(this, TableType.grill);
-		//		master.profile.inventory.grillSpecs.getType().setTable(this, TableType.grill);
-		//		master.profile.inventory.grillStand.setTable(this,  TableType.vanity);
-		//		master.profile.inventory.decorations.setTable(this,  TableType.vanity);
+		
+		initializeHashMap();
+	}
+	
+	public void initializeHashMap() {
+		typeTables.put(foodTypes, foodTable);
+		typeTables.put(grillTypes, grillTable);
+		typeTables.put(locationTypes, mapTable);
+		typeTables.put(adTypes, adsTable);
+		
+		// TODO simplify this
+		typeEnums.put(foodTypes, TableType.food);
+		typeEnums.put(grillTypes, TableType.grill);
+		typeEnums.put(locationTypes, TableType.map);
+		typeEnums.put(adTypes, TableType.ads);
 	}
 
 	public void initializeTables() {
@@ -177,6 +181,22 @@ public class StoreScreen extends ActiveScreen {
 		this.resetTable(currentTable);
 		this.switchTo(currentTable);
 	}
+	
+	public PurchaseType[] getContainingTypeArray(PurchaseType type) {
+		for (PurchaseType[] p : allTypes) {
+			for (int i = 0; i < p.length; i++) {
+				if (p[i] == type) {
+					return p;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public StoreSubtable getSubtableForType(PurchaseType type) {
+		PurchaseType[] p = getContainingTypeArray(type);
+		return typeTables.get(p);
+	}
 
 	// TODO, change this to only update the subtable we're worried about, so it doesn't scroll up.
 	public void resetTable(TableType type) {
@@ -185,16 +205,16 @@ public class StoreScreen extends ActiveScreen {
 		//			break;
 		case food:
 			//			System.out.println("initializeing food");
-			foodTable = createTable("Food", new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.drinkQuality,}); //master.profile.inventory.stickType});
+			foodTable = new StoreSubtable(foodTypes, this); //master.profile.inventory.stickType});
 			break;
 		case grill:
-			grillTable = createTable("Grill", new PurchaseType[] {master.profile.inventory.grillSpecs.getGrillSize(), master.profile.inventory.grillSpecs.getType(), master.profile.inventory.grillStand});
+			grillTable = new StoreSubtable(grillTypes, this);
 			break;
 		case map:
-			mapTable = createTable("Map", new PurchaseType[] {master.profile.inventory.locationType});
+			mapTable = new StoreSubtable(locationTypes, this);
 			break;
 		case ads:
-			adsTable = createTable("Ads", new PurchaseType[] {master.profile.inventory.adCampaign});
+			adsTable = new StoreSubtable(adTypes, this);
 			break;
 //		case vanity:
 //			vanityTable = createTable("Vanity", new PurchaseType[] {master.profile.inventory.decorations, });
@@ -202,6 +222,8 @@ public class StoreScreen extends ActiveScreen {
 		case jade:
 			//coinsTable = createTable("Coins", new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.grillSpecs.getType(), master.profile.inventory.grillSpecs.getGrillSize()});
 			jadeTable = new JewelerTable(master);
+			break;
+		default:
 			break;
 		}
 	}
@@ -251,231 +273,14 @@ public class StoreScreen extends ActiveScreen {
 		switchToMain();
 	}
 
-	public void updatePurchaseTypeTable(PurchaseType type) {
-		// if ads table, create special top table
-		if (type == master.profile.inventory.adCampaign) this.selectPurchaseable(-1);
-		
-		if (this.currentTypeTable == null) this.currentTypeTable = new Table();
-		this.currentTypeTable.clear();
-
-		// add section for currently selected item
-		updateSelectedPurchaseableTable(type.getCurrentSelected(), type);
-		int selectedPad = KebabKing.getGlobalY(0.02f);
-		currentTypeTable.add(selectedPurchaseableTable).fillX().padBottom(selectedPad);
-
-		// now draw list of all purchaseable options
-		this.purchaseables = type.values;
-		this.currentPurchaseableIndex = -1;
-		for (int i = 0; i < purchaseables.length; i++) {
-			if (purchaseables[i] == type.getCurrentSelected()) this.currentPurchaseableIndex = i;
+	// update the purchasetype subtable for this purchaseable
+	public void updateTableFor(Purchaseable p) {
+		StoreSubtable subtable = getSubtableForType(p.getType());
+		if (subtable == null) {
+			System.out.println("Wanting to update " + p.getName() + " but it doesn't exist");
+			return;
 		}
-
-		this.purchaseableTables = new Table[purchaseables.length];
-
-		int purchaseablePad = KebabKing.getGlobalY(0.01f);
-
-		Table purchaseableListTable = new Table();
-		for (int i = 0; i < purchaseables.length; i++) {
-			//			System.out.println("updating purchaseable table " + i);
-			purchaseableListTable.add(createPurchaseableTable(i)).expandX().left().padTop(purchaseablePad).fillX();
-			purchaseableListTable.row();
-		}
-		currentTypeTable.row();
-		ScrollPane sp = new ScrollPane(purchaseableListTable, Assets.getSPS());
-		sp.setScrollingDisabled(true, false);
-		currentTypeTable.add(sp).expandX().fillX();
-	}
-
-	public Table createPurchaseableTable(int index) {
-		purchaseableTables[index] = new Table();
-		updatePurchaseableTable(index);
-		return purchaseableTables[index];
-	}
-
-	public void updatePurchaseableTable(int index) {
-		//		System.out.println("updating purchaseable table with current purchasable index " + currentPurchaseableIndex);
-		Table table = purchaseableTables[index];
-		Purchaseable purchaseable = purchaseables[index];
-		PurchaseType type = types[currentTypeIndex];
-		if (purchaseable == null) return;
-		table.clear();
-		//		table.debugAll();
-
-		// actually populate the table
-		// first thing is the 9 patch on the left
-		ButtonStyle bs = Assets.getButtonStylePurchaseableGray();
-		if (this.currentPurchaseableIndex == index) 
-			bs = Assets.getButtonStylePurchaseableGreen();
-		Button button = new Button(bs);
-
-		int buttonHeight = KebabKing.getGlobalX(0.15f);
-		int buttonWidth = buttonHeight;
-
-		int imagePadX, imagePadY;
-
-		if (this.currentPurchaseableIndex == index) {
-			imagePadX = Assets.GREEN_9PATCH_OFFSET_X/2 - 4;
-			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 2.5f);
-		}
-		else { 
-			imagePadX = Assets.GREEN_9PATCH_OFFSET_X/2 / 3;
-			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 2.5f);
-		}
-
-		TextureRegion full = purchaseable.getIcon();
-		if (full == null) {
-			full = Assets.questionMark;
-		}
-
-		int iconWidth = buttonWidth - imagePadX;
-		int iconHeight = buttonHeight - imagePadY;
-
-		// if the icon is wider than long, crop out appropriate part of image
-
-		// crop to that aspect ratio
-		int regWidth = full.getRegionWidth();
-		int regHeight = full.getRegionHeight(); 
-		float aspectButton = (iconWidth) * 1.0f / (iconHeight); 
-
-		TextureRegion half;
-		if (regWidth / regHeight > aspectButton) {
-			//			System.out.println("reg Width > regHeight" + regWidth + " , " + regHeight);
-			float cropWidth = (aspectButton * regHeight);
-			half = new TextureRegion(full, (int) (regWidth/2 - cropWidth/2), 0, (int) cropWidth, full.getRegionHeight());
-		}
-		// TODO when region is taller than wide, make this cleverly allow less vertical padding so it fits well inside the box
-		else {
-			float cropHeight = regHeight/aspectButton;
-			half = new TextureRegion(full, 0, (int) (regHeight/2 - cropHeight/2), full.getRegionWidth(), (int) cropHeight);
-		}
-		Image icon = new Image(half);		
-		button.add(icon).center().width(iconWidth).height(iconHeight);
-
-		if (this.currentPurchaseableIndex == index && index > 0) {
-			Image check = new Image(Assets.purchaseableCheck);
-			int checkWidth = (int) (buttonWidth/4.0f);
-			int checkHeight = (int) (buttonHeight/4.0f);
-			button.add(check).top().right().width(checkWidth).height(checkHeight).padLeft(-checkWidth).padTop(-checkHeight/2);
-		}
-		table.add(button).width(buttonWidth).height(buttonHeight).left();
-
-		boolean lockedByRound = !type.unlockIfReady(purchaseable);
-		boolean locked = !type.isUnlocked(purchaseable);
-		
-		boolean consumable = type.consumable;
-		boolean consumableActive = false;
-		// for now, assume ad campaign
-		if (consumable && master.profile.inventory.adCampaign.getActive() != null) {
-			consumableActive = true;
-//			lockedByRound = true;
-//			locked = true;
-		}
-
-		Color color = MainStoreScreen.FONT_COLOR;
-		if (lockedByRound || (consumableActive && this.currentPurchaseableIndex != index)) {
-			color = MainStoreScreen.FONT_COLOR_GRAY;
-			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
-			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
-		}
-		else if (locked && !consumable) {
-			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
-			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
-		}
-
-		Table info = new Table();
-		//		info.debugAll();
-		int infoPad = KebabKing.getGlobalX(0.03f);
-		int infoWidth = mainWidth - infoPad - buttonWidth;
-		Label pTitle = new Label(purchaseable.getName(), Assets.generateLabelStyleUILight(PURCHASEABLE_TITLE_SIZE, Assets.alpha));
-		pTitle.setColor(color);
-		pTitle.setAlignment(Align.left);
-		info.add(pTitle).left();
-
-		if (!lockedByRound) {
-			Label pPrice1 = new Label("$" + floatToString(purchaseable.getDailyCost()), Assets.generateLabelStyleUIHeavyWhite(DAILY_COST_SIZE, Assets.nums + "$"));
-			pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
-			if (purchaseable.getDailyCost() <= 0) {
-				pPrice1.setText(" ");
-			}
-			//		pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
-			pPrice1.setAlignment(Align.right);
-			info.add(pPrice1).right().expandX().fillX().bottom();
-
-			Label pPrice2 = new Label(" / DAY", Assets.generateLabelStyleUIHeavyWhite(PER_DAY_SIZE, " / DAY"));
-			pPrice2.setColor(MainStoreScreen.FONT_COLOR_GREEN);
-			if (purchaseable.getDailyCost() <= 0) {
-				pPrice2.setText(" ");
-			}
-			pPrice2.setAlignment(Align.right);
-			info.add(pPrice2).right().bottom().padBottom(KebabKing.getGlobalY(0.002f));
-		}
-
-		info.row();
-
-		// if locked but not by round
-		if (locked && !lockedByRound && !consumableActive) {
-			// add unlock button
-			// create unlock button
-			int unlockHeight = KebabKing.getGlobalY(0.04f);
-			Button unlockButton = createUnlockButton(purchaseable, type, unlockHeight);
-			Table unlockButtonTable = new Table();
-			unlockButtonTable.add(unlockButton).height(unlockHeight).left();
-			info.add(unlockButtonTable).colspan(3).left();
-		}
-		// otherwise just draw with gray
-		else {
-			Label pDesc = new Label(purchaseable.getDescription(), Assets.generateLabelStyleUILight(PURCHASEABLE_DESCRIPTION_SIZE, Assets.allChars));
-			if (purchaseable.getDescription() == null || purchaseable.getDescription().length() == 0) {
-				pDesc = new Label("???", Assets.generateLabelStyleUILight(PURCHASEABLE_DESCRIPTION_SIZE, "???"));
-			}
-			if (lockedByRound) 
-				pDesc.setText("Available at level " + purchaseable.unlockAtLevel());
-			pDesc.setWrap(true);
-			pDesc.setColor(color);
-			pDesc.setAlignment(Align.left);
-			info.add(pDesc).left().width(infoWidth).colspan(3);
-		}
-		table.add(info).expandX().left().padLeft(infoPad).fillX();
-
-		// Should not be able to select a table if it hasn't been unlocked by cash or by round
-		if (!locked && !consumable) {
-			table.addListener(new InputListener() {
-				public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-					return true;
-				}
-				public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-					clickPurchaseableTable((Table) event.getListenerActor());
-				}
-			});	
-		}
-		// add a listener on everything except the unlock button
-		//		else if (!lockedByRound) {
-		//			button.addListener(new InputListener() {
-		//				public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-		//					return true;
-		//				}
-		//				public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-		//					clickPurchaseableTable((Table) event.getListenerActor().getParent());
-		//				}
-		//			});	
-		//		}
-	}
-
-	public String floatToString(float value) {
-		if ((int) value == value) return "" + ((int) value);
-		else return "" + value;
-	}
-
-	public void clickPurchaseableTable(Table table) {
-		int index = -1;
-		for (int i = 0; i < this.purchaseableTables.length; i++) {
-			if (purchaseableTables[i] == table)
-				index = i;
-		}
-		if (index == -1) throw new java.lang.AssertionError();
-		
-		if (!types[currentTypeIndex].consumable)
-			this.selectPurchaseable(index);
+		subtable.updateTableFor(p);
 	}
 
 	//	// switches the table in the current table to the next one, left or right
@@ -490,28 +295,6 @@ public class StoreScreen extends ActiveScreen {
 	//		setCurrentPurchaseableTable(ssb.scroll, next, ssb.type);
 	//	}
 
-	// you shouldn't be able to select consumables
-	public void selectPurchaseable(int index) {
-		if (index < 0) {
-			updateSelectedPurchaseableTable(null, types[currentTypeIndex]);
-			return;
-		}
-		
-		int oldSelected = currentPurchaseableIndex;
-		this.currentPurchaseableIndex = index;
-		this.updatePurchaseableTable(oldSelected);
-		this.updatePurchaseableTable(index);
-		this.currentPurchaseableTable = this.purchaseableTables[index];
-		this.updateSelectedPurchaseableTable(purchaseables[index], types[currentTypeIndex]);
-		types[currentTypeIndex].setCurrent(this.purchaseables[this.currentPurchaseableIndex]);
-		
-		// hacky
-		if (types[currentTypeIndex] == master.profile.inventory.locationType) {
-			// note that this replaces any existing ad campaign.
-			System.out.println("resettting distribution");
-			master.profile.updateCustomerDistribution();
-		}
-	}
 
 	//	public void setCurrentPurchaseableTable(Table scrollAndNext, Purchaseable purchaseable, PurchaseType type) {
 	//		Table newPurchaseable = createPurchaseableTable(purchaseable, type);
@@ -528,352 +311,15 @@ public class StoreScreen extends ActiveScreen {
 	//		//		newUBS.setName("upgrade_select");
 	//	}
 
-	private Button createUnlockButton(Purchaseable purchaseable, PurchaseType type, float height) {
-		UnlockSelectButton button  = new UnlockSelectButton(type, purchaseable, this.getInventory());
-
-		//		// SELECT
-		//		if (type.isUnlocked(purchaseable)) {
-		//			button.setText("Select");
-		//			button.addListener(new InputListener() {
-		//				public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-		//					return true;
-		//				}
-		//				public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-		//					UnlockSelectButton usb = (UnlockSelectButton) event.getTarget();
-		//					usb.type.setCurrent(usb.purchaseable);
-		//					//					System.out.println("selected");
-		//					resetCurrentTable();
-		//				}
-		//			});	
-		//		}
-		//		// if unlocked but consumable TODO
-		//		//		else if (type)
-		// UNLOCK
-		//		else {
-
-		// it's actually two buttons next to each other
-		// one says "unlock", the other says "$10" or "jade 10"
-		Table bothButtons = new Table();
-		String toWrite = "UNLOCK";
-		if (type.consumable) {
-			toWrite = "ACTIVATE";
-		}
-		Label unlock = new Label(toWrite, Assets.generateLabelStyleUIChinaWhite(UNLOCK_SIZE, "UNLOCK ACTIVATE"));
-		unlock.setTouchable(Touchable.disabled);
-		Table unlockTable = new Table();
-		
-		if (master.profile.inventory.canAffordUnlock(purchaseable))
-			unlockTable.setBackground(new TextureRegionDrawable(Assets.marketGreen));
-		else
-			unlockTable.setBackground(new TextureRegionDrawable(Assets.gray));
-			
-		unlockTable.add(unlock).padLeft(KebabKing.getGlobalX(0.01f)).padRight(KebabKing.getGlobalX(0.01f)).fill();
-		bothButtons.add(unlockTable).width(KebabKing.getGlobalX(0.2f)).fill();
-
-		Table priceTable = new Table();
-		
-		if (purchaseable.cashToUnlock() > 0 || purchaseable.coinsToUnlock() <= 0) {
-			Table priceCashTable = new Table();
-			Label priceCash = new Label("", Assets.generateLabelStyleUIChinaWhite(26, Assets.nums + "$"));
-			priceCash.setTouchable(Touchable.disabled);
-			
-			if (master.profile.getCash() >= purchaseable.cashToUnlock()) {
-				priceCashTable.setBackground(new TextureRegionDrawable(Assets.marketDarkGreen));
-			}
-			else {
-				priceCashTable.setBackground(new TextureRegionDrawable(Assets.gray));			
-			}
-
-			priceCash.setText("$" + purchaseable.cashToUnlock() + "");
-			priceCashTable.add(priceCash).padLeft(KebabKing.getGlobalX(0.01f)).padRight(KebabKing.getGlobalX(0.01f));
-			priceTable.add(priceCashTable).expand().fill();;
-		}
-	
-		if (purchaseable.coinsToUnlock() > 0) {
-			Table priceCoinsTable = new Table();
-			Label priceCoins = new Label("", Assets.generateLabelStyleUIChinaWhite(26, Assets.nums + "$"));
-			priceCoins.setTouchable(Touchable.disabled);
-			
-			if (master.profile.getCoins() >= purchaseable.coinsToUnlock()) {
-				priceCoinsTable.setBackground(new TextureRegionDrawable(Assets.marketDarkGreen));
-			}
-			else {
-				priceCoinsTable.setBackground(new TextureRegionDrawable(Assets.gray));			
-			}
-			
-			priceCoinsTable.add(new Image(Assets.marketJade)).width(height);
-			priceCoins.setText("" + purchaseable.coinsToUnlock() + "");
-			priceCoinsTable.add(priceCoins).padLeft(KebabKing.getGlobalX(-0.005f)).padRight(KebabKing.getGlobalX(0.01f));
-			priceTable.add(priceCoinsTable).expandX().fill();;
-		}
-		
-		bothButtons.add(priceTable);//.padLeft(padLeft);
-
-		button.add(bothButtons);
-		button.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				UnlockSelectButton usb = (UnlockSelectButton) event.getListenerActor();
-				attemptUnlock(usb.type, usb.purchaseable);
-			}
-		});	
-		//		}
-
-		// disable button if haven't had enough rounds
-		//		if (!type.availableForUnlock(purchaseable)) {
-		//			button.setDisabled(true);
-		//			button.setTouchable(Touchable.disabled);
-		//		}
-
-		return button;
-	}
-
-	public void attemptUnlock(PurchaseType type, Purchaseable purchaseable) {
-		if (type.consumable) {
-			boolean success = this.master.profile.inventory.purchaseConsumable(purchaseable, type);
-			System.out.println(purchaseable.getName() + " consumed: " + success);
-			if (success) unlockSuccess(purchaseable, type);
-		}
-		else {
-			boolean success = this.master.profile.inventory.unlock(purchaseable, type);
-			if (!success) unlockFail(purchaseable);
-			else unlockSuccess(purchaseable, type);
-		}
-
-	}
-
-	public void unlockSuccess(Purchaseable purchaseable, PurchaseType type) {
-		if (purchaseable.coinsToUnlock() > 0)
-			System.out.println("You unlocked " + purchaseable.getName() + " for " + purchaseable.coinsToUnlock() + " coins");
-		else {
-			System.out.println("You unlocked " + purchaseable.getName() + " for $" + purchaseable.cashToUnlock());
-		}
-
-		// verify unlocked
-		if (!type.isUnlocked(purchaseable)) System.out.println("SHOULD BE UNLOCKED");
-		else {
-			System.out.println("successfully unlocked!");
-		}
-
-		// must update everything now TODO
-//		this.resetCurrentTable();
-		updatePurchaseTypeTable(types[currentTypeIndex]); 
-		
-		// reset the customer distribution
-		if (types[currentTypeIndex] == master.profile.inventory.locationType) {
-			master.profile.updateCustomerDistribution();
-		}
-	}
-
-	public void unlockFail(Purchaseable purchaseable) {
-//		DrawUI.launchNotification("Sorry", "You can't afford " + purchaseable.getName(), null);
-		System.out.println("You can't afford that!");
-	}
-
-	public Inventory getInventory() {
+	public ProfileInventory getInventory() {
 		return this.getProfile().inventory;
 	}
 
-	// creates a table of dimensions 8 x 3.5 describing the purchaseable in question
-	public Table updateSelectedPurchaseableTable(Purchaseable purchaseable, PurchaseType type) {
-		if (selectedPurchaseableTable == null) selectedPurchaseableTable = new Table();
-		Table table = selectedPurchaseableTable;
 
-		table.clear();
-		
-		table.top();
-		//
-		// first add image
-		int imageHeight = KebabKing.getGlobalY(0.1f);
-
-		// note this is a fixed value, corresponding to the green part of the image
-		TextureRegion iconReg;
-		if (purchaseable != null)
-			iconReg = purchaseable.getIcon();
-		else iconReg = type.values[0].getIcon();
-		
-		if (iconReg == null)
-			iconReg = Assets.questionMark;
-		int regHeight = 1;
-		int regWidth = 2;
-		if (iconReg != null) {
-			regWidth = iconReg.getRegionWidth();
-			regHeight = iconReg.getRegionHeight();
-		}
-		int imageWidth = imageHeight * regWidth / regHeight;
-
-		// adjust for big images
-		if (imageWidth > mainWidth) {
-			imageWidth = mainWidth;
-			imageHeight = imageWidth * regHeight / regWidth;
-		}
-
-		int iconPad = KebabKing.getGlobalY(0.05f);
-		Image icon = new Image(iconReg); 
-
-		table.add(icon).width(imageWidth).height(imageHeight).padTop(iconPad);
-		table.row();
-		String titleText;
-		if (purchaseable != null) titleText = purchaseable.getName();
-		else {
-			// TODO handle this better if more consumables added
-//			titleText = type.getName();
-			titleText = "Ad Campaigns";
-		}
-		
-		Label title = new Label(titleText, Assets.generateLabelStyleUIWhite(SELECTED_PURCHASEABLE_TITLE_SIZE, Assets.alpha));
-		title.setColor(MainStoreScreen.FONT_COLOR);
-		table.add(title);
-		table.row();
-		
-		String descText;
-		if (purchaseable != null) descText = purchaseable.getDescription();
-		else descText = type.getDescription();
-		
-		Label description = new Label(descText, Assets.generateLabelStyleUILight(SELECTED_PURCHASEABLE_DESCRIPTION_SIZE, Assets.allChars));
-		description.setWrap(true);
-		description.setAlignment(Align.center);
-		description.setColor(MainStoreScreen.FONT_COLOR);
-		table.add(description).width(mainWidth);
-
-		return table;
-	}
 
 	// This table should have an array of PurchaseTypes that are selectable
 	// it should have an index corresponding to which one is selected.
 
-	// create and return a full table for the given purchase types with the given title
-	public Table createTable(String titleString, PurchaseType[] types) {
-		this.types = types;
-		this.currentTypeIndex = 0;
-
-		Table table = new Table();
-		//		table.debugAll();
-		table.setWidth(KebabKing.getWidth());
-		table.setHeight(KebabKing.getHeight());
-
-		mainWidth = KebabKing.getGlobalX(0.8f);
-
-		Table main = new Table();
-		//		main.debugAll();
-		main.setWidth(mainWidth);
-		main.setHeight(KebabKing.getGlobalY(0.7f));
-		main.row();
-		table.add(main).center().top().expandY();
-
-		// add buttons for each table
-		int buttonPad = KebabKing.getGlobalX(0.01f);
-		int buttonWidth = mainWidth / types.length - buttonPad;
-		int buttonHeight = KebabKing.getGlobalY(0.05f);
-
-		typeButtons = new Button[types.length];
-		Table buttonTable = new Table();
-		if (types.length > 1) {
-			for (int i = 0; i < types.length; i++) {
-				Button button = new Button(Assets.getPurchaseTypeButtonStyle());
-
-				// 
-				Label label = new Label(types[i].getName(), getLabelStyleForButtonCount(types.length)); // so 48, 24, 16, 12, 9
-				label.setColor(MainStoreScreen.FONT_COLOR);
-				button.add(label);
-				label.setTouchable(Touchable.disabled);
-
-				button.addListener(new InputListener() {
-					public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-						return true;
-					}
-
-					public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-						switchToPurchaseType((Button) event.getTarget());
-					}
-				});
-
-				buttonTable.add(button).width(buttonWidth).height(buttonHeight).padRight(buttonPad / 2).padLeft(buttonPad / 2);
-				typeButtons[i] = button;
-			}
-		}
-		main.add(buttonTable).top().expandY().padTop(KebabKing.getGlobalY(0.1f));
-
-		this.currentTypeIndex = 0;
-		switchToPurchaseType();
-		main.row();
-		main.add(currentTypeTable).top().fillX().fillY();
-
-		table.row();
-
-		return table;
-	}
-
-	private void disableButton(int index) {
-		typeButtons[index].setDisabled(true);
-		((Label) typeButtons[index].getChildren().first()).setStyle(getLabelStyleForButtonCount(typeButtons.length));
-		((Label) typeButtons[index].getChildren().first()).setColor(Color.WHITE);
-		typeButtons[index].setTouchable(Touchable.disabled);
-	}
-	private void enableButton(int index) {
-		typeButtons[index].setDisabled(false);
-		((Label) typeButtons[index].getChildren().first()).setStyle(getLabelStyleForButtonCount(typeButtons.length));
-		((Label) typeButtons[index].getChildren().first()).setColor(MainStoreScreen.FONT_COLOR);
-		typeButtons[index].setTouchable(Touchable.enabled);
-	}
-
-	private LabelStyle getLabelStyleForButtonCount(int count) {
-		if (count == 1)
-			throw new java.lang.AssertionError();
-		else if (count == 2) {
-//			if (!enabled)
-				return Assets.generateLabelStyleUIChinaWhite(30, Assets.upper);
-//			else 
-//				return Assets.generateLabelStyleUIChina(30);
-		}
-		else if (count == 3) {
-//			if (!enabled)
-				return Assets.generateLabelStyleUIChinaWhite(22, Assets.upper);
-//			else 
-//				return Assets.generateLabelStyleUIChina(22);
-		}
-		else if (count == 4) {
-//			if (!enabled)
-				return Assets.generateLabelStyleUIChinaWhite(18, Assets.upper);
-//			else 
-//				return Assets.generateLabelStyleUIChina(18);
-		}
-		else if (count == 5) {
-//			if (!enabled)
-				return Assets.generateLabelStyleUIChinaWhite(15, Assets.upper);
-//			else 
-//				return Assets.generateLabelStyleUIChina(15);
-		}
-		return null;
-	}
-
-	// this is the button that was clicked 
-	private void switchToPurchaseType(Button listener) {
-		//		System.out.println(listener.getText());
-		int index = -1;
-		for (int i = 0; i < typeButtons.length; i++) {
-			if (typeButtons[i] == listener) index = i;
-		}
-		if (index == -1) throw new java.lang.AssertionError();
-		this.currentTypeIndex = index;
-		switchToPurchaseType();
-	}
-
-	// do everything 
-	public void switchToPurchaseType() {
-		// enable all buttons but disable this button
-		if (typeButtons.length > 1) {
-			for (int i = 0; i < typeButtons.length; i++) {
-				enableButton(i);
-			}
-			disableButton(currentTypeIndex);
-		}
-		PurchaseType toSwitchTo = types[currentTypeIndex];
-
-		updatePurchaseTypeTable(toSwitchTo);
-	}
 
 	public void switchToMain() {
 		mainTable.clear();
@@ -881,30 +327,42 @@ public class StoreScreen extends ActiveScreen {
 		this.currentTable = null;
 		master.setScreen(mainStoreScreen);
 	}
+	
+//	public void preparePurchaseTypes(PurchaseType[] types) {
+//		this.types = types;
+//		this.currentTypeIndex = 0;
+//	}
 
+	
 	public void switchTo(TableType switchToThis) {
 		Table newTable = null;
 		String name = "NoType";
-		resetTable(switchToThis);
+		
+//		resetTable(switchToThis);
 
+		// TODO somehow consolidate the enum "TableType" and the PurchaseType[] arrays
 		switch(switchToThis) {
 		//		case main:
 		//			newTable = mainTable;
 		//			name = "Main";
 		//			break;
 		case food:
+//			preparePurchaseTypes(foodTypes);
 			newTable = foodTable;
-			name = "Food";
+//			name = "Food";
 			break;
 		case grill:
+//			preparePurchaseTypes(grillTypes);
 			newTable = grillTable;
 			name = "Grill";
 			break;
 		case map:
+//			preparePurchaseTypes(locationTypes);
 			newTable = mapTable;
 			name = "Map";
 			break;
 		case ads:
+//			preparePurchaseTypes(adTypes);
 			newTable = adsTable;
 			name = "Ads";
 			break;
@@ -917,7 +375,7 @@ public class StoreScreen extends ActiveScreen {
 			name = "Vanity";
 			break;
 		}
-
+		
 		mainTable.clear();
 		mainTable.row();
 		//		table.add(title).height(titleHeight);
@@ -948,13 +406,20 @@ public class StoreScreen extends ActiveScreen {
 
 		Manager.analytics.sendEventHit("Store", "Switch To", name);
 	}
+	
+	public void switchToType(PurchaseType type) {
+		PurchaseType[] p = getContainingTypeArray(type);
+		switchTo(typeEnums.get(p));
+		StoreSubtable s = typeTables.get(p);
+		s.switchToPurchaseType(type);
+	}
 
-	public Profile getProfile() {
+	public ProfileRobust getProfile() {
 		return master.profile;
 	}
 	
 	public void campaignEnded() {
 		System.out.println("campaign ended, updating purchase type table for ad campaign");
-		updatePurchaseTypeTable(master.profile.inventory.adCampaign);
+		adsTable.updatePurchaseTypeTable(master.profile.inventory.adCampaign);
 	}
 }

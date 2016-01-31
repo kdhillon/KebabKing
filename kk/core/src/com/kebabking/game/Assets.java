@@ -32,6 +32,13 @@ public class Assets {
 	final static float CUSTOMER_ANIMATION_TIME = .15f;
 	final static int CUSTOMER_ANIMATION_FRAMES = 1;
 	
+	final static int WHITE_9PATCH_LEFT = 39;
+	final static int WHITE_9PATCH_RIGHT = 40;
+	
+	// PIXELS from edge
+	final static int WHITE_9PATCH_TOP = 1; // 25
+	final static int WHITE_9PATCH_BOT = 24; // 24
+
 	final static int GREEN_9PATCH_OFFSET_X = 17;
 	final static int GREEN_9PATCH_OFFSET_X_2 = GREEN_9PATCH_OFFSET_X + 2;
 	final static int GREEN_9PATCH_OFFSET_Y = 17;
@@ -39,14 +46,13 @@ public class Assets {
 	
 	final static Color RED = new Color(211/256.0f, 90/256.0f, 68/256.0f, 1f);
 
-	// this needs to be minimized for each font
-	// using a smaller character set really reduces memory usage.
-	// next step: optimize font usage. don't need to initialize them first and dispose anymore.
+	public final static String currencyChar = "¥"; // this is the char used for in-game money
+	final static String realCurrencyChar = "$"; // this is used for IAPs
 	final static String lower = "abcdefghijklmnopqrstuvwxyz";
 	final static String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	final static String alpha = lower + upper;
-	final static String nums = "1234567890.$";
-	final static String allChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#$%^&*()/1234567890:;-'\">+=_[]{}<";
+	final static String alpha = lower + upper + "-";
+	final static String nums = "1234567890." + currencyChar;
+	final static String allChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#%^&*()/1234567890:;-'\">+=_[]{}<" + currencyChar;
 //	final static String chars = "a";
 
 	public static AssetManager manager; // must be disposed
@@ -80,6 +86,7 @@ public class Assets {
 	static public class CustomerTextures {
 		Animation idle;
 		Animation right;
+		Animation left;
 		Animation down;
 		Animation up;
 	}
@@ -99,11 +106,11 @@ public class Assets {
 	static TextureRegion beefBox;
 	static TextureRegion chickenBox;
 	static TextureRegion lambBox;
-	static TextureRegion beerBox;
+	static TextureRegion coolerLidOpen;
+	static TextureRegion coolerLidClosed;
 	static TextureRegion beefBoxOpen;
 	static TextureRegion chickenBoxOpen;
 	static TextureRegion lambBoxOpen;
-	static TextureRegion beerBoxOpen;
 	static TextureRegion spiceBox;
 
 	static TextureRegion beefIcon;
@@ -134,7 +141,9 @@ public class Assets {
 	static TextureRegionDrawable volOn;
 	static TextureRegionDrawable volMute;
 
-	static TextureRegionDrawable facebook;
+	static TextureRegion facebook;
+	static TextureRegion bigjade;
+	static TextureRegion minijade;
 
 	static TextureRegion speech;
 
@@ -143,6 +152,7 @@ public class Assets {
 	static TextureRegion purchaseableCheck;
 
 	static TextureRegion gray;
+	static TextureRegion grayLight;
 	static TextureRegion white;
 	static TextureRegion whiteAlpha;
 	static TextureRegion grayAlpha;
@@ -196,6 +206,8 @@ public class Assets {
 	static Music music;
 	
 //	static NinePatch green9Patch;
+//	static NinePatch white9Patch;
+
 	static NinePatch green9PatchSmall;
 	static NinePatch limeGreen9PatchSmallFilled;
 //	static NinePatch gray9Patch;
@@ -389,6 +401,26 @@ public class Assets {
 		return animation;
 	}
 	
+	public static Animation createAnimationWithRepeatFirstFlipped(String region, float time, int row, int rowsColumns) {
+		TextureRegion walkSheet = getTextureRegion(region);
+		TextureRegion[][] textureArray = walkSheet.split(walkSheet.getRegionWidth()/rowsColumns, walkSheet.getRegionHeight()/rowsColumns);
+		TextureRegion[] framesToUse = new TextureRegion[4];
+	
+		framesToUse[0] = textureArray[row-1][0];
+		framesToUse[1] = textureArray[row-1][1];
+		framesToUse[2] = textureArray[row-1][0];
+		framesToUse[3] = textureArray[row-1][2];
+		
+		framesToUse[0].flip(true, false);
+		framesToUse[1].flip(true, false);
+		framesToUse[3].flip(true, false);
+
+		Animation animation = new Animation(time, framesToUse);
+		animation.setPlayMode(Animation.PlayMode.LOOP);
+		
+		return animation;
+	}
+	
 	// access a single frame
 	public static Animation createAnimation(String region, float time, int row, int rowsColumns, int column) {
 		TextureRegion walkSheet = getTextureRegion(region);
@@ -405,6 +437,10 @@ public class Assets {
 	}
 
 	public static void dispose() {
+		worksans.dispose();
+		worksansHeavy.dispose();
+		worksansLight.dispose();
+		china.dispose();
 		music.dispose();
 	}
 	
@@ -480,12 +516,12 @@ public class Assets {
 		LabelStyle ls = new LabelStyle();
 		ls.font = gen.generateFont(p);
 		ls.fontColor = Color.WHITE;
-		
+
 		// if replacing
 //		ls.font = arial;
 //		ls.fontColor = color;
 
-//		if (!styles.containsKey(name)) {
+//		if (!styles.containsKey(name))
 		styles.put(name, ls);
 		
 		HashSet<Character> charset = charSets.get(name);
@@ -581,8 +617,12 @@ public class Assets {
 		atlas = manager.get("atlas1.atlas", TextureAtlas.class);
 				
 		speech = getTextureRegion("customers/Play_speechbubble_element-38");
+		facebook = getTextureRegion("screens/facebook-share-button");
+		minijade = getTextureRegion("screens/minijade");
+		bigjade = getTextureRegion("screens/pause-02");
 
 		gray = getTextureRegion("graypixel");
+		grayLight = getTextureRegion("lightgraypixel");
 		white = getTextureRegion("whitepixel");
 		whiteAlpha = getTextureRegion("white_alpha");
 		grayAlpha = getTextureRegion("gray_alpha");
@@ -600,11 +640,12 @@ public class Assets {
 		beefBox = getTextureRegion("grill/Cooler-21");
 		lambBox = getTextureRegion("grill/Cooler-23");
 		chickenBox = getTextureRegion("grill/Cooler-22");
-		beerBox = getTextureRegion("grill/Cooler-24");
 		beefBoxOpen = getTextureRegion("grill/Cooler_open-29");
 		lambBoxOpen = getTextureRegion("grill/Cooler_open-31");
 		chickenBoxOpen = getTextureRegion("grill/Cooler_open-30");
-		beerBoxOpen = getTextureRegion("grill/Cooler_open-32");
+
+		coolerLidOpen = getTextureRegion("market/icons/cover-active");
+		coolerLidClosed = getTextureRegion("market/icons/cover-inactive");
 
 		//		trashBox = getTexture("trashbox");
 
@@ -643,7 +684,7 @@ public class Assets {
 		paintBrush = getTextureRegion("grill/brush-48");
 		paintBrushSide = getTextureRegion("grill/brush-50");
 
-		trashIcon = getTextureRegion("trash");
+		trashIcon = getTextureRegion("grill/trashcan-52");
 
 		cloud1 = getTextureRegion("background/SkyElement-02");
 		cloud2 = getTextureRegion("background/SkyElement-03");
@@ -674,13 +715,15 @@ public class Assets {
 		red = getTextureRegion("screens/red");
 		yellow = getTextureRegion("topbar/yellow");
 		
+		
+//		white9Patch = new NinePatch(getTextureRegion("screens/white9patch"), WHITE_9PATCH_LEFT, WHITE_9PATCH_RIGHT, WHITE_9PATCH_TOP, WHITE_9PATCH_BOT);
 //		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		green9PatchSmall = new NinePatch(getTextureRegion("market/green9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
-		limeGreen9PatchSmallFilled = new NinePatch(getTextureRegion("market/limeGreen9patchSmallFilled"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
+		limeGreen9PatchSmallFilled = new NinePatch(getTextureRegion("market/limeGreen9patchSmallFilled"), 9, 5, 8, 8);
 //		gray9Patch = new NinePatch(getTextureRegion("market/gray9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		gray9PatchSmall = new NinePatch(getTextureRegion("market/gray9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 		gray9PatchSmallFilled = new NinePatch(getTextureRegion("market/gray9patchSmallFilled"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
-		gray9PatchSmallFilledCut = new NinePatch(getTextureRegion("market/gray9patchSmallFilledCut"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
+		gray9PatchSmallFilledCut = new NinePatch(getTextureRegion("market/gray9patchSmallFilledCut"), 2,9,8, 8);
 		red9PatchSmall = new NinePatch(getTextureRegion("market/red9patchSmall"), GREEN_9PATCH_OFFSET_X/2, GREEN_9PATCH_OFFSET_X_2/2, GREEN_9PATCH_OFFSET_Y/2, GREEN_9PATCH_OFFSET_Y_2/2);
 	
 //		createUI();
@@ -694,6 +737,7 @@ public class Assets {
 		float time = 1/speed * CUSTOMER_ANIMATION_TIME;
 		ct.idle = createAnimation(prefix, time, 2, 3, 1);
 		ct.right = createAnimationWithRepeatFirst(prefix, time, 1, 3);
+		ct.left = createAnimationWithRepeatFirstFlipped(prefix, time, 1, 3);
 		ct.up = createAnimationWithRepeatFirst(prefix, time, 3, 3);
 		ct.down = createAnimationWithRepeatFirst(prefix, time, 2, 3);
 		if (ct.idle == null || ct.right == null || ct.up == null || ct.down == null)
@@ -711,7 +755,7 @@ public class Assets {
 		return kt;
 	}
 	
-	public static TextureRegion getStickTexture(Profile profile) {
+	public static TextureRegion getStickTexture(ProfileRobust profile) {
 		return profile.inventory.stickType.getCurrentSelected().getIcon();
 	}
 	

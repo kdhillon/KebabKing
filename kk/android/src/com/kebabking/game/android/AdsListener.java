@@ -1,5 +1,6 @@
 package com.kebabking.game.android;
 
+import com.kebabking.game.AdsHandler;
 import com.supersonic.mediationsdk.logger.SupersonicError;
 import com.supersonic.mediationsdk.model.Placement;
 import com.supersonic.mediationsdk.sdk.RewardedVideoListener;
@@ -51,7 +52,8 @@ public class AdsListener implements RewardedVideoListener {
 
     @Override
     public void onRewardedVideoAdRewarded(Placement placement) {
-
+        System.out.println("onRewardedVideoAdRewarded!");
+        AdsHandler.handleAdJustWatched();
     }
 
     @Override

@@ -8,18 +8,18 @@ public class Manager {
     public static FileManager file;
     public static AnalyticsManager analytics;
     public static AdsManager ads;
-    public static FacebookManager fb;
+    public static SocialMediaManager fb;
 
     public static void initDesktop() {
     	iab = new IABManagerMock();
     	file = new FileManagerDesktop();
     	analytics = new AnalyticsManagerMock();
     	ads = new AdsManagerMock();
-    	fb = new FacebookManagerMock();
+    	fb = new SocialMediaManagerMock();
     }
     
     // For now, pass everything in already initialized...
-    public static void initAndroid(IABManager iabIn, FileManager fileIn, AnalyticsManager analyticsIn, AdsManager adsIn, FacebookManager facebookIn) {
+    public static void initAndroid(IABManager iabIn, FileManager fileIn, AnalyticsManager analyticsIn, AdsManager adsIn, SocialMediaManager facebookIn) {
     	if (iabIn == null) iab = new IABManagerMock();
         else iab = iabIn;
     	file = fileIn;
@@ -28,7 +28,7 @@ public class Manager {
             ads = new AdsManagerMock();
         else ads = adsIn;
     	if (facebookIn == null)
-            fb = new FacebookManagerMock();
+            fb = new SocialMediaManagerMock();
         else fb = facebookIn;
     }
 

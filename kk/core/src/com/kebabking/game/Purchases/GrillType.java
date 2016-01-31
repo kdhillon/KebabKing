@@ -1,5 +1,7 @@
 package com.kebabking.game.Purchases;
 
+import com.kebabking.game.ProfileInventory;
+
 // this class contains the user's current grill type
 public class GrillType extends PurchaseType {	
 	static String name = "GRILL TYPE";
@@ -19,18 +21,18 @@ public class GrillType extends PurchaseType {
 		private Type() {}
 		
 		private Type(String name, float cash, int coins, int unlockAtLevel, String description) {
-			super(GrillType.name, name, cash, coins, unlockAtLevel, description, "");
+			super(name, cash, coins, unlockAtLevel, description, "");
 		}
 	};
 
-	public GrillType(Inventory inventory) {
-		super(inventory, name, grillTypeDescription, null, Type.values);
-		unlock(Type.values[0]);
+	public GrillType(ProfileInventory inventory) {
+//		super(inventory, name, grillTypeDescription, null, Type.values);
+//		unlock(Type.values[0]);
 	}
 	
-	// for kryo
+	// for kryo, for now don't initialize
 	public GrillType() {
-		super(name, grillTypeDescription, null, Type.values);
+		//super(name, grillTypeDescription, null, Type.values);
 	};
 }
 

@@ -59,7 +59,7 @@ public class Meat {
 			this.state = State.COOKED;
 	}
 	
-	public void draw(SpriteBatch batch, int x, int y, Profile profile) {
+	public void draw(SpriteBatch batch, int x, int y, ProfileRobust profile) {
 		TextureRegion stickTexture = Assets.getStickTexture(profile);
 		TextureRegion meatTexture = Assets.getMeatTexture(this);
 		

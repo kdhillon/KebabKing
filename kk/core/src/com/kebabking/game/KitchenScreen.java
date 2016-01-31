@@ -34,9 +34,13 @@ public class KitchenScreen extends ActiveScreen {
 	
 //	float currentMoney;
 
-	float moneyEarnedToday;
-	float moneySpentToday;
-
+//	float moneyEarnedToday;
+	
+	float totalRevenue;
+	
+	float drinkExpenses;
+	float meatExpenses;
+	
 	float happyCustomers;
 
 	long roundStartTime;
@@ -57,7 +61,7 @@ public class KitchenScreen extends ActiveScreen {
 		this.grill.reset(this);
 		this.grill.tutorialMode = false;
 
-		if (KebabKing.TEST_MODE) {
+		if (KebabKing.SHORT_DAY) {
 			System.out.println("setting day length to 10");
 			DAY_LENGTH = 10;
 		}
@@ -75,7 +79,13 @@ public class KitchenScreen extends ActiveScreen {
 
 	@Override
 	public void render(float delta) {
-		super.render(delta);
+		// normally just regular render
+		if (!grill.hoverTrash || !Grill.DRAW_GRAY_ON_TRASH) {
+			super.render(delta);
+		}
+		else {
+			super.renderGrayAlpha(delta, Grill.TRASH_GRAY_ALPHA);
+		}
 
 		batch.begin();
 		if (time < COUNTDOWN_TIME)
@@ -150,7 +160,37 @@ public class KitchenScreen extends ActiveScreen {
 	public static int convertY(float unit_y) {
 		return (int) (unit_y * UNIT_HEIGHT);
 	}
-	
+
+	public void serveCustomerAll(Customer customer) {
+		float[] revCost = customer.giveMeat(grill.selectedSet);
+		earnMoney(revCost[0] - revCost[1]);
+		totalRevenue += revCost[0];
+		meatExpenses += revCost[1];
+		
+		int served = grill.selectedSet.size();
+		Grill.kebabsServedThisSession += served;
+		grill.removeSelected(); // deletes selected meat from grill;
+		grill.select(Grill.Selected.NONE);
+	}
+
+	public boolean serveCustomerBeer(Customer customer) {
+//		if (canAfford(getDrinkBuyPrice())) {
+			float moneyEarned = cm.mousedOver.giveBeer();
+			totalRevenue += moneyEarned;
+			
+			// customer doesn't want beer
+			if (moneyEarned == 0) {
+				return false;
+			}
+
+			spendMoney(getDrinkBuyPrice());
+			
+			earnMoney(moneyEarned);
+
+		return true;
+//		}
+	}
+
 	public Meat dropMeatOnGrill(Meat.Type type) {
 //		if (!canAfford(Meat.getBuyPrice(type))
 //				|| !grill.open(grill.mousedOver)) return null;
@@ -166,13 +206,11 @@ public class KitchenScreen extends ActiveScreen {
 	}
 
 	public void earnMoney(float money) {
-		this.moneyEarnedToday += money;
 		this.master.profile.giveMoney(money);
 	}
 
 	public void spendMoney(float money) {
 		master.profile.spendCash(money);
-		moneySpentToday += money;
 	}
 
 	public static int getUnitX(int x) {
@@ -183,9 +221,21 @@ public class KitchenScreen extends ActiveScreen {
 		return ((KebabKing.getHeight() - y) / UNIT_HEIGHT);
 	}
 
-	// when you get shut down by police
-	public void shutdown() {
+	// TODO as soon as the policeman walks onto the screen, save the fact that the player was shut down and save.
+	// this prevents people from quitting the app before it saves.
+	// SAVAGE but necessary
+	public void preShutDown() {
 		this.wasShutDown = true;
+		master.profile.shutdownAt = System.currentTimeMillis();
+		master.save();
+	}
+	
+	// this is called when the police actually arrives at your stand
+	public void shutdown() {
+//		this.wasShutDown = true;
+//		// also set shutdown start time
+//		master.profile.shutdownAt = System.currentTimeMillis();
+		
 		finishDay();
 	}
 	
@@ -211,6 +261,11 @@ public class KitchenScreen extends ActiveScreen {
 		if (rep == 0) rep = 0.5f;
 
 		return rep;
+	}
+
+	@Override
+	public void pause() {
+		master.kitchenPause();
 	}
 
 //	// this is really untrustworthy if we have a UIStage on top.

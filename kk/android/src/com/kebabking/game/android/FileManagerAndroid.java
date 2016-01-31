@@ -5,8 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.kebabking.game.KebabKing;
 import com.kebabking.game.Managers.FileManager;
+import com.kebabking.game.SocialMediaHandler;
 
 import android.content.Context;
 
@@ -42,5 +45,19 @@ public class FileManagerAndroid implements FileManager {
     public void deleteProfile() {
         Context ctx = androidLauncher.getContext();
         ctx.deleteFile(KebabKing.SAVE_FILENAME);
+    }
+
+    @Override
+    public FileHandle getTempOutputHandle() throws FileNotFoundException {
+//        Context ctx = androidLauncher.getContext();
+        return Gdx.files.local(SocialMediaHandler.FILENAME);
+//        return ctx.openFileOutput(SocialMediaHandler.FILENAME, Context.MODE_PRIVATE);
+    }
+
+    @Override
+    public InputStream getTempInputStream() throws FileNotFoundException {
+//        Context ctx = androidLauncher.getContext();
+//        return ctx.openFileInput(SocialMediaHandler.FILENAME);
+        return Gdx.files.local(SocialMediaHandler.FILENAME).read();
     }
 }

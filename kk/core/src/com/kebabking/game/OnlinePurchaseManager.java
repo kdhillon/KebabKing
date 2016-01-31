@@ -45,6 +45,9 @@ public class OnlinePurchaseManager {
 		System.out.println("Successfully purchased " + purchaseID + " for " + purchased.price + " giving you " + purchased.cash + " cash and " + purchased.jade + " coins");
 		master.profile.giveCoins(purchased.jade);
 		master.profile.giveMoney(purchased.cash);
+		
+		// save after purchase success
+		master.save();
 	}
 
 	public static PurchaseableOnline getPurchaseableForID(String purchaseID) {

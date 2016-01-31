@@ -60,9 +60,9 @@ public class CountdownScreen extends ActiveScreen  {
 		this.countdown = COUNTDOWN_TIME;
 
 		// if tutorial mode, skip countdown
-		if (master.profile.tutorialNeeded) {
-			this.countdown = 0;
-		}
+//		if (master.profile.tutorialNeeded) {
+//			this.countdown = 0;
+//		}
 
 		color = new Color(1, 1, 1, 1);
 

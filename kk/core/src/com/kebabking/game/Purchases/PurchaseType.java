@@ -2,14 +2,19 @@ package com.kebabking.game.Purchases;
 
 import java.util.HashSet;
 
+import com.esotericsoftware.kryo.serializers.TaggedFieldSerializer.Tag;
+import com.kebabking.game.ProfileInventory;
+
 
 // Allows other purchase types to extend this for simplicity
+// These really should be Static classes EXCEPT for unlocked
 public class PurchaseType {
 	// stores rounds at which purchaseables unlock
 	public static HashSet<Purchaseable> allPurchaseables = new HashSet<Purchaseable>();
 	public transient Purchaseable[] values; // contains Purchaseable.values()
 //	protected transient static TextureRegion icon;
 //	protected transien
+	// doesn't need to be saved
 	public String name;
 	public String description;
 	
@@ -17,44 +22,46 @@ public class PurchaseType {
 	protected boolean allowMultipleSelect; // can multiple purchaseables be "selected" at once?
 	protected HashSet<Integer> selected;
 
-	public Inventory inventory;
-	protected HashSet<Integer> unlocked; 	// items that have been fully unlocked and can be purchased
-	protected HashSet<Integer> levelUnlocked; // items that can be unlocked based on level
+	// doesn't need to be serialized
+	
+	// needs to be serialized
+	@Tag(401) protected HashSet<Integer> unlocked; 	// items that have been fully unlocked and can be purchased
+	
+	// TODO do we really need to save this???
+	@Tag(402) protected HashSet<Integer> levelUnlocked; // items that can be unlocked based on level, 
 //	protected Purchaseable currentQuality;
 	
 	// just store the index. If consumable, this should be -1 unless something is active
-	protected int current;
+	@Tag(403) protected int currentSelected;
 	
-	public  boolean consumable;
+	// I think we do need to save this.
+	@Tag(404) public ProfileInventory inventory;
+
+	public boolean consumable; // should only be used by PurchaseTypeConsumable
 	
-	// Only used for updating store screen on unlock
-//	private transient StoreScreen storeScreen;
-//	private transient StoreScreen.TableType storeTable;
-	
-	// for kryo
-	public PurchaseType() {
+	// for kryo (note, init should be called on kryo initialization in extending classes)
+	public PurchaseType() {		
 	}
 	
 	// create a new one
 	public PurchaseType(String name, String description, String textureRegionName, Purchaseable[] values) {
-		init(name, description, textureRegionName, values, false);
+		init(name, description, textureRegionName, values);
 	}
 	
 	// create a new one
-	public PurchaseType(Inventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
+	public PurchaseType(ProfileInventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
 		this.inventory = inventory;
-		init(name, description, textureRegionName, values, false);
-		setValues(values);
+		init(name, description, textureRegionName, values);
 	}
 	
-	// create a new one (with consumable option)
-	public PurchaseType(Inventory inventory, String name, String description, String textureRegionName, Purchaseable[] values, boolean consumable) {
-		this.inventory = inventory;
-		init(name, description, textureRegionName, values, consumable);
-		setValues(values);
-	}
+//	// create a new one (with consumable option)
+//	public PurchaseType(ProfileInventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
+//		this.inventory = inventory;
+//		init(name, description, textureRegionName, values, consumable);
+//		setValues(values);
+//	}
 	
-	public void init(String name, String description, String textureRegionName, Purchaseable[] values, boolean consumable) {
+	public void init(String name, String description, String textureRegionName, Purchaseable[] values) { //, boolean consumable) {
 		unlocked = new HashSet<Integer>();
 		levelUnlocked = new HashSet<Integer>();
 		this.name = name;
@@ -65,9 +72,10 @@ public class PurchaseType {
 		for (Purchaseable p : values)
 			allPurchaseables.add(p);
 		
-		this.consumable = consumable;
-		current = 0;
-		if (consumable) current = -1;
+//		this.consumable = consumable;
+//		current = 0;
+//		if (consumable) current = -1;
+		setValues(values);
 	}
 	
 	public void allowMultipleSelect() {
@@ -93,9 +101,9 @@ public class PurchaseType {
 //	@Override
 	public Purchaseable getCurrentSelected() {
 		if (this.consumable) {
-			if (current < 0) return null;
+			if (currentSelected < 0) return null;
 		}
-		return values[current];
+		return values[currentSelected];
 	}
 	
 //	@Override
@@ -114,7 +122,7 @@ public class PurchaseType {
 		}
 		if (!consumable && !isUnlocked(newCurrent)) throw new java.lang.AssertionError();
 		if (!availableForUnlock(newCurrent)) throw new java.lang.AssertionError();
-		this.current = getIndexOf(newCurrent);
+		this.currentSelected = getIndexOf(newCurrent);
 	}
 	
 	public int getIndexOf(Purchaseable p) {
@@ -151,19 +159,6 @@ public class PurchaseType {
 		this.setCurrent(toUnlock);
 	}
 	
-	public Purchaseable getActive() {
-		if (!this.consumable) throw new java.lang.AssertionError();
-		return getCurrentSelected();
-	}
-	
-	public void activateConsumable(Purchaseable p) {
-		if (p == null) {
-			current = -1;
-			return;
-		}
-		this.setCurrent(p);
-	}
-	
 //	@Override
 	public Purchaseable getNext(Purchaseable current, boolean left) {		
 		int currentIndex = -1;
@@ -185,6 +180,10 @@ public class PurchaseType {
 	}
 	
 	public boolean unlockIfReady(Purchaseable p) {
+		if (inventory == null) {
+			System.out.println("INVENTORY IS NULL IN PURCHASETYPE");
+			return false;
+		}
 		if (inventory.hasUnlockedByLevel(p)) {
 			unlockByLevel(p);
 			return true;
@@ -198,6 +197,7 @@ public class PurchaseType {
 		for (Purchaseable p : values) {
 			if (p == null) throw new java.lang.NullPointerException();
 			unlockIfReady(p);
+			p.setType(this);
 		}
 	}
 	

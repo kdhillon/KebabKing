@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kebabking.game.Customer.CustomerType;
 
 public class Order {
+	static final boolean ACCEPT_WRONG_SPICINESS = true;
 	static final float ORDER_ROW_WIDTH = 1.25f;
 	static final float ORDER_ROW_HEIGHT = .675f;
 	static final float ICON_WIDTH  = 0.75f; // times unit height
@@ -35,6 +36,7 @@ public class Order {
 	int remaining;
 	int raw; 			 // how many raw meats were given to this person
 	int burnt; 			 // how many chuanrs were burnt
+	int wrongSpiciness;
 	int incorrect;		 // how many wrong chuanrs/beers were given to this person	
 	
 	KitchenScreen ks;
@@ -94,35 +96,52 @@ public class Order {
 	}
 	
 	// returns total money received from this 
-	public float giveMeat(ArrayList<Meat> set) {
-		float revenue = 0;
-		for (Meat m : set) revenue += giveMeat(m);
+	public float[] giveMeat(ArrayList<Meat> set) {
+		float[] totalRevCost = new float[2];
+		for (Meat m : set) {
+			float[] revCost = giveMeat(m);
+			if (revCost != null) {
+				totalRevCost[0] += revCost[0];
+				totalRevCost[1] += revCost[1];
+			}
+		}
 //		System.out.println(incorrect);
 		updateTable();
-		return revenue;
+		return totalRevCost;
 	}
 	
-	public float giveMeat(Meat meat) {
+	public float[] giveMeat(Meat meat) {
 		switch (meat.type) {
 		case CHICKEN:
-			if (meat.spiced != chickenSpicy || chicken == 0) {
-				System.out.println("wrong chicken");
+			if (chicken == 0 || (meat.spiced != chickenSpicy && !ACCEPT_WRONG_SPICINESS)) {
+				System.out.println("I don't want chicken");
 				incorrect++;
-				return 0;
+				return null;
+			}
+			if (meat.spiced != chickenSpicy) {
+				//  incorrect spiciness, but still counts as chicken.
+				wrongSpiciness++;
+				
 			}
 			break;
 		case BEEF:
-			if (meat.spiced != beefSpicy || beef == 0) {
+			if (beef == 0  || (meat.spiced != beefSpicy && !ACCEPT_WRONG_SPICINESS)) {
 				System.out.println("wrong beef");
 				incorrect++;
-				return 0;
+				return null;
+			}
+			if (meat.spiced != beefSpicy) {
+				wrongSpiciness++;
 			}
 			break;
 		case LAMB:
-			if (meat.spiced != lambSpicy || lamb == 0) {
+			if (lamb == 0  || (meat.spiced != lambSpicy && !ACCEPT_WRONG_SPICINESS)) {
 				System.out.println("wrong lamb");
 				incorrect++;
-				return 0;
+				return null;
+			}
+			if (meat.spiced != lambSpicy) {
+				wrongSpiciness++;
 			}
 		}
 		
@@ -138,7 +157,10 @@ public class Order {
 		if (meat.state == Meat.State.BURNT) burnt++;
 		if (meat.state == Meat.State.RAW) raw++;
 		
-		return Meat.getSellPrice(meat.type) - Meat.getBuyPrice(meat.type);
+		float[] revCost = new float[2];
+		revCost[0] = Meat.getSellPrice(meat.type);
+		revCost[1] = Meat.getBuyPrice(meat.type);
+		return revCost;
 	}
 	
 //	public float giveBeer(int count) {
@@ -273,9 +295,6 @@ public class Order {
 	
 	// returns number of different types of items remaining (1-3)
 	public int getTotalTypes() {
-		// TODO remove for testing
-//		return 3;
-		
 		int types = 0;
 		if (chicken > 0) types++;
 		if (beef > 0) types++;

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.kebabking.game.KebabKing;
+import com.kebabking.game.SocialMediaHandler;
 
 public class FileManagerDesktop implements FileManager {
 
@@ -34,5 +35,17 @@ public class FileManagerDesktop implements FileManager {
 	@Override
 	public void deleteProfile() {
 		 Gdx.files.local(KebabKing.SAVE_FILENAME).delete();
+	}
+
+	@Override
+	public FileHandle getTempOutputHandle() throws FileNotFoundException {
+		FileHandle file = Gdx.files.local(SocialMediaHandler.FILENAME);
+		return file;
+	}
+
+	@Override
+	public InputStream getTempInputStream() throws FileNotFoundException {
+		FileHandle file = Gdx.files.local(SocialMediaHandler.FILENAME);
+		return file.read();
 	}
 }

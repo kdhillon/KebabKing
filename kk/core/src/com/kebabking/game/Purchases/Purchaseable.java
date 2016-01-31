@@ -18,5 +18,7 @@ public interface Purchaseable {
 	
 	public String getDescription();
 	
-	public String getTypeName();
+	public PurchaseType getType();
+	
+	public void setType(PurchaseType type);
 }

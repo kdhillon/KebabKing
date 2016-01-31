@@ -24,8 +24,14 @@ public class Customer implements Comparable<Customer> {
 	static final float BASE_WALK_SPEED_Y = .18f;
 	static final float SQUISH_FACTOR = .4f; // for the line
 	
+	static final float POLICE_SHUTDOWN_BASE = 0.3f;
+	static final int JEWELER_COINS = 5;
+	
 	static final float BORDER_RIGHT = 0.1f; // this times the customer width is border.
 //	static final float SCALE_FACTOR = 2f;
+	
+	static final float END_RIGHT = 1.0f;
+	static final float END_LEFT = -.3f;
 	
 //	static final float TEXTURE_WIDTH = 3f; 	// double the old values before Vic's textures
 //	static final float TEXTURE_HEIGHT = 4.5f; 
@@ -71,9 +77,12 @@ public class Customer implements Comparable<Customer> {
 	int satisfaction; 	// maybe need this
 	boolean sick;			// if true, person is sick
 	int lineChoice;			// choose a line to go in, weighted towards lines with less people
+	
 	int lineIndex; 			// which index should this guy be at
 	float targetY;			// where is this guy trying to go vertically?
 
+	boolean walkingLeft;	// walking right is default
+	
 	float width; // to be used for drawing speech bubble when leaving
 	float height; 
 	
@@ -102,12 +111,14 @@ public class Customer implements Comparable<Customer> {
 		FAT_MAN(		1, 		3, 	9, 		.6f,	 .5f, "FatMan", "fat men"), //
 		WOMAN(			1, 		2,	4, 		.2f, 	.7f, "Woman", "women"),
 		MAN(			1, 		2, 	7, 		.5f, 	.55f, "Man", "men"),
-		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, "OldMan", "businessmen"),
+		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, "Businessman", "businessmen"),
 		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, "Policeman", "police"),
 		SOLDIER(		.8f, 	2,	7, 		.4f, 	.53f, "Soldier", "soldiers"),
 		GIRL(			1f, 	2, 	6, 		.05f, 	.75f, "Girl", "girls"),
 		TOURIST(		1f, 	3, 	9, 		.4f, 	.53f, "FatAmerican", "tourists"),
 		FOREIGNER(		.8f, 	3, 	8, 		.5f, 	.75f, "American", "foreigners"),//
+		FARMER(			.8f, 	2, 	8, 		.3f, 	.7f, "Farmer", "farmers"),//
+		JEWELER(		1f, 	1, 	8, 		.2f, 	.6f, "Jeweler", "jewelers"),//
 ;
 
 		Animation walkUp;
@@ -125,7 +136,7 @@ public class Customer implements Comparable<Customer> {
 		
 		/**
 		 * 
-		 * @param patience: relative amount of time they're willing to wait, a factor
+		 * @param patienceFactor: relative amount of time they're willing to wait, a factor
 		 * @param minOrder: minimum number of Chuanr they will order
 		 * @param maxOrder: maximum number of Chuanr they will order
 		 * @param beerFactor: likelihood of buying beer
@@ -144,7 +155,7 @@ public class Customer implements Comparable<Customer> {
 			this.idle = ct.idle;
 			this.walkUp = ct.up;
 			this.walkDown = ct.down;
-			this.walkLeft = ct.right;
+			this.walkLeft = ct.left;
 			this.walkRight = ct.right;
 			this.walkSpeed = speed;
 			this.patienceFactor = patienceFactor;
@@ -154,18 +165,23 @@ public class Customer implements Comparable<Customer> {
 			this.plural = plural;
 		}
 	}
-	static final CustomerType[] genOrder = 	{MAN, FAT_MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, GIRL, TOURIST, FOREIGNER, POLICE, SOLDIER, BUSINESSMAN};
+	static final CustomerType[] genOrder = 	{MAN, FAT_MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, GIRL, TOURIST, FOREIGNER, POLICE, SOLDIER, BUSINESSMAN, FARMER, JEWELER};
 	
 	public Customer(float currentWaitFactor, CustomerManager cm) {
 		this.action = CustomerAction.PASS_START;
 		this.cm = cm;
-
-		this.position_x = -.3f;
+		
 		this.orient = Orient.RIGHT;
+		this.position_x = END_LEFT;
+		if (Math.random() < 0.5) {
+			orient = Orient.LEFT;
+			walkingLeft = true;
+			this.position_x = END_RIGHT;
+		}
 
 		// randomize line_y
 		this.position_y = (CustomerManager.PATH_Y + (float) Math.random() - 0.5f) * KitchenScreen.UNIT_HEIGHT;
-		//		this.position_y = CustomerManager.PATH_Y * KitchenScreen.UNIT_HEIGHT;
+//				this.position_y = CustomerManager.PATH_Y * KitchenScreen.UNIT_HEIGHT;
 
 		this.path_y = this.position_y;
 
@@ -175,9 +191,8 @@ public class Customer implements Comparable<Customer> {
 		// calculate wait time
 		this.waitTime = calcWaitTime(currentWaitFactor);
 		this.originalWaitTime = waitTime;
-
+		
 		// decide which line to go in
-		// TODO remove
 		this.lineChoice = chooseLine();
 		
 		//		System.out.println("line choice: " + this.lineChoice);
@@ -205,7 +220,7 @@ public class Customer implements Comparable<Customer> {
 //		}
 		
 		// do this based off profile
-		double[] spread = cm.profile.currentCustomerSpread;
+		double[] spread = cm.currentCustomerSpread;
 
 		// first calculate total from Profile
 		float sum = 0;
@@ -237,15 +252,29 @@ public class Customer implements Comparable<Customer> {
 
 		// if on path
 		if (this.action == CustomerAction.PASS_START || this.action == CustomerAction.PASS_END) {
-			this.position_x += BASE_WALK_SPEED_X * this.type.walkSpeed * delta;
-			if (this.position_x * KitchenScreen.WIDTH >= CustomerManager.LINE_POSITIONS[lineChoice] && this.action == CustomerAction.PASS_START) makeDecision();
+			
+			if (walkingLeft) {
+				this.position_x -= BASE_WALK_SPEED_X * this.type.walkSpeed * delta;				
+			}
+			else {
+				this.position_x += BASE_WALK_SPEED_X * this.type.walkSpeed * delta;
+			}
+			if (!walkingLeft && this.position_x * KitchenScreen.WIDTH >= CustomerManager.LINE_POSITIONS[lineChoice] && this.action == CustomerAction.PASS_START) {
+				makeDecision();
+			}
+			if (walkingLeft && this.position_x * KitchenScreen.WIDTH <= CustomerManager.LINE_POSITIONS[lineChoice] && this.action == CustomerAction.PASS_START) makeDecision();
 		}
+		
 		// if not on path, walk to stand. but for now, don't worry about this
 
 		// move down
-		if (this.action == CustomerAction.ARRIVE) {		
+		if (this.action == CustomerAction.ARRIVE) {
+			this.position_x = CustomerManager.LINE_POSITIONS[lineChoice] / KitchenScreen.WIDTH;
 			this.position_y -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
-			if (this.position_y <= targetY) this.placeOrder();
+			if (this.position_y <= targetY) {
+				this.placeOrder();
+				this.position_y = targetY;
+			}
 			CustomerManager.SHOULD_ORDER = true;
 		}
 
@@ -255,6 +284,9 @@ public class Customer implements Comparable<Customer> {
 			else if (this.position_y > targetY){
 				this.position_y -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			}
+			else if (this.position_y < targetY) {
+				this.position_y = targetY;
+			}
 		}
 		else this.order = null;
 
@@ -263,7 +295,10 @@ public class Customer implements Comparable<Customer> {
 			this.position_y += KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			//			System.out.println("leaving");
 			//			System.out.println(position_y + " " + targetY);
-			if (this.position_y >= targetY) this.finishLeaving();
+			if (this.position_y >= targetY) {
+				this.finishLeaving();
+				this.position_y = targetY;
+			}
 			CustomerManager.SHOULD_ORDER = true; // only time we need to reorder
 		}
 
@@ -276,6 +311,7 @@ public class Customer implements Comparable<Customer> {
 		// two possible animations, depending on the state and direction
 		TextureRegion toDraw;
 		float time = cm.timeElapsed + initTimeOffset;
+		
 		// default
 		if (type.walkDown == null) toDraw = type.idle.getKeyFrame(0);
 		else {
@@ -378,95 +414,6 @@ public class Customer implements Comparable<Customer> {
 		batch.draw(icon, happiness_x + width, y_position, (int) (width * 0.4f), (int) (width * 0.4f));
 	}
 
-	// TODO THIS IS SHITTY CODE FIX THIS 
-	public void drawOrder(SpriteBatch batch, int x_pos, int y_pos) {
-//		int order_x_pos = x_pos - 10;
-//
-//		//		Color temp = batch.getColor();
-//		//		batch.setColor(Color.WHITE); 
-//
-//		float speechWidth = 1.25f * ORDER_ROW_WIDTH;
-//		float speechHeight = 1.05f * ORDER_ROW_HEIGHT;
-//
-//		float speechXOffset = Customer.TEXTURE_WIDTH * SPEECH_X_OFFSET;
-//		float speechYOffset = 0.98f;
-//
-//		if (order.getTotalTypes() == 1) {
-//			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (speechHeight * KitchenScreen.UNIT_HEIGHT));
-//		}
-//		else if (order.getTotalTypes() == 2) {
-//			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + 0.75 * speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (2 * speechHeight * KitchenScreen.UNIT_HEIGHT));
-//
-//		}
-//		else if (order.getTotalTypes() == 3) {
-//			batch.draw(speech, order_x_pos + speechXOffset*KitchenScreen.UNIT_WIDTH, (int) (y_pos + 0.5 * speechYOffset * KitchenScreen.UNIT_HEIGHT), (int) (speechWidth * KitchenScreen.UNIT_WIDTH), (int) (3 * speechHeight * KitchenScreen.UNIT_HEIGHT));
-//		}
-//		//		batch.setColor(temp);
-//
-//		boolean chickenDone = false;
-//		boolean beefDone = false;
-//		boolean lambDone = false;
-//		for (int i = 0; i < order.getTotalTypes(); i++) {
-//			TextureRegion icon;
-//			int count;
-//			boolean spicy = false;
-//			// draw the item
-//			if (order.chicken > 0 && !chickenDone) {
-//				if (order.chickenSpicy) {
-//					spicy = true;
-//					icon = Assets.chickenIcon;
-//				}
-//				else icon = Assets.chickenIcon;
-//				count = order.chicken;
-//				chickenDone = true;
-//			}
-//			else if (order.beef > 0 && !beefDone) {
-//				if (order.beefSpicy) {
-//					icon = Assets.beefSpicyIcon;
-//					spicy = true;
-//				}
-//				else icon = Assets.beefIcon;
-//				count = order.beef;
-//				beefDone = true;
-//			}
-//			else if (order.lamb > 0 && !lambDone) {
-//				if (order.lambSpicy) {
-//					icon = Assets.lambSpicyIcon;
-//					spicy = true;
-//				}
-//				else icon = Assets.lambIcon;
-//				count = order.lamb;
-//				lambDone = true;
-//			}
-//			else {
-//				icon = Assets.beerIcon;
-//				count = order.beer;
-//			}
-//			int y_position;
-//			if (order.getTotalTypes() == 1) 
-//				y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-//			else if (order.getTotalTypes() == 2) {
-//				if (i == 0) 
-//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.5 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-//				else 
-//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT* 0.75 + ICON_OFFSET_Y  * KitchenScreen.UNIT_HEIGHT);
-//			}
-//			else {
-//				if (i == 0) 
-//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 0.5 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-//				else if (i == 1)
-//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.2 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-//				else 
-//					y_position = (int) (y_pos + KitchenScreen.UNIT_HEIGHT * 1.9 + ICON_OFFSET_Y * KitchenScreen.UNIT_HEIGHT);
-//			}
-//			batch.draw(icon, order_x_pos + (Customer.TEXTURE_WIDTH + ICON_OFFSET_X)*KitchenScreen.UNIT_WIDTH, y_position, (int) (ICON_WIDTH * KitchenScreen.UNIT_WIDTH), (int) (ICON_HEIGHT * KitchenScreen.UNIT_HEIGHT));
-//
-//			if (spicy) Assets.fontOrder.setColor(Color.RED);
-//			Assets.fontOrder.draw(batch, ""+count, (int) (order_x_pos + 1.02* KitchenScreen.UNIT_WIDTH * TEXTURE_WIDTH), (int) (y_position + FONT_OFFSET_Y * KitchenScreen.UNIT_HEIGHT));
-//			Assets.fontOrder.setColor(Color.BLACK);
-//		}
-	}
-
 	public void highlight(SpriteBatch batch) {
 		// calculate global position
 		int x_pos = KebabKing.getGlobalX(this.position_x);
@@ -493,9 +440,8 @@ public class Customer implements Comparable<Customer> {
 			return;
 		}
 
-		// for now, angry police always shut you down
-		float policeShutdownProb = 0.2f;
-		if (this.policeShutdown && Math.random() < policeShutdownProb) {
+		
+		if (this.policeShutdown) {
 			
 			if (cm.totalPeopleInLines() == CustomerManager.MAX_IN_LINE) {
 				cm.master.shutdownStand();
@@ -531,22 +477,26 @@ public class Customer implements Comparable<Customer> {
 		cm.addToLine(this, lineChoice);
 		action = CustomerAction.ARRIVE;
 		updateTargetY();
+		
+		if (this.type == CustomerType.JEWELER) {
+			cm.registerJewelerArriving();
+		}
 	}
 
 	// walk away from the stand
 	public void startLeaving() {
 		
-		if (this.tutorialFirst) {
-			cm.shouldAddSecondCustomer = true;
-			
-			TutorialScreen ts = (TutorialScreen) cm.master.kitchen;
-			ts.transitionToNext();	
-			if (ts.current == TutorialScreen.Step.ClickWoman) ts.transitionToNext();
-				
-		}
-		else if (this.tutorialSecond) {
-			((TutorialScreen) cm.master.kitchen).transitionToNext();	
-		}
+//		if (this.tutorialFirst) {
+//			cm.shouldAddSecondCustomer = true;
+//			
+//			TutorialScreen ts = (TutorialScreen) cm.master.kitchen;
+//			ts.transitionToNext();	
+//			if (ts.current == TutorialScreen.Step.ClickWoman) ts.transitionToNext();
+//				
+//		}
+//		else if (this.tutorialSecond) {
+//			((TutorialScreen) cm.master.kitchen).transitionToNext();	
+//		}
 		
 		cm.removeFromLine(lineChoice, lineIndex);
 		cm.moveUpLine(lineChoice, lineIndex);
@@ -579,7 +529,7 @@ public class Customer implements Comparable<Customer> {
 		// perfect order (everything satisfied, no burnt) is a perfect 1
 
 		// factor = (quantity given / total quantity) * (total well cooked / total quantity)
-		float accuracyFactor = ((order.total - order.remaining) / (float) order.total) * ((order.total - (order.burnt + order.raw)) / (float) order.total);
+		float accuracyFactor = ((order.total - order.remaining) / (float) order.total) * ((order.total - (order.burnt + order.raw + order.wrongSpiciness)) / (float) order.total);
 		//		System.out.println("accuracy factor: " + accuracyFactor);
 
 		// satisfaction is between 1 and 5 (don't round for now)
@@ -598,23 +548,37 @@ public class Customer implements Comparable<Customer> {
 		cm.totalSatisfaction += satisfaction;
 
 		if (this.sick) {
-			// TODO change with difficulty 
-			float generatePoliceNextProb = 1;
+			float generatePoliceNextProb = POLICE_SHUTDOWN_BASE;
+			
+			// for now, if they've played enough make it harder
+			if (cm.profile.getLevel() > 3) generatePoliceNextProb = 0.8f;
+			
+			// if this is true, a policeman will DEFINITELY come and shut you down
+			// what about if its the end of the day?
+			// should STILL be shut down
 			if (Math.random() < generatePoliceNextProb) {
 				cm.generatePoliceNext();
 				cm.totalSick++;
+				cm.master.kitchen.preShutDown();
 			}
 		}
 	}
 
 	public void finishLeaving() {
-		this.orient = Orient.RIGHT;
+		if (this.walkingLeft) {
+			this.orient = Orient.LEFT;
+		}
+		else {
+			this.orient = Orient.RIGHT;
+		}
 		this.action = CustomerAction.PASS_END;
 	}
 
 	// is this person done with their path?
 	public boolean shouldRemove() {
-		return (this.position_x > 1.0);
+		if (!walkingLeft && this.position_x > END_RIGHT) return true;
+		if (walkingLeft && this.position_x < END_LEFT) return true;
+		return false;
 	}
 
 
@@ -627,18 +591,25 @@ public class Customer implements Comparable<Customer> {
 		// after 30 days, customers wait 10% less
 		// after 70 days, customers wait 15% less
 		// after 150 days, customers wait 20% less
+		
+		
+		// do this based on location...
 
 		// can increase this to make the game harder, or decrease it to make it easier.
 		// scales logarithmically
-		float DIFFICULTY = 0.05f;
+//		float DIFFICULTY = 0.05f;
 
-		float difficultyFactor = (float) (Math.log((cm.profile.daysWorked + 10.0) / 10.0) / Math.log(2.0));
-		difficultyFactor *= DIFFICULTY;
-		difficultyFactor = 1 -difficultyFactor;
-
+//		float difficultyFactor = (float) (Math.log((cm.profile.getDaysWorked + 10.0) / 10.0) / Math.log(2.0));
+//		difficultyFactor = 1;
+//		difficultyFactor *= DIFFICULTY;
+//		difficultyFactor = 1 -difficultyFactor;
+		
+		// TODO make higher locations more difficult?
+		float difficultyFactor = 1;
+		
 		float maxTime = customerPatienceFactor * BASE_WAIT_TIME * this.type.patienceFactor;
 
-		//		System.out.println("max time: " + maxTime + " difficultyFactor: " + difficultyFactor + ", together: " + maxTime*difficultyFactor);
+//		System.out.println("max time: " + maxTime + " difficultyFactor: " + difficultyFactor + ", together: " + maxTime*difficultyFactor);
 		return maxTime * difficultyFactor;
 	}
 
@@ -650,28 +621,32 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	public int chooseLine() {
+		// just pick the first line
+		if (walkingLeft) return 1;
+		else return 0;
+
 		// do a weighted decision, variable amount of lines
-		int index = 0;
-		if (Math.random() < .5) {
-			index = (int) (Math.random() * CustomerManager.LINE_POSITIONS.length);
-		}
-		else {
-			// alternatively, choose the line with lowest
-			int minCount = Integer.MAX_VALUE;
-			for (int i = 0; i < CustomerManager.LINE_COUNT; i++) {
-				if (cm.peopleInLine(i) <= minCount) {
-					if (cm.peopleInLine(i) == minCount && Math.random() < .5) {
-						minCount = cm.peopleInLine(i);
-						index = i;
-					}
-					else {
-						minCount = cm.peopleInLine(i);
-						index = i;
-					}
-				}
-			}
-		}
-		return index;
+//		int index = 0;
+//		if (Math.random() < .5 || cm.totalPeopleInLines() == 0) {
+//			index = (int) (Math.random() * CustomerManager.LINE_POSITIONS.length);
+//		}
+//		else {
+//			// alternatively, choose the line with lowest
+//			int minCount = Integer.MAX_VALUE;
+//			for (int i = 0; i < CustomerManager.LINE_COUNT; i++) {
+//				if (cm.peopleInLine(i) <= minCount) {
+//					if (cm.peopleInLine(i) == minCount && Math.random() < .5) {
+//						minCount = cm.peopleInLine(i);
+//						index = i;
+//					}
+//					else {
+//						minCount = cm.peopleInLine(i);
+//						index = i;
+//					}
+//				}
+//			}
+//		}
+//		return index;
 	}
 
 	public void placeOrder() {
@@ -687,41 +662,49 @@ public class Customer implements Comparable<Customer> {
 		//		order.print();
 		this.action = CustomerAction.WAIT;
 		
-		if (this.tutorialFirst) {
-			this.order.beef = 0;
-			this.order.chicken = 1;
-			this.order.lamb = 3;
-			this.order.beer = 0;
-			this.order.beefSpicy = false;
-			this.order.lambSpicy = true;
-			this.order.chickenSpicy = false;
-			this.order.remaining = 4;
-			
-			TutorialScreen ts = (TutorialScreen) this.cm.master.kitchen;
-			ts.transitionToNext();
-//			ts.firstOrder();
-		} 
-		else if (this.tutorialSecond) {
-			this.order.beef = 0;
-			this.order.chicken = 0;
-			this.order.lamb = 4;
-			this.order.beer = 1;
-			this.order.beefSpicy = false;
-			this.order.lambSpicy = true;
-			this.order.chickenSpicy = false;
-			this.order.remaining = 5;
-			
-			TutorialScreen ts = (TutorialScreen) this.cm.master.kitchen;
-			ts.transitionToNext();
-//			ts.secondOrder();
+//		if (this.tutorialFirst) {
+//			this.order.beef = 0;
+//			this.order.chicken = 1;
+//			this.order.lamb = 3;
+//			this.order.beer = 0;
+//			this.order.beefSpicy = false;
+//			this.order.lambSpicy = true;
+//			this.order.chickenSpicy = false;
+//			this.order.remaining = 4;
+//			
+//			TutorialScreen ts = (TutorialScreen) this.cm.master.kitchen;
+//			ts.transitionToNext();
+////			ts.firstOrder();
+//		} 
+//		else if (this.tutorialSecond) {
+//			this.order.beef = 0;
+//			this.order.chicken = 0;
+//			this.order.lamb = 4;
+//			this.order.beer = 1;
+//			this.order.beefSpicy = false;
+//			this.order.lambSpicy = true;
+//			this.order.chickenSpicy = false;
+//			this.order.remaining = 5;
+//			
+//			TutorialScreen ts = (TutorialScreen) this.cm.master.kitchen;
+//			ts.transitionToNext();
+////			ts.secondOrder();
+//		}
+	}
+
+	public void orderComplete() {
+		this.startLeaving();
+		if (this.type == CustomerType.JEWELER) {
+			cm.master.profile.giveCoins(JEWELER_COINS);
 		}
 	}
 
-	public float giveMeat(ArrayList<Meat> meat) {
-		float moneyPaid = this.order.giveMeat(meat);
+	// returns revcost array (first element is rev, second is cost)
+	public float[] giveMeat(ArrayList<Meat> meat) {
+		float[] moneyPaid = this.order.giveMeat(meat);
 		//		order.print();
 		if (order.remaining == 0) {
-			this.startLeaving();
+			this.orderComplete();
 		}
 		return moneyPaid;
 	}
@@ -730,7 +713,7 @@ public class Customer implements Comparable<Customer> {
 	public float giveBeer() {
 		float toReturn = this.order.giveBeer();
 		if (order.remaining == 0) {
-			this.startLeaving();
+			this.orderComplete();
 		}
 		//		order.print();
 		return toReturn;

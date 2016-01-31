@@ -1,5 +1,7 @@
 package com.kebabking.game.Purchases;
 
+import com.kebabking.game.ProfileInventory;
+
 // this class contains the user's current grill Size
 public class GrillSize extends PurchaseType {	
 	static String name = "GRILL SIZE";
@@ -9,10 +11,10 @@ public class GrillSize extends PurchaseType {
 	// Using a static class allows us to extend simplepurchaseable, but still basically be an enum.
 	static class Size extends SimplePurchaseable {
 		public static final Size[] values = new Size[] {
-				new Size("Tiny", 		0,		0, 	0, 	4,	"Fits a puny 4 kebabs"),
-				new Size("Small", 		50,	2,	0,  6,	"Fits 6 kebabs"), 
-				new Size("Medium", 		500,	4,	10, 8,	"Fits 8 whole kebabs!"),
-				new Size("Large", 		1000,	10,	20, 10,	"Fits 10 kebabs! Wow!"),
+				new Size("Tiny Grill", 			0,		0, 	0, 	4,	"Fits a puny 4 kebabs", "grill-00"),
+				new Size("Small Grill", 		100,	2,	2,  6,	"Fits 6 kebabs", "grill-01"), 
+				new Size("Medium Grill", 		500,	4,	10, 8,	"Fits 8 whole kebabs!", "grill-02"),
+				new Size("Large Grill", 		1000,	10,	20, 10,	"Fits 10 kebabs! Wow!", "grill-03"),
 		};
 	
 		int size;
@@ -20,14 +22,14 @@ public class GrillSize extends PurchaseType {
 		// for Kryo
 		private Size() {}
 		
-		private Size(String name, float cash, int coins, int unlockAtLevel, int size, String description) {
-			super(GrillSize.name, name, cash, coins, unlockAtLevel, description, "");
+		private Size(String name, float cash, int coins, int unlockAtLevel, int size, String description, String icon) {
+			super(name, cash, coins, unlockAtLevel, description, "market/icons/" + icon);
 			this.size = size;
 		}
 	};
 
 	
-	public GrillSize(Inventory inventory) {
+	public GrillSize(ProfileInventory inventory) {
 		super(inventory, name, grillSizeDescription, null, Size.values);
 		unlock(values[0]);
 	}
@@ -36,4 +38,8 @@ public class GrillSize extends PurchaseType {
 	public GrillSize() {
 		super(name, grillSizeDescription, null, Size.values);
 	};
+	
+	public int getSize() {
+		return ((Size) this.getCurrentSelected()).size;
+	}
 }

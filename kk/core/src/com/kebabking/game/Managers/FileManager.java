@@ -1,5 +1,7 @@
 package com.kebabking.game.Managers;
 
+import com.badlogic.gdx.files.FileHandle;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,4 +18,8 @@ public interface FileManager {
     public boolean saveFileExists();
 
     public void deleteProfile();
+
+    public FileHandle getTempOutputHandle() throws FileNotFoundException;
+
+    public InputStream getTempInputStream() throws FileNotFoundException;
 }

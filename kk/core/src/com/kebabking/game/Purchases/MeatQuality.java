@@ -1,5 +1,7 @@
 package com.kebabking.game.Purchases;
 
+import com.kebabking.game.ProfileInventory;
+
 //later: split this into separate ones for chicken beef, lamb
 public class MeatQuality extends PurchaseType {
 	static String name = "MEAT QUALITY";
@@ -9,11 +11,11 @@ public class MeatQuality extends PurchaseType {
 	static class Quality extends SimplePurchaseable {
 		public static final Quality[] values = new Quality[] {
 //				// 					name, 	cash,  coins, unlock at, qual factor, description		
-				new Quality ("Grade C Meat", 	0,	 0,	0, 1, 		"Pretty sketchy 'meat'..."), 
-				new Quality  ("Grade B Meat", 	100, 2, 8, 1.1f,	 "It probably comes from animals."),
-				new Quality  ("Grade A Meat", 	250, 5, 13, 1.2f,	 "Smells great!"),
-				new Quality  ("Grade AA Meat", 	500, 10, 21, 1.3f,	 "Almost restaurant quality!"), 
-				new Quality  ("Grade AAA Meat",	1000, 15, 37, 1.4f,  "You can't find better!"),
+				new Quality ("Grade C Meat", 	0,	 0,		0, 		1, 		"Pretty fishy smell to it"), 
+				new Quality  ("Grade B Meat", 	100, 2, 	8, 		1.1f,	"I think it's meat"),
+				new Quality  ("Grade A Meat", 	250, 5, 	13, 	1.2f,	"Definitely meat"),
+				new Quality  ("Grade AA Meat", 	500, 10, 	21, 	1.3f,	"Great organic meat"), 
+				new Quality  ("Grade AAA Meat",	1000, 15, 	37, 	1.4f,  	"Mouth-watering meat"),
 		};
 		
 		float qualityFactor;
@@ -22,12 +24,12 @@ public class MeatQuality extends PurchaseType {
 		private Quality(){}
 
 		private Quality(String name, float cash, int coins, int unlockAt, float qualityFactor, String description) {
-			super(MeatQuality.name, name, cash, coins, unlockAt, description, "market/Market_subMenus__template_element-06");			
+			super(name, cash, coins, unlockAt, description, "market/Market_subMenus__template_element-06");			
 			this.qualityFactor = qualityFactor;
 		}
 	};
 
-	public MeatQuality(Inventory inventory) {
+	public MeatQuality(ProfileInventory inventory) {
 		super(inventory, name, desc, null, Quality.values);
 		unlock(Quality.values[0]);
 	}

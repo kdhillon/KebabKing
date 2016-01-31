@@ -40,6 +40,12 @@ public class ActiveScreen extends ScreenTemplate {
 		cm.draw(batch);
 		grill.draw(batch, delta);
 		
+		// force tint
+		if (DrawUI.notificationActive) {
+			tint = Assets.gray;
+			alpha = DrawUI.GRAY_ALPHA;
+		}
+		
 		if (tint != null)
 			DrawUI.tint(batch, tint, alpha);
 		

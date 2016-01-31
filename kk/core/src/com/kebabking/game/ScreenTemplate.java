@@ -1,7 +1,6 @@
 package com.kebabking.game;
 
 import com.badlogic.gdx.Screen;
-import com.kebabking.game.Managers.Manager;
 
 public class ScreenTemplate implements Screen {
 

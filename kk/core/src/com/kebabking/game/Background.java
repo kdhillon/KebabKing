@@ -22,7 +22,7 @@ public class Background {
 	float timeElapsed;
 
 //	TextureRegion bg; 
-	Profile profile;
+	ProfileRobust profile;
 
 	Color currentColor;
 
@@ -61,7 +61,7 @@ public class Background {
 	float sunPathB = 0.1f;
 	float sunPathC = 0.9f;
 	
-	public Background(Profile profile) {
+	public Background(ProfileRobust profile) {
 		this.timeElapsed = 0;
 		
 		// assign bg based on location

@@ -20,6 +20,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.kebabking.game.AdsHandler;
 import com.kebabking.game.Managers.AdsManager;
+import com.kebabking.game.Managers.Manager;
 import com.supersonic.mediationsdk.integration.IntegrationHelper;
 import com.supersonic.mediationsdk.sdk.Supersonic;
 import com.supersonic.mediationsdk.sdk.SupersonicFactory;
@@ -28,12 +29,14 @@ import java.io.IOException;
 
 public class AdsManagerChartboost implements AdsManager {
     static final String TAG = "CHARTBOOST";
-    // TODO change for KK
+
     static final String CHARTBOOST_APP_ID = "56798750f789820e60403d70";
     static final String CHARTBOOST_APP_SIGNATURE = "6a042a52116488af98293227f61f198141682ccd";
 
     final AndroidLauncher androidLauncher;
 
+
+    // Chartboost is allocating an insane amount of memory for some reason... is this expected?
     public AdsManagerChartboost(AndroidLauncher androidLauncherIn) {
         androidLauncher = androidLauncherIn;
 
@@ -49,25 +52,31 @@ public class AdsManagerChartboost implements AdsManager {
         System.out.println("chartboost initialized");
     }
 
+    public void cacheAd() {
+        if (!Chartboost.hasRewardedVideo(CBLocation.LOCATION_DEFAULT)) {
+            Chartboost.cacheRewardedVideo(CBLocation.LOCATION_DEFAULT);
+            System.out.println("caching chartboost ad");
+        }
+        else
+            System.out.println("ad already cached");
+    }
+
     @Override
     public void showAd() {
         if (Chartboost.hasRewardedVideo(CBLocation.LOCATION_DEFAULT)) {
             System.out.println("showing chartboost ad");
-            Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
-            AdsHandler.handleAdWatched();
+            // this doesn't work to catch errors
+            try {
+                Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
+            }
+            catch(Exception e) {
+
+            }
         }
         else {
-            Chartboost.cacheRewardedVideo(CBLocation.LOCATION_DEFAULT);
-            System.out.println("caching chartboost ad");
-            if (Chartboost.hasRewardedVideo(CBLocation.LOCATION_DEFAULT)) {
-                Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
-                AdsHandler.handleAdWatched();
-            }
-            else {
-                System.out.println("no chartboost ad available");
-                AdsHandler.handleAdNotAvailable();
-                return;
-            }
+            System.out.println("no ad has been cached, caching ad");
+            cacheAd();
+//
         }
     }
 
@@ -213,7 +222,7 @@ public class AdsManagerChartboost implements AdsManager {
 
         @Override
         public boolean shouldDisplayRewardedVideo(String location) {
-            Log.i(TAG, String.format("SHOULD DISPLAY REWARDED VIDEO: '%s'",  (location != null ? location : "null")));
+            Log.i(TAG, String.format("SHOULD DISPLAY REWARDED VIDEO: '%s'", (location != null ? location : "null")));
             return true;
         }
 
@@ -225,8 +234,9 @@ public class AdsManagerChartboost implements AdsManager {
         @Override
         public void didFailToLoadRewardedVideo(String location,
                                                CBImpressionError error) {
-//            Log.i(TAG, String.format("DID FAIL TO LOAD REWARDED VIDEO: '%s', Error:  %s",  (location != null ? location : "null"), error.name()));
+            Log.i(TAG, String.format("DID FAIL TO LOAD REWARDED VIDEO: '%s', Error:  %s",  (location != null ? location : "null"), error.name()));
 //            Toast.makeText(androidLauncher.getContext(), String.format("DID FAIL TO LOAD REWARDED VIDEO '%s' because %s", location, error.name()), Toast.LENGTH_SHORT).show();
+            AdsHandler.handleAdNotAvailable();
         }
 
         @Override
@@ -236,17 +246,19 @@ public class AdsManagerChartboost implements AdsManager {
 
         @Override
         public void didCloseRewardedVideo(String location) {
-            Log.i(TAG, String.format("DID CLOSE REWARDED VIDEO '%s'",  (location != null ? location : "null")));
+            Log.i(TAG, String.format("DID CLOSE REWARDED VIDEO '%s'", (location != null ? location : "null")));
         }
 
         @Override
         public void didClickRewardedVideo(String location) {
             Log.i(TAG, String.format("DID CLICK REWARDED VIDEO '%s'",  (location != null ? location : "null")));
+            AdsHandler.handleAdJustWatched();
         }
 
         @Override
         public void didCompleteRewardedVideo(String location, int reward) {
-            Log.i(TAG, String.format("DID COMPLETE REWARDED VIDEO '%s' FOR REWARD %d",  (location != null ? location : "null"), reward));
+            Log.i(TAG, String.format("DID COMPLETE REWARDED VIDEO '%s' FOR REWARD %d", (location != null ? location : "null"), reward));
+           AdsHandler.handleAdJustWatched();
         }
 
         @Override

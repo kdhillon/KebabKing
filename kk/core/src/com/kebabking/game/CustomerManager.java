@@ -1,11 +1,12 @@
 package com.kebabking.game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kebabking.game.Customer.CustomerType;
+import com.kebabking.game.Purchases.AdCampaign;
 
 
 /**
@@ -19,6 +20,8 @@ public class CustomerManager {
 	// could do an array of three "lines", at various x unit positions, that people wait in.
 	// start off with just one
 //	static final float[] LINE_POSITIONS = new float[] {4.5f};
+	
+	// fix this
 	static final float[] LINE_POSITIONS = new float[] {0.75f, 7.2f};
 //	static final float[] LINE_POSITIONS = new float[] {0, 3.5f, 7f};
 
@@ -31,7 +34,7 @@ public class CustomerManager {
 	static boolean SHOULD_ORDER = true; // sorts every frame
 
 	KebabKing master;
-	Profile profile;
+	ProfileRobust profile;
 	Customer mousedOver;
 	Customer[][] lines;
 	int[] peopleInLine;
@@ -48,7 +51,7 @@ public class CustomerManager {
 	boolean generatePoliceNext;
 	
 	float customerGenerationMaxTime; // generate a customer every 0.5 to this number of seconds?
-	float customerPatienceFactor;
+	float customerPatienceFactor = 1;
 	float timeElapsed;
 
 	float expenses;
@@ -68,11 +71,18 @@ public class CustomerManager {
 	//	ArrayList<Customer> customers;
 
 	ArrayList<Customer> customers;
+	
+	double[] currentCustomerSpread; 		// modified during ad campaigns
+	public float boost;						// what is the percent increase in total people, after normalization?
+	Customer.CustomerType[] currentBoosted;
+	
+//	private float bonus; // should only be used for resettting customer distribution
+	public AdCampaign.CampaignSpecial campaignSpecial;
 
 	public CustomerManager(KebabKing master) {
 		this.master = master;
 		this.profile = master.profile;
-		this.customerPatienceFactor = profile.customerPatienceFactor;
+//		this.customerPatienceFactor = profile.customerPatienceFactor;
 		this.customerGenerationMaxTime = getGenerationMaxTime(profile);
 
 		//		customers = new ArrayList<Customer>();
@@ -84,6 +94,8 @@ public class CustomerManager {
 		peopleInLine = new int[LINE_COUNT];
 
 		lastCustomer = 0;
+		
+		resetCustomerDistribution();
 	}
 
 	public void reset() {
@@ -138,7 +150,7 @@ public class CustomerManager {
 		// in fact, this should be based on global clock
 		// we want players to play as many rounds as possible during the 
 		// time that this campaign lasts
-		master.profile.inventory.updateAds();
+		master.profile.inventory.updateConsumables();
 	}
 
 	// draw all customers
@@ -199,22 +211,22 @@ public class CustomerManager {
 
 	public void generateCustomers() {
 		// tutorial mode
-		if (profile.tutorialNeeded && master.getScreen() == master.kitchen) {
-			if (!tutFirstCustomer) {
-				this.reset();
-				addFirstTutorialCustomer();
-				this.tutFirstCustomer = true;
-			}
-//			if (!tutSecondCustomer && shouldAddSecondCustomer) {
-//				addSecondTutorialCustomer();
-//				this.tutSecondCustomer = true;
-//				this.shouldAddSecondCustomer = false;
-////				TutorialScreen ts = (TutorialScreen) this.master.kitchen;
-////				ts.transitionToNext();
+//		if (profile.tutorialNeeded && master.getScreen() == master.kitchen) {
+//			if (!tutFirstCustomer) {
+//				this.reset();
+//				addFirstTutorialCustomer();
+//				this.tutFirstCustomer = true;
 //			}
-//			System.out.println("tutorial needed");
-			return;
-		}
+////			if (!tutSecondCustomer && shouldAddSecondCustomer) {
+////				addSecondTutorialCustomer();
+////				this.tutSecondCustomer = true;
+////				this.shouldAddSecondCustomer = false;
+//////				TutorialScreen ts = (TutorialScreen) this.master.kitchen;
+//////				ts.transitionToNext();
+////			}
+////			System.out.println("tutorial needed");
+//			return;
+//		}
 		
 		// decide whether to create a customer this frame
 		if (needCustomer()) {
@@ -224,6 +236,61 @@ public class CustomerManager {
 		else if (lastCustomer > nextCustomer) addCustomer();
 
 		//TODO make this based on location you're in.
+	}
+
+	// this reapplies any existing ad campaign, used when changing locations.
+	public void updateCustomerDistribution() {
+//		if (boost == 1) resetCustomerDistribution();
+//		else {
+		updateCustomerDistribution(currentBoosted, boost);
+//		}
+	}
+
+	public void updateCustomerDistribution(AdCampaign adCampaign) {
+		AdCampaign.Campaign campaign = (AdCampaign.Campaign) adCampaign.getActive();
+		if (campaign == null) {
+			resetCustomerDistribution();
+			return;
+		}
+		this.updateCustomerDistribution(campaign.types, campaign.hypeBoost);
+		this.campaignSpecial = campaign.special;
+	}
+	
+	public void updateCustomerDistribution(Customer.CustomerType[] types, float bonus) {
+		this.currentCustomerSpread = Arrays.copyOf(master.profile.getLocation().originalCustomerSpread, master.profile.getLocation().originalCustomerSpread.length);
+//		int nonZeroCustomers = 0;
+//		for (int i = 0; i < currentCustomerSpread.length; i++) {
+//			if (currentCustomerSpread[i] != 0) nonZeroCustomers++;
+//		}
+		
+		this.currentBoosted = types;
+//		this.bonus = bonus;
+		
+		if (types != null) {
+			for (int i = 0; i < types.length; i++) {
+				int j = Customer.getIndexOf(types[i]);
+				currentCustomerSpread[j] *= bonus;
+			}
+			
+//			this.boost = 1 + (bonus - 1) / nonZeroCustomers;
+			System.out.println("PROFILE: setting boost: " + boost);
+		}
+		else {
+			for (int i = 0; i < currentCustomerSpread.length; i++) {
+				currentCustomerSpread[i] *= bonus;
+			}
+		}
+		this.boost = bonus;
+	}
+	
+
+	// this ends the existing ad campaign
+	public void resetCustomerDistribution() {
+		this.currentCustomerSpread = Arrays.copyOf(master.profile.getLocation().originalCustomerSpread, master.profile.getLocation().originalCustomerSpread.length);
+		this.boost = 1;
+//		this.bonus = 1;
+		this.currentBoosted = null;
+		this.campaignSpecial = null;
 	}
 	
 	public boolean needCustomer() {
@@ -259,35 +326,35 @@ public class CustomerManager {
 	}
 	
 	// add the first customer
-	public void addFirstTutorialCustomer() {
-		Customer customer = new Customer(customerPatienceFactor, this);
-//		customer.type = CustomerType.OLD_WOMAN;
-		customer.type = CustomerType.OLD_MAN;
-		customer.tutorialFirst = true;
-		if (!customers.add(customer)) {
-			System.out.println("CANT ADD, ALREADY EXISTS");
-		}
-		
-		lastCustomer = 0;
-		this.nextCustomer = (float) (Math.random() * (customerGenerationMaxTime - 0.5f) + 0.5f);
-		
-		SHOULD_ORDER = true;
-	}
-	
-	public void addSecondTutorialCustomer() {
-		Customer customer = new Customer(customerPatienceFactor, this);
-		customer.type = CustomerType.FAT_MAN;
-		customer.tutorialSecond = true;
-		
-		if (!customers.add(customer)) {
-			System.out.println("CANT ADD, ALREADY EXISTS");
-		}
-		
-		lastCustomer = 0;
-		this.nextCustomer = (float) (Math.random() * (customerGenerationMaxTime - 0.5f) + 0.5f);
-		
-		SHOULD_ORDER = true;
-	}
+//	public void addFirstTutorialCustomer() {
+//		Customer customer = new Customer(customerPatienceFactor, this);
+////		customer.type = CustomerType.OLD_WOMAN;
+//		customer.type = CustomerType.OLD_MAN;
+//		customer.tutorialFirst = true;
+//		if (!customers.add(customer)) {
+//			System.out.println("CANT ADD, ALREADY EXISTS");
+//		}
+//		
+//		lastCustomer = 0;
+//		this.nextCustomer = (float) (Math.random() * (customerGenerationMaxTime - 0.5f) + 0.5f);
+//		
+//		SHOULD_ORDER = true;
+//	}
+//	
+//	public void addSecondTutorialCustomer() {
+//		Customer customer = new Customer(customerPatienceFactor, this);
+//		customer.type = CustomerType.FAT_MAN;
+//		customer.tutorialSecond = true;
+//		
+//		if (!customers.add(customer)) {
+//			System.out.println("CANT ADD, ALREADY EXISTS");
+//		}
+//		
+//		lastCustomer = 0;
+//		this.nextCustomer = (float) (Math.random() * (customerGenerationMaxTime - 0.5f) + 0.5f);
+//		
+//		SHOULD_ORDER = true;
+//	}
 	
 	public void calcNextCustomer() {
 		this.customerGenerationMaxTime = getGenerationMaxTime(this.profile);
@@ -296,11 +363,13 @@ public class CustomerManager {
 
 	// call this if someone gets sick and the stand should be shutdown
 	public void generatePoliceNext() {
-		this.generatePoliceNext = true;
+		// don't generate more than one police
+		if (!master.kitchen.wasShutDown)
+			this.generatePoliceNext = true;
 	}
 	
-	public float getGenerationMaxTime(Profile profile) {
-		return GENERATE_BASE_TIME * (1/(float) (profile.getLocation().popularity * profile.boost));
+	public float getGenerationMaxTime(ProfileRobust profile) {
+		return GENERATE_BASE_TIME * (1/(float) (profile.getLocation().popularity * boost));
 	}
 
 	public void removeCustomers() {
@@ -361,5 +430,10 @@ public class CustomerManager {
 	public float calculateProfit() {
 		return revenue - expenses;
 	}
-
+	
+	// TODO add tutorial notification
+	public void registerJewelerArriving() {
+		master.profile.stats.jewelerCustomers++;
+	}
+	
 }

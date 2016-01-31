@@ -5,14 +5,14 @@ import com.kebabking.game.Assets;
 
 public class SimplePurchaseable implements Purchaseable {
 	String name; 
-	int coinsToUnlock;
-	float cashToUnlock;	
+	protected int coinsToUnlock;
+	protected float cashToUnlock;	
 	float dailyCost;
 	int unlockAtLevel;
 	String description;
 	transient TextureRegion icon;
 	String textureName;
-	String typeName;
+	PurchaseType type;
 	
 	// for Kryo
 	public SimplePurchaseable() {
@@ -21,12 +21,13 @@ public class SimplePurchaseable implements Purchaseable {
 		}
 	}
 	
-	public SimplePurchaseable(String typeName, String name, float cashToUnlock, int coinsToUnlock, int unlockAtLevel, String description, String iconFull) {
-		this(typeName, name, cashToUnlock, coinsToUnlock, 0.0f, unlockAtLevel, description, iconFull);
+	public SimplePurchaseable(String name, float cashToUnlock, int coinsToUnlock, int unlockAtLevel, String description, String iconFull) {
+		this(name, cashToUnlock, coinsToUnlock, 0.0f, unlockAtLevel, description, iconFull);
 	}
 	
-	public SimplePurchaseable(String typeName, String name, float cashToUnlock, int coinsToUnlock, float dailyCost, int unlockAtLevel, String description, String iconFull) {
-		this.typeName = typeName;
+	public SimplePurchaseable(String name, float cashToUnlock, int coinsToUnlock, float dailyCost, int unlockAtLevel, String description, String iconFull) {
+//		this.type = type;
+		// TYPE MUST BE SET IN PurchaseType.setValues();
 		this.name = name;
 		this.coinsToUnlock = coinsToUnlock;
 		this.cashToUnlock = cashToUnlock;
@@ -73,9 +74,13 @@ public class SimplePurchaseable implements Purchaseable {
 		return description;
 	}
 
+	@Override
+	public PurchaseType getType() {
+		return type;
+	}
 	
 	@Override
-	public String getTypeName() {
-		return typeName;
+	public void setType(PurchaseType type) {
+		this.type = type;
 	}
 }

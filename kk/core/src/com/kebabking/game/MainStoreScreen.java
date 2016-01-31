@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kebabking.game.StoreScreen.TableType;
+import com.kebabking.game.Purchases.Purchaseable;
 
 public class MainStoreScreen extends ActiveScreen {
 	static float UNITS_WIDTH = 12f;
@@ -173,6 +175,7 @@ public class MainStoreScreen extends ActiveScreen {
 	
 	public Table newBackButtonInit() {
 		Table backButton = new Table();
+		backButton.setTouchable(Touchable.enabled);
 		Label back = new Label("back", Assets.generateLabelStyleUIWhite(32, "back"));
 		backButton.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("market/back_button")));
 		backButton.add(back);
@@ -205,6 +208,12 @@ public class MainStoreScreen extends ActiveScreen {
 			}
 		});
 		return button;
+	}
+	
+	public void switchTo(Purchaseable p) {
+		System.out.println("switching main store screen to " + p.getName());
+		storeScreen.switchToType(p.getType());
+		master.setScreen(storeScreen);
 	}
 	
 	public void switchTo(TableType type) {

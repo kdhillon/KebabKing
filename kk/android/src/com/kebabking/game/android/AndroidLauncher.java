@@ -1,15 +1,15 @@
 package com.kebabking.game.android;
 
+import com.applovin.sdk.AppLovinSdk;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.chartboost.sdk.Chartboost;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GoogleApiAvailability;
+import com.kebabking.game.AdsHandler;
 import com.kebabking.game.Grill;
 import com.kebabking.game.KebabKing;
-import com.kebabking.game.KitchenScreen;
 import com.kebabking.game.MainMenuScreen;
 import com.kebabking.game.Managers.AdsManager;
+import com.kebabking.game.Managers.AdsManagerMock;
 import com.kebabking.game.Managers.Manager;
 import com.kebabking.game.SummaryScreen;
 
@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.multidex.MultiDex;
 
 public class AndroidLauncher extends AndroidApplication {
 	KebabKing game;
@@ -49,10 +50,10 @@ public class AndroidLauncher extends AndroidApplication {
 		IABManagerAndroid iab = new IABManagerAndroid(this);
 		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
 		FileManagerAndroid file = new FileManagerAndroid(this);
-		AdsManager ads = new AdsManagerChartboost(this);
-//		FacebookManagerAndroid fb = new FacebookManagerAndroid(this);
-		
-		Manager.initAndroid(iab, file, analytics, ads, null);
+		AdsManager ads = new AdsManagerSupersonic(this);
+		SocialMediaFacebook media = new SocialMediaFacebook(this);
+
+		Manager.initAndroid(iab, file, analytics, ads, media);
 		
 		game = new KebabKing();
 
@@ -69,12 +70,21 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected  void onResume() {
 		super.onResume();
+		System.out.println("ON RESUME!!!");
+		// need to pause assets (specifically the stupid fonts)
 		Manager.onResume();
+	}
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+		System.out.println("ON PAUSE!!!");
 		Manager.onPause();
 		Manager.analytics.sendEventHit("Ads", "ads watched this session", "", (long) SummaryScreen.adsWatchedThisSession);
 		Manager.analytics.sendEventHit("Game", "kebabs trashed this session", "", (long) Grill.kebabsTrashedThisSession);
@@ -86,12 +96,14 @@ public class AndroidLauncher extends AndroidApplication {
 	// required for iab helper
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		System.out.println("on activity result");
-		if (Manager.iab != null)
-			if (((IABManagerAndroid) Manager.iab).handleActivityResult(requestCode, resultCode, data))
-			return;
-//		}
 		super.onActivityResult(requestCode, resultCode, data);
+		System.out.println("on activity result");
+		if (Manager.iab != null) {
+			((IABManagerAndroid) Manager.iab).handleActivityResult(requestCode, resultCode, data);
+		}
+		if (Manager.fb != null) {
+			((SocialMediaFacebook) Manager.fb).onActivityResult(requestCode, resultCode, data);
+		}
 	}
 
 	// dispose of IAB for cleanliness

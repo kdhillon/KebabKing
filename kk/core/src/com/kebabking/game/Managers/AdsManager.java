@@ -1,8 +1,10 @@
 package com.kebabking.game.Managers;
 
 public interface AdsManager {
+    // prepare an ad
+    public void cacheAd();
+
     // Display an ad
-    // TODO return info about ad completion.
     public void showAd();
 
     // Stuff to do on pause/resume

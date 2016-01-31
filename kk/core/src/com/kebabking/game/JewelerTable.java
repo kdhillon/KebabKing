@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.kebabking.game.Managers.Manager;
 import com.kebabking.game.OnlinePurchaseManager.PurchaseableOnline;
 
 public class JewelerTable extends Table {
@@ -64,6 +65,17 @@ public class JewelerTable extends Table {
 
 		TextureRegion jewelerReg = Assets.getTextureRegion("market/Jeweler-08");
 		Image jeweler = new Image(jewelerReg);
+		
+		jeweler.setTouchable(Touchable.enabled);
+		jeweler.addListener(new InputListener() {
+			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+				return true;
+			}
+			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+				Manager.ads.showAd();
+			}
+		});
+		
 		this.row();
 		float height = KebabKing.getGlobalY(0.36f);
 		float width = height * jewelerReg.getRegionWidth() / jewelerReg.getRegionHeight();
@@ -156,7 +168,7 @@ public class JewelerTable extends Table {
 		
 		entry.add(title).top().padTop(KebabKing.getGlobalY(0.005f)).center().width(totalWidth);
 		
-		Label price = new Label("$" + op.price, Assets.generateLabelStyleUIWhite(16, Assets.nums));
+		Label price = new Label(Assets.realCurrencyChar + op.price, Assets.generateLabelStyleUIWhite(16, Assets.nums + Assets.realCurrencyChar));
 		entry.row();
 		entry.add(price).top().expandY();
 		//		Label title = new Label("" + op.coins + " Coins!", Assets.generateLabelStyleUIChinaWhite(30, Assets.nums + " Coins!"));

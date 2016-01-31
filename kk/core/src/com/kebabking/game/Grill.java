@@ -10,6 +10,13 @@ import com.kebabking.game.Purchases.GrillStand;
 // contains information for the grill, the "trash", spice box, and ice chests
 //
 // The following is how the control scheme for meat should work:
+// 		BASIC (SWIPE) CONTROL SCHEME:
+//		Touching down on a chest drags meat of that type (chest is opened during drag). Mousing over grill area "ghosts" meat where it would be placed.
+//		Releasing places meat at that spot.
+//		Tapping chest does nothing
+//		Beer must be dragged onto customers.
+
+// 		ADVANCED (TAP) CONTROL SCHEME:
 //  	Tapping a chest opens the chest. 
 //		Trying to drag the chest does nothing. Chest opens on release.
 //		Tapping an open grill spot places a meat at that spot. 
@@ -58,6 +65,9 @@ public class Grill {
 	static final int BEER_X = 9;
 	static final int BEER_Y = 0;
 	static final int SPICE_Y = 3;
+	
+	static final boolean DRAW_GRAY_ON_TRASH = true;
+	static final float TRASH_GRAY_ALPHA = MainMenuScreen.INIT_BG_ALPHA;
 	//	static final int TRASH_X = 0;
 	//	static final int TRASH_Y = 2;
 
@@ -69,6 +79,10 @@ public class Grill {
 
 	static final float FIRE_PAD_X = 0.01f;
 	static final float FIRE_PAD_TOP = 0.005f;
+	
+	static final float BRUSH_MAX_ROT = 30f;
+	static final float BRUSH_MIN_ROT = -30f;
+	static final float BRUSH_ROT_RATE = 90f;
 
 	private int draw_width;
 	private int draw_height;
@@ -97,9 +111,12 @@ public class Grill {
 	boolean active; 
 	boolean disableTouch;
 
-	boolean hoverTrash;
-
-	Profile profile;
+	boolean hoverTrash; // are we hovering over a
+	
+	float brushRot;
+	boolean brushRotUp; // increaseing or decreasing?
+	
+	ProfileRobust profile;
 	KitchenScreen ks; // only non-null when active
 	int size; 
 	Meat[] meat;
@@ -115,6 +132,8 @@ public class Grill {
 	boolean firstTouch = true;
 	boolean justTappedSpice;
 
+	boolean holding; // is button being held
+	
 	ArrayList<Meat> selectedSet;
 
 	//	// think of a good way to keep this flexible if we want to add more grills later on.
@@ -130,7 +149,7 @@ public class Grill {
 	
 	float trashHoldTime = 0;
 
-	public Grill(Profile profile) {
+	public Grill(ProfileRobust profile) {
 		//		this.grillType = profile.grillType;
 		this.profile = profile;
 		this.mousedOver = -1;
@@ -169,8 +188,8 @@ public class Grill {
 		draw_x = (grillLeftX + GRILL_X) * KitchenScreen.UNIT_WIDTH;
 		draw_y = (int) ((grillLeftY + GRILL_Y) * KitchenScreen.UNIT_HEIGHT);
 		
-		trashWidth = KebabKing.getGlobalX(0.15f);
-		trashHeight = trashWidth;
+		trashWidth = KebabKing.getGlobalX(0.3f);
+		trashHeight = Assets.trashIcon.getRegionHeight() * trashWidth / Assets.trashIcon.getRegionWidth();
 	}
 
 	public void activate() {
@@ -187,6 +206,7 @@ public class Grill {
 		this.selected = Selected.NONE;
 		this.ks = null;
 		this.active = false;
+		hoverTrash = true;
 	}
 
 	public void act(float delta) {
@@ -208,9 +228,9 @@ public class Grill {
 		// this is required for now.
 		this.updateSize();
 
-		if (ks != null && TrashPile.DRAW_TRASH_PILE) {
-			drawTrashPile(batch);
-		}
+//		if (ks != null && TrashPile.DRAW_TRASH_PILE) {
+//			drawTrashPile(batch);
+//		}
 
 		// draw grill stand (behind boxes
 		drawStandBack(batch);
@@ -233,7 +253,7 @@ public class Grill {
 
 		// draw spice paintbrush
 		if (this.selected == Selected.SPICE && Gdx.input.isTouched()) {
-			drawPaintbrush(batch);
+			drawPaintbrush(batch, delta);
 		}
 
 		// draw trash icon if throwing away
@@ -286,19 +306,47 @@ public class Grill {
 	}
 
 	public boolean trashHover() {
-		if (ks != null && ks.cm != null && ks.cm.mousedOver != null) return false;
-		return this.meatSelected() && !meatSelectedNotHeld && !this.onGrillAbsolute(Gdx.input.getX(), Gdx.input.getY());
+		if (ks != null && ks.cm != null && ks.cm.mousedOver != null || !holding) return false;
+		if (!this.meatSelected()) return false;
+//		if (meatSelectedNotHeld) return false;
+		if (this.onGrillAbsolute(Gdx.input.getX(), Gdx.input.getY())) return false;
+		
+		// also don't allow trashing if hovering over spice box
+		Selected box = touchBox(KitchenScreen.getUnitX(Gdx.input.getX()), KitchenScreen.getUnitY(Gdx.input.getY()));
+		
+		// not good style but for clarity
+		if (box == Selected.SPICE) return false;
+		return true;
 	}
 
-	public void drawPaintbrush(SpriteBatch batch) {
+	public void drawPaintbrush(SpriteBatch batch, float delta) {
 		float brushWidth = 80;
 		float brushHeight = 120;
 
-		batch.draw(Assets.paintBrush, Gdx.input.getX() - brushWidth/2, KebabKing.getHeight() - Gdx.input.getY() - brushHeight/8, brushWidth, brushHeight);
+		if (brushRotUp) {
+			brushRot += BRUSH_ROT_RATE * delta;
+			if (brushRot > BRUSH_MAX_ROT) {
+				brushRotUp = false;
+				brushRot = BRUSH_MAX_ROT;
+			}
+		}
+		else {
+			brushRot -= BRUSH_ROT_RATE * delta;
+			if (brushRot < BRUSH_MIN_ROT) {
+				brushRotUp = true;
+				brushRot = BRUSH_MIN_ROT;
+			}
+		}
+		batch.draw(Assets.paintBrush, Gdx.input.getX() - brushWidth/2, KebabKing.getHeight() - Gdx.input.getY() - brushHeight/8,
+				brushWidth / 2, brushHeight / 2, brushWidth, brushHeight, 1, 1, brushRot);
 	}
 
+	
+	// say width is 0.4
+	// want to draw at 0.3
 	public void drawTrashIcon(SpriteBatch batch) {
-		batch.draw(Assets.trashIcon, Gdx.input.getX() - trashWidth/2, KebabKing.getHeight() - Gdx.input.getY() - trashHeight/8, trashWidth, trashHeight);
+		
+		batch.draw(Assets.trashIcon, (KebabKing.getWidth() - trashWidth)/2, (KebabKing.getHeight() - trashHeight)/2, trashWidth, trashHeight);
 	}
 
 	public void tutDrawLeftGrill(SpriteBatch batch) {
@@ -436,10 +484,12 @@ public class Grill {
 		else
 			batch.draw(Assets.lambBox, lamb_x, bottom_y, box_hor_width, box_hor_height);
 
+		batch.draw(profile.inventory.drinkQuality.getCooler(), beer_x, beer_y, box_ver_width, box_ver_height);
+		
 		if (selected == Selected.BEER) 
-			batch.draw(Assets.beerBoxOpen, beer_x, beer_y, box_ver_width, box_ver_height);
+			batch.draw(Assets.coolerLidOpen, beer_x, beer_y, box_ver_width, box_ver_height);
 		else
-			batch.draw(Assets.beerBox, beer_x, beer_y, box_ver_width, box_ver_height);
+			batch.draw(Assets.coolerLidClosed, beer_x, beer_y, box_ver_width, box_ver_height);
 
 		batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
 
@@ -451,79 +501,79 @@ public class Grill {
 		//		batch.setColor(original);
 	}
 
-	// specially for tutorial
-	public void tutDrawBeefBox(SpriteBatch batch, boolean open) {
-		int box_hor_width 	= KitchenScreen.convertWidth(BOX_HOR_WIDTH);
-		int box_hor_height 	= KitchenScreen.convertHeight(BOX_HOR_HEIGHT);
-
-		int beef_x 		= KitchenScreen.convertXWithBuffer(BEEF_X);
-		int bottom_y 	= KitchenScreen.convertYWithBuffer(BOTTOM_Y);
-
-		if (open) {
-			batch.draw(Assets.beefBoxOpen, 	beef_x, bottom_y, box_hor_width, box_hor_height);			
-		}
-		else {
-			batch.draw(Assets.beefBox, 	beef_x, bottom_y, box_hor_width, box_hor_height);
-		}
-		if (this.selected == Selected.BEEF && !open) {
-			TutorialScreen ts = (TutorialScreen) ks;
-			ts.transitionToNext();
-		}
-	}
-
-	public void tutDrawChickenBox(SpriteBatch batch, boolean open) {
-		int box_hor_width 	= KitchenScreen.convertWidth(BOX_HOR_WIDTH);
-		int box_hor_height 	= KitchenScreen.convertHeight(BOX_HOR_HEIGHT);
-		int chicken_x 	= KitchenScreen.convertXWithBuffer(CHICKEN_X);
-		int bottom_y 	= KitchenScreen.convertYWithBuffer(BOTTOM_Y);
-
-		if (open) {
-			batch.draw(Assets.chickenBoxOpen, chicken_x, bottom_y, box_hor_width, box_hor_height);
-		}
-		else {
-			batch.draw(Assets.chickenBox, chicken_x, bottom_y, box_hor_width, box_hor_height);
-		}
-		if (this.selected == Selected.CHICKEN && !open) {
-			TutorialScreen ts = (TutorialScreen) ks;
-			ts.transitionToNext();
-		}
-	}
-
-	public void tutDrawLambBox(SpriteBatch batch, boolean open) {
-		int box_hor_width 	= KitchenScreen.convertWidth(BOX_HOR_WIDTH);
-		int box_hor_height 	= KitchenScreen.convertHeight(BOX_HOR_HEIGHT);
-		int lamb_x 		= KitchenScreen.convertXWithBuffer(LAMB_X);
-		int bottom_y 	= KitchenScreen.convertYWithBuffer(BOTTOM_Y);
-
-		if (open) {
-			batch.draw(Assets.lambBoxOpen, lamb_x, bottom_y, box_hor_width, box_hor_height);
-		}
-		else {
-			batch.draw(Assets.lambBox, lamb_x, bottom_y, box_hor_width, box_hor_height);
-		}
-		if (this.selected == Selected.LAMB && !open) {
-			TutorialScreen ts = (TutorialScreen) ks;
-			ts.transitionToNext();
-		}
-	}
-
-	public void tutDrawSpiceBox(SpriteBatch batch, boolean open) {
-		int spice_width 	= KitchenScreen.convertWidth(SPICE_WIDTH);
-		int spice_height 	= KitchenScreen.convertHeight(SPICE_HEIGHT);
-		int spice_x 	= KitchenScreen.convertXWithBuffer(grillRightX);
-		int spice_y 	= KitchenScreen.convertYWithBuffer(SPICE_Y);
-
-		if (open) {
-			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
-		}
-		else {
-			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
-		}
-		if (this.selected == Selected.SPICE && !open) {
-			TutorialScreen ts = (TutorialScreen) ks;
-			ts.transitionToNext();
-		}
-	}
+//	// specially for tutorial
+//	public void tutDrawBeefBox(SpriteBatch batch, boolean open) {
+//		int box_hor_width 	= KitchenScreen.convertWidth(BOX_HOR_WIDTH);
+//		int box_hor_height 	= KitchenScreen.convertHeight(BOX_HOR_HEIGHT);
+//
+//		int beef_x 		= KitchenScreen.convertXWithBuffer(BEEF_X);
+//		int bottom_y 	= KitchenScreen.convertYWithBuffer(BOTTOM_Y);
+//
+//		if (open) {
+//			batch.draw(Assets.beefBoxOpen, 	beef_x, bottom_y, box_hor_width, box_hor_height);			
+//		}
+//		else {
+//			batch.draw(Assets.beefBox, 	beef_x, bottom_y, box_hor_width, box_hor_height);
+//		}
+//		if (this.selected == Selected.BEEF && !open) {
+//			TutorialScreen ts = (TutorialScreen) ks;
+//			ts.transitionToNext();
+//		}
+//	}
+//
+//	public void tutDrawChickenBox(SpriteBatch batch, boolean open) {
+//		int box_hor_width 	= KitchenScreen.convertWidth(BOX_HOR_WIDTH);
+//		int box_hor_height 	= KitchenScreen.convertHeight(BOX_HOR_HEIGHT);
+//		int chicken_x 	= KitchenScreen.convertXWithBuffer(CHICKEN_X);
+//		int bottom_y 	= KitchenScreen.convertYWithBuffer(BOTTOM_Y);
+//
+//		if (open) {
+//			batch.draw(Assets.chickenBoxOpen, chicken_x, bottom_y, box_hor_width, box_hor_height);
+//		}
+//		else {
+//			batch.draw(Assets.chickenBox, chicken_x, bottom_y, box_hor_width, box_hor_height);
+//		}
+//		if (this.selected == Selected.CHICKEN && !open) {
+//			TutorialScreen ts = (TutorialScreen) ks;
+//			ts.transitionToNext();
+//		}
+//	}
+//
+//	public void tutDrawLambBox(SpriteBatch batch, boolean open) {
+//		int box_hor_width 	= KitchenScreen.convertWidth(BOX_HOR_WIDTH);
+//		int box_hor_height 	= KitchenScreen.convertHeight(BOX_HOR_HEIGHT);
+//		int lamb_x 		= KitchenScreen.convertXWithBuffer(LAMB_X);
+//		int bottom_y 	= KitchenScreen.convertYWithBuffer(BOTTOM_Y);
+//
+//		if (open) {
+//			batch.draw(Assets.lambBoxOpen, lamb_x, bottom_y, box_hor_width, box_hor_height);
+//		}
+//		else {
+//			batch.draw(Assets.lambBox, lamb_x, bottom_y, box_hor_width, box_hor_height);
+//		}
+//		if (this.selected == Selected.LAMB && !open) {
+//			TutorialScreen ts = (TutorialScreen) ks;
+//			ts.transitionToNext();
+//		}
+//	}
+//
+//	public void tutDrawSpiceBox(SpriteBatch batch, boolean open) {
+//		int spice_width 	= KitchenScreen.convertWidth(SPICE_WIDTH);
+//		int spice_height 	= KitchenScreen.convertHeight(SPICE_HEIGHT);
+//		int spice_x 	= KitchenScreen.convertXWithBuffer(grillRightX);
+//		int spice_y 	= KitchenScreen.convertYWithBuffer(SPICE_Y);
+//
+//		if (open) {
+//			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
+//		}
+//		else {
+//			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
+//		}
+//		if (this.selected == Selected.SPICE && !open) {
+//			TutorialScreen ts = (TutorialScreen) ks;
+//			ts.transitionToNext();
+//		}
+//	}
 
 	// removes meat at given index when touch is released
 	public void removeOnRelease(int index) {
@@ -548,6 +598,8 @@ public class Grill {
 
 	// used for calculating "mouseOver"
 	public void holdInput(int x, int y) {
+		holding = true;
+		
 		if (firstTouch) {
 			if (selected == Selected.SPICE) {
 				justTappedSpice = false;
@@ -601,8 +653,9 @@ public class Grill {
 
 	}
 
-	// this has to be the bug
 	public void release(int x, int y) {
+		this.holding = false;
+		
 		if (!this.active || this.disableTouch) {
 			System.out.println("GRILL NOT ACTIVE OR TOUCH DISABLED");
 			return;
@@ -642,6 +695,8 @@ public class Grill {
 			else if (meatSelected() && mousedOver != justSelected) {
 				// remove it from selected if clicking it twice
 				if (!open(mousedOver)) {
+					
+					// only remove on release if this isn't the first touch
 					removeOnRelease(mousedOver);
 					//					if (selectedSet.contains(meat[mousedOver]) && meatSelectedNotHeld) 
 					//						selectedSet.remove(meat[mousedOver]);
@@ -697,28 +752,11 @@ public class Grill {
 		//		}
 		// drop meat on customers
 		else if (meatSelected() && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null) {
-			ks.earnMoney(ks.cm.mousedOver.giveMeat(selectedSet));
-			int served = selectedSet.size();
-			kebabsServedThisSession += served;
-			removeSelected(); // deletes selected meat from grill;
-			select(Selected.NONE);
+			ks.serveCustomerAll(ks.cm.mousedOver);
 		}
 		// drop beer on customers
 		else if (selected == Selected.BEER && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null) {
-			if (ks.canAfford(ks.getDrinkBuyPrice())) {
-				float moneyEarned = ks.cm.mousedOver.giveBeer(); 
-
-				System.out.println("Dropping beer");
-				// customer doesn't want beer
-				if (moneyEarned == 0) {
-					return;
-				}
-
-				ks.spendMoney(ks.getDrinkBuyPrice());
-				ks.earnMoney(moneyEarned);
-
-				gaveBeerToCustomer = true;
-			}
+			gaveBeerToCustomer = ks.serveCustomerBeer(ks.cm.mousedOver);
 		}
 		// trash meat if dropping it onto empty space and you were holding down
 		else if (meatSelected() && !meatSelectedNotHeld) {
@@ -739,22 +777,27 @@ public class Grill {
 		int unit_y = KitchenScreen.getUnitY(y);
 		Selected box = touchBox(unit_x, unit_y);
 
-		// touched and released same meat
+		// no meat box was clicked, maybe deselect
 		if (box == Selected.NONE) {
 			if (onGrillAbsolute(x, y)) {
 				if (selectedSet.contains(meat[getGrillIndex(x, y)])) 
 					this.meatSelectedNotHeld = true;
 			}
 			else {
-				if (!gaveBeerToCustomer) {
+				// don't deselect if just selected meat (unless trashing)
+				if (!gaveBeerToCustomer && (meatSelectedNotHeld || hoverTrash)) {
 					select(Selected.NONE);
 				}
 			}
 		}
 		else {
+			// maybe select spice box, maybe deselect it if already selected
 			if (box == Selected.SPICE) {
-				if (selected != Selected.SPICE)
-					select(box);
+				if (selected != Selected.SPICE) {
+					// don't select Spice box if just deselected meat
+					if (meatSelectedNotHeld || hoverTrash)
+						select(box);
+				}
 				else if (!justTappedSpice) 
 					select(Selected.NONE);
 			}
