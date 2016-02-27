@@ -7,23 +7,23 @@ import com.kebabking.game.ProfileInventory;
 // user has one of these
 // later: split this into separate ones for chicken beef, lamb
 public class DrinkQuality extends PurchaseType {
-	static String name = "DRINK QUALITY";
-	static String desc = "Upgrade the quality of your drinks!";
+	static String name = "DRINKS";
+	static String desc = "Better quality beer means more profit!";
 	
 	// Specific types that you might own 
-	static class Quality extends SimplePurchaseable {
+	public static class Quality extends SimplePurchaseable {
 		public static final Quality[] values = new Quality[] {
-				// name, initial cost, unlockAt, qual factor, description
-		new Quality ("Qing Mao", 	0,	3,	0,	 1, "lightgreen",	"Yellow water"), 
-		new Quality ("Heimikan", 	50,	6,	3, 1.1f, "green",	 "Premium Lager"),
-		new Quality ("Youngling", 	100,10, 11, 1.2f, "brown",	 "Twistoffs! Wow!"), 
-		new Quality ("Stellar",		200,15, 18, 1.3f, "yellow",  "Only 4 ingredients and 10 preservatives!"),
-		new Quality ("Guinnist", 	500,20, 20, 1.5f, "dark",	 "Bonnie Irish Stout"),
-		new Quality ("Harpspear", 	1000,30, 24, 1.7f, "red", 	"Delicious, fisherman's favorite."),
-		new Quality ("Trappish", 	5000,40, 32, 2f,  	"tan",	 "Made by Monks! Holy beer!"),
+		// name, initial cost, unlockAt, sell price, description
+		new Quality ("Qing Mao", 	0,		3,	0,	 1, "lightgreen",	"Yellow water"), 
+		new Quality ("Heimikan", 	200,	6,	3, 1.5f, "green",	 "Premium Lager"),
+		new Quality ("Youngling", 	500,	10, 11, 2f, "brown",	 "Twistoffs! Wow!"), 
+		new Quality ("Stellar",		800,	15, 19, 2.5f, "yellow",  "Only 4 ingredients and 10 preservatives!"),
+		new Quality ("Guinnist", 	1100,	20, 27, 3f, "dark",	 "Bonnie Irish Stout"),
+		new Quality ("Harpspear", 	1500,	30, 35, 3.5f, "red", 	"Delicious, fisherman's favorite."),
+		new Quality ("Trappish", 	2000,	40, 48, 4f,  	"tan",	 "Made by Monks! Holy beer!"),
 		};
 		
-		float qualityFactor;
+		float sellPrice;
 		public TextureRegion coolerRegion; 
 		
 		// for kryo
@@ -31,19 +31,19 @@ public class DrinkQuality extends PurchaseType {
 
 		private Quality(String name, float cash, int coins, int unlockAt, float qualityFactor, String color, String description) {
 			super(name, cash, coins, unlockAt, description, "market/icons/" + color + "_thumb");
-			this.qualityFactor = qualityFactor;
+			this.sellPrice = qualityFactor;
 			this.coolerRegion = Assets.getTextureRegion("market/icons/" + color + "_cooler");
 		}
 	};
 
 	public DrinkQuality(ProfileInventory inventory) {
-		super(inventory, name, desc, null, Quality.values);
+		super(inventory, name, desc, Quality.values);
 		unlock(Quality.values[0]);
 	}
 	
 	// for kryo
 	public DrinkQuality() {
-		super(name, desc, null, Quality.values);
+		super(name, desc, Quality.values);
 	};
 	
 	// TODO implement this
@@ -52,10 +52,10 @@ public class DrinkQuality extends PurchaseType {
 		return 0;
 	}
 	public float getSellPrice() {
-		return 2;
+		return ((Quality) getFirstSelected()).sellPrice;
 	}
 	
 	public TextureRegion getCooler() {
-		return ((Quality) getCurrentSelected()).coolerRegion;
+		return ((Quality) getFirstSelected()).coolerRegion;
 	}
 }

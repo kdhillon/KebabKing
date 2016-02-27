@@ -8,6 +8,7 @@ import com.kebabking.game.AdsHandler;
 import com.kebabking.game.Grill;
 import com.kebabking.game.KebabKing;
 import com.kebabking.game.MainMenuScreen;
+import com.kebabking.game.StatsHandler;
 import com.kebabking.game.Managers.AdsManager;
 import com.kebabking.game.Managers.AdsManagerMock;
 import com.kebabking.game.Managers.Manager;
@@ -86,16 +87,13 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onPause();
 		System.out.println("ON PAUSE!!!");
 		Manager.onPause();
-		Manager.analytics.sendEventHit("Ads", "ads watched this session", "", (long) SummaryScreen.adsWatchedThisSession);
-		Manager.analytics.sendEventHit("Game", "kebabs trashed this session", "", (long) Grill.kebabsTrashedThisSession);
-		Manager.analytics.sendEventHit("Game", "kebabs served this session", "", (long) Grill.kebabsServedThisSession);
-		Manager.analytics.sendEventHit("Game", "days played this session", "", (long) MainMenuScreen.daysPlayedThisSession);
-		Manager.analytics.sendEventHit("Game", "market clicks this session", "", (long) MainMenuScreen.marketClicksThisSession);
+		StatsHandler.onSessionEnd();
 	}
 
 	// required for iab helper
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		System.out.println("On activity result start");
 		super.onActivityResult(requestCode, resultCode, data);
 		System.out.println("on activity result");
 		if (Manager.iab != null) {

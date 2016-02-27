@@ -76,6 +76,8 @@ public class SummaryScreen extends ActiveScreen {
 	Label levelRight;
 	LabelStyle lvlLs;
 	
+	Table share;
+	
 	float infoWidth;
 	
 	public SummaryScreen(KebabKing master, KitchenScreen kitchen) {
@@ -132,8 +134,7 @@ public class SummaryScreen extends ActiveScreen {
 		if (kitchen.wasShutDown) {
 			DrawUI.launchPoliceNotification();
 		}
-
-
+				
 		// Prepare an ad to be watched
 		Manager.ads.cacheAd();
 		
@@ -203,10 +204,12 @@ public class SummaryScreen extends ActiveScreen {
 		
 		float padShareY = KebabKing.getGlobalY(0.02f);
 		
-		Table share = generateShareTable();
-//		share.debugAll();
-		subTable.add(share).top().expandX().padBottom(padShareY);
-		subTable.row();
+		if (SocialMediaHandler.checkIfShouldAllowShare()) {
+			share = generateShareTable();
+			//		share.debugAll();
+			subTable.add(share).top().expandX().padBottom(padShareY);
+			subTable.row();
+		}
 		
 		float infoPadBetween = KebabKing.getGlobalY(0.005f);
 		Table infoTable = new Table();
@@ -237,7 +240,6 @@ public class SummaryScreen extends ActiveScreen {
 		
 		subTable.add(infoTable).top().width(infoWidth).expandY().center();
 		subTable.row();
-		
 		
 		Table jadeTable = generateJadeTable();
 		float width = KebabKing.getGlobalX(0.7f);
@@ -330,11 +332,15 @@ public class SummaryScreen extends ActiveScreen {
 		return shareMain;
 	}
 	
+	public void clearShareTable() {
+		share.clear();
+	}
+	
 	public Table generateTable(String mainLabel, float mainValue, boolean money, String[] labels, float[] values) {
 		if (labels.length != values.length) throw new java.lang.AssertionError();
 		
 		Table table = new Table();
-		table.setBackground(new NinePatchDrawable(Assets.gray9PatchSmall));
+		table.setBackground(new NinePatchDrawable(Assets.gray9PatchSmallThin));
 		
 		Label title = new Label(mainLabel, Assets.generateLabelStyleUIHeavyWhite(14, Assets.alpha));	
 		title.setColor(MainStoreScreen.FONT_COLOR);
@@ -363,7 +369,7 @@ public class SummaryScreen extends ActiveScreen {
 	
 	public Table generateReputationTable() {
 		Table table = new Table();
-		table.setBackground(new NinePatchDrawable(Assets.gray9PatchSmall));
+		table.setBackground(new NinePatchDrawable(Assets.gray9PatchSmallThin));
 		
 		float negPadY = -KebabKing.getGlobalY(NEG_PAD);
 		
@@ -599,7 +605,7 @@ public class SummaryScreen extends ActiveScreen {
 	}
 	
 	
-	public ProfileRobust getProfile() {
+	public Profile getProfile() {
 		return kitchen.master.profile;
 	}
 }

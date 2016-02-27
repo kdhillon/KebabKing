@@ -116,7 +116,7 @@ public class PauseScreen extends ActiveScreen  {
 	
 	@Override
 	public void update(float delta, boolean ff) {
-		// do nothing because this is overridden
+		// do nothing, we are overriding active screen so nothing happens on pause
 	}
 
 	public void unpause() {

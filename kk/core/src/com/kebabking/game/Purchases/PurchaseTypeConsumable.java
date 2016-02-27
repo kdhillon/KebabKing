@@ -15,14 +15,14 @@ public class PurchaseTypeConsumable extends PurchaseType {
 	// kryo
 	public PurchaseTypeConsumable(){}
 	
-	public PurchaseTypeConsumable(String name, String description, String textureRegionName, Purchaseable[] values) {
-		super(name, description, textureRegionName, values);
+	public PurchaseTypeConsumable(String name, String description, Purchaseable[] values) {
+		super(name, description, values);
 		this.consumable = true;
 		this.active = -1;
 	}
 	
-	public PurchaseTypeConsumable(ProfileInventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
-		super(inventory, name, description, textureRegionName, values);
+	public PurchaseTypeConsumable(ProfileInventory inventory, String name, String description, Purchaseable[] values) {
+		super(inventory, name, description, values);
 		this.consumable = true;
 		this.active = -1;
 	}

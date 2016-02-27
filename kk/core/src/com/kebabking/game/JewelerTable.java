@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kebabking.game.Managers.Manager;
-import com.kebabking.game.OnlinePurchaseManager.PurchaseableOnline;
+import com.kebabking.game.OnlinePurchaseHandler.PurchaseableOnline;
 
 public class JewelerTable extends Table {
 	static final float SELECT_TABLE_WIDTH = 0.45f;
@@ -216,7 +216,7 @@ public class JewelerTable extends Table {
 				return true;
 			}
 			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				OnlinePurchaseManager.attemptPurchase(options[currentOption]);
+				OnlinePurchaseHandler.attemptPurchase(options[currentOption]);
 			}
 		});
 				

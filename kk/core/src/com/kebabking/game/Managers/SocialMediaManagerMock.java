@@ -26,6 +26,7 @@ public class SocialMediaManagerMock implements SocialMediaManager {
     }
     public void shareDayComplete(float profit) {
         System.out.println("share() mock");
+        SocialMediaHandler.handleAboutToLaunchShare();
         SocialMediaHandler.shareSuccess();
     }
 

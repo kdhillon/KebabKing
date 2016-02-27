@@ -98,6 +98,7 @@ public class AdsManagerSupersonic implements AdsManager {
      */
     public void showAd() {
         if (mMediationAgent.isRewardedVideoAvailable()) {
+            AdsHandler.handleAboutToLaunchAd();
             mMediationAgent.showRewardedVideo();
         }
         else {

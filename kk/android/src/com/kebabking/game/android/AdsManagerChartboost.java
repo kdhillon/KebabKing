@@ -67,6 +67,7 @@ public class AdsManagerChartboost implements AdsManager {
             System.out.println("showing chartboost ad");
             // this doesn't work to catch errors
             try {
+                AdsHandler.handleAboutToLaunchAd();
                 Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
             }
             catch(Exception e) {

@@ -9,21 +9,22 @@ import com.kebabking.game.Purchases.GrillStand;
 import com.kebabking.game.Purchases.GrillType;
 import com.kebabking.game.Purchases.LocationType;
 import com.kebabking.game.Purchases.MeatQuality;
+import com.kebabking.game.Purchases.MeatTypes;
 import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.PurchaseTypeConsumable;
 import com.kebabking.game.Purchases.Purchaseable;
 import com.kebabking.game.Purchases.SimpleConsumable;
-import com.kebabking.game.Purchases.StickType;
+import com.kebabking.game.Purchases.SkewerType;
 
 public class ProfileInventory {	
 	// class that contains all information about purchased items
 	// remember to make this expandable, so that there are no problems when updates are released
-	ProfileRobust profile;
+	public Profile profile;
 
 	@Tag(101) public MeatQuality meatQuality;
 	@Tag(102) public DrinkQuality drinkQuality;
 
-	@Tag(103) public StickType stickType;
+	@Tag(103) public SkewerType skewerType;
 
 	// Info about grill
 	//	@Tag(0) public GrillSpecs grillSpecs; // contains two relevant items, can remove later
@@ -41,7 +42,10 @@ public class ProfileInventory {
 	//	public AdCampaign adCampaign;
 
 	@Tag(108) public AdCampaign adCampaign;
-
+	
+	// multiple meat types can be selected
+	@Tag(111) public MeatTypes meatTypes;
+	
 	// testing tags, won't be saved.
 	@Deprecated	@Tag(109) public AdCampaign unused;
 	@Deprecated @Tag(110) public String fake;
@@ -52,20 +56,22 @@ public class ProfileInventory {
 	}
 
 	// create a blank purchases
-	public ProfileInventory(ProfileRobust profile) {
+	public ProfileInventory(Profile profile) {
 //		VanityItem.initialize();
 
 		this.profile = profile;
 
 		meatQuality = new MeatQuality(this);
 
+		meatTypes = new MeatTypes(this);
+		
 		drinkQuality = new DrinkQuality(this);
 
 		locationType = new LocationType(this);
 
 		grillSize = new GrillSize(this);
 
-//		grillType = new GrillType(this);
+		grillType = new GrillType(this);
 
 		adCampaign = new AdCampaign(this);
 
@@ -73,11 +79,20 @@ public class ProfileInventory {
 
 		grillStand = new GrillStand(this);
 
-		stickType = new StickType(this);
+		skewerType = new SkewerType(this);
 	}
 
-	public void initializeAfterLoad() {
-
+	public void initializeAfterLoad(Profile profile) {
+		// Anything that wasn't in the first generation of purchasetypes should be checked and initialized here
+		if (meatTypes == null) {
+			meatTypes = new MeatTypes(this);
+		}
+		if (grillType == null) {
+			grillType = new GrillType(this);
+		}
+	
+		
+		this.profile = profile;
 	}
 
 	public float getCash() {
@@ -221,6 +236,16 @@ public class ProfileInventory {
 		return true;
 	}
 
+	// unlock second meat option without asking player
+	public void forceSecondBoxUpdate() {
+		meatTypes.unlock(MeatTypes.Type.values[1]);
+//		meatTypes.addToSelected(1);
+	}
+	
+	public void forceThirdBoxUpdate() {
+		meatTypes.unlock(MeatTypes.Type.values[2]);
+//		meatTypes.addToSelected(1);
+	}
 
 	// update all consumable purchasetypes
 	public void updateConsumables() {

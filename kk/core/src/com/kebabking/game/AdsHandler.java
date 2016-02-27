@@ -1,6 +1,5 @@
 package com.kebabking.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.kebabking.game.Managers.Manager;
 
@@ -53,6 +52,7 @@ public class AdsHandler {
         // this should be allowed to be set true twice, if person clicks vid and then complete is called as well
         adJustFinished = true;
         adWatchedAt = TimeUtils.millis();
+        master.profile.gameQuitDuringAd = false;
     }
 
     public static void handleAdExited() {
@@ -64,5 +64,9 @@ public class AdsHandler {
         Manager.analytics.sendEventHit("Ads", "ad not available");
         DrawUI.launchAdNotAvailableNotification();
         System.out.println("Ad not available!");
+    }
+
+    public static void handleAboutToLaunchAd() {
+        master.profile.gameQuitDuringAd = true;
     }
 }

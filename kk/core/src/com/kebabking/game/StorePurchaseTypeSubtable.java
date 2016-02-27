@@ -1,5 +1,7 @@
 package com.kebabking.game;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -33,16 +35,24 @@ public class StorePurchaseTypeSubtable extends Table {
 	
 //	Table selectedPurchaseableTa/ble;
 	Purchaseable[] purchaseables;
+	
 	// currently selected purchaseable
-	int currentPurchaseableIndex;
-	Table currentPurchaseableTable;
+//	Deque<Integer> currentPurchaseableIndices;
+	
+//	int currentPurchaseableIndex;
+//	Table currentPurchaseableTable;
+//	ArrayList<Table> currentPurchaseableTables;
+	
 	Table[] purchaseableTables;
 	PurchaseType type;
 //	int typeIndex;
 	
-	Table selected;
+//	HashSet<Table> selectedTables;
+	Table typeSummary;
 	
 	int mainWidth;
+	
+	boolean needsUpdate;
 	
 	// create 
 	public StorePurchaseTypeSubtable(StoreSubtable parent, PurchaseType type, int mainWidth) {
@@ -54,6 +64,11 @@ public class StorePurchaseTypeSubtable extends Table {
 		this.purchaseables = type.values;
 		purchaseableTables = new Table[purchaseables.length];
 		
+//		if (type.allowsMultipleSelect()) {
+////			currentPurchaseableTables = new ArrayList<Table>();
+//			currentPurchaseableIndices = new Deque<Integer>();
+//		
+//		}
 //		if (!type.consumable)
 //			selectPurchaseable(0);
 //		else selectPurchaseable(-1);
@@ -97,18 +112,16 @@ public class StorePurchaseTypeSubtable extends Table {
 //		System.out.println();
 		
 		if (index < 0) {
-			updateSelectedPurchaseableTable(null, type);
+			updateTypeSummaryTable(type);
 			return;
 		}
 		
-		int oldSelected = currentPurchaseableIndex;
-		this.currentPurchaseableIndex = index;
-		this.updatePurchaseableTable(oldSelected);
-		this.updatePurchaseableTable(index);
-		this.currentPurchaseableTable = this.purchaseableTables[index];
-		this.updateSelectedPurchaseableTable(purchaseables[index], type);
-		type.setCurrent(this.purchaseables[this.currentPurchaseableIndex]);
+		int removed = type.addToSelected(index);
+		updatePurchaseableTable(index);
+		if (removed > -1) updatePurchaseableTable(removed);
 		
+		this.updateTypeSummaryTable(type);
+
 		// hacky
 		if (type == master.profile.inventory.locationType) {
 			// note that this replaces any existing ad campaign.
@@ -121,22 +134,27 @@ public class StorePurchaseTypeSubtable extends Table {
 	
 	// creates a table of dimensions 8 x 3.5 describing the purchaseable in question
 	// There should be selected Purchaseable tables for each Purchasetype
-	private void updateSelectedPurchaseableTable(Purchaseable purchaseable, PurchaseType type) {
+	private void updateTypeSummaryTable(PurchaseType type) {
 //		System.out.println("UPDATING SELECTED PURCHASEABLE TABLE");
+//		Purchaseable purchaseable = null;
 		
-		if (selected == null) selected = new Table();
-		selected.clear();
+		if (typeSummary == null) typeSummary = new Table();
+		typeSummary.clear();
 		
-		selected.top();
+		typeSummary.top();
 		
 		// first add image
 		int imageHeight = KebabKing.getGlobalY(0.1f);
 
 		// note this is a fixed value, corresponding to the green part of the image
 		TextureRegion iconReg;
-		if (purchaseable != null)
-			iconReg = purchaseable.getIcon();
-		else iconReg = type.values[0].getIcon();
+//		if (purchaseable != null)
+//			iconReg = purchaseable.getIcon();
+//		else
+		if (type.icon == null)
+			iconReg = type.values[0].getIcon();
+		else 
+			iconReg = type.icon;
 		
 		if (iconReg == null)
 			iconReg = Assets.questionMark;
@@ -157,30 +175,32 @@ public class StorePurchaseTypeSubtable extends Table {
 		int iconPad = KebabKing.getGlobalY(0.05f);
 		Image icon = new Image(iconReg); 
 
-		selected.add(icon).width(imageWidth).height(imageHeight).padTop(iconPad);
-		selected.row();
+		typeSummary.add(icon).width(imageWidth).height(imageHeight).padTop(iconPad);
+		typeSummary.row();
 		String titleText;
-		if (purchaseable != null) titleText = purchaseable.getName();
-		else {
+//		if (purchaseable != null) titleText = purchaseable.getName();
+//		else {
 			// TODO handle this better if more consumables added
-//			titleText = type.getName();
-			titleText = "Ad Campaigns";
-		}
+			titleText = type.getName();
+			titleText = titleText.toLowerCase();
+			titleText = WordUtils.capitalize(titleText);			
+//		}
 		
 		Label title = new Label(titleText, Assets.generateLabelStyleUIWhite(SELECTED_PURCHASEABLE_TITLE_SIZE, Assets.alpha));
 		title.setColor(MainStoreScreen.FONT_COLOR);
-		selected.add(title);
-		selected.row();
+		typeSummary.add(title);
+		typeSummary.row();
 		
 		String descText;
-		if (purchaseable != null) descText = purchaseable.getDescription();
-		else descText = type.getDescription();
+//		if (purchaseable != null) descText = purchaseable.getDescription();
+//		else 
+			descText = type.getDescription();
 		
 		Label description = new Label(descText, Assets.generateLabelStyleUILight(SELECTED_PURCHASEABLE_DESCRIPTION_SIZE, Assets.allChars));
 		description.setWrap(true);
 		description.setAlignment(Align.center);
 		description.setColor(MainStoreScreen.FONT_COLOR);
-		selected.add(description).width(mainWidth);
+		typeSummary.add(description).width(mainWidth);
 	}
 	
 	public ProfileInventory getInventory() {
@@ -262,18 +282,89 @@ public class StorePurchaseTypeSubtable extends Table {
 				attemptUnlock(usb.type, usb.purchaseable);
 			}
 		});	
-		//		}
 
 		// disable button if haven't had enough rounds
 		//		if (!type.availableForUnlock(purchaseable)) {
 		//			button.setDisabled(true);
 		//			button.setTouchable(Touchable.disabled);
 		//		}
-
 		return button;
 	}
 
+	public static Table generateIconBox(Purchaseable purchaseable, int buttonWidth, int buttonHeight, boolean green, boolean drawLock, boolean drawGray) {		
+		// actually populate the table
+		// first thing is the 9 patch on the left
 
+		ButtonStyle bs = Assets.getButtonStylePurchaseableWhite();
+		Button button = new Button(bs);
+		
+		TextureRegion full = purchaseable.getIcon();
+		if (full == null) {
+			full = Assets.questionMark;
+		}
+		
+		// draw two boxes, one white, then one either green or gray on top.
+		// then we can draw icons to be exactly the height of the box.
+
+		// if the icon is wider than long, crop out appropriate part of image
+
+		// DONT CROP
+		int regWidth = full.getRegionWidth();
+		int regHeight = full.getRegionHeight(); 
+		
+		// just use this to decide how "big" to draw region.
+		// always draw in native (texture) aspect ratio, with longer side as 
+		// the bigger side.
+		//	float aspectButton = (buttonWidth) * 1.0f / (buttonHeight); 
+		
+//		float aspectButton = 1;
+		float aspectTexture = regWidth * 1.0f / regHeight;
+//		
+		int width, height;
+		if (aspectTexture > 1) {
+			width = buttonWidth - 2;
+			height = (int) (buttonHeight / aspectTexture);
+		}
+		else if (aspectTexture < 1) {
+			width = (int) (buttonWidth * aspectTexture);
+			height = buttonHeight - 2;
+		}
+		else {
+			// don't pad at all, assume box has alpha in corners.
+			width = buttonWidth-2; // -2 is just extra padding
+			height = buttonHeight-2;
+		}
+		
+		Image icon = new Image(full);
+		float imagePad = (buttonWidth - width)/2.0f;
+		button.add(icon).center().width(width).height(height).padLeft(imagePad).padRight(imagePad);
+		
+		if (green) {
+			button.add(new Image(Assets.green9PatchSmall)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
+		}
+		else {
+			button.add(new Image(Assets.gray9PatchSmall)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
+		}
+		
+//		if (green) {
+//			Image check = new Image(Assets.purchaseableCheck);
+//			int checkWidth = (int) (buttonWidth/4.0f);
+//			int checkHeight = (int) (buttonHeight/4.0f);
+//			button.add(check).top().right().width(checkWidth).height(checkHeight).padLeft(-checkWidth).padTop(-checkHeight/2);
+//		}
+		
+		if (drawLock) {
+			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
+			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
+		}
+		// don't draw if consumable, unless another is already active
+		else if (drawGray) {
+			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
+		}
+		
+		return button;
+	}
+	
 	public void attemptUnlock(PurchaseType type, Purchaseable purchaseable) {
 		if (type.consumable) {
 			boolean success = this.master.profile.inventory.purchaseConsumable((SimpleConsumable) purchaseable, (PurchaseTypeConsumable) type);
@@ -288,22 +379,25 @@ public class StorePurchaseTypeSubtable extends Table {
 	}
 	
 	public void update() {
+		System.out.println("updating purchase type table");
+
+		needsUpdate = false;
 		this.clear();
 		
 		// add section for currently selected item
-		updateSelectedPurchaseableTable(type.getCurrentSelected(), type);
+		updateTypeSummaryTable(type);
 		int selectedPad = KebabKing.getGlobalY(0.02f);
-		this.add(selected).fillX().padBottom(selectedPad).width(mainWidth);
+		this.add(typeSummary).fillX().padBottom(selectedPad).width(mainWidth);
 		
 		// if ads table, create special top table
 		if (type == master.profile.inventory.adCampaign) selectPurchaseable(-1);
 
 		// now draw list of all purchaseable options
 		this.purchaseables = type.values;
-		this.currentPurchaseableIndex = -1;
-		for (int i = 0; i < purchaseables.length; i++) {
-			if (purchaseables[i] == type.getCurrentSelected()) this.currentPurchaseableIndex = i;
-		}
+//		this.currentPurchaseableIndex = -1;
+//		for (int i = 0; i < purchaseables.length; i++) {
+//			if (purchaseables[i] == type.getCurrentSelected()) this.currentPurchaseableIndex = i;
+//		}
 		// currentPurchaseableIndex might equal -1
 		
 		this.purchaseableTables = new Table[purchaseables.length];
@@ -365,107 +459,31 @@ public class StorePurchaseTypeSubtable extends Table {
 		table.clear();
 		//		table.debugAll();
 
-		// actually populate the table
-		// first thing is the 9 patch on the left
-		ButtonStyle bs = Assets.getButtonStylePurchaseableGray();
-		if (this.currentPurchaseableIndex == index) 
-			bs = Assets.getButtonStylePurchaseableGreen();
-		Button button = new Button(bs);
-
 		// prev .15
 		int buttonWidth = KebabKing.getGlobalX(0.15f);
 		// guarantees a square button
 		int buttonHeight = buttonWidth;
-//		int buttonHeight = buttonWidth;
-
-		TextureRegion full = purchaseable.getIcon();
-		if (full == null) {
-			full = Assets.questionMark;
-		}
 		
-		int imagePadX, imagePadY;
-
-		
-		//TODO make this whole section better, make a separate function to generate an icon for purchaseables.
-		
-		// to fix this garbage code, could draw the green part on top of the white part. do this later
-		if (this.currentPurchaseableIndex == index) {
-			imagePadX = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 0.8f);
-			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 0.8f);
-		}
-		else { 
-			imagePadX = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 0.5f);
-			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 0.5f);
-		}
-		
-		// if icons are tall, we want to have very little Y padding so they fill the button. if not, big padding
-		if (full.getRegionHeight() < full.getRegionWidth()) {
-			imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 2.5f);				
-		}
-
-		int iconWidth = buttonWidth - imagePadX;
-		int iconHeight = buttonHeight - imagePadY;
-
-		// if the icon is wider than long, crop out appropriate part of image
-
-		// crop to that aspect ratio
-		int regWidth = full.getRegionWidth();
-		int regHeight = full.getRegionHeight(); 
-		float aspectButton = (iconWidth) * 1.0f / (iconHeight); 
-		
-		// either way, one dimension needs to be shrunk
-		if (regWidth > regHeight) {
-			
-		}
-
-		TextureRegion half;
-		if (regWidth / regHeight > aspectButton) {
-			//			System.out.println("reg Width > regHeight" + regWidth + " , " + regHeight);
-			float cropWidth = (aspectButton * regHeight);
-			half = new TextureRegion(full, (int) (regWidth/2 - cropWidth/2), 0, (int) cropWidth, full.getRegionHeight());
-		}
-		// TODO when region is taller than wide, make this cleverly allow less vertical padding so it fits well inside the box
-		else {
-			float cropHeight = regHeight/aspectButton;
-			half = new TextureRegion(full, 0, (int) (regHeight/2 - cropHeight/2), full.getRegionWidth(), (int) cropHeight);
-		}
-		Image icon = new Image(half);		
-		button.add(icon).center().width(iconWidth).height(iconHeight);
-
-		if (this.currentPurchaseableIndex == index && index >= 0) {
-			Image check = new Image(Assets.purchaseableCheck);
-			int checkWidth = (int) (buttonWidth/4.0f);
-			int checkHeight = (int) (buttonHeight/4.0f);
-			button.add(check).top().right().width(checkWidth).height(checkHeight).padLeft(-checkWidth).padTop(-checkHeight/2);
-		}
-		table.add(button).width(buttonWidth).height(buttonHeight).left();
-
 		boolean lockedByRound = !type.unlockIfReady(purchaseable);
 		boolean locked = !type.isUnlocked(purchaseable);
-		
 		boolean consumable = type.consumable;
 		boolean consumableActive = false;
+
 		// for now, assume ad campaign
 		if (consumable && master.profile.inventory.adCampaign.getActive() != null) {
 			consumableActive = true;
-//			lockedByRound = true;
-//			locked = true;
 		}
-
+		
+		boolean drawLock = lockedByRound || ((locked && (!consumable || (consumableActive && !type.isSelected(index))) && !consumableActive));
+		boolean drawGray = lockedByRound || (consumable && (consumableActive && !type.isSelected(index)));
+		
+		Table button = generateIconBox(purchaseable, buttonWidth, buttonHeight, type.isSelected(index) && index >= 0, drawLock, drawGray);
+		
+		table.add(button).width(buttonWidth).height(buttonHeight).left();
+	
 		Color color = MainStoreScreen.FONT_COLOR;
-		if (lockedByRound) {
-			color = MainStoreScreen.FONT_COLOR_GRAY;
-			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
-			button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
-		}
-		// don't draw if consumable, unless another is already active
-		else if (locked && (!consumable || (consumableActive && this.currentPurchaseableIndex != index))) {
-			button.add(new Image(Assets.gray9PatchSmallFilled)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth + imagePadX);//.padTop(-buttonHeight + imagePadY);
-			
-			// small thing: don't draw lock if consumable is active, because it's not "locked", just disabled
-			if (!consumableActive)
-				button.add(new Image(Assets.marketLock)).width(buttonWidth).height(buttonHeight).padLeft(-buttonWidth);//.padTop(-buttonHeight + imagePadY);
-		}
+		if (drawGray) color = MainStoreScreen.FONT_COLOR_GRAY;
+		
 
 		Table info = new Table();
 		//		info.debugAll();

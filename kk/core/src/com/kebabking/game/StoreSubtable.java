@@ -60,6 +60,7 @@ public class StoreSubtable extends Table {
 			for (int i = 0; i < types.length; i++) {
 				Button button = new Button(Assets.getPurchaseTypeButtonStyle());
 
+				System.out.println(i);
 				// 
 				Label label = new Label(types[i].getName(), getLabelStyleForButtonCount(types.length)); // so 48, 24, 16, 12, 9
 				label.setColor(MainStoreScreen.FONT_COLOR);
@@ -91,6 +92,14 @@ public class StoreSubtable extends Table {
 		return parent.getInventory();
 	}
 	
+	public void markAllForUpdate() {
+		System.out.println("marking all for update");
+		for (int i = 0; i < types.length; i++) {
+			if (typeTables[i] != null)
+				typeTables[i].needsUpdate = true;
+		}
+	}
+	
 	public void updatePurchaseTypeTable(PurchaseType type) {
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == type) updatePurchaseTypeTable(i);
@@ -102,9 +111,6 @@ public class StoreSubtable extends Table {
 			typeTables[typeIndex] = new StorePurchaseTypeSubtable(this, types[typeIndex], mainWidth);
 		}
 		typeTables[typeIndex].update();
-		
-		this.currentTypeContainer.clear();
-		currentTypeContainer.add(typeTables[typeIndex]).width(mainWidth);
 	}
 	
 	
@@ -151,6 +157,12 @@ public class StoreSubtable extends Table {
 		}
 		return null;
 	}
+	
+	public void updateCurrent() {
+		if (typeTables[currentTypeIndex].needsUpdate) {
+			typeTables[currentTypeIndex].update();
+		}
+	}
 		
 	private int getIndexOfType(PurchaseType type) {
 		for (int i = 0; i < types.length; i++) {
@@ -166,6 +178,7 @@ public class StoreSubtable extends Table {
 	
 	// do everything 
 	public void switchToPurchaseType(int typeIndex) {
+		System.out.println("switching to purchase type");
 		currentTypeIndex = typeIndex;
 		// enable all buttons but disable this button
 		if (typeButtons.length > 1) {
@@ -175,8 +188,14 @@ public class StoreSubtable extends Table {
 			disableButton(currentTypeIndex);
 		}
 		
-		if (typeTables[currentTypeIndex] == null) {
+		if (typeTables[currentTypeIndex] != null)
+			System.out.println("needs update: " + typeTables[currentTypeIndex].needsUpdate);
+		
+		if (typeTables[currentTypeIndex] == null || typeTables[currentTypeIndex].needsUpdate) {
 			updatePurchaseTypeTable(currentTypeIndex);
+			
+			this.currentTypeContainer.clear();
+			currentTypeContainer.add(typeTables[typeIndex]).width(mainWidth);
 		}
 		else {
 			currentTypeContainer.clear();

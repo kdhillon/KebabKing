@@ -10,7 +10,7 @@ import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.Purchaseable;
 
 
-public class ProfileRobust {
+public class Profile {
 	static final int FIRST_LEVEL_EXP = 90;
 	static final double EXP_GROWTH_RATE = 1.15;
 	static final float EXP_RATE = 1f;
@@ -28,7 +28,7 @@ public class ProfileRobust {
 	static int[] EXP_TABLE;
 	
 	// don't need transient tag anymore
-	KebabKing master;
+	public KebabKing master;
 	
 	// Don't tag these, instead kryo load and initialize separately. 
 	ProfileSettings settings; 		// persistent game settings
@@ -45,30 +45,31 @@ public class ProfileRobust {
 	
 	// This needs to be stored
 	@Tag(5) float[] pastFiveDaysReputation;
+
+	@Tag(6) public boolean gameQuitDuringShare;
+	@Tag(7) public boolean gameQuitDuringAd;
 	
 	// updated based on past few days, calculated on the fly based on current location
 	float currentReputation;	
 	
 	// Kryo
-	public ProfileRobust() {
+	public Profile() {
 		init();
 		if (KebabKing.LVL_50) {
 			level = 50;
-		}		
-		// TODO calculate customerPatienceFactor
-		// TODO calculate currentReputation from past 5 days
+		}
 	}
 	
 	// create a totally new Profile
-	public ProfileRobust(KebabKing master) {
+	public Profile(KebabKing master) {
 		init();
 		this.master = master;
 		this.cash = STARTING_CASH;
 		this.coins = STARTING_JADE;
 		
 		if (KebabKing.RICH_MODE) {
-			this.cash = 999999;
-			this.coins = 9999;
+			this.cash = 12204;
+			this.coins = 350;
 		}
 		if (KebabKing.LVL_50) {
 			level = 50;
@@ -83,7 +84,6 @@ public class ProfileRobust {
 //		this.stats = new ProfileStats();
 //		this.inventory = new ProfileInventory(this);
 //		this.settings = new ProfileSettings();
-				
 		
 //		resetCustomerDistribution();
 	}
@@ -110,9 +110,21 @@ public class ProfileRobust {
 
 		// initialize any fields that were recently added.
 		
-		inventory.initializeAfterLoad();
+		inventory.initializeAfterLoad(this);
 		settings.initializeAfterLoad();
-		stats.initializeAfterLoad();
+		stats.initializeAfterLoad(this);
+
+		System.out.println("Quit during ad: " + gameQuitDuringAd);
+		System.out.println("Quit during share: " + gameQuitDuringShare);
+
+		// these booleans are for dealing with cases where game crashes during sharing or ads
+		// for now, we just assume the user watched/shared successfully
+		if (gameQuitDuringAd) {
+			AdsHandler.handleAdJustWatched();
+		}
+		if (gameQuitDuringShare) {
+			SocialMediaHandler.shareSuccess();
+		}
 	}
 	
 	// only used at the end of the day
@@ -120,17 +132,18 @@ public class ProfileRobust {
 		validateMoney();
 		this.cash += money;
 		validateMoney();
+		master.store.storeScreen.updateAll();
 	}
 
 	public void giveCoins(int coins) {
 		validateCoins();
 		this.coins += coins;
 		validateCoins();
+		master.store.storeScreen.updateAll();
 	}
 	
 	public long getViolationSecondsRemaining() {
 		if (shutdownAt <= 0) return 0;
-		System.out.println("Get violations: " + shutdownAt);
 		return (long) (shutdownAt - System.currentTimeMillis()) / 1000 + KebabKing.SHUTDOWN_LENGTH_SECONDS;
 	}
 	
@@ -227,16 +240,16 @@ public class ProfileRobust {
 
 	public void subtractDailyExpenses() {
 		float dailyExpenses = 0;
-		dailyExpenses += inventory.locationType.getCurrentSelected().getDailyCost();
-		dailyExpenses += inventory.drinkQuality.getCurrentSelected().getDailyCost();
-		dailyExpenses += inventory.meatQuality.getCurrentSelected().getDailyCost();
+		dailyExpenses += inventory.locationType.getFirstSelected().getDailyCost();
+		dailyExpenses += inventory.drinkQuality.getFirstSelected().getDailyCost();
+		dailyExpenses += inventory.meatQuality.getFirstSelected().getDailyCost();
 //		dailyExpenses += inventory.
 		this.cash -= dailyExpenses;
 //		this.updateCashString();
 	}
 	
 	public LocationType.Location getLocation() {
-		return (LocationType.Location) this.inventory.locationType.getCurrentSelected();
+		return (LocationType.Location) this.inventory.locationType.getFirstSelected();
 	}
 	
 	public float getCash() {
@@ -250,12 +263,14 @@ public class ProfileRobust {
 	public void spendCoins(int coins) {
 		this.coins -= coins;
 		if (coins < 0) throw new java.lang.AssertionError();
+		master.store.storeScreen.updateAll();
 //		updateCoinsString();
 	}
 	
 	public void spendCash(float cash) {
 		this.cash -= cash;
 		if (cash < 0) throw new java.lang.AssertionError();
+		master.store.storeScreen.updateAll();
 //		updateCashString();
 	}
 	

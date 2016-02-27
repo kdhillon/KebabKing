@@ -1,11 +1,5 @@
 package com.kebabking.game.Managers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.utils.ScreenUtils;
-
 import java.io.InputStream;
 
 public interface SocialMediaManager {

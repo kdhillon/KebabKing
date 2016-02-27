@@ -3,7 +3,7 @@ package com.kebabking.game;
 import com.kebabking.game.Managers.Manager;
 
 // for managing online purchases
-public class OnlinePurchaseManager {
+public class OnlinePurchaseHandler {
 
 	static class PurchaseableOnline {
 		public static final PurchaseableOnline[] values = new PurchaseableOnline[] {

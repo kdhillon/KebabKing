@@ -144,6 +144,7 @@ project(":core") {
 
 
     dependencies {
+        compile "org.apache.commons:commons-lang3:3.0"
     	compile "com.esotericsoftware.kryo:kryo:2.24.0"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"

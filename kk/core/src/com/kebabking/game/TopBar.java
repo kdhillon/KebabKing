@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
 public class TopBar extends Table {
-	static final float UI_BAR_HEIGHT = 0.054f; 
+	static final float UI_BAR_HEIGHT = 0.052f; 
 	static final float AD_BAR_HEIGHT = 0.015f; 
 
 	static final float STAR_HEIGHT = 0.022f;
@@ -30,12 +30,16 @@ public class TopBar extends Table {
 	static final float MIN_ALPHA = 0.3f;
 
 	static final int REPUTATION_FONT_SIZE = 11;
+	
+	static final float PAD_X_STANDARD = 0.006f;
+	
 	public static Color blue = new Color(69f/256, 112f/256, 159f/256, 1);
 //	static final Color REPUTATION_FONT_COLOR = new Color(0f, .2f, .3f, 0.5f);	
 	static final Color REPUTATION_FONT_COLOR = new Color(blue.r, blue.g, blue.b, 0.5f);
 	public static KebabKing master;
 
-	static Button pauseButton;
+	static boolean pauseVisible; // if false, settings is visible
+	static Button pauseSettingsButton;
 	static Button muteButton;
 
 	static float barHeight;
@@ -48,6 +52,8 @@ public class TopBar extends Table {
 	static Label level;
 	static Label coins;
 	static Label cash;
+	
+	static float standardPad;
 
 	static Table adCampaignTable;
 	static Table bar;
@@ -83,46 +89,69 @@ public class TopBar extends Table {
 
 	public TopBar(KebabKing masterIn) {
 		master = masterIn;
-
+		
 		// calculate coins bg size
 		float unit = 1/10f;
-		float mute_size = KebabKing.getGlobalX(unit);
-		float pause_size = KebabKing.getGlobalX(unit);
+//		float mute_size = KebabKing.getGlobalX(unit * 0.9f);
+		float pause_size = KebabKing.getGlobalX(unit * 0.9f);
 		float level_bg_size = KebabKing.getGlobalX(1.4f * unit);
 		float starTableWidth = KebabKing.getGlobalX(2.7f * unit);
 		float cash_bg_size = KebabKing.getGlobalX(2.3f * unit);
 		float coins_bg_size = KebabKing.getGlobalX(1.75f * unit);
+		
+//		float totalSize = mute_size + pause_size + level_bg_size + starTableWidth + cash_bg_size + coins_bg_size;
+//		float ratio = 1 - (totalSize / KebabKing.getWidth());
+//		standardPad = KebabKing.getGlobalXFloat(ratio / 2);
+		standardPad = KebabKing.getGlobalXFloat(PAD_X_STANDARD);
+		// TODO figure out a better, cleaner way of calculating standardPad.
+		
+		
 		float bars_pad_top = 0.00f*coins_bg_size;
 		//		float plusSize = 0.6f*barHeight;
 
 		barHeight = KebabKing.getGlobalY(UI_BAR_HEIGHT);
 		adBarHeight += KebabKing.getGlobalY(AD_BAR_HEIGHT);
 
-		pauseButton = new Button();
-		pauseButton.addListener(new InputListener() {
+		pauseSettingsButton = new Button();
+		pauseSettingsButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
 				return true;
 			}
 			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				clickPause();
+				System.out.println("PAUSE VISIBLE: " + pauseVisible);
+				if (pauseVisible)
+					clickPause();
+				else 
+					clickSettings();
 			}
 		});
-		pauseButton.setStyle(Assets.getPauseButtonStyle());
-		this.add(pauseButton).height(barHeight).width(pause_size).left();
-		pauseButton.setVisible(false); // disable on main screen, enable only on pause screen
+		pauseSettingsButton.setStyle(Assets.getPauseSettingsButtonStyle());
+		this.add(pauseSettingsButton).height(barHeight).width(pause_size).left().padLeft(standardPad * 2).padRight(standardPad);
+		pauseSettingsButton.setVisible(true);
+		pauseVisible = false;
+		pauseSettingsButton.setDisabled(true); // main screen, should be settings button
+		
+		
+//		muteButton = new Button();
+//		muteButton.addListener(new InputListener() {
+//			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+//				return true;
+//			}
+//			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+//				clickMute(master.profile);
+//			}
+//		});
+//		setProperMuteStyle(master.profile);
+//		this.add(muteButton).height(barHeight).width(mute_size).left().expandX().padLeft(standardPad).padRight(standardPad);
 
-		muteButton = new Button();
-		muteButton.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				clickMute(master.profile);
-			}
-		});
-		setProperMuteStyle(master.profile);
-		this.add(muteButton).height(barHeight).width(mute_size).left().expandX();
-
+	
+		
+		// Add coins and cash table
+		coins = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
+		cash = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
+		coins.setColor(blue);
+		cash.setColor(blue);
+		
 		star = new Image[5];
 		for (int i = 0; i < 5; i++) {
 			star[i] =  new Image(Assets.getStar());
@@ -148,10 +177,11 @@ public class TopBar extends Table {
 		updateStars(master.profile.getCurrentReputation());
 
 		//		starTable.setBackground(Assets.getTopBarBG());
-		this.add(reputationTable).expandX(); //width(starTableWidth).
+		this.add(reputationTable).expandX().padLeft(standardPad).padRight(standardPad); //width(starTableWidth).
 
 		//		int TEXT_SIZE = (int) (barHeight * 0.35f);
-
+		
+		
 		// Add level table
 		level = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums));
 		level.setColor(blue);
@@ -164,14 +194,10 @@ public class TopBar extends Table {
 		levelTable.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("topbar/level")));
 		levelTable.add(level).center().expand();
 		level.setAlignment(Align.center);
-		this.add(levelTable).width(level_bg_size).height(barHeight);
-		
-		// Add coins and cash table
-		coins = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
-		cash = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
-		coins.setColor(blue);
-		cash.setColor(blue);
+		this.add(levelTable).width(level_bg_size).height(barHeight).padLeft(standardPad).padRight(standardPad);
 
+		
+		
 		Table cashTable = new Table();
 		//		Label cash_l = new Label("$", Assets.generateLabelStyle(TEXT_SIZE));
 		//		cashTable.add(cash_l);
@@ -179,7 +205,7 @@ public class TopBar extends Table {
 		cashTable.setBackground(new TextureRegionDrawable(Assets.getCashBG()));
 		cashTable.add(cash).center().expand().padTop(bars_pad_top).padLeft(coins_bg_size * 0.4f);
 		cash.setAlignment(Align.center);
-		this.add(cashTable).width(cash_bg_size).height(barHeight);
+		this.add(cashTable).width(cash_bg_size).height(barHeight).padLeft(standardPad).padRight(standardPad);
 
 		Table coinsTable = new Table();
 		//		coinsTable.debugAll();
@@ -200,7 +226,7 @@ public class TopBar extends Table {
 		//		
 		//		coinsTable.add(coinPlus).right().padTop(bars_pad_top + 0.1f*barHeight).width(plusSize).height(plusSize);
 		coins.setAlignment(Align.center);
-		this.add(coinsTable).width(coins_bg_size).height(barHeight);
+		this.add(coinsTable).width(coins_bg_size).height(barHeight).padLeft(standardPad).padRight(standardPad * 2);
 
 		this.row();
 		adCampaignTable = new Table();
@@ -215,27 +241,38 @@ public class TopBar extends Table {
 		updateCashString();
 	}
 
-	public static void update(float delta, ProfileRobust profile) {
+	public static void update(float delta, Profile profile) {
 		updateCoinCashStrings(delta, profile);
 		updateLevel(profile);
 		
 		// update fields of all relevant UI things
-		if (master.getScreen() == master.kitchen) {
-			pauseButton.setVisible(true);
-			pauseButton.setTouchable(Touchable.enabled);
+		if (master.getScreen() != master.kitchen && pauseVisible) {
+			// set disabled is actually switching to settings box
+			switchPauseToSettings();
+			pauseVisible = false;
+			System.out.println("switching pause to settings");
+
+//			pauseSettingsButton.
 			//					muteButton.setTouchable(Touchable.disabled);
 			//					if (uiTable.getCell(muteButton) != null) {
 			//						uiTable.getCell(muteButton).setActor(pauseButton).height(barHeight).width(barHeight).left().expandX();
 			//					}
 		}
-		else {
-			pauseButton.setVisible(false);
-			pauseButton.setTouchable(Touchable.disabled);
+		if (master.getScreen() == master.kitchen && !pauseVisible) {
+			switchSettingsToPause();
+			pauseVisible = true;
+			System.out.println("Switching settings to pause");
+
 			//					muteButton.setTouchable(Touchable.enabled);
 			//					if (uiTable.getCell(pauseButton) != null) {
 			//						uiTable.getCell(pauseButton).setActor(muteButton).height(barHeight).width(barHeight).left().expandX();
 			//					}
 		}
+		if (master.getScreen() == master.settingsScreen) {
+			pauseSettingsButton.setVisible(false);
+		}
+		else 
+			pauseSettingsButton.setVisible(true);
 		
 		if (profile.inventory.adCampaign.getActive() != null) {
 			updateAdCampaignBar(profile.inventory.adCampaign.getActive().getName());
@@ -250,7 +287,17 @@ public class TopBar extends Table {
 		}
 	}
 	
-	public static void updateLevel(ProfileRobust profile) {
+	public static void switchPauseToSettings() {
+		pauseSettingsButton.setDisabled(true);
+		pauseSettingsButton.setTouchable(Touchable.enabled);
+	}
+	
+	public static void switchSettingsToPause() {
+		pauseSettingsButton.setDisabled(false);
+		pauseSettingsButton.setTouchable(Touchable.enabled);
+	}
+	
+	public static void updateLevel(Profile profile) {
 		if (levelDisplayed != profile.getLevel()) {
 			levelDisplayed = profile.getLevel();
 			level.setText(""+levelDisplayed);
@@ -258,7 +305,7 @@ public class TopBar extends Table {
 	}
 
 	// called every frame, updates strings and ints as necessary
-	public static void updateCoinCashStrings(float delta, ProfileRobust profile) {
+	public static void updateCoinCashStrings(float delta, Profile profile) {
 		timeElapsed += delta;
 
 		if (coinsDisplayed != profile.getCoins()) {
@@ -438,14 +485,19 @@ public class TopBar extends Table {
 		System.out.println("PAUSING");
 		master.kitchenPause();
 	}
+	
+	public static void clickSettings() {
+		System.out.println("SETTINGS");
+		master.switchToSettings();
+	}
 
-	public static void clickMute(ProfileRobust profile) {
+	public static void clickMute(Profile profile) {
 		System.out.println("Mutings");
 		master.toggleMute();
 		setProperMuteStyle(profile);
 	}
 
-	public static void setProperMuteStyle(ProfileRobust profile) {
+	public static void setProperMuteStyle(Profile profile) {
 		if (profile.settings.muteMusic)
 			muteButton.setStyle(Assets.getButtonStyleMuted());
 		else 

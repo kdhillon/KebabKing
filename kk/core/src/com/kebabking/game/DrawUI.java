@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -45,7 +44,6 @@ public class DrawUI {
 	static final float WHITE_ALPHA = 0.75f;
 	static final float GRAY_ALPHA = 0.8f;
 	
-	
 //	static final float COINS_X  = 0.02f * ChuanrC.width;
 //	static final float COINS_Y	= 0.982f * ChuanrC.height;
 //	
@@ -63,14 +61,15 @@ public class DrawUI {
 	static Table bigTable;
 	static TopBar topBar;
 	
-	static Label countdownTime;
+	static Label dayEndLabel;
 	
-	static Color countdownColor;
+	static Color dayEndColor;
 	
 	static Table notificationTable;
 	static Table subTable;
 	static boolean notificationActive;
 	static boolean policeNotificationActive;
+	static boolean tutorialNotificationActive;
 
 	static Color tintColor;
 
@@ -129,13 +128,18 @@ public class DrawUI {
 		uiStage.addActor(bigTable);
 			
 		// screen is divided into 9 regions follows:
+		if (KitchenScreen.LAST_CUSTOMER_MODE) {
+			dayEndLabel = new Label(KitchenScreen.LAST_CUSTOMER_TEXT, Assets.generateLabelStyleUIChinaWhite(70, KitchenScreen.LAST_CUSTOMER_TEXT));
+			dayEndLabel.setPosition(0, KebabKing.getGlobalY(0.55f));
+		}
+		else {
+			dayEndLabel = new Label("", Assets.generateLabelStyleUIChinaWhite(100, Assets.nums));
+			dayEndLabel.setPosition(0, KebabKing.getGlobalY(0.7f));
+		}
+		dayEndLabel.setWidth(KebabKing.getWidth());
+		dayEndLabel.setAlignment(Align.center);
 		
-		countdownTime = new Label("", Assets.generateLabelStyleUIChinaWhite(100, Assets.nums));
-		countdownTime.setPosition(0, KebabKing.getGlobalY(0.7f));
-		countdownTime.setWidth(KebabKing.getWidth());
-		countdownTime.setAlignment(Align.center);
-		
-		countdownColor = new Color(1, 1, 1, 1);
+		dayEndColor = new Color(1, 1, 1, 1);
 		
 		notificationTable = new Table();
 //		notificationTable.debug();
@@ -159,7 +163,7 @@ public class DrawUI {
 	}
 	
 	
-	public static void drawFullUI(float delta, SpriteBatch batch, ProfileRobust profile) {
+	public static void drawFullUI(float delta, SpriteBatch batch, Profile profile) {
 		TopBar.update(delta, profile);
 	
 //		updateCoinCashStrings(delta, profile);
@@ -216,6 +220,10 @@ public class DrawUI {
 		}
 	}
 	
+	public static boolean shouldTint() {
+		return DrawUI.notificationActive && !DrawUI.tutorialNotificationActive;
+	}
+	
 //	public static void tintGrayAlpha(SpriteBatch batch, float alpha) {
 //		Color o = batch.getColor();
 //		grayDraw.set(1, 1, 1, alpha);
@@ -258,12 +266,21 @@ public class DrawUI {
 			currentString = "" + currentTime;
 			prevTime = currentTime;
 		}
-		countdownTime.setText(currentString);
+		dayEndLabel.setText(currentString);
 		
-		countdownColor.set(1,  1,  1, inputTime - (int) inputTime);
+		dayEndColor.set(1,  1,  1, inputTime - (int) inputTime);
 	
-		countdownTime.setColor(countdownColor);
-		countdownTime.draw(batch, 1);	
+		dayEndLabel.setColor(dayEndColor);
+		dayEndLabel.draw(batch, 1);	
+	}
+	
+	public static void drawLastCustomer(SpriteBatch batch, float inputTime) {
+//		dayEndLabel.setText(KitchenScreen.LAST_CUSTOMER_TEXT);
+//		System.out.println("drawing last customer " + inputTime);
+		dayEndColor.set(1,  1,  1, Math.max(0, ((inputTime + KitchenScreen.LAST_CUSTOMER_FADE) / KitchenScreen.LAST_CUSTOMER_FADE)));
+	
+		dayEndLabel.setColor(dayEndColor);
+		dayEndLabel.draw(batch, 1);	
 	}
 	
 	public static void drawTime(SpriteBatch batch, float time) {
@@ -320,7 +337,60 @@ public class DrawUI {
 		prepareAdNotAvailableNotificationTable();
 	}
 	
-	// TODO replace bordered notification window with regular one, that can resize easily. Maybe even make it a 9patch with bottom part repeatable
+	private static void prepareTutorialNotification(float height) {
+		notificationActive = true;
+		tutorialNotificationActive = true;
+		subTable = new Table();
+		
+//		notificationTable.debugAll();
+		subTable.setBackground(new TextureRegionDrawable(Assets.notificationBG));
+		float width = 0.7f;
+		
+//		float padTop = (1 - height) / 2f;
+//		float padBot = padTop;
+//		notificationTable.add(subTable).padLeft(KebabKing.getGlobalX(padX)).padRight(KebabKing.getGlobalX(padX)).padTop(KebabKing.getGlobalY(padTop)).padBottom(KebabKing.getGlobalY(padBot)).expandX().fill();//.top();
+
+		Table topTable = DrawUI.generateTutorialTopTable();
+		float topBarPadY = KebabKing.getGlobalY(0.03f);
+		subTable.add(topTable).top().expandX().fillX().padBottom(topBarPadY).padTop(topBarPadY);
+		subTable.row();
+		
+		notificationTable.add(subTable).width(KebabKing.getGlobalX(width)).height(KebabKing.getGlobalYFloat(height)).expandX().expandY().top().padTop(KebabKing.getGlobalYFloat(-0.03f));
+
+	}
+	
+	public static Table generateTutorialTopTable() {
+		Table topBar = new Table();
+//		topBar.debugAll();
+		Table topLeft = new Table();
+		Table topRight = new Table();
+		topLeft.setBackground(new TextureRegionDrawable(Assets.red));
+		topRight.setBackground(new TextureRegionDrawable(Assets.red));
+		
+		Table topCenter = new Table();
+		
+		TextureRegion topImage = Assets.getTextureRegion("screens/Summary-02 (2)");
+		float IMAGE_WIDTH = 0.15f;
+		float IMAGE_HEIGHT = IMAGE_WIDTH * topImage.getRegionHeight() / topImage.getRegionWidth();
+		Image image = new Image(topImage);
+//		image.setWidth(KebabKing.getGlobalX(IMAGE_WIDTH));
+//		image.setHeight(KebabKing.getGlobalY(IMAGE_HEIGHT));
+		topCenter.add(image).width(KebabKing.getGlobalX(IMAGE_WIDTH)).height(KebabKing.getGlobalX(IMAGE_HEIGHT));
+		topCenter.row();
+		Label dailyAccounts = new Label("TUTORIAL", Assets.generateLabelStyleUIWhite(12, "TUTORIAL"));
+		dailyAccounts.setColor(MainStoreScreen.FONT_COLOR);
+	
+		float BAR_HEIGHT = 0.005f;
+		
+		topCenter.add(dailyAccounts);
+		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(BAR_HEIGHT));
+		
+		float imagePadX = KebabKing.getGlobalX(0.03f);
+		topBar.add(topCenter).top().padLeft(imagePadX).padRight(imagePadX);;;
+		topBar.add(topRight).expandX().fillX().height(KebabKing.getGlobalY(BAR_HEIGHT));;
+		return topBar;
+	}
+	
 	private static void prepareNotification(float height) {
 		notificationActive = true;
 		Gdx.input.setInputProcessor(uiStage);
@@ -342,6 +412,31 @@ public class DrawUI {
 		subTable.row();
 	}
 	
+	
+	public static void launchTutorialNotification(String title, String aboveImage, String belowImage, TextureRegion toDraw) {
+		if (notificationActive && KebabKing.STRICT_MODE) {
+			// TODO change this to just exitNotification();
+			throw new java.lang.AssertionError();
+		}
+		
+		else {
+			prepareTutorialNotification(0.4f);
+			prepareTutorialNotificationTable(title, aboveImage, belowImage, toDraw);
+		}
+	}
+	
+	public static void launchTutorialSuccessNotification(String title, String aboveImage, String belowImage, TextureRegion toDraw) {
+		if (notificationActive  && KebabKing.STRICT_MODE) {
+			// TODO change this to just exitNotification();
+			throw new java.lang.AssertionError();
+		}
+		
+		else {
+			prepareTutorialNotification(0.4f);
+			prepareTutorialSuccessNotificationTable(title, aboveImage, belowImage, toDraw);
+		}
+	}
+	
 	public static void launchUnlockNotification(Queue<Purchaseable> available) {
 		if (notificationActive) enqueueUnlockNotification(available);
 		else {
@@ -349,6 +444,10 @@ public class DrawUI {
 			prepareNotification(0.6f);
 			prepareUnlockNotificationTable(available);
 		}
+	}
+	
+	public static void exitTutorialNotification() {
+		exitNotification();
 	}
 
 	public static void handleViolationEnded() {
@@ -359,12 +458,55 @@ public class DrawUI {
 	private static void exitNotification() {
 		policeNotificationActive = false;
 		notificationActive = false;
+		tutorialNotificationActive = false;
 		clearNotificationTableDontCallThis();
 		setInput(pausedIP);
 		
 		if (unlockDisplayQueue.size() > 0) {
 			launchUnlockNotification(unlockDisplayQueue.pop());
 		}
+	}
+	
+	
+	private static void prepareTutorialSuccessNotificationTable(String title, String aboveImage, String belowImage, TextureRegion toDraw) {
+		prepareTutorialNotificationTable(title, aboveImage, belowImage, toDraw);
+		addContinueButton("CONTINUE");
+	}
+	
+	private static void prepareTutorialNotificationTable(String title, String aboveImage, String belowImage, TextureRegion toDraw) {
+		Label titleLabel = new Label(title, Assets.generateLabelStyleUILight(24, title));
+		titleLabel.setAlignment(Align.center);
+		titleLabel.setColor(MainStoreScreen.FONT_COLOR);
+		titleLabel.setWrap(true);
+
+		subTable.add(titleLabel).center().expandX().fillX().padTop(KebabKing.getGlobalY(0f));
+		subTable.row();
+		
+		if (aboveImage != null && aboveImage.length() > 0) {
+			Label above = new Label(aboveImage, Assets.generateLabelStyleUILight(16, aboveImage));
+			above.setAlignment(Align.center);
+			above.setColor(MainStoreScreen.FONT_COLOR);
+			above.setWrap(true);
+
+			subTable.add(above).center().expandX().fillX().padTop(KebabKing.getGlobalYFloat(0.0f));
+			subTable.row();
+		}
+		
+		if (toDraw != null) {
+			float regHeight = KebabKing.getGlobalYFloat(0.07f);
+//			float regHeight = toDraw.getRegionHeight() * regWidth / toDraw.getRegionWidth();
+			float regWidth = toDraw.getRegionWidth() * regHeight / toDraw.getRegionHeight();
+			Image image = new Image(toDraw);
+			subTable.add(image).center().expandX().width(regWidth).height(regHeight).top().padTop(KebabKing.getGlobalYFloat(0.02f));
+			subTable.row();
+		}
+		
+		Label below = new Label(belowImage, Assets.generateLabelStyleUILight(16, belowImage));
+		below.setAlignment(Align.center);
+		below.setColor(MainStoreScreen.FONT_COLOR);
+		below.setWrap(true);
+		subTable.add(below).center().expandX().fillX().padTop(KebabKing.getGlobalYFloat(0.02f)).expandY().top();
+		subTable.row();
 	}
 	
 	private static void preparePoliceNotificationTable() {
@@ -562,9 +704,8 @@ public class DrawUI {
 //		float subTableWidth = (notificationTable.getWidth() - KebabKing.getGlobalX(2 * padX));
 //		subTable.debugAll();
 		
+		
 		// add daily accounts thing.
-
-	
 		float unlocksTableWidth = KebabKing.getGlobalX(0.52f);
 		
 		// contains youve unlocked and all unlocks
@@ -573,7 +714,7 @@ public class DrawUI {
 		
 		Table topPart = new Table();
 		
-		LabelStyle lite = Assets.generateLabelStyleUILight(16, "You reached Nnew available upgrades:" + Assets.nums);
+		LabelStyle lite = Assets.generateLabelStyleUILight(16, "You reached new available upgrades:" + Assets.nums);
 		Label youveUnlocked = new Label("You reached", lite); 
 		youveUnlocked.setAlignment(Align.center);
 		youveUnlocked.setColor(MainStoreScreen.FONT_COLOR);
@@ -593,6 +734,7 @@ public class DrawUI {
 	
 		Table bottomPart = new Table();
 //		bottomPart.debug();
+		
 		
 		String toPrint = "New upgrade available:";
 		if (available.size() > 1) {
@@ -659,51 +801,60 @@ public class DrawUI {
 			}
 		});
 
+//		notificationTable.debugAll();
 		notificationTable.row();
 		notificationTable.add(continueButton).top().height(KebabKing.getGlobalYFloat(0.07f)).expandY();
+		
+		notificationTable.getCell(subTable).expand(true, false);
 	}
 	
 	public static Table generateUnlockItemTable(Purchaseable purchaseable) {
-		int imagePadX, imagePadY;
+//		int imagePadX, imagePadY;
 		Table table = new Table();
-		Table button = new Table();
-		button.setBackground(new NinePatchDrawable(Assets.gray9PatchSmall));
+//		Table button = new Table();
+//		button.setBackground(new NinePatchDrawable(Assets.gray9PatchSmall));
+//
+//		int buttonHeight = KebabKing.getGlobalX(0.15f);
+//		int buttonWidth = buttonHeight;
+//		
+//		imagePadX = Assets.PATCH_OFFSET_X * 2 / 3;
+//		imagePadY = (int) (Assets.PATCH_OFFSET_Y * 2.5f);
+//
+//		TextureRegion full = purchaseable.getIcon();
+//		if (full == null) {
+//			full = Assets.questionMark;
+//		}
+//
+//		int iconWidth = buttonWidth - imagePadX;
+//		int iconHeight = buttonHeight - imagePadY;
+//
+//		// if the icon is wider than long, crop out appropriate part of image
+//
+//		// crop to that aspect ratio
+//		int regWidth = full.getRegionWidth();
+//		int regHeight = full.getRegionHeight(); 
+//		float aspectButton = (iconWidth) * 1.0f / (iconHeight); 
+//
+//		TextureRegion half;
+//		if (regWidth / regHeight > aspectButton) {
+//			//			System.out.println("reg Width > regHeight" + regWidth + " , " + regHeight);
+//			float cropWidth = (aspectButton * regHeight);
+//			half = new TextureRegion(full, (int) (regWidth/2 - cropWidth/2), 0, (int) cropWidth, full.getRegionHeight());
+//		}
+//		// TODO when region is taller than wide, make this cleverly allow less vertical padding so it fits well inside the box
+//		else {
+//			float cropHeight = regHeight/aspectButton;
+//			half = new TextureRegion(full, 0, (int) (regHeight/2 - cropHeight/2), full.getRegionWidth(), (int) cropHeight);
+//		}
+//		Image icon = new Image(half);		
+//		button.add(icon).center().width(iconWidth).height(iconHeight);
 
-		int buttonHeight = KebabKing.getGlobalX(0.15f);
-		int buttonWidth = buttonHeight;
+		// prev .15
+		int buttonWidth = KebabKing.getGlobalX(0.15f);
+		// guarantees a square button
+		int buttonHeight = buttonWidth;
+		Table button = StorePurchaseTypeSubtable.generateIconBox(purchaseable, buttonWidth, buttonHeight, false, false, false);
 		
-		imagePadX = Assets.GREEN_9PATCH_OFFSET_X/2 / 3;
-		imagePadY = (int) (Assets.GREEN_9PATCH_OFFSET_X/2 * 2.5f);
-
-		TextureRegion full = purchaseable.getIcon();
-		if (full == null) {
-			full = Assets.questionMark;
-		}
-
-		int iconWidth = buttonWidth - imagePadX;
-		int iconHeight = buttonHeight - imagePadY;
-
-		// if the icon is wider than long, crop out appropriate part of image
-
-		// crop to that aspect ratio
-		int regWidth = full.getRegionWidth();
-		int regHeight = full.getRegionHeight(); 
-		float aspectButton = (iconWidth) * 1.0f / (iconHeight); 
-
-		TextureRegion half;
-		if (regWidth / regHeight > aspectButton) {
-			//			System.out.println("reg Width > regHeight" + regWidth + " , " + regHeight);
-			float cropWidth = (aspectButton * regHeight);
-			half = new TextureRegion(full, (int) (regWidth/2 - cropWidth/2), 0, (int) cropWidth, full.getRegionHeight());
-		}
-		// TODO when region is taller than wide, make this cleverly allow less vertical padding so it fits well inside the box
-		else {
-			float cropHeight = regHeight/aspectButton;
-			half = new TextureRegion(full, 0, (int) (regHeight/2 - cropHeight/2), full.getRegionWidth(), (int) cropHeight);
-		}
-		Image icon = new Image(half);		
-		button.add(icon).center().width(iconWidth).height(iconHeight);
-
 		table.add(button).width(buttonWidth).height(buttonHeight).left();
 
 		Table info = new Table();

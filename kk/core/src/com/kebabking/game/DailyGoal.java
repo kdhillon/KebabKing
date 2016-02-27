@@ -1,6 +1,7 @@
 package com.kebabking.game;
 
 import com.kebabking.game.Customer.CustomerType;
+import com.kebabking.game.Purchases.MeatTypes;
 
 public class DailyGoal {
 	// TODO determine how meat goals should scale
@@ -42,7 +43,7 @@ public class DailyGoal {
 	
 	int progressToGoal;
 	int goal;
-	Meat.Type meatType;
+	MeatTypes.Type meatType;
 	CustomerType customerToServe;
 	
 	float reward;		// what is the reward for meeting this goal
@@ -63,7 +64,7 @@ public class DailyGoal {
 			this.string = "Serve " + goal +" customers!";
 			break;
 		case NUM_MEAT_SPECIFIC:
-			Meat.Type[] typeArray = Meat.Type.values();
+			MeatTypes.Type[] typeArray = MeatTypes.Type.values;
 			int meatIndex = (int) (Math.random() * typeArray.length);
 			this.meatType = typeArray[meatIndex];
 			this.goal = generateMeatTotalGoal() / 3;

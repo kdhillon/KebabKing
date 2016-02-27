@@ -1,5 +1,7 @@
 package com.kebabking.game;
 
+import java.io.FileNotFoundException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
@@ -8,13 +10,12 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.kebabking.game.Managers.Manager;
 
-import java.io.FileNotFoundException;
-
 /**
  * Created by Kyle on 1/21/2016.
  */
 public class SocialMediaHandler {
-    static final long MILLIS_TO_WAIT_BEFORE_REWARD = 1000; //
+	static final int DAYS_BETWEEN_SHARES = 3;
+    static final long MILLIS_TO_WAIT_BEFORE_REWARD = 1000; 
     public static String FILENAME = "temp.png";
 
     static long sharedAt;
@@ -29,6 +30,9 @@ public class SocialMediaHandler {
         System.out.println("Share Success in SocialMediaHandler");
         justShared = true;
         sharedAt = TimeUtils.millis();
+        if (master.summary != null) {
+        	master.summary.clearShareTable();
+        }
     }
 
     public static void reward() {
@@ -39,6 +43,7 @@ public class SocialMediaHandler {
         Manager.analytics.sendEventHit("Social", "day shared");
         System.out.println("Share rewarded!");
 
+        master.profile.gameQuitDuringShare = false;
         master.save();
     }
 
@@ -48,6 +53,19 @@ public class SocialMediaHandler {
             justShared = false;
             sharedAt = 0;
         }
+    }
+    
+    public static boolean checkIfShouldAllowShare() {
+    	System.out.println(master.profile.stats.lastShareDay);
+    	return (master.profile.stats.daysWorked - master.profile.stats.lastShareDay >= DAYS_BETWEEN_SHARES);
+    }
+
+    public static void handleAboutToLaunchShare() {
+    	System.out.println("HANDLE ABOUT TO LAUNCH SHARE");
+        master.profile.stats.lastShareDay = master.profile.stats.daysWorked;
+        master.profile.gameQuitDuringShare = true;
+        // need to save here!
+        master.save();
     }
 
     private static void saveScreenshot() {

@@ -34,7 +34,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Kyle on 1/20/2016.
-
  https://developers.facebook.com/docs/android/getting-started
  */
 public class SocialMediaFacebook implements SocialMediaManager {
@@ -82,7 +81,7 @@ public class SocialMediaFacebook implements SocialMediaManager {
                     .setContentDescription("Cook kebabs and serve your hungry customers in this awesome Android game!")
                     .setImageUrl(Uri.parse("https://lh3.googleusercontent.com/mqZXECxUdd8vEznthMNAU_sZBENxhDc4lVbzWE-P4jvYcPo0_GrGUoGK0oTJJl-NpGg=w300-rw"))
                     .build();
-
+            SocialMediaHandler.handleAboutToLaunchShare();
             ShareDialog.show(master, content);
         }
         else {

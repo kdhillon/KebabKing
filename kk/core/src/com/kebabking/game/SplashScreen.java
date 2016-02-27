@@ -50,7 +50,7 @@ public class SplashScreen extends ScreenTemplate  {
 	Label loadText;
 	Label title;
 	
- 	String[] textArray = {"buying coal", "setting up grill", "marinating meat", "sharpening sticks","prepping kebabs", "cooling drinks"};
+ 	String[] textArray = {"buying coal", "setting up grill", "marinating meat", "sharpening skewers","prepping kebabs", "cooling drinks"};
 //	float arrPercent;
 //	float nextSwitch;
 	int currentIndex = 0;

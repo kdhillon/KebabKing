@@ -5,7 +5,7 @@ import com.kebabking.game.ProfileInventory;
 // this class contains the user's current grill Size
 public class GrillSize extends PurchaseType {	
 	static String name = "GRILL SIZE";
-	static String grillSizeDescription = "Change your grill Size!";
+	static String grillSizeDescription = "Larger grills will let you cook more meat at once!";
 	
 	// Specific Sizes that you might own 
 	// Using a static class allows us to extend simplepurchaseable, but still basically be an enum.
@@ -30,16 +30,16 @@ public class GrillSize extends PurchaseType {
 
 	
 	public GrillSize(ProfileInventory inventory) {
-		super(inventory, name, grillSizeDescription, null, Size.values);
+		super(inventory, name, grillSizeDescription, Size.values);
 		unlock(values[0]);
 	}
 	
 	// for kryo
 	public GrillSize() {
-		super(name, grillSizeDescription, null, Size.values);
+		super(name, grillSizeDescription, Size.values);
 	};
 	
 	public int getSize() {
-		return ((Size) this.getCurrentSelected()).size;
+		return ((Size) this.getFirstSelected()).size;
 	}
 }

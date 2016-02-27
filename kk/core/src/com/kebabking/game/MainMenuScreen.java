@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.kebabking.game.Managers.Manager;
 
 public class MainMenuScreen extends ActiveScreen {
 	public static int daysPlayedThisSession = 0;
@@ -46,7 +45,8 @@ public class MainMenuScreen extends ActiveScreen {
 		
 		// update everything else after resize has been called
 		initializeStage();
-
+		
+		SoundManager.playMusic();
 	}
 
 	public void initializeStage() {	

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.kebabking.game.Customer.CustomerType;
 import com.kebabking.game.Purchases.AdCampaign;
 
 
@@ -34,7 +33,7 @@ public class CustomerManager {
 	static boolean SHOULD_ORDER = true; // sorts every frame
 
 	KebabKing master;
-	ProfileRobust profile;
+	Profile profile;
 	Customer mousedOver;
 	Customer[][] lines;
 	int[] peopleInLine;
@@ -42,9 +41,10 @@ public class CustomerManager {
 	boolean active;
 	
 	// only used for tutorial
-	boolean tutFirstCustomer;
-	boolean tutSecondCustomer;
-	boolean shouldAddSecondCustomer;
+//	boolean tutFirstCustomer;
+//	boolean tutSecondCustomer;
+//	boolean shouldAddSecondCustomer;
+	boolean tutGenerated;
 
 //	int maxAtOnce; // number of people in  lines at one time
 
@@ -191,12 +191,18 @@ public class CustomerManager {
 			for (int j = 0; j < MAX_IN_LINE; j++) {
 				Customer c = lines[i][j];
 				if (c != null) {
-					int xPos = (KebabKing.getGlobalX(c.position_x));
-					int yPos = (int) c.position_y;
-					if (x > xPos && x < xPos + Customer.TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH) {
-						if (y > yPos && y < yPos + Customer.TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT) {
+//					int xPos = (KebabKing.getGlobalX(c.position_x));
+//					int yPos = (int) c.position_y;
+//					if (x > xPos && x < xPos + Customer.TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH) {
+//						if (y > yPos && y < yPos + Customer.TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT) {
+//							mousedOver = c;
+//							System.out.println("Moused over is " + mousedOver.type);
+//							return;
+//						}
+//					}
+					if (x > c.getStrictLeft() && x < c.getStrictRight()) {
+						if (y > c.getStrictBottom() && y < c.getStrictTop()) {
 							mousedOver = c;
-							System.out.println("Moused over is " + mousedOver.type);
 							return;
 						}
 					}
@@ -207,9 +213,17 @@ public class CustomerManager {
 //			System.out.println("Moused over is null");
 //		}
 	}
-
-
+	
 	public void generateCustomers() {
+//		if (needCustomer() && tutorialCustomerNeeded()) {
+////			addTutorialCustomer();
+//			addCustomer(this.active);
+//			return;
+//		}
+//		if (dontAllowNormalCustomer()) {
+//			// don't allow other customers to be generated until first is served
+//			return;
+//		}
 		// tutorial mode
 //		if (profile.tutorialNeeded && master.getScreen() == master.kitchen) {
 //			if (!tutFirstCustomer) {
@@ -230,10 +244,10 @@ public class CustomerManager {
 		
 		// decide whether to create a customer this frame
 		if (needCustomer()) {
-			addCustomer();
+			addCustomer(this.active);
 			return;
 		}
-		else if (lastCustomer > nextCustomer) addCustomer();
+		else if (lastCustomer > nextCustomer) addCustomer(this.active);
 
 		//TODO make this based on location you're in.
 	}
@@ -282,7 +296,6 @@ public class CustomerManager {
 		}
 		this.boost = bonus;
 	}
-	
 
 	// this ends the existing ad campaign
 	public void resetCustomerDistribution() {
@@ -305,9 +318,9 @@ public class CustomerManager {
 		return false;
 	}
 
-	public void addCustomer() {
+	public Customer addCustomer(boolean active) {
 		//		System.out.println("adding customer");
-		Customer customer = new Customer(customerPatienceFactor, this);
+		Customer customer = new Customer(customerPatienceFactor, this, active);
 	
 		if (this.generatePoliceNext) {
 			customer.type = Customer.CustomerType.POLICE;
@@ -323,7 +336,15 @@ public class CustomerManager {
 		customers.trimToSize();
 		
 		SHOULD_ORDER = true;
+		
+		return customer;
 	}
+	
+//	public void addTutorialCustomer() {
+//		System.out.println("Adding tutorial customer");
+//		Customer customer = addCustomer(true);
+////		customer.type = Customer.CustomerType.OLD_MAN;
+//	}
 	
 	// add the first customer
 //	public void addFirstTutorialCustomer() {
@@ -368,7 +389,7 @@ public class CustomerManager {
 			this.generatePoliceNext = true;
 	}
 	
-	public float getGenerationMaxTime(ProfileRobust profile) {
+	public float getGenerationMaxTime(Profile profile) {
 		return GENERATE_BASE_TIME * (1/(float) (profile.getLocation().popularity * boost));
 	}
 
@@ -431,8 +452,8 @@ public class CustomerManager {
 		return revenue - expenses;
 	}
 	
-	// TODO add tutorial notification
-	public void registerJewelerArriving() {
+	public void registerJewelerOrdering() {
+		TutorialEventHandler.handleJewelerOrder();
 		master.profile.stats.jewelerCustomers++;
 	}
 	

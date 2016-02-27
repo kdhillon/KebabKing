@@ -7,35 +7,57 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Background {
+	static final float BG_Y_BOT = 0.77f;
+	
 	// c7ebff
 	static final Color daySky = new Color(.777f, .917f, 1, 1);
+//	static final Color duskSky = new Color(255f/256, 225f/256, 135f/256, 1);
 	static final Color nightSky = new Color(.1f, .1f, .2f, 1);
 	static final float nightStartTime = 15; // when night transition starts
 	static final int CLOUD_COUNT = 3;
-
+	static final int STAR_COUNT = 50;
+	static final float STAR_ALPHA_RATE = 0.3f;
+	
 	static final float SUN_SIZE = 0.15f;
 	static final float SUN_START_X = 0f;
 	static final float SUN_START_Y = 0.9f;
-	static final float SUN_ROT_SPEED = 5f;
+	static final float SUN_ROT_SPEED = 15f;
+	static final float SUN_SPEED = 1.25f;
+	
+	static final float PLANE_Y = 0.87f;
+//	static final float PLANE_WIDTH = 0.1f;
+//	static final float PLANE_HEIGHT = 0.05f;
+	static final float PLANE_SPEED = 0.05f;
 	
 	// background based on where the player is, what time of day, etc.
 	float timeElapsed;
 
 //	TextureRegion bg; 
-	ProfileRobust profile;
+	Profile profile;
 
+	Color currentGoal;
 	Color currentColor;
 
 	float dayPercent;
-	
-	float nightRate = 0.05f;
-	float rDif = nightSky.r - daySky.r;
-	float gDif = nightSky.g - daySky.g;
-	float bDif = nightSky.b - daySky.b;
+
+	float nightRate = 0.15f;
+//	float rDif = (duskSky.r - daySky.r) / 2f;
+//	float gDif = duskSky.g - daySky.g;
+//	float bDif = duskSky.b - daySky.b;
+	float rDif = (nightSky.r - daySky.r) / 4f;
+	float gDif = (nightSky.g - daySky.g) / 2f;
+	float bDif = (nightSky.b - daySky.b);
 	boolean fullNight;
+	boolean dusk;
 	
 	float cloudWidth;
 	float cloudHeight;
+
+	float starWidth;
+	float starHeight;
+	
+	float planeWidth;
+	float planeHeight;
 	
 	boolean active;
 	
@@ -47,6 +69,21 @@ public class Background {
 		float speed;
 		float scale;
 		int type;
+	}
+	
+	Star[] stars;
+	class Star {
+		float x;
+		float y;
+		float scale;
+		float alpha;
+		boolean alphaUp;
+	}
+	
+	Plane plane;
+	class Plane {
+		float x;
+		float y;
 	}
 	
 	// Define a path for sun to follow:
@@ -61,7 +98,7 @@ public class Background {
 	float sunPathB = 0.1f;
 	float sunPathC = 0.9f;
 	
-	public Background(ProfileRobust profile) {
+	public Background(Profile profile) {
 		this.timeElapsed = 0;
 		
 		// assign bg based on location
@@ -86,6 +123,10 @@ public class Background {
 	public void reset() {
 		this.timeElapsed = 0;
 		this.activate();
+		
+		rDif = (nightSky.r - daySky.r) / 4f;
+		gDif = (nightSky.g - daySky.g) / 2f;
+		bDif = (nightSky.b - daySky.b);
 	}
 	
 	public void activate() {
@@ -103,14 +144,40 @@ public class Background {
 
 			if (!fullNight) {
 				// fade towards night
+//				if (!dusk) {
+//					if (this.currentColor.r <= duskSky.r) {
+//						System.out.println("updating current");
+//						this.currentColor.r += rDif * delta * nightRate;
+//					}
+//					if (this.currentColor.g >= duskSky.g) {
+//						this.currentColor.g += gDif * delta * nightRate;
+//					}
+//					if (this.currentColor.b >= duskSky.b) {
+//						this.currentColor.b += bDif * delta * nightRate;
+//					}
+//					if (this.currentColor.r <= duskSky.r && this.currentColor.g >= duskSky.g && this.currentColor.b >= duskSky.b) {
+//						this.duskReached();
+//					}
+//				}
 				this.currentColor.r += rDif * delta * nightRate;
 				this.currentColor.g += gDif * delta * nightRate;
 				this.currentColor.b += bDif * delta * nightRate;
+				if (this.currentColor.b <= nightSky.b) {
+					rDif = (nightSky.r - daySky.r) / 1.5f;
+					gDif = (nightSky.g - daySky.g) / 1.2f;
+					bDif = 0;
+					nightRate = 0.2f;
+				}
 				if (this.currentColor.g <= nightSky.g) {
+					gDif = 0;
+				}
+				if (this.currentColor.r <= nightSky.r) {
 					fullNight = true;
 					this.currentColor = nightSky.cpy();
 				}
-				this.dayPercent = (this.currentColor.g - nightSky.g) / (daySky.g - nightSky.g);
+				
+				this.dayPercent = (this.currentColor.b - nightSky.b) / (daySky.b - nightSky.b);
+				if (dayPercent < 0) this.dayPercent = 0;
 			}
 			else this.dayPercent = 0;
 		}
@@ -119,15 +186,62 @@ public class Background {
 		for (int i = 0; i < CLOUD_COUNT; i++) {
 			clouds[i].x += clouds[i].speed * delta;
 			if (clouds[i].x >= KebabKing.getWidth()) generateCloud(i);
-			this.sunAngle += SUN_ROT_SPEED * delta;
+		}
+
+		this.sunAngle += SUN_ROT_SPEED * delta;
+		
+		// update stars
+		for (int i = 0; i < STAR_COUNT; i++) {
+			if (stars[i].alphaUp) {
+				stars[i].alpha += STAR_ALPHA_RATE * delta;
+				if (stars[i].alpha > 1) {
+					stars[i].alpha = 1;
+					stars[i].alphaUp = false;
+				}
+			}
+			else{
+				stars[i].alpha -= STAR_ALPHA_RATE * delta;
+				if (stars[i].alpha < 0) {
+					stars[i].alpha = 0;
+					stars[i].alphaUp = true;
+				}
+			}
 		}
 		
+		// update plane
+		if (plane != null) {
+			plane.x += KebabKing.getGlobalXFloat(PLANE_SPEED * delta);
+			if (plane.x > KebabKing.getGlobalXFloat(1)) {
+				if (!profile.inventory.adCampaign.isPlane()) {
+					plane = null;
+				}
+				else {
+					plane.x = -planeWidth * 2;
+				}
+			}
+		}
+		else {
+			if (profile.inventory.adCampaign.isPlane()) {
+				plane = new Plane();
+				plane.y = KebabKing.getGlobalYFloat(PLANE_Y);
+				plane.x = -planeWidth * 2;
+			}
+		}
+
 		if (this.active) {
 			// update sun
-			sunX = (timeElapsed * 0.04f) - 0.4f;
+			sunX = (timeElapsed * SUN_SPEED * 0.04f) - 0.4f;
 			sunY = sunX * sunX * sunPathA + sunX * sunPathB + sunPathC;
 		}
 	}
+	
+//	public void duskReached() {
+//		dusk = true;
+//		rDif = (nightSky.r - duskSky.r) / 2;
+//		gDif = nightSky.g - duskSky.g;
+//		bDif = nightSky.b - duskSky.b;
+//		nightRate = 0.1f;
+//	}
 
 	public void draw(SpriteBatch batch) {
 		Gdx.gl.glClearColor(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
@@ -143,7 +257,6 @@ public class Background {
 		
 //		float colDif = (daySky.g - nightSky.g) - (currentColor.g - nightSky.g);
 //		
-		batch.setColor(dayPercent * .2f + .8f, dayPercent * .2f + .8f, dayPercent * .2f + .8f, 1);
 		
 		// draw clouds
 		for (int i = 0; i < CLOUD_COUNT; i++) {
@@ -151,13 +264,37 @@ public class Background {
 			if (clouds[i].type == 2) toDraw = Assets.cloud2;
 			batch.draw(toDraw, clouds[i].x, clouds[i].y, cloudWidth * clouds[i].scale, cloudHeight * clouds[i].scale);
 		}
+		
+		// when dayPercent is 0.5, should be 0
+		// when dayPercent is 0, should be 1
+
+		// draw stars
+		for (int i = 0; i < STAR_COUNT; i++) {
+			batch.setColor(1, 1, 1, stars[i].alpha * Math.min(Math.max((((sunX) - 0.9f)*10), 0), 1));
+			TextureRegion toDraw = Assets.skyStar;
+	
+			// TODO make this screen size dependent.
+			batch.draw(toDraw, stars[i].x, stars[i].y, starWidth * stars[i].scale, starHeight * stars[i].scale);
+		}
+	
+		batch.setColor(orig);
+
+		// draw plane
+		if (plane != null) {
+//			System.out.println("Drawing plane");
+			TextureRegion toDraw = Assets.face5;
+//			System.out.println(plane.x);
+			batch.draw(toDraw, plane.x, plane.y, planeWidth, planeHeight);
+		}
+		
+		batch.setColor(dayPercent * .2f + .8f, dayPercent * .2f + .8f, dayPercent * .2f + .8f, 1);
+		
 		batch.draw(profile.getLocationBG(), 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
 		
 		batch.setColor(orig);
 		// draw the background filling entire screen
 		
 //		drawVanityDecorations(batch);
-	
 	}
 	
 	// draw background vanity decorations
@@ -179,12 +316,20 @@ public class Background {
 		this.cloudWidth = KebabKing.getGlobalX(0.35f);
 		this.cloudHeight = KebabKing.getGlobalY(0.1f);
 				
+		this.starWidth = KebabKing.getGlobalX(0.02f);
+		this.starHeight = KebabKing.getGlobalY(0.01f);
+	
+		this.planeWidth = KebabKing.getGlobalX(0.1f);
+		this.planeHeight = KebabKing.getGlobalY(0.05f);	
+		
 		generateCloud(0);
 		generateCloud(1);
 		generateCloud(2);
 		
 		clouds[2].x = KebabKing.getGlobalX(1.0f / 4);
 		clouds[1].x = KebabKing.getGlobalY(3.0f / 4);
+		
+		generateRandomStars(STAR_COUNT);
 	}
 
 	public void generateCloud(int i) {
@@ -196,5 +341,21 @@ public class Background {
 		this.clouds[i].speed = (float) (Math.random() * 10 + 15);
 		this.clouds[i].scale = (float) (Math.random() * 0.5 + 0.8);
 		this.clouds[i].type = (int) Math.ceil(Math.random()*2);
+	}
+	
+	public void generateRandomStars(int count) {
+		stars = new Star[count];
+		for (int i = 0; i < count; i++) {
+			float xPos = (float) Math.random();
+			float yPos = (float) (Math.random()) * (1 - BG_Y_BOT) + BG_Y_BOT;
+			float size = ((float) Math.random()) + 0.6f;
+			Star star = new Star();
+			star.x = KebabKing.getGlobalXFloat(xPos);
+			star.y = KebabKing.getGlobalYFloat(yPos);
+			star.scale = size;
+			star.alpha = (float) Math.random();
+			star.alphaUp = Math.random() < 0.5;
+			stars[i] = star;
+		}
 	}
 }

@@ -8,21 +8,25 @@ import com.esotericsoftware.kryo.serializers.TaggedFieldSerializer.Tag;
  *
  */
 public class ProfileSettings {
-	@Tag(201) boolean muteMusic = true; // unmuted by default
+	@Tag(201) boolean muteMusic = false; // unmuted by default
 	@Tag(202) boolean muteSound = false; // unmuted by default
 	
 	public void initializeAfterLoad() {
 		// initialize any fields that were empty at load.
+		if (muteMusic) {
+			muteMusic();
+		}
+		else unmuteMusic();
 	}
 	
 	public void muteMusic() {
 		this.muteMusic = true;
-		Assets.music.pause();
+		SoundManager.muteAll();
 	}
 	
 	public void unmuteMusic() {
 		this.muteMusic = false;
-		Assets.music.play();
+		SoundManager.unmuteAll();
 	}
 	
 	public void muteSound() {

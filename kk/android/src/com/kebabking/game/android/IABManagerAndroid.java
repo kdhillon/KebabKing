@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.kebabking.game.OnlinePurchaseManager;
+import com.kebabking.game.OnlinePurchaseHandler;
 import com.kebabking.game.Managers.IABManager;
 import com.google.android.gms.analytics.ecommerce.Product;
 import com.google.android.gms.analytics.ecommerce.ProductAction;
@@ -125,7 +125,7 @@ public class IABManagerAndroid implements IABManager {
     }
 
     private void handlePurchaseSuccess(com.kebabking.game.android.util.Purchase purchase) {
-        OnlinePurchaseManager.handlePurchaseSuccess(purchase.getSku());
+        OnlinePurchaseHandler.handlePurchaseSuccess(purchase.getSku());
 //        System.out.println("Purchase success " + purchase.getSku() + " ");
 //        Product product =  new Product()
 //                .setId(purchase.getSku())

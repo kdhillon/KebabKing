@@ -2,24 +2,30 @@ package com.kebabking.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
+import com.kebabking.game.Purchases.MeatTypes;
 
 public class KitchenScreen extends ActiveScreen {
-	static final float COUNTDOWN_TIME = 10;
+	static final boolean LAST_CUSTOMER_MODE = true;
 	
+	static final String LAST_CUSTOMER_TEXT = "Last customer";
+	static final float LAST_CUSTOMER_FADE = 2;
+	static final float COUNTDOWN_TIME = 10;
+
 	static final int WIDTH  = 12; // approx. 3:4 ratio
 	static final int HEIGHT = 16; // 3:4 ratio approximation
 	static final int BUFFER = 0; // distance between each item
-	
-//	static final float PAUSE_X = 0;
-//	static final float PAUSE_Y = .90f;
-//	static final float PAUSE_WIDTH = 2.1f; // this times unit width
-//	static final float PAUSE_HEIGHT = 1.5f;
 
-	static float DAY_LENGTH = 120; // 2 minutes per day
-//	static final float DAY_LENGTH = 10;
-	
-//	static float TIME_TO_WAIT = 2f;
-	
+	//	static final float PAUSE_X = 0;
+	//	static final float PAUSE_Y = .90f;
+	//	static final float PAUSE_WIDTH = 2.1f; // this times unit width
+	//	static final float PAUSE_HEIGHT = 1.5f;
+
+	static float LAST_CUSTOMER_AFTER = 100; // 2 minutes per day
+	static float DAY_LENGTH = 100; // 2 minutes per day
+	//	static final float DAY_LENGTH = 10;
+
+	//	static float TIME_TO_WAIT = 2f;
+
 	static int UNIT_WIDTH;
 	static int UNIT_HEIGHT;
 
@@ -28,35 +34,38 @@ public class KitchenScreen extends ActiveScreen {
 	float time;
 	boolean wasShutDown;
 
-//	boolean paused = false;
+	//	boolean paused = false;
 
 	float initialMoney; // set to initial money for calculating profits?
-	
-//	float currentMoney;
 
-//	float moneyEarnedToday;
-	
+	//	float currentMoney;
+
+	//	float moneyEarnedToday;
+
 	float totalRevenue;
-	
+
 	float drinkExpenses;
 	float meatExpenses;
-	
+
 	float happyCustomers;
 
 	long roundStartTime;
-	
+
 	int kebabsTrashed = 0;
 	
 	TrashPile tp;
 
 	boolean stillHolding;
+
+	boolean lastCustomer;
+//	boolean lastCustomerDrawn;
 	
 	// A new Kitchen Screen is created every time the player starts a new day.
 	// handles user input and the main render / update loop
 	public KitchenScreen(KebabKing master) {
 		super(master, false);
 		roundStartTime = System.currentTimeMillis();
-		
+
 		this.bg.reset();
 		this.grill.reset(this);
 		this.grill.tutorialMode = false;
@@ -64,14 +73,17 @@ public class KitchenScreen extends ActiveScreen {
 		if (KebabKing.SHORT_DAY) {
 			System.out.println("setting day length to 10");
 			DAY_LENGTH = 10;
+			LAST_CUSTOMER_AFTER = 3;
 		}
-		
-		this.time = DAY_LENGTH;
+
+		if (LAST_CUSTOMER_MODE) 
+			this.time = LAST_CUSTOMER_AFTER;
+		else 
+			this.time = DAY_LENGTH;
 
 		tp = new TrashPile(this);
-		
 
-//		setInputProcessor();
+		//		setInputProcessor();
 
 		// required to have a smooth thing
 		this.render(0);
@@ -88,8 +100,18 @@ public class KitchenScreen extends ActiveScreen {
 		}
 
 		batch.begin();
-		if (time < COUNTDOWN_TIME)
-			DrawUI.countdownTime(batch, time);
+		
+		if (LAST_CUSTOMER_MODE) {
+			if (lastCustomer) {
+				DrawUI.drawLastCustomer(batch, time);
+			}
+		}
+		else {
+			if (time < COUNTDOWN_TIME)
+				DrawUI.countdownTime(batch, time);
+		}
+		
+		
 		batch.end();
 	}
 
@@ -115,14 +137,43 @@ public class KitchenScreen extends ActiveScreen {
 			cm.mousedOver = null;
 		}
 
-		if (ff) {
-			this.time -= 8*delta;
+		if (!TutorialEventHandler.shouldPause()) {
+			if (ff) {
+				this.time -= 8*delta;
+			}
+			else {
+				// countdown
+				this.time -= delta;
+			}
+			if (this.time < 0) {
+				if (LAST_CUSTOMER_MODE) {
+					if (lastCustomer) {
+						if (cm.totalPeopleInLines() == 0) finishDay();
+					}
+				}
+				else {
+					finishDay();
+				}
+			}
 		}
-		else {
-			// countdown
-			this.time -= delta;
+	}
+	
+	public void handleCustomerApproaching() {
+		if (LAST_CUSTOMER_MODE) {
+			if (this.time < 0 && !lastCustomer) {
+				if (KebabKing.SHORT_DAY) {
+					finishDay();
+					return;
+				}
+				lastCustomer = true;
+				// must reset time so drawing of "last customer" will work
+				this.time = 0;
+			}
 		}
-		if (this.time < 0) finishDay();
+	}
+	
+	public boolean forceArrive() {
+		return !lastCustomer && LAST_CUSTOMER_MODE && time < 0;
 	}
 	
 	public float getDrinkBuyPrice() {
@@ -131,12 +182,12 @@ public class KitchenScreen extends ActiveScreen {
 	public float getDrinkSellPrice() {
 		return master.profile.inventory.drinkQuality.getSellPrice();
 	}
-	
+
 	// converts 
 	public static int convertWidth(float width) {
 		return (int) (width * UNIT_WIDTH - 2*BUFFER);
 	}
-	
+
 	public static int convertHeight(int height) {
 		return height * UNIT_HEIGHT - 2*BUFFER;
 	}
@@ -166,7 +217,7 @@ public class KitchenScreen extends ActiveScreen {
 		earnMoney(revCost[0] - revCost[1]);
 		totalRevenue += revCost[0];
 		meatExpenses += revCost[1];
-		
+
 		int served = grill.selectedSet.size();
 		Grill.kebabsServedThisSession += served;
 		grill.removeSelected(); // deletes selected meat from grill;
@@ -174,30 +225,30 @@ public class KitchenScreen extends ActiveScreen {
 	}
 
 	public boolean serveCustomerBeer(Customer customer) {
-//		if (canAfford(getDrinkBuyPrice())) {
-			float moneyEarned = cm.mousedOver.giveBeer();
-			totalRevenue += moneyEarned;
-			
-			// customer doesn't want beer
-			if (moneyEarned == 0) {
-				return false;
-			}
+		//		if (canAfford(getDrinkBuyPrice())) {
+		float moneyEarned = cm.mousedOver.giveBeer();
+		totalRevenue += moneyEarned;
 
-			spendMoney(getDrinkBuyPrice());
-			
-			earnMoney(moneyEarned);
+		// customer doesn't want beer
+		if (moneyEarned == 0) {
+			return false;
+		}
+
+		spendMoney(getDrinkBuyPrice());
+
+		earnMoney(moneyEarned);
 
 		return true;
-//		}
+		//		}
 	}
 
-	public Meat dropMeatOnGrill(Meat.Type type) {
-//		if (!canAfford(Meat.getBuyPrice(type))
-//				|| !grill.open(grill.mousedOver)) return null;
+	public Meat dropMeatOnGrill(MeatTypes.Type type, int index) {
+		//		if (!canAfford(Meat.getBuyPrice(type))
+		//				|| !grill.open(grill.mousedOver)) return null;
 		System.out.println("Dropping meat on grill");
-		Meat meat = grill.dropMeat(type);
-//		if (meat != null) 
-//			spendMoney(Meat.getBuyPrice(type));
+		Meat meat = grill.dropMeat(type, index);
+		//		if (meat != null) 
+		//			spendMoney(Meat.getBuyPrice(type));
 		return meat;
 	}
 
@@ -221,27 +272,28 @@ public class KitchenScreen extends ActiveScreen {
 		return ((KebabKing.getHeight() - y) / UNIT_HEIGHT);
 	}
 
-	// TODO as soon as the policeman walks onto the screen, save the fact that the player was shut down and save.
+	// As soon as the policeman walks onto the screen, save the fact that the player was shut down and save.
 	// this prevents people from quitting the app before it saves.
-	// SAVAGE but necessary
+	// SAVAGE but necessary to prevent bitch boys from cheating
 	public void preShutDown() {
 		this.wasShutDown = true;
+		StatsHandler.policeShutdown();
 		master.profile.shutdownAt = System.currentTimeMillis();
 		master.save();
 	}
-	
+
 	// this is called when the police actually arrives at your stand
 	public void shutdown() {
-//		this.wasShutDown = true;
-//		// also set shutdown start time
-//		master.profile.shutdownAt = System.currentTimeMillis();
-		
+		//		this.wasShutDown = true;
+		//		// also set shutdown start time
+		//		master.profile.shutdownAt = System.currentTimeMillis();
+
 		finishDay();
 	}
-	
+
 	public void finishDay() {	
 		// switch to summary screen
-//		master.platformSpec.sendUserTiming("Round", System.currentTimeMillis() - roundStartTime);
+		//		master.platformSpec.sendUserTiming("Round", System.currentTimeMillis() - roundStartTime);
 		master.endDay();
 	}
 
@@ -251,44 +303,53 @@ public class KitchenScreen extends ActiveScreen {
 		// out of 10
 		int reputation = (int) (2.0 * cm.totalSatisfaction / cm.totalCustomers + 0.5);		
 
-//		if (cm.totalCustomers == 0) return master.profile.currentReputation;
+		//		if (cm.totalCustomers == 0) return master.profile.currentReputation;
 		if (cm.totalCustomers == 0) return 0.5f;
-		
+
 		// out of 5
 		float rep = reputation / 2.0f;
-		
+
 		// boost up if too low
 		if (rep == 0) rep = 0.5f;
 
 		return rep;
 	}
 
+	// this overrides the "onPause" method
 	@Override
 	public void pause() {
-		master.kitchenPause();
+		// this check prevents problems during tutorial
+		if (!DrawUI.notificationActive) {
+			grill.deselectAll();
+			master.kitchenPause();
+		}
+	}
+	
+	public boolean isPaused() {
+		return master.getScreen() == master.pause;
 	}
 
-//	// this is really untrustworthy if we have a UIStage on top.
-//	public void setInputProcessor() {
-//		DrawUI.setInput(new InputAdapter () {
-//			public boolean touchDown (int x, int y, int pointer, int button) {
-////				super.touchDown(x, y, pointer, button);
-//				grill.touchInput(x, y); // handle all types of clicks the same.
-//				return true; // return true to indicate the event was handled
-//			}
-//			public boolean touchUp (int x, int y, int pointer, int button) {
-////				super.touchUp(x, y, pointer, button);
-/////				grill.release(x, y);
-//				// don't trust this for now. finicky
-//				return true; // return true to indicate the event was handled
-//			};
-//		});
-//	}
-	
-//	@Override
-//	public void show() {
-//		super.show();
-////		this.setInputProcessor();
-//	}
-	
+	//	// this is really untrustworthy if we have a UIStage on top.
+	//	public void setInputProcessor() {
+	//		DrawUI.setInput(new InputAdapter () {
+	//			public boolean touchDown (int x, int y, int pointer, int button) {
+	////				super.touchDown(x, y, pointer, button);
+	//				grill.touchInput(x, y); // handle all types of clicks the same.
+	//				return true; // return true to indicate the event was handled
+	//			}
+	//			public boolean touchUp (int x, int y, int pointer, int button) {
+	////				super.touchUp(x, y, pointer, button);
+	/////				grill.release(x, y);
+	//				// don't trust this for now. finicky
+	//				return true; // return true to indicate the event was handled
+	//			};
+	//		});
+	//	}
+
+	//	@Override
+	//	public void show() {
+	//		super.show();
+	////		this.setInputProcessor();
+	//	}
+
 }

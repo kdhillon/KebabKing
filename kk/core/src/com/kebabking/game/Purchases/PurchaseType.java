@@ -1,9 +1,14 @@
 package com.kebabking.game.Purchases;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.esotericsoftware.kryo.serializers.TaggedFieldSerializer.Tag;
+import com.kebabking.game.Assets;
 import com.kebabking.game.ProfileInventory;
+import com.kebabking.game.Purchases.GrillType.Type;
 
 
 // Allows other purchase types to extend this for simplicity
@@ -12,119 +17,159 @@ public class PurchaseType {
 	// stores rounds at which purchaseables unlock
 	public static HashSet<Purchaseable> allPurchaseables = new HashSet<Purchaseable>();
 	public transient Purchaseable[] values; // contains Purchaseable.values()
-//	protected transient static TextureRegion icon;
-//	protected transien
+	//	protected transient static TextureRegion icon;
+	//	protected transien
 	// doesn't need to be saved
 	public String name;
 	public String description;
-	
-	// TODO, actually use this in implementation
-	protected boolean allowMultipleSelect; // can multiple purchaseables be "selected" at once?
-	protected HashSet<Integer> selected;
+	public TextureRegion icon;
 
 	// doesn't need to be serialized
-	
+
 	// needs to be serialized
 	@Tag(401) protected HashSet<Integer> unlocked; 	// items that have been fully unlocked and can be purchased
-	
+
 	// TODO do we really need to save this???
 	@Tag(402) protected HashSet<Integer> levelUnlocked; // items that can be unlocked based on level, 
-//	protected Purchaseable currentQuality;
-	
+	//	protected Purchaseable currentQuality;
+
 	// just store the index. If consumable, this should be -1 unless something is active
-	@Tag(403) protected int currentSelected;
-	
+	@Deprecated @Tag(403) protected int currentSelected;
+
 	// I think we do need to save this.
 	@Tag(404) public ProfileInventory inventory;
 
+	// TODO, actually use this in implementation
+	//	@Deprecated @Tag(405) public int maxSelectable;
+	@Tag(406) protected Deque<Integer> selected;
+
 	public boolean consumable; // should only be used by PurchaseTypeConsumable
-	
+
 	// for kryo (note, init should be called on kryo initialization in extending classes)
-	public PurchaseType() {		
+	public PurchaseType() {
 	}
-	
+
 	// create a new one
-	public PurchaseType(String name, String description, String textureRegionName, Purchaseable[] values) {
-		init(name, description, textureRegionName, values);
+	public PurchaseType(String name, String description, Purchaseable[] values) {
+		init(name, description, values);
 	}
-	
+
 	// create a new one
-	public PurchaseType(ProfileInventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
+	public PurchaseType(ProfileInventory inventory, String name, String description, Purchaseable[] values) {
 		this.inventory = inventory;
-		init(name, description, textureRegionName, values);
+		init(name, description, values);
 	}
-	
-//	// create a new one (with consumable option)
-//	public PurchaseType(ProfileInventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
-//		this.inventory = inventory;
-//		init(name, description, textureRegionName, values, consumable);
-//		setValues(values);
-//	}
-	
-	public void init(String name, String description, String textureRegionName, Purchaseable[] values) { //, boolean consumable) {
+
+	//	// create a new one (with consumable option)
+	//	public PurchaseType(ProfileInventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
+	//		this.inventory = inventory;
+	//		init(name, description, textureRegionName, values, consumable);
+	//		setValues(values);
+	//	}
+
+	public void init(String name, String description, Purchaseable[] values) { //, boolean consumable) {
 		unlocked = new HashSet<Integer>();
 		levelUnlocked = new HashSet<Integer>();
 		this.name = name;
 		this.description = description;
-//		if (textureRegionName != null)
-//			this.icon = Assets.getTextureRegion(textureRegionName);
 		this.values = values;
 		for (Purchaseable p : values)
 			allPurchaseables.add(p);
 		
-//		this.consumable = consumable;
-//		current = 0;
-//		if (consumable) current = -1;
+		String regName = "market/" + name + "_icon";
+		if (Assets.regionExists(regName))
+			this.icon = Assets.getTextureRegion(regName);
+		
+		// default value is 1
+		//		maxSelectable = 1;
+		selected = new ArrayDeque<Integer>();
+		//		this.consumable = consumable;
+		//		current = 0;
+		//		if (consumable) current = -1;
 		setValues(values);
 	}
-	
-	public void allowMultipleSelect() {
-		this.allowMultipleSelect = true;
-		selected = new HashSet<Integer>();
-	}
-	
-//	@Override
+
+	//	public boolean allowsMultipleSelect() {
+	//		return maxSelectable > 1;
+	//	}
+
+	//	public void allowMultipleSelect() {
+	//		this.allowMultipleSelect = true;
+	//		selected = new HashSet<Integer>();
+	//	}
+
+	//	@Override
 	public String getName() {
 		return name;
 	}
 
-//	@Override
+	//	@Override
 	public String getDescription() {
 		return description;
 	}
 
 //	@Override
-//	public TextureRegion getIcon() {
-//		return icon;
-//	}
+	public TextureRegion getIcon() {
+		return icon;
+	}
 
-//	@Override
-	public Purchaseable getCurrentSelected() {
+	//	@Override
+	//	public Purchaseable getCurrentSelected() {
+	//		if (this.consumable) {
+	//			if (selected.size() <= 0) return null;
+	//		}
+	//		if (maxSelectable == 1) return values[selected.getFirst()];
+	////		return values[currentSelected];
+	//		return null;
+	//	}
+
+	//	@Override
+	public Purchaseable getFirstSelected() {
 		if (this.consumable) {
-			if (currentSelected < 0) return null;
+			if (selected.size() <= 0) return null;
 		}
-		return values[currentSelected];
+		// if loading from a file that had "currentselected" as an int
+		else if (this.getMaxSelectable() == 1 && selected.size() == 0) {
+			unlock(Type.values[0]);
+		}
+		if (selected.size() == 0) {
+			selected.add(0);
+		}
+		return values[selected.getFirst()];
+		//		return values[currentSelected];
+		//		return null;
 	}
 	
-//	@Override
+	public Deque<Integer> getSelected() {
+		return selected;
+	}
+
+	//	@Override
 	public boolean availableForUnlock(Purchaseable purchaseable) {
 		return levelUnlocked.contains(getIndexOf(purchaseable));
 	}
 
-//	@Override
+	//	@Override
 	public boolean isUnlocked(Purchaseable purchaseable) {
 		return unlocked.contains(getIndexOf(purchaseable));
 	}
-	
-	public void setCurrent(Purchaseable newCurrent) {
-		if (newCurrent == null) {
-			throw new java.lang.AssertionError();
-		}
-		if (!consumable && !isUnlocked(newCurrent)) throw new java.lang.AssertionError();
-		if (!availableForUnlock(newCurrent)) throw new java.lang.AssertionError();
-		this.currentSelected = getIndexOf(newCurrent);
+
+
+	//	public void setCurrent(Purchaseable newCurrent) {
+	//		if (newCurrent == null) {
+	//			throw new java.lang.AssertionError();
+	//		}
+	//		if (!consumable && !isUnlocked(newCurrent)) throw new java.lang.AssertionError();
+	//		if (!availableForUnlock(newCurrent)) throw new java.lang.AssertionError();
+	//		this.currentSelected = getIndexOf(newCurrent);
+	//	}
+
+	// for multi select?
+	public void setCurrent(Deque<Integer> deque) {
+		this.selected.clear();
+		this.selected.addAll(deque);
 	}
-	
+
 	public int getIndexOf(Purchaseable p) {
 		for (int i = 0; i < values.length; i++) {
 			if (p == values[i])
@@ -132,41 +177,75 @@ public class PurchaseType {
 		}
 		return -1;
 	}
-	
-	public void addToCurrent(Purchaseable toSelect) {
-		if (!isUnlocked(toSelect)) throw new java.lang.AssertionError();
-		this.selected.add(getIndexOf(toSelect));
-	}
-	
-	public void removeFromCurrent(Purchaseable toRemove) {
-		if (!isUnlocked(toRemove)) throw new java.lang.AssertionError();
-		this.selected.remove(toRemove);
-	}
-	
-//	@Override
+
+	//	public void addToCurrent(Purchaseable toSelect) {
+	//		if (!isUnlocked(toSelect)) throw new java.lang.AssertionError();
+	//		this.selected.add(getIndexOf(toSelect));
+	//	}
+
+	//	public void removeFromCurrent(Purchaseable toRemove) {
+	//		if (!isUnlocked(toRemove)) throw new java.lang.AssertionError();
+	//		this.selected.remove(toRemove);
+	//	}
+
+	//	@Override
 	public void unlockByLevel(Purchaseable toUnlock) {
 		this.levelUnlocked.add(getIndexOf(toUnlock));
-		
-//		if (this.storeScreen != null)
-//			this.storeScreen.resetTable(storeTable);
+
+		//		if (this.storeScreen != null)
+		//			this.storeScreen.resetTable(storeTable);
 		// TODO make an announcement!
 	}
 
-//	@Override
+	//	@Override
 	public void unlock(Purchaseable toUnlock) {
 		if (!availableForUnlock(toUnlock)) throw new java.lang.AssertionError();
 		this.unlocked.add(getIndexOf(toUnlock));
-		this.setCurrent(toUnlock);
+		this.addToSelected(toUnlock);
 	}
-	
-//	@Override
+
+	public int addToSelected(Purchaseable toAdd) {
+		return addToSelected(getIndexOf(toAdd));
+	}
+
+	// returns the index that was removed, or -1 if none removed
+	public int addToSelected(int index) {
+		// if already selected, try to remove
+		if (isSelected(index)) {
+			// don't remove if less 1
+			if (this.selected.size() > 1) {
+				this.selected.remove(index);
+				return index;
+			}
+			return -1;
+		}
+		else {
+			System.out.println("Adding " + index + " to selected");
+			int ret = -1;
+			if (selected.size() >= this.getMaxSelectable()) {
+				System.out.println(selected.size() + " >= " + this.getMaxSelectable());
+				ret = selected.removeFirst();
+			}
+			this.selected.add(index);
+			return ret;
+		}
+	}
+
+	public boolean isSelected(int index) {
+		for (Integer i : selected) {
+			if (i == index) return true;
+		}
+		return false;
+	}
+
+	//	@Override
 	public Purchaseable getNext(Purchaseable current, boolean left) {		
 		int currentIndex = -1;
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] == current) currentIndex = i;
 		}
 		int nextIndex;
-				
+
 		if (left) {
 			nextIndex = currentIndex - 1;
 			if (nextIndex < 0) nextIndex = values.length - 1;
@@ -175,13 +254,13 @@ public class PurchaseType {
 			nextIndex = currentIndex + 1;
 			if (nextIndex > values.length - 1) nextIndex = 0;
 		}
-				
+
 		return values[nextIndex];
 	}
-	
+
 	public boolean unlockIfReady(Purchaseable p) {
 		if (inventory == null) {
-			System.out.println("INVENTORY IS NULL IN PURCHASETYPE");
+//			System.out.println("INVENTORY IS NULL IN PURCHASETYPE");
 			return false;
 		}
 		if (inventory.hasUnlockedByLevel(p)) {
@@ -190,9 +269,9 @@ public class PurchaseType {
 		}
 		return false;
 	}
-	
+
 	private void setValues(Purchaseable[] values) {
-//		System.out.println("set values");
+		//		System.out.println("set values");
 		this.values = values;
 		for (Purchaseable p : values) {
 			if (p == null) throw new java.lang.NullPointerException();
@@ -200,9 +279,12 @@ public class PurchaseType {
 			p.setType(this);
 		}
 	}
-	
-//	public void setTable(StoreScreen screen, StoreScreen.TableType table) {
-//		this.storeScreen = screen;
-//		this.storeTable = table;
-//	}
+
+	public int getMaxSelectable() {
+		return 1;
+	}
+	//	public void setTable(StoreScreen screen, StoreScreen.TableType table) {
+	//		this.storeScreen = screen;
+	//		this.storeTable = table;
+	//	}
 }

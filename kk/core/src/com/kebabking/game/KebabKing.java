@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -14,43 +15,46 @@ import com.kebabking.game.Managers.Manager;
 import com.kebabking.game.Purchases.Purchaseable;
 
 public class KebabKing extends Game {
-//	public static final boolean TEST_MODE = false;
-	public static final boolean EXP_CITY = false; // get 300 exp after day
+	//	public static final boolean TEST_MODE = false;
+	public static final boolean EXP_CITY = true; // get 300 exp after day
+	public static final boolean SHORT_DAY = true;
 	public static final boolean LVL_50 = false;
-	public static final boolean SHORT_DAY = false;
-	public static final boolean FORCE_NEW = false;
-	public static final boolean RICH_MODE = false;
+	public static final boolean RICH_MODE = true;
+	public static final boolean FORCE_NEW = true;
+	public static final boolean DISABLE_TUTORIAL = true;
+	public static final boolean SAVE_AFTER_NEW = false;
 	public static final boolean DONT_SAVE = false;
 	public static final boolean VERIFY_SAVE = false;
+	public static final boolean STRICT_MODE = false; // asserts that save files are in right format, and that only one notification is active at once
 
 	public static final String SAVE_FILENAME = "kk.sav";
 	public static final boolean ENGLISH = true;
-	
+
 	// shut down stand for 5 minutes unless they pay the fine
 	public static final long SHUTDOWN_LENGTH_SECONDS = 300;
-//	public static final int SHUTDOWN_LENGTH_SECONDS = 30;
+	//	public static final int SHUTDOWN_LENGTH_SECONDS = 30;
 
 	private static int width;
 	private static int height; 
-	
-//	PlatformSpecific platformSpec;
-	
-//	boolean TUTORIAL_MODE;
+
+	//	PlatformSpecific platformSpec;
+
+	//	boolean TUTORIAL_MODE;
 
 	Kryo kryo;
 
 	SpriteBatch batch; // master spritebatch used for everything
-	
-	ProfileRobust profile; // includes settings, inventory, stats
+
+	public Profile profile; // includes settings, inventory, stats
 
 	// these guys are here so they can be drawn at all times
 	Background bg;
-	Grill grill;
+	public Grill grill;
 	CustomerManager cm;
 
 	// this should be disposed a few seconds after loading mainscreen
 	SplashScreen splash;
-	
+
 	// these three screens are permanent
 	MainMenuScreen mainMenu;
 	MainStoreScreen store;
@@ -59,12 +63,16 @@ public class KebabKing extends Game {
 	CountdownScreen countdown;
 	KitchenScreen kitchen;
 	PauseScreen pause;
+	SettingsScreen settingsScreen;
+
 	SummaryScreen summary; 
-	
+
 	// timing variables
 	public long activityStartTime;
 
 	ActiveScreen marketFromThis;
+
+	Screen settingsFromThis;
 	// Summary Screens are temporary
 
 
@@ -72,28 +80,30 @@ public class KebabKing extends Game {
 	public void create () {
 		System.out.println("local storage path " + Gdx.files.getLocalStoragePath());
 		this.activityStartTime = System.currentTimeMillis();
-		
+
 		this.kryo = new Kryo();
 		kryo.setDefaultSerializer(TaggedFieldSerializer.class);
 
 		// make sure to serailize in this order
-		kryo.register(ProfileRobust.class);//, new TaggedFieldSerializer(kryo, ProfileRobust.class));
+		kryo.register(Profile.class);//, new TaggedFieldSerializer(kryo, ProfileRobust.class));
 		kryo.register(ProfileSettings.class);//, new TaggedFieldSerializer(kryo, ProfileSettings.class));
 		kryo.register(ProfileStats.class);//, new TaggedFieldSerializer(kryo, ProfileStats.class));
 		kryo.register(ProfileInventory.class);//, new TaggedFieldSerializer(kryo, ProfileInventory.class));
-		
+
 		// load splash screen first to load assets!
 		System.out.println("loading splash");
 		splash = new SplashScreen(this);
 		this.setScreen(splash);
 
 		// set up iab and ads
-		OnlinePurchaseManager.init(this);
+		OnlinePurchaseHandler.init(this);
 		AdsHandler.init(this);
 		SocialMediaHandler.init(this);
+		TutorialEventHandler.init(this);
+		StatsHandler.init(this);
 
 		// allow catching of back button on Android
-        Gdx.input.setCatchBackKey(true);
+		Gdx.input.setCatchBackKey(true);
 	}
 
 	public void initializeAssets() {
@@ -108,42 +118,51 @@ public class KebabKing extends Game {
 			long loadStartTime = System.currentTimeMillis();
 			// load a new game
 			if (this.load()) {
-//				this.TUTORIAL_MODE = false;
+				//				this.TUTORIAL_MODE = false;
 				Manager.analytics.sendUserTiming("Load", System.currentTimeMillis() - loadStartTime);
 			}
 			else {
 				// if absolutely no save file found, launch a completely new profile.	
-//				this.TUTORIAL_MODE = true;
-				
+				//				this.TUTORIAL_MODE = true;
+
 				// save exists, at least try loading parts of it?
 				// TODO
-				System.out.println("Loading failed, creating a new profile");
+				System.out.println("Loading failed because Kryo is null, creating a new profile");
+				if (STRICT_MODE) 
+					throw new java.lang.AssertionError();
 				createFreshProfile();
 			}
 		}
 		else {
 			System.out.println("No save found, starting completely new profile");
+			if (STRICT_MODE)
+				throw new java.lang.AssertionError();
+
 			// start a new game
 			// launch tutorial screen if first launch
 			createFreshProfile();
-			
-//			this.TUTORIAL_MODE = true;
+			profile.initializeAfterLoad(this);	
+
+			//			TUTORIAL_MODE = true;
 		}
+		TutorialEventHandler.initializeAfterLoad();
 	}
-	
+
 	public void createFreshProfile() {
-		this.profile = new ProfileRobust(this);
+		this.profile = new Profile(this);
 		this.profile.settings = new ProfileSettings();
 		this.profile.stats = new ProfileStats();
 		this.profile.inventory = new ProfileInventory(profile);
-		
+
 		// test just for now
-//		try {
-//			save();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		if (SAVE_AFTER_NEW) {
+			try {
+				save();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void initializeRemaining(long startTime) {
@@ -163,14 +182,13 @@ public class KebabKing extends Game {
 		// load customer manager which will always be present
 		cm = new CustomerManager(this);
 
-		// if music is supposed to be playing, play it
-		if (!profile.settings.muteMusic) Assets.music.play();
-
 		// initialize screen
 		mainMenu = new MainMenuScreen(this);
 		setScreen(mainMenu); // have to set this immediately, otherwise height and width won't load properly
 
 		store = new MainStoreScreen(this);
+
+		settingsScreen = new SettingsScreen(this);
 
 		bg.initialize(); // have to do  this after setScreen, so height and width work
 
@@ -181,12 +199,12 @@ public class KebabKing extends Game {
 		Manager.analytics.sendEventHit("App", "Started");
 	}
 
-	public void initialize(long startTime) {
-		initializeAssets();
-		initializeProfile();
-		initializeRemaining(startTime);
-	}
-	
+	//	public void initialize(long startTime) {
+	//		initializeAssets();
+	//		initializeProfile();
+	//		initializeRemaining(startTime);
+	//	}
+
 	public void disposeSplash() {
 		splash.specialDispose();
 	}
@@ -196,9 +214,9 @@ public class KebabKing extends Game {
 
 		// open android fileoutputstream in internal storage
 		//		FileOutputStream internal = openFileOutput("filename.sav", Context.MODE_PRIVATE);
-		
+
 		long startTime = System.currentTimeMillis();
-	
+
 		Output output = null;
 		try {
 			output = new Output(Manager.file.getOutputStream());
@@ -217,9 +235,9 @@ public class KebabKing extends Game {
 		kryo.writeObject(output, this.profile.inventory);
 
 		output.close();
-		
+
 		if (VERIFY_SAVE) {
-			ProfileRobust p = getSavedProfile();
+			Profile p = getSavedProfile();
 			if (p == null) throw new java.lang.AssertionError();
 		}
 
@@ -227,17 +245,17 @@ public class KebabKing extends Game {
 		Manager.analytics.sendUserTiming("Save", System.currentTimeMillis() - startTime);
 	}
 
-//	public void deleteProfile() {
-//		platformSpec.deleteProfile();
-//		this.profile = new Profile();
-//		System.out.println("deleting profile");
-//		this.initialize();
-//	}
+	//	public void deleteProfile() {
+	//		platformSpec.deleteProfile();
+	//		this.profile = new Profile();
+	//		System.out.println("deleting profile");
+	//		this.initialize();
+	//	}
 
 	public void deleteSave() {
 		Manager.file.deleteProfile();
 	}
-	
+
 	public boolean saveFileExists() {
 		if (FORCE_NEW)
 			return false;
@@ -246,7 +264,7 @@ public class KebabKing extends Game {
 	}
 
 	// useful for testing whether save is actually saving properly
-	private ProfileRobust getSavedProfile() {		
+	private Profile getSavedProfile() {		
 		Input input = null;
 		try {
 			input = new Input(Manager.file.getInputStream());
@@ -259,11 +277,11 @@ public class KebabKing extends Game {
 		// the order of loading/saving these is important.
 		Date date;
 		// profile is most important, so load first.
-		ProfileRobust profile;
+		Profile profile;
 		ProfileSettings settings;
 		ProfileStats stats;
 		ProfileInventory inventory;
-		
+
 		// Try loading all things separately:
 		try {
 			date = kryo.readObject(input, Date.class);
@@ -274,18 +292,20 @@ public class KebabKing extends Game {
 			e.printStackTrace();
 			System.out.println("Date in wrong format");
 		}
-		
+
 		// Load profile
 		try {
-			profile = kryo.readObject(input, ProfileRobust.class);
+			profile = kryo.readObject(input, Profile.class);
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			System.out.println("Profile in wrong format, creating new!");
-			profile = new ProfileRobust();
+			profile = new Profile();
+			
+			if (STRICT_MODE) throw new java.lang.AssertionError();
 		}
-		
+
 		// Load settings
 		try {
 			settings = kryo.readObject(input, ProfileSettings.class);
@@ -295,8 +315,10 @@ public class KebabKing extends Game {
 			e.printStackTrace();
 			System.out.println("Settings in wrong format, creating new!");
 			settings = new ProfileSettings();
+			
+			if (STRICT_MODE) throw new java.lang.AssertionError();
 		}
-		
+
 		// Load stats
 		try {
 			stats = kryo.readObject(input, ProfileStats.class);
@@ -306,8 +328,10 @@ public class KebabKing extends Game {
 			e.printStackTrace();
 			System.out.println("Stats in wrong format, creating new!");
 			stats = new ProfileStats();
+			
+			if (STRICT_MODE) throw new java.lang.AssertionError();
 		}
-		
+
 		// Load inventory
 		try {
 			inventory = kryo.readObject(input, ProfileInventory.class);
@@ -317,53 +341,54 @@ public class KebabKing extends Game {
 			e.printStackTrace();
 			System.out.println("Inventory in wrong format, creating new!");
 			inventory = new ProfileInventory(profile);
+			
+			if (STRICT_MODE) throw new java.lang.AssertionError();
 		}
-		
+
 		input.close();
-		
+
 		// everything has been initialized by now
 		profile.settings = settings;
 		profile.stats = stats;
 		profile.inventory = inventory;
 		inventory.profile = profile;
-		
+
 		return profile;
 	}
-	
+
 	public boolean load() {
 		if (kryo == null) return false;
-		ProfileRobust profile = getSavedProfile();
-		profile.initializeAfterLoad(this);
-	
-
+		Profile profile = getSavedProfile();
 		this.profile = profile;
-		
+		profile.initializeAfterLoad(this);
+
+
 		System.out.println("save loaded successfully");
 
 		return true;
 
-//		try {
-//			profile = kryo.readObject(input, ProfileSettings.class);
-//		}
-//		catch (Exception e) {	
-//			
-//			System.out.println("save file in wrong format, creating new profile");
-//			input.close();
-//			deleteSave();
-//			// Create fresh profile
-//			profile = new Profile(this);
-//		}
+		//		try {
+		//			profile = kryo.readObject(input, ProfileSettings.class);
+		//		}
+		//		catch (Exception e) {	
+		//			
+		//			System.out.println("save file in wrong format, creating new profile");
+		//			input.close();
+		//			deleteSave();
+		//			// Create fresh profile
+		//			profile = new Profile(this);
+		//		}
 		// update profile 
-//		this.profile = profile;	
-//		this.profile.master = this;
-////		
-//		if (TutorialScreen.FORCE_TUTORIAL) {
-//			this.profile.tutorialNeeded = true;
-//		}
-		
+		//		this.profile = profile;	
+		//		this.profile.master = this;
+		////		
+		//		if (TutorialScreen.FORCE_TUTORIAL) {
+		//			this.profile.tutorialNeeded = true;
+		//		}
+
 		// update main menu screen stuff
-//		this.initialize();
-		
+		//		this.initialize();
+
 	}
 
 	// shutdown the stand
@@ -381,19 +406,23 @@ public class KebabKing extends Game {
 	public void startDay() {
 		if (countdown != null)
 			countdown.dispose();
-//		if (profile.tutorialNeeded) {
-//			kitchen = new TutorialScreen(this);
-//		}
-//		else {
+		//		if (profile.tutorialNeeded) {
+		//			kitchen = new TutorialScreen(this);
+		//		}
+		//		else {
 		kitchen = new KitchenScreen(this);
-//		}
+		//		}
 		pause = new PauseScreen(this);
 
 		this.setScreen(kitchen);		
-		
+
 		long muted = 0;
 		if (profile.settings.muteMusic) muted = 1;
-		
+
+		if (profile.stats.daysWorked == 1) TutorialEventHandler.handleSecondDayBegun();
+		else if (profile.stats.daysWorked == 2) TutorialEventHandler.handleThirdDayBegun();
+		else if (profile.stats.daysWorked == 3) TutorialEventHandler.handleFourthDayBegun();
+
 		Manager.analytics.sendEventHit("Day", "Start", "Muted", muted);
 	}
 
@@ -401,23 +430,26 @@ public class KebabKing extends Game {
 	public void endDay() {
 		kitchen.dispose();
 		pause.dispose();
-		
+
 		// saving here should be redundant with creating summary screen, which saves after exp is loaded.
 		//
-//		try {
-//			save();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+		//		try {
+		//			save();
+		//		} catch (FileNotFoundException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
+		if (profile.stats.daysWorked == 0) TutorialEventHandler.handleFirstDayComplete();
+		else if (profile.stats.daysWorked == 1) TutorialEventHandler.handleSecondDayComplete();
+		else if (profile.stats.daysWorked == 2) TutorialEventHandler.handleThirdDayComplete();
+
 		summary = new SummaryScreen(this, kitchen);
-//		summary = new SummaryScreen(kitchen);
-//		if (profile.tutorialNeeded) profile.tutorialNeeded = false;
+		//		summary = new SummaryScreen(kitchen);
+		//		if (profile.tutorialNeeded) profile.tutorialNeeded = false;
 		kitchen = null; // hopefully save some memory here
 		this.setScreen(summary);
 	}
-	
+
 	public void toggleMute() {
 		if (!profile.settings.muteMusic) {
 			profile.settings.muteMusic();
@@ -431,16 +463,34 @@ public class KebabKing extends Game {
 
 	public void kitchenPause() {
 		this.setScreen(pause);
+		SoundManager.pauseAll();
 	}
 
 	public void kitchenUnpause() {
 		this.setScreen(kitchen);
+		SoundManager.resumeAll();
 	}
 
-//	public void summaryToStore() {
-//		this.setScreen(store);
-//	}
-	
+	public void switchToSettings() {
+		// DON'T ALLOW SWITCH FROM SETTINGS TO SETTINGS
+		if (this.getScreen() == settingsScreen) return;
+
+		this.settingsFromThis = this.getScreen();
+		if (settingsScreen == null) throw new java.lang.AssertionError();
+		this.setScreen(settingsScreen);
+		System.out.println("Just switched to settings");
+	}
+
+	public void settingsBack() {
+		if (settingsFromThis == null) throw new java.lang.AssertionError();
+		this.setScreen(settingsFromThis);
+		this.settingsFromThis = null;
+	}
+
+	//	public void summaryToStore() {
+	//		this.setScreen(store);
+	//	}
+
 	public void leaveStore() {
 		// go to summary screen
 		if (marketFromThis != null) {
@@ -453,12 +503,12 @@ public class KebabKing extends Game {
 			bg.setToDay();
 		}
 	}
-	
-//	public void storeToMain() {
-//		mainMenu.reset();
-//		this.setScreen(mainMenu);
-//		bg.setToDay();
-//	}
+
+	//	public void storeToMain() {
+	//		mainMenu.reset();
+	//		this.setScreen(mainMenu);
+	//		bg.setToDay();
+	//	}
 
 	public void summaryToMain() {		
 		if (summary != null) summary.dispose();
@@ -473,15 +523,15 @@ public class KebabKing extends Game {
 		this.setScreen(store);
 		store.switchTo(p);
 	}
-	
+
 	public void mainToStore() {
-		 this.setScreen(store);
+		this.setScreen(store);
 	}
 
-//	public void setPlatformSpecific(PlatformSpecific ps) {
-//		this.platformSpec = ps;
-//		Analytics.init(ps);
-//	}
+	//	public void setPlatformSpecific(PlatformSpecific ps) {
+	//		this.platformSpec = ps;
+	//		Analytics.init(ps);
+	//	}
 
 	public static void setWidth(int toSet) {
 		width = toSet;
@@ -495,9 +545,12 @@ public class KebabKing extends Game {
 	public static int getHeight() {
 		return height;
 	}
-	
+
 	public static int getGlobalX(float percentX) {
 		return (int) (percentX * width);
+	}
+	public static float getGlobalXFloat(float percentX) {
+		return (percentX * width);
 	}
 	public static int getGlobalY(float percentY) {
 		return (int) (percentY * height);

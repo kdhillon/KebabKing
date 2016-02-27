@@ -107,8 +107,8 @@ public class StoreScreen extends ActiveScreen {
 //	Table currentPurchaseableTable;
 //	Table[] purchaseableTables;
 	
-	PurchaseType[] foodTypes = new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.drinkQuality,};
-	PurchaseType[] grillTypes = new PurchaseType[] {master.profile.inventory.grillSize, master.profile.inventory.grillStand, master.profile.inventory.stickType};
+	PurchaseType[] foodTypes = new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.drinkQuality, master.profile.inventory.skewerType};
+	PurchaseType[] grillTypes = new PurchaseType[] {master.profile.inventory.grillSize, master.profile.inventory.grillType, master.profile.inventory.grillStand};
 	PurchaseType[] locationTypes = new PurchaseType[] {master.profile.inventory.locationType};
 	PurchaseType[] adTypes = new PurchaseType[] {master.profile.inventory.adCampaign};
 	
@@ -273,6 +273,13 @@ public class StoreScreen extends ActiveScreen {
 		switchToMain();
 	}
 
+	public void updateAll() {
+		foodTable.markAllForUpdate();
+		grillTable.markAllForUpdate();;
+		mapTable.markAllForUpdate();
+		adsTable.markAllForUpdate();
+	}
+	
 	// update the purchasetype subtable for this purchaseable
 	public void updateTableFor(Purchaseable p) {
 		StoreSubtable subtable = getSubtableForType(p.getType());
@@ -315,8 +322,6 @@ public class StoreScreen extends ActiveScreen {
 		return this.getProfile().inventory;
 	}
 
-
-
 	// This table should have an array of PurchaseTypes that are selectable
 	// it should have an index corresponding to which one is selected.
 
@@ -349,22 +354,26 @@ public class StoreScreen extends ActiveScreen {
 		case food:
 //			preparePurchaseTypes(foodTypes);
 			newTable = foodTable;
+			foodTable.updateCurrent();
 //			name = "Food";
 			break;
 		case grill:
 //			preparePurchaseTypes(grillTypes);
 			newTable = grillTable;
 			name = "Grill";
+			grillTable.updateCurrent();
 			break;
 		case map:
 //			preparePurchaseTypes(locationTypes);
 			newTable = mapTable;
 			name = "Map";
+			mapTable.updateCurrent();
 			break;
 		case ads:
 //			preparePurchaseTypes(adTypes);
 			newTable = adsTable;
 			name = "Ads";
+			adsTable.updateCurrent();
 			break;
 		case jade:
 			newTable = jadeTable;
@@ -414,7 +423,7 @@ public class StoreScreen extends ActiveScreen {
 		s.switchToPurchaseType(type);
 	}
 
-	public ProfileRobust getProfile() {
+	public Profile getProfile() {
 		return master.profile;
 	}
 	

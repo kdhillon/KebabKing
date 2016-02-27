@@ -6,8 +6,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         /// this is what actually stores the important version information
-        versionCode 19
-        versionName "0.985"
+        versionCode 21
+        versionName "0.988"
         // This is crucial for preventing DexDebug errors
         multiDexEnabled true
     }

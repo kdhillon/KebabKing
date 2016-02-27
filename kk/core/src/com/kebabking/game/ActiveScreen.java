@@ -41,7 +41,7 @@ public class ActiveScreen extends ScreenTemplate {
 		grill.draw(batch, delta);
 		
 		// force tint
-		if (DrawUI.notificationActive) {
+		if (DrawUI.shouldTint()) {
 			tint = Assets.gray;
 			alpha = DrawUI.GRAY_ALPHA;
 		}
@@ -49,7 +49,7 @@ public class ActiveScreen extends ScreenTemplate {
 		if (tint != null)
 			DrawUI.tint(batch, tint, alpha);
 		
-		if (uiStage != null && !DrawUI.notificationActive) {
+		if (uiStage != null && !DrawUI.shouldTint()) {
 			batch.end();
 			uiStage.draw();
 			batch.begin();
@@ -79,6 +79,8 @@ public class ActiveScreen extends ScreenTemplate {
 	}
 	
 	public void update(float delta, boolean ff) {
+		if (TutorialEventHandler.shouldPause()) return;
+		
 		bg.act(delta);
 		grill.act(delta);
 		cm.act(delta);
