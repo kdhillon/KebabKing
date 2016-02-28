@@ -21,7 +21,7 @@ import com.kebabking.game.Purchases.MeatTypes;
 //		Tapping chest does nothing
 //		Beer must be dragged onto customers.
 
-// 		ADVANCED (TAP) CONTROL SCHEME:
+// 		[DEPRECATED] ADVANCED (TAP) CONTROL SCHEME:
 //  	Tapping a chest opens the chest. 
 //		Trying to drag the chest does nothing. Chest opens on release.
 //		Tapping an open grill spot places a meat at that spot. 
@@ -37,8 +37,11 @@ import com.kebabking.game.Purchases.MeatTypes;
 public class Grill {
 	public static int kebabsTrashedThisSession = 0;
 	public static int kebabsServedThisSession = 0;
+	
+	// number of spots on the right of grill that are for warming meat.
+	public static int WARMING_SIZE = 2;
 
-	static final float TIME_TO_TRASH = 0.5f;
+	static final float TIME_TO_TRASH = 0.4f;
 	static final boolean ADVANCED_CONTROLS = false;
 
 	//	static final boolean DISABLE_DRAG_TO_PLACE = false;
@@ -48,12 +51,13 @@ public class Grill {
 	static final int GRILL_WIDTH = 12;
 	static final float GRILL_HEIGHT = 3.5f;
 
-	static final float GRILL_GRATE_PERCENT = 0.67f;
+	static final float GRILL_GRATE_PERCENT = 0.78f;
 
 	static final int GRILL_PIECE_WIDTH = 1;
 	static final float GRILL_PIECE_HEIGHT = GRILL_HEIGHT;
 	static final double CHUANR_PER_PIECE = 1;
-	static final float CHUANR_HEIGHT = 2.5f;
+	static final float CHUANR_HEIGHT = 2.8f;
+	static final float LIFTED_MEAT = 0.5f;
 
 	// bottom values
 	static final int BOX_HOR_WIDTH = 3;
@@ -83,7 +87,7 @@ public class Grill {
 	static final float STAND_WIDTH = .5f;
 	static final float STAND_HEIGHT = .18f;
 
-	static final float FIRE_PAD_X = 0.01f;
+	static final float FIRE_PAD_X = 0.015f;
 	static final float FIRE_PAD_TOP = 0.005f;
 
 	static final float BRUSH_MAX_ROT = 30f;
@@ -269,13 +273,17 @@ public class Grill {
 
 		for (int i = 0; i < meat.length; i++) {
 			Meat m = meat[i];
-			if (m != null && !(m.type.doubleWidth && m.index2 == i))
+			if (m != null && !(m.type.doubleWidth && m.index2 == i) && !isWarming(i))
 				m.act(delta);
 		}
 		this.time += delta;
 
 		// play sound
 
+	}
+	
+	public boolean isWarming(int index) {
+		return profile.inventory.grillType.isWarming() && index >= getGrillSize() - WARMING_SIZE;
 	}
 
 	public MeatTypes.Type getType(Selected select) {
@@ -339,6 +347,12 @@ public class Grill {
 		if (!ADVANCED_CONTROLS && meatBoxSelected() && this.indexToPlaceMeatAt < 0) {
 			drawFloatingMeat(batch, delta);
 		}
+		
+		// draw floating meat below finger
+		if (drawingFloatingSelected()) {
+			drawFloatingSelectedMeat(batch, delta);
+		}
+
 
 		if (selected == Selected.BEER && !ADVANCED_CONTROLS)
 			drawFloatingBeer(batch, delta);
@@ -370,28 +384,41 @@ public class Grill {
 
 		int xCount = grillLeftX;
 
+		int index = 0;
+		
+		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
 		// draw left
-		batch.draw(fire, draw_x + KebabKing.getGlobalX(FIRE_PAD_X), draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+		batch.draw(fire, draw_x + KebabKing.getGlobalX(FIRE_PAD_X), draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width * 2 - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+		index++;
+		index++;
+//		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
 		// draw two fires
-		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+//		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 		//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(getGrillLeft(), draw_x, draw_y, draw_width * 2, draw_height); 
 		xCount++;
 		xCount++;
-
+		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
+		
 		// draw middle
 		while (xCount < GRILL_WIDTH - grillLeftX - 4) {
+			if (xCount % 2 == 0) {
+				batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width * 2, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+			}
 			draw_x = (xCount + GRILL_X) * KitchenScreen.UNIT_WIDTH;
-			batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 			//			batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 			batch.draw(getGrillMiddle(), draw_x, draw_y, draw_width, draw_height);
 			xCount++;
+			index++;
+			if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
 		}
 
 		// draw right		 
 		draw_x = (xCount + GRILL_X) * KitchenScreen.UNIT_WIDTH;
-		batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
-		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+		batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width * 2 - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+		index++;
+		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
+//		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 		//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(getGrillRight(), draw_x, draw_y, draw_width*2, draw_height); 
 	}
@@ -407,6 +434,9 @@ public class Grill {
 	}
 	public Animation getGrillFire() {
 		return getGrillType().fire;
+	}
+	public Animation getGrillFireWarming() {
+		return getGrillType().warmingFire;
 	}
 	
 
@@ -431,7 +461,37 @@ public class Grill {
 		MeatTypes.Type type = getType(this.selected);		
 		toDraw = Assets.getMeatTexture(type, Meat.State.RAW, false);
 
-		Meat.draw(batch, toDraw, type.doubleWidth, Gdx.input.getX() - Meat.getWidth()/2, (KebabKing.getHeight() - Gdx.input.getY()) - Meat.getHeight() / 2, profile);
+		Meat.draw(batch, toDraw, type.doubleWidth, Gdx.input.getX() - Meat.getWidth()/2, (KebabKing.getHeight() - Gdx.input.getY()) - Meat.getHeight() / 2, profile, 0.8f);
+	}
+	
+	public boolean drawingFloatingSelected() {
+		return !ADVANCED_CONTROLS && meatSelected() && !mousedOver() && holding;
+	}
+	
+	public void drawFloatingSelectedMeat(SpriteBatch batch, float delta) {
+		TextureRegion toDraw = null;
+
+		// space meat 
+		int meatCount = this.selectedSet.size();
+		int totalWidth = meatCount;
+		for (Meat m : selectedSet) {
+			if (m.type.doubleWidth) totalWidth++;
+		}
+		
+		float offsetDelta = 1.0f/meatCount;
+		
+		float scaleEffect = 0.8f;
+		
+		float offset = -totalWidth * offsetDelta / 2;
+		
+		for (int i = 0; i < meatCount; i++) {
+			MeatTypes.Type type = selectedSet.get(i).type;
+			toDraw = Assets.getMeatTexture(selectedSet.get(i));
+
+			Meat.draw(batch, toDraw, type.doubleWidth, Gdx.input.getX() - Meat.getWidth()/2 + (int) (offset * Meat.getWidth()), (KebabKing.getHeight() - Gdx.input.getY()) - Meat.getHeight() / 2, profile, scaleEffect);
+			offset += offsetDelta;
+			if (type.doubleWidth) offset += offsetDelta;
+		}	
 	}
 
 	public void drawFloatingBeer(SpriteBatch batch, float delta) {
@@ -624,7 +684,7 @@ public class Grill {
 			batch.draw(Assets.spiceBoxDisabled,	spice_x, spice_y, spice_width, spice_height);			
 		}
 		else {
-			batch.draw(Assets.spiceBox,	spice_x, spice_y, spice_width, spice_height);
+			batch.draw(getGrillType().spice, spice_x, spice_y, spice_width, spice_height);
 
 			if (selected != Selected.SPICE)
 				batch.draw(Assets.paintBrushSide,	spice_x, spice_y, spice_width, spice_height);
@@ -653,6 +713,7 @@ public class Grill {
 		if (grillIndex < 0 || grillIndex > meat.length) throw new java.lang.ArrayIndexOutOfBoundsException();
 		this.selected = Selected.NONE;
 		this.selectedSet.add(meat[grillIndex]);
+		meat[grillIndex].selected = true;
 		//		this.boxSelectedNotHeld = false;
 		this.meatSelectedNotHeld = false;
 		this.justSelected = grillIndex;
@@ -724,7 +785,7 @@ public class Grill {
 				dropSpice();
 			}
 			else if (this.selected == Selected.NONE || ((this.meatBoxSelected() || this.selected == Selected.BEER) && !placedWhileHeld && this.selected != Selected.BEER)) {
-				if ((ADVANCED_CONTROLS || !meatBoxSelected()) && !selectedSet.contains(meat[mousedOver])) {
+				if ((ADVANCED_CONTROLS || !meatBoxSelected()) && !meat[mousedOver].selected) {
 					if (disableSelectingMeat()) return;
 					this.selected = Selected.NONE;
 					//					selectedSet.add(meat[mousedOver]);
@@ -864,6 +925,7 @@ public class Grill {
 		// remove on release, don't remove if just selected
 		if (removeOnRelease >= 0) {
 			selectedSet.remove(meat[removeOnRelease]);
+			meat[removeOnRelease].selected = false;
 			removeOnRelease = -1;
 		}
 
@@ -1042,11 +1104,20 @@ public class Grill {
 		return  (int) (KitchenScreen.UNIT_HEIGHT * (GRILL_Y + grillLeftY));
 	}
 
+	private int getLiftedYForIndex(int i) {
+		return  (int) (KitchenScreen.UNIT_HEIGHT * (GRILL_Y + grillLeftY + LIFTED_MEAT));
+	}
+	
 	public void drawMeat(SpriteBatch batch) {
 		for (Meat m : meat) {
 			if (m == null) continue;
 			int x = getXForIndex(m.index1);
 			int y = getYForIndex(m.index1);
+			
+			if (m.selected) {
+				if (drawingFloatingSelected()) continue;
+				y = getLiftedYForIndex(m.index1);
+			}
 			m.draw(batch, x, y, profile);
 		}
 		//		System.out.println(meatBoxSelected);
@@ -1090,27 +1161,27 @@ public class Grill {
 			//			if (this.selected == Selected.LAMB) //  && this.canFit(Meat.Type.LAMB))
 			//				toDraw = Assets.getMeatTexture(Meat.Type.LAMB, Meat.State.RAW, false);			
 
-			if (toDraw != null) {
-				Meat.draw(batch, toDraw, ghostType.doubleWidth, getXForIndex(indexToPlaceMeatAt), getYForIndex(indexToPlaceMeatAt), profile);
+			if (toDraw != null) { 
+				Meat.draw(batch, toDraw, ghostType.doubleWidth, getXForIndex(indexToPlaceMeatAt), getYForIndex(indexToPlaceMeatAt), profile, 1);
 			}
 			batch.setColor(1, 1, 1, 1);
 			//				batch.draw(toDraw, getXForIndex(indexToPlaceMeatAt), getYForIndex(indexToPlaceMeatAt),  (int) (GRILL_PIECE_WIDTH * widthFactor * KitchenScreen.UNIT_WIDTH / 
 			//						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
 		}
-		if (this.meatSelected()) {
-			//			Color orig = batch.getColor();
-			for (Meat m : selectedSet) {
-				//				Color myColor = Color.WHITE;
-				//				myColor.a = .2f;
-				//				batch.setColor(myColor);
-				batch.draw(Assets.whiteAlpha, getXForIndex(m.index1), getYForIndex(m.index1) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
-						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
-				if (m.type.doubleWidth) 
-					batch.draw(Assets.whiteAlpha, getXForIndex(m.index2), getYForIndex(m.index2) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
-							CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
-			}
-			//			batch.setColor(orig);
-		}
+//		if (this.meatSelected()) {
+//			//			Color orig = batch.getColor();
+//			for (Meat m : selectedSet) {
+//				//				Color myColor = Color.WHITE;
+//				//				myColor.a = .2f;
+//				//				batch.setColor(myColor);
+//				batch.draw(Assets.whiteAlpha, getXForIndex(m.index1), getYForIndex(m.index1) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
+//						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
+//				if (m.type.doubleWidth) 
+//					batch.draw(Assets.whiteAlpha, getXForIndex(m.index2), getYForIndex(m.index2) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
+//							CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
+//			}
+//			//			batch.setColor(orig);
+//		}
 	}
 
 	// drops meat at mousedOver index
@@ -1243,7 +1314,11 @@ public class Grill {
 	}
 
 	public void deselectAll() {
+		for (Meat m : selectedSet) {
+			m.selected = false;
+		}
 		selectedSet.clear();
+		
 	}
 	
 	public boolean open(int index) {

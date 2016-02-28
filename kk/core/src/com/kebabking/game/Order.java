@@ -285,7 +285,7 @@ public class Order {
 	public Table createSubTable(TextureRegion icon, boolean spice, int quantity) {
 		Table subTable = new Table();
 		Label count;		
-		count = new Label("" + quantity, Assets.generateLabelStyleUIHeavyWhite(26, Assets.nums));
+		count = new Label("" + quantity, Assets.generateLabelStyleUIHeavyWhite(22, Assets.nums));
 		if (!spice) {
 			count.setColor(MainStoreScreen.FONT_COLOR);
 		}
@@ -294,10 +294,10 @@ public class Order {
 		int iconPad = KebabKing.getGlobalX(0.01f);
 
 		// Make sure same or less than above
-		int iconHeight = KebabKing.getGlobalY(0.03f);
+		int iconHeight = KebabKing.getGlobalY(0.025f);
 		int iconWidth = icon.getRegionWidth() * iconHeight / icon.getRegionHeight();
 		subTable.add(new Image(icon)).width(iconWidth).height(iconHeight).padLeft(iconPad);
-		if (spice) subTable.setBackground(new TextureRegionDrawable(Assets.red));
+		if (spice) subTable.setBackground(new TextureRegionDrawable(Assets.redBright));
 
 		//		int subTableWidth = ChuanrC.getGlobalX(0.13f);
 		//		int subTableHeight = ChuanrC.getGlobalY(0.04f);

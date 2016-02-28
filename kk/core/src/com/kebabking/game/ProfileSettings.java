@@ -14,26 +14,13 @@ public class ProfileSettings {
 	public void initializeAfterLoad() {
 		// initialize any fields that were empty at load.
 		if (muteMusic) {
-			muteMusic();
+			SoundManager.muteMusic();
 		}
-		else unmuteMusic();
-	}
-	
-	public void muteMusic() {
-		this.muteMusic = true;
-		SoundManager.muteAll();
-	}
-	
-	public void unmuteMusic() {
-		this.muteMusic = false;
-		SoundManager.unmuteAll();
-	}
-	
-	public void muteSound() {
-		this.muteSound = true;
-	}
-	
-	public void unmuteSound() {
-		this.muteSound = false;
+		else SoundManager.unmuteMusic();
+		
+		if (muteSound) {
+			SoundManager.muteSound();
+		}
+		else SoundManager.unmuteSound();
 	}
 }

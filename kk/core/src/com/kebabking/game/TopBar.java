@@ -490,18 +490,4 @@ public class TopBar extends Table {
 		System.out.println("SETTINGS");
 		master.switchToSettings();
 	}
-
-	public static void clickMute(Profile profile) {
-		System.out.println("Mutings");
-		master.toggleMute();
-		setProperMuteStyle(profile);
-	}
-
-	public static void setProperMuteStyle(Profile profile) {
-		if (profile.settings.muteMusic)
-			muteButton.setStyle(Assets.getButtonStyleMuted());
-		else 
-			muteButton.setStyle(Assets.getButtonStyleUnmuted());
-	}
-
 }

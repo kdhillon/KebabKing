@@ -16,7 +16,7 @@ import com.kebabking.game.ProfileInventory;
 // user has one of these
 // later: split this into separate ones for chicken beef, lamb
 public class AdCampaign extends PurchaseTypeConsumable {
-	static String name = "AD CAMPAIGN";
+	static String name = "ADVERTISING";
 	static String desc = "Marketing campaigns bring more customers to your stand. Using them at the right time can be the key to success!";
 	
 	private static Customer.CustomerType all = null;
@@ -30,10 +30,10 @@ public class AdCampaign extends PurchaseTypeConsumable {
 					// name,		round, 		jade, 	time, description
 //		new Campaign ("Sign", 			1,		10,				0,	 		5,		1.5f, 		OLD_MAN,		"icon_ads",	"A nice kebab sign!"), 
 		new Campaign ("Poster Ads", 	4,		1, 		120,	1.25f,		all, 		"poster",	"Advertise with posters!"),
+		new Campaign ("Neon Sign",		19,		5,		200,	2.0f,		new Customer.CustomerType[] {STUDENT, FOREIGNER, TOURIST, MAN, WOMAN}, "sign", "Billy Mays here!", CampaignSpecial.SIGN),
 		new Campaign ("Newspaper Ads",	5,		3,	 	160,	1.5f, 		new Customer.CustomerType[] {BUSINESSMAN, OLD_MAN}, 	"poster",	 "Get in print!"), 
 		new Campaign ("Radio Ads",		12,		3,		180,	1.5f, 		new Customer.CustomerType[] {TOURIST, OLD_MAN, OLD_WOMAN},	 	"poster",  "Kebab FM!"),
 		new Campaign ("Online Ads", 	18,		4,		200,	1.5f,		all,		"poster",	 "Technology!"),
-		new Campaign ("Neon Sign",		19,		5,		200,	2.0f,		new Customer.CustomerType[] {STUDENT, FOREIGNER, TOURIST, MAN, WOMAN}, "sign", "Billy Mays here!", CampaignSpecial.SIGN),
 		new Campaign ("TV Ads",			20,		6,		240,	2.4f,		all,		 "poster",	 "Billy Mays here!"),
 		new Campaign ("T-Shirts",		22,		7,		300,	3.4f,		STUDENT,	 "poster",	 "Billy Mays here!", CampaignSpecial.TSHIRTS),
 		new Campaign ("Tourist Brochure",30,	8,		300,	2.5f,		new Customer.CustomerType[] {FOREIGNER, FAT_MAN, TOURIST}, "poster",	 "Billy Mays here!"),

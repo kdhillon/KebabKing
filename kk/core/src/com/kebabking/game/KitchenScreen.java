@@ -77,7 +77,7 @@ public class KitchenScreen extends ActiveScreen {
 		}
 
 		if (LAST_CUSTOMER_MODE) 
-			this.time = LAST_CUSTOMER_AFTER;
+			this.time = LAST_CUSTOMER_AFTER * master.profile.inventory.grillStand.getLengthBoost();
 		else 
 			this.time = DAY_LENGTH;
 
@@ -287,7 +287,6 @@ public class KitchenScreen extends ActiveScreen {
 		//		this.wasShutDown = true;
 		//		// also set shutdown start time
 		//		master.profile.shutdownAt = System.currentTimeMillis();
-
 		finishDay();
 	}
 

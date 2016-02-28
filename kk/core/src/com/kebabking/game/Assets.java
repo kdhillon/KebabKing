@@ -76,19 +76,6 @@ public class Assets {
 //	static Skin purchaseableTableSkin;
 
 	static TextureRegion title;
-	
-//	static TextureRegion grillMid;
-//	static TextureRegion grillLeft;
-//	static TextureRegion grillRight;
-	
-//	static TextureRegion grillBgMid;
-//	static TextureRegion grillBgLeft;
-//	static TextureRegion grillBgRight;
-	
-//	static TextureRegion grillCoals;
-//	static Animation grillFire;
-	
-//	static Animation jadeRain;
 
 	static public class CustomerTextures {
 		Animation idle;
@@ -118,7 +105,7 @@ public class Assets {
 //	static TextureRegion beefBoxOpen;
 //	static TextureRegion chickenBoxOpen;
 //	static TextureRegion lambBoxOpen;
-	static TextureRegion spiceBox;
+//	static TextureRegion spiceBox;
 	static TextureRegion spiceBoxDisabled;
 
 //	static TextureRegion beefIcon;
@@ -205,6 +192,7 @@ public class Assets {
 	static TextureRegion jadeBoxPlay;
 	
 	static TextureRegion red;
+	static TextureRegion redBright;
 	static TextureRegion yellow;
 
 	static NinePatchDrawable roundUp;
@@ -685,7 +673,7 @@ public class Assets {
 		//		store = getTexture("store");
 		//		quit = getTexture("quit");
 		
-		spiceBox = getTextureRegion("grill/grill-05");
+//		spiceBox = getTextureRegion("grill/grill-05");
 		spiceBoxDisabled = getTextureRegion("grill/grill-06");
 		
 //		beefBox = getTextureRegion("grill/Cooler-21");
@@ -766,6 +754,7 @@ public class Assets {
 		jadeBox = getTextureRegion("screens/jadeBox");
 
 		red = getTextureRegion("screens/red");
+		redBright = getTextureRegion("red");
 		yellow = getTextureRegion("topbar/yellow");
 		
 		
@@ -1152,6 +1141,22 @@ public class Assets {
 		NinePatchDrawable np = new NinePatchDrawable(Assets.gray9PatchSmall);
 		bs.up = np;
 		bs.down = np;
+		return bs;
+	}
+	
+	public static ButtonStyle getButtonStyleMusic() {
+		ButtonStyle bs = new ButtonStyle();
+		bs.up = new TextureRegionDrawable(getTextureRegion("screens/music_on"));
+		bs.down = new TextureRegionDrawable(getTextureRegion("screens/music_on"));
+		bs.disabled = new TextureRegionDrawable(getTextureRegion("screens/music_off"));
+		return bs;
+	}
+	
+	public static ButtonStyle getButtonStyleSound() {
+		ButtonStyle bs = new ButtonStyle();
+		bs.up = new TextureRegionDrawable(getTextureRegion("screens/sound_on"));
+		bs.down = new TextureRegionDrawable(getTextureRegion("screens/sound_on"));
+		bs.disabled = new TextureRegionDrawable(getTextureRegion("screens/sound_off"));
 		return bs;
 	}
 	

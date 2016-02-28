@@ -64,4 +64,8 @@ public class ProfileStats {
 			spiceCustomerServed = true;
 		}
 	}
+	
+	public boolean tutorialComplete() {
+		return secondCustomerServed;
+	}
 }

@@ -36,6 +36,8 @@ public class Meat {
 	
 	int index1;
 	int index2;
+	
+	boolean selected;
 
 	// create a raw meat on the grill 
 	public Meat(MeatTypes.Type type, Grill grill) {
@@ -80,27 +82,27 @@ public class Meat {
 		return  (int) (KitchenScreen.UNIT_HEIGHT * Grill.CHUANR_HEIGHT);
 	}
 	
-	public static void draw(SpriteBatch batch, TextureRegion meatTexture, boolean chicken, int x, int y, Profile profile) {
+	public static void draw(SpriteBatch batch, TextureRegion meatTexture, boolean chicken, int x, int y, Profile profile, float scale) {
 		TextureRegion stickTexture = Assets.getStickTexture(profile);
 
 		// First draw meat
 		int width = getWidth();
 		int height = getHeight();
 
-		batch.draw(stickTexture, x, y, width, KitchenScreen.UNIT_HEIGHT * Grill.GRILL_PIECE_HEIGHT);
+		batch.draw(stickTexture, x, y, width * scale, KitchenScreen.UNIT_HEIGHT * Grill.GRILL_PIECE_HEIGHT * scale);
 
 		if (chicken) {
-			batch.draw(stickTexture, x + KitchenScreen.UNIT_WIDTH, y, width, KitchenScreen.UNIT_HEIGHT * Grill.GRILL_PIECE_HEIGHT);
+			batch.draw(stickTexture, x + KitchenScreen.UNIT_WIDTH * scale, y, width * scale, KitchenScreen.UNIT_HEIGHT * Grill.GRILL_PIECE_HEIGHT * scale);
 			width *= 2;
 		}
 
-		batch.draw(meatTexture, x, y + KitchenScreen.UNIT_HEIGHT * (Grill.GRILL_PIECE_HEIGHT - Grill.CHUANR_HEIGHT), width, height);
+		batch.draw(meatTexture, x, y + KitchenScreen.UNIT_HEIGHT * (Grill.GRILL_PIECE_HEIGHT - Grill.CHUANR_HEIGHT), width * scale, height * scale);
 	}
 	
 	public void draw(SpriteBatch batch, int x, int y, Profile profile) {
 		TextureRegion meatTexture = Assets.getMeatTexture(this);
 		if (meatTexture == null) return;
-		draw(batch, meatTexture, this.type.doubleWidth, x, y, profile);
+		draw(batch, meatTexture, this.type.doubleWidth, x, y, profile, 1);
 	}
 	
 	public float getBuyPrice() {

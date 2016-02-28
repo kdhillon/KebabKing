@@ -14,8 +14,9 @@ public class MeatTypes extends PurchaseType {
 				//			name		buy		sell	cook burn	double	veg
 				new Type ("Beef", 		2f, 	3.5f,  	8, 	12, 	false, false),
 				new Type ("Lamb", 		1.5f, 	3f,  	7, 	10, 	false, false),
-				new Type ("Chicken", 	2.5f, 	4f,  	5, 	8,  	true, false),
-//				new Type ("Beef", 		2f, 	3.5f,  	8, 	12, 	false, false),
+				new Type ("Chicken",	 	2.5f, 	4f,  	5, 	8,  	true, false),
+				new Type ("Squid", 		2f, 	3.5f,  	8, 	12, 	false, false),
+				new Type ("Fish", 	2.5f, 	4f,  	5, 	8,  	true, false),
 //				new Type ("Lamb", 		2f, 	3.5f,  	8, 	12, 	false, false),
 		};
 		

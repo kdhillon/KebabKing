@@ -83,6 +83,8 @@ public class DrawUI {
 	static int violationTimeMins;
 	static int violationTimeSecs;
 	
+	static Projectile[] proj;
+	
 	// for unlock notifications
 //	static SummaryScreen summaryScreen;
 	
@@ -160,11 +162,25 @@ public class DrawUI {
 		
 //		master.shutdownAt = System.currentTimeMillis();
 //		launchPoliceNotification();
+		
+		proj = new Projectile[10];
 	}
-	
+
 	
 	public static void drawFullUI(float delta, SpriteBatch batch, Profile profile) {
 		TopBar.update(delta, profile);
+		
+//		for (int i = 0; i < proj.length; i++) {
+//			if (proj[i] == null) {
+//				proj[i] = new Projectile(0, 0, false);
+////				break;
+//			}
+//			if (proj[i] != null) {
+//				proj[i].update(delta);
+//				proj[i].draw(batch);
+//				if (proj[i].shouldDestroy) proj[i] = null;
+//			}
+//		}
 	
 //		updateCoinCashStrings(delta, profile);
 
@@ -710,7 +726,7 @@ public class DrawUI {
 		
 		// contains youve unlocked and all unlocks
 		Table unlocksTable = new Table();
-		unlocksTable.setBackground(new NinePatchDrawable(Assets.gray9PatchSmall));
+		unlocksTable.setBackground(new NinePatchDrawable(Assets.gray9PatchSmallThin));
 		
 		Table topPart = new Table();
 		

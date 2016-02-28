@@ -242,7 +242,7 @@ public class TutorialEventHandler {
 	
 	// first burn
 	public static void handleBurn() {
-		if (getStats().burntMeatThrownAway || meatBurnt) return;
+		if (getStats().burntMeatThrownAway || meatBurnt || !getStats().tutorialComplete()) return;
 
 		DrawUI.launchTutorialNotification("Burnt Meat", "Oh no! This meat has burned!", "It's ok, we can handle this. Select the meat and hold your finger off the grill to put it in the trash!", Assets.getTextureRegion("screens/tutorial_burnt"));
 
@@ -261,7 +261,7 @@ public class TutorialEventHandler {
 	}
 	
 	public static void handleServeRaw() {
-		if (getStats().servedRaw) return;
+		if (getStats().servedRaw || !getStats().tutorialComplete()) return;
 		
 		DrawUI.launchTutorialSuccessNotification("Oh no!", "", "Serving raw meat might make your customers sick!\nBe sure to cook your meat fully before serving!", Assets.faceSick);
 		getStats().servedRaw = true;

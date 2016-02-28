@@ -17,11 +17,11 @@ import com.kebabking.game.Purchases.Purchaseable;
 public class KebabKing extends Game {
 	//	public static final boolean TEST_MODE = false;
 	public static final boolean EXP_CITY = true; // get 300 exp after day
-	public static final boolean SHORT_DAY = true;
+	public static final boolean SHORT_DAY = false;
 	public static final boolean LVL_50 = false;
-	public static final boolean RICH_MODE = true;
+	public static final boolean RICH_MODE = false;
 	public static final boolean FORCE_NEW = true;
-	public static final boolean DISABLE_TUTORIAL = true;
+	public static final boolean DISABLE_TUTORIAL = false;
 	public static final boolean SAVE_AFTER_NEW = false;
 	public static final boolean DONT_SAVE = false;
 	public static final boolean VERIFY_SAVE = false;
@@ -101,6 +101,7 @@ public class KebabKing extends Game {
 		SocialMediaHandler.init(this);
 		TutorialEventHandler.init(this);
 		StatsHandler.init(this);
+		SoundManager.init(this);
 
 		// allow catching of back button on Android
 		Gdx.input.setCatchBackKey(true);
@@ -448,17 +449,6 @@ public class KebabKing extends Game {
 		//		if (profile.tutorialNeeded) profile.tutorialNeeded = false;
 		kitchen = null; // hopefully save some memory here
 		this.setScreen(summary);
-	}
-
-	public void toggleMute() {
-		if (!profile.settings.muteMusic) {
-			profile.settings.muteMusic();
-			Manager.analytics.sendEventHit("Volume", "Mute");
-		}
-		else {
-			profile.settings.unmuteMusic();
-			Manager.analytics.sendEventHit("Volume", "Unmute");
-		}
 	}
 
 	public void kitchenPause() {

@@ -565,11 +565,6 @@ public class Customer implements Comparable<Customer> {
 			startArriving();
 			return;
 		}
-		
-		if (cm.master.kitchen != null && cm.master.kitchen.forceArrive()) {
-			startArriving();
-			return;
-		}
 
 		
 		if (this.policeShutdown) {
@@ -594,9 +589,14 @@ public class Customer implements Comparable<Customer> {
 		float maxAtOnce = cm.master.profile.getCurrentReputation();
 		
 		if (cm.peopleInLine(lineChoice) >= CustomerManager.MAX_IN_LINE ||
-				cm.totalPeopleInLines() >= maxAtOnce - 1 ||
-				!wantsChuanr) {
-			action = CustomerAction.PASS_END;
+				cm.totalPeopleInLines() >= maxAtOnce - 1) {
+			if (cm.master.kitchen != null && cm.master.kitchen.forceArrive()) {
+				return;
+			}
+			else if (!wantsChuanr) {
+				action = CustomerAction.PASS_END;
+			
+			}
 		}
 		else {
 			startArriving();
@@ -666,6 +666,8 @@ public class Customer implements Comparable<Customer> {
 		satisfaction = (int) (((((waitTimeFactor + accuracyFactor) * 4 / 2)) + 1) * cm.profile.inventory.skewerType.getSatBoost());
 		//		System.out.println("total satisfaction: " + satisfaction);
 
+		satisfaction = Math.min(5, satisfaction);
+		
 		// calculate if the person gets sick or not
 		double sickChance = .8;
 
@@ -677,7 +679,7 @@ public class Customer implements Comparable<Customer> {
 		cm.totalCustomers++;
 		cm.totalSatisfaction += satisfaction;
 
-		if (this.sick) {
+		if (this.sick && canShutDown()) {
 			float generatePoliceNextProb = POLICE_SHUTDOWN_BASE;
 			
 			// for now, if they've played enough make it harder
@@ -695,6 +697,10 @@ public class Customer implements Comparable<Customer> {
 		
 		System.out.println("Playing leaving sounds");
 		SoundManager.playLeavingSound(type, satisfaction, sick);
+	}
+	
+	public boolean canShutDown() {
+		return cm.profile.stats.tutorialComplete();
 	}
 
 	public void finishLeaving() {

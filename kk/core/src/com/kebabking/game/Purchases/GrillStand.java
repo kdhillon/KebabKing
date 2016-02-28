@@ -7,7 +7,7 @@ import com.kebabking.game.ProfileInventory;
 //this class contains the user's current grill Stand
 public class GrillStand extends PurchaseType {	
 	static String name = "GRILL STAND";
-	static String grillStandDescription = "Change your grill stand!";
+	static String grillStandDescription = "Better grill stands extend the length of your day!";
 
 	// Specific Stands that you might own 
 	// Using a static class allows us to extend simplepurchaseable, but still basically be an enum.
@@ -15,10 +15,10 @@ public class GrillStand extends PurchaseType {
 		public static final Stand[] values = new Stand[] {
 								//    round, coins, desc, dayLengthBoost
 				new Stand("Metal Stand", 0,  0f, 0, 1.0f, "Simple metal frame", "grill_stand-01", "grill_stand_thumb-06"),
-				new Stand("Wooden Table",17, 0f, 5, 1, "A nice oak table", "grill_stand-03", "grill_stand_thumb-08"),
-				new Stand("Metal Table", 25, 0f, 10, 1, "Durable steel table", "grill_stand-02", "grill_stand_thumb-07"),
-				new Stand("Bicycle",	 34, 0f, 15, 1, "Light and agile", "grill_stand-04", "grill_stand_thumb-09"),
-				new Stand("Motorcycle",  43, 0f, 20, 1, "Makes you look cool!", "grill_stand-05", "grill_stand_thumb-10"),
+				new Stand("Wooden Table",17, 0f, 5, 1.1f, "A nice oak table", "grill_stand-03", "grill_stand_thumb-08"),
+				new Stand("Metal Table", 25, 0f, 10, 1.2f, "Durable steel table", "grill_stand-02", "grill_stand_thumb-07"),
+				new Stand("Bicycle",	 34, 0f, 15, 1.3f, "Light and agile", "grill_stand-04", "grill_stand_thumb-09"),
+				new Stand("Motorcycle",  43, 0f, 20, 1.4f, "Awesome!", "grill_stand-05", "grill_stand_thumb-10"),
 		};
 	
 		public TextureRegion back;
@@ -44,5 +44,10 @@ public class GrillStand extends PurchaseType {
 	// for kryo
 	public GrillStand() {
 		super(name, grillStandDescription, Stand.values);
+	}
+	
+	
+	public float getLengthBoost() {
+		return ((GrillStand.Stand) this.getFirstSelected()).dayLengthBoost;
 	}
 };

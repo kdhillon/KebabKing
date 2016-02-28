@@ -5,27 +5,33 @@ import com.badlogic.gdx.audio.Sound;
 public class SoundManager {
 	static float MUTE_VOL = 0f;
 	
-//	static float SIZZLE_VOL = 0.4f;
-//	static float MUSIC_VOL = 0.7f;
-//	static float ORDER_VOL = 1f;
+	static float SIZZLE_VOL = 0.4f;
+	static float MUSIC_VOL = 0.7f;
+	static float ORDER_VOL = 1f;
 	
-	static float SIZZLE_VOL = 0.0f;
-	static float MUSIC_VOL = 0.0f;
-	static float ORDER_VOL = 0f;	
+//	static float SIZZLE_VOL = 0.0f;
+//	static float MUSIC_VOL = 0.0f;
+//	static float ORDER_VOL = 0f;	
 	
-	static boolean muted = false;
+//	static boolean getSettings().muteMusic;
+//	static boolean getSettings().muteMusic;
 	
-	static ProfileSettings profileSettings;
+	static KebabKing master;
+	
 	static boolean sizzlePlaying = false;
 	static boolean musicPlaying = false;
 	
-	public static void init(Profile profile) {
-		profileSettings = profile.settings;
+	public static void init(KebabKing masterIn) {
+		master = masterIn;
+	}
+	
+	public static ProfileSettings getSettings() {
+		return master.profile.settings;
 	}
 	
 	public static void playSizzle() {
 		if (!sizzlePlaying) {
-			if (muted)
+			if (getSettings().muteSound)
 				Assets.sizzle.loop(MUTE_VOL);
 			else 
 				Assets.sizzle.loop(SIZZLE_VOL);
@@ -41,17 +47,30 @@ public class SoundManager {
 		}
 	}
 	
-	public static void muteAll() {
-		muted = true;
+	public static void muteSound() {
+		System.out.println("Mute sound");
+		getSettings().muteSound = true;
 		Assets.sizzle.setVolume(0, MUTE_VOL);
-		Assets.mainTheme.setVolume(MUTE_VOL);
 	}
 	
-	public static void unmuteAll() {
-		muted = false;
+	public static void unmuteSound() {
+		System.out.println("unMute sound");
+		getSettings().muteSound = false;
 		Assets.sizzle.setVolume(0, SIZZLE_VOL);
+	}
+	
+	public static void muteMusic() {
+		System.out.println("Mute music");
+		getSettings().muteMusic = true;
+		Assets.mainTheme.setVolume(MUTE_VOL);
+	}
+
+	public static void unmuteMusic() {
+		System.out.println("unMute music");
+		getSettings().muteMusic = false;
 		Assets.mainTheme.setVolume(MUSIC_VOL);
 	}
+
 	
 	public static void pauseAll() {
 		Assets.mainTheme.pause();
