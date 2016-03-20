@@ -7,11 +7,11 @@ public class OnlinePurchaseHandler {
 
 	static class PurchaseableOnline {
 		public static final PurchaseableOnline[] values = new PurchaseableOnline[] {
-				new PurchaseableOnline("PEASANT PACK", "peasant_pack", 10, 0, 0.99),
-				new PurchaseableOnline("VENDOR PACK", "vendor_pack", 25, 300, 1.99),
-				new PurchaseableOnline("MERCHANT PACK", "merchant_pack", 50, 500, 2.99),
-				new PurchaseableOnline("TYCOON PACK", "tycoon_pack", 400, 1000, 9.99),
-				new PurchaseableOnline("KEBAB KING PACK", "kebab_king_pack", 1000, 2500, 19.99),
+				new PurchaseableOnline("PEASANT PACK", "peasant_pack", 10, 0, 0.99f),
+				new PurchaseableOnline("VENDOR PACK", "vendor_pack", 25, 300, 1.99f),
+				new PurchaseableOnline("MERCHANT PACK", "merchant_pack", 50, 500, 2.99f),
+				new PurchaseableOnline("TYCOON PACK", "tycoon_pack", 400, 1000, 9.99f),
+				new PurchaseableOnline("KEBAB KING PACK", "kebab_king_pack", 1000, 2500, 19.99f),
 //				new PurchaseableOnline("TEST PACK", "android.test.purchased", 1000, 2500, 19.99),
 		};
 
@@ -19,10 +19,10 @@ public class OnlinePurchaseHandler {
 		public String productID;
 		public int jade;
 		public float cash;
-		public double price;
+		public float price;
 
-		private PurchaseableOnline(String name, String productID, int coins, float cash, double price) {
-			this.name = name;
+		private PurchaseableOnline(String name, String productID, int coins, float cash, float price) {
+			this.name = Assets.strings.get(productID);
 			this.productID = productID;
 			this.jade = coins;
 			this.cash = cash;

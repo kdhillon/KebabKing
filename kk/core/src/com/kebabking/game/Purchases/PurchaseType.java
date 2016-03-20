@@ -60,21 +60,28 @@ public class PurchaseType {
 		init(name, description, values);
 	}
 
-	//	// create a new one (with consumable option)
-	//	public PurchaseType(ProfileInventory inventory, String name, String description, String textureRegionName, Purchaseable[] values) {
-	//		this.inventory = inventory;
-	//		init(name, description, textureRegionName, values, consumable);
-	//		setValues(values);
-	//	}
-
 	public void init(String name, String description, Purchaseable[] values) { //, boolean consumable) {
 		unlocked = new HashSet<Integer>();
 		levelUnlocked = new HashSet<Integer>();
-		this.name = name;
-		this.description = description;
+		this.name = Assets.strings.get(name);
+		this.description = Assets.strings.get(description);
 		this.values = values;
-		for (Purchaseable p : values)
+		for (Purchaseable p : values) {
 			allPurchaseables.add(p);
+			// way too hacky
+			if (this.getName().equals(Assets.strings.get("location"))) continue;
+			if (p.unlockAtLevel() <= 0) System.out.println(p.getName());
+			if (LocationType.UNLOCKS_ONLY_WITH_LOCATIONS && LocationType.getLocationAt(p.unlockWithLocation()) == null) throw new java.lang.AssertionError("purchaseable needs to be unlocked with a location");
+		}
+		
+		// this is code for checking unlock levels
+//		int[] levelUnlockCount = new int[51];
+//		for (Purchaseable p : allPurchaseables) {
+//			if (p.unlockAtLevel() > 0) levelUnlockCount[p.unlockAtLevel()]++;
+//		}
+//		for (int i = 2; i < 51; i++) {
+//			System.out.println(i + ": " + levelUnlockCount[i]);
+//		}
 		
 		String regName = "market/" + name + "_icon";
 		if (Assets.regionExists(regName))
@@ -135,6 +142,11 @@ public class PurchaseType {
 		if (selected.size() == 0) {
 			selected.add(0);
 		}
+		
+		if (selected.getFirst() > values.length - 1) {
+			selected.remove(selected.getFirst());
+		}
+		
 		return values[selected.getFirst()];
 		//		return values[currentSelected];
 		//		return null;
@@ -154,17 +166,7 @@ public class PurchaseType {
 		return unlocked.contains(getIndexOf(purchaseable));
 	}
 
-
-	//	public void setCurrent(Purchaseable newCurrent) {
-	//		if (newCurrent == null) {
-	//			throw new java.lang.AssertionError();
-	//		}
-	//		if (!consumable && !isUnlocked(newCurrent)) throw new java.lang.AssertionError();
-	//		if (!availableForUnlock(newCurrent)) throw new java.lang.AssertionError();
-	//		this.currentSelected = getIndexOf(newCurrent);
-	//	}
-
-	// for multi select?
+	// for multi select
 	public void setCurrent(Deque<Integer> deque) {
 		this.selected.clear();
 		this.selected.addAll(deque);
@@ -178,23 +180,9 @@ public class PurchaseType {
 		return -1;
 	}
 
-	//	public void addToCurrent(Purchaseable toSelect) {
-	//		if (!isUnlocked(toSelect)) throw new java.lang.AssertionError();
-	//		this.selected.add(getIndexOf(toSelect));
-	//	}
-
-	//	public void removeFromCurrent(Purchaseable toRemove) {
-	//		if (!isUnlocked(toRemove)) throw new java.lang.AssertionError();
-	//		this.selected.remove(toRemove);
-	//	}
-
 	//	@Override
 	public void unlockByLevel(Purchaseable toUnlock) {
 		this.levelUnlocked.add(getIndexOf(toUnlock));
-
-		//		if (this.storeScreen != null)
-		//			this.storeScreen.resetTable(storeTable);
-		// TODO make an announcement!
 	}
 
 	//	@Override
@@ -233,7 +221,9 @@ public class PurchaseType {
 
 	public boolean isSelected(int index) {
 		for (Integer i : selected) {
-			if (i == index) return true;
+			if (i == index) {
+				return true;
+			}
 		}
 		return false;
 	}

@@ -29,7 +29,7 @@ public class CountdownScreen extends ActiveScreen  {
 
 	// first displays daily goal for a few seconds, then counts down to start round
 	public CountdownScreen(KebabKing master) {
-		super(master, true);
+		super(master, true, "Countdown");
 
 //		uiStage.setDebugAll(true);
 

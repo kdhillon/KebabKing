@@ -1,7 +1,5 @@
 package com.kebabking.game;
 
-import java.util.LinkedList;
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.esotericsoftware.kryo.serializers.TaggedFieldSerializer.Tag;
 import com.kebabking.game.Managers.Manager;
@@ -124,6 +122,7 @@ public class Profile {
 		}
 		if (gameQuitDuringShare) {
 			SocialMediaHandler.shareSuccess();
+			StatsHandler.shareCrashedButRewarded();
 		}
 	}
 	
@@ -132,14 +131,15 @@ public class Profile {
 		validateMoney();
 		this.cash += money;
 		validateMoney();
-		master.store.storeScreen.updateAll();
+//		master.store.storeScreen.updateAll();
 	}
 
 	public void giveCoins(int coins) {
 		validateCoins();
 		this.coins += coins;
 		validateCoins();
-		master.store.storeScreen.updateAll();
+//		master.store.storeScreen.updateAll();
+		StatsHandler.earnJade(coins);
 	}
 	
 	public long getViolationSecondsRemaining() {
@@ -210,7 +210,7 @@ public class Profile {
 		return currentReputation;
 	}
 	
-	public int getCurrentRound() {
+	public int getCurrentDay() {
 		return this.stats.daysWorked + 1;
 	}
 	
@@ -263,14 +263,15 @@ public class Profile {
 	public void spendCoins(int coins) {
 		this.coins -= coins;
 		if (coins < 0) throw new java.lang.AssertionError();
-		master.store.storeScreen.updateAll();
+//		master.store.storeScreen.updateAll();
+		StatsHandler.spendJade(coins);
 //		updateCoinsString();
 	}
 	
 	public void spendCash(float cash) {
 		this.cash -= cash;
 		if (cash < 0) throw new java.lang.AssertionError();
-		master.store.storeScreen.updateAll();
+//		master.store.storeScreen.updateAll();
 //		updateCashString();
 	}
 	
@@ -292,24 +293,24 @@ public class Profile {
 			
 			System.out.println("You are now at level " + level + "!");
 
-			Manager.analytics.sendEventHit("Player", "Level " + level + " reached at round", "", (long) this.getCurrentRound());
+			Manager.analytics.sendEventHit("Player", "Level " + level + " reached at round", "", (long) this.getCurrentDay());
 
-			LinkedList<Purchaseable> unlocked = new LinkedList<Purchaseable>();
 			for (Purchaseable p : PurchaseType.allPurchaseables) {
 				if (p.unlockAtLevel() == this.level) {
-					// TODO enable
-					unlocked.add(p);
-					master.store.storeScreen.updateTableFor(p);
-//					master.store.storeScreen.initializeTables();
+					p.getType().unlockIfReady(p);
+					master.store.storeScreen.updatePurchaseableAfterUnlock(p);
 				}
 			}
-			if (unlocked.size() > 0) 
-				DrawUI.launchUnlockNotification(unlocked);
 		}
+		StatsHandler.onLevelUp();
 	}
 	
 	public int getNextExp() {
 		return EXP_TABLE[level+1];
+	}
+	
+	public static int getExpNeededFor(int i) {
+		return EXP_TABLE[i];
 	}
 	
 	public int getExp() {

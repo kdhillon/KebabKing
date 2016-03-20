@@ -14,7 +14,7 @@ public class Background {
 //	static final Color duskSky = new Color(255f/256, 225f/256, 135f/256, 1);
 	static final Color nightSky = new Color(.1f, .1f, .2f, 1);
 	static final float nightStartTime = 15; // when night transition starts
-	static final int CLOUD_COUNT = 3;
+	static final int CLOUD_COUNT = 5;
 	static final int STAR_COUNT = 50;
 	static final float STAR_ALPHA_RATE = 0.3f;
 	
@@ -28,6 +28,8 @@ public class Background {
 //	static final float PLANE_WIDTH = 0.1f;
 //	static final float PLANE_HEIGHT = 0.05f;
 	static final float PLANE_SPEED = 0.05f;
+
+	static final float FLASH_LENGTH = 4f;
 	
 	// background based on where the player is, what time of day, etc.
 	float timeElapsed;
@@ -35,6 +37,8 @@ public class Background {
 //	TextureRegion bg; 
 	Profile profile;
 
+	TextureRegion currentBg;
+	
 	Color currentGoal;
 	Color currentColor;
 
@@ -60,6 +64,8 @@ public class Background {
 	float planeHeight;
 	
 	boolean active;
+	
+//	boolean sign; //is neon sign drawn
 	
 	Cloud[] clouds;
 	
@@ -97,6 +103,13 @@ public class Background {
 	float sunPathA = -.25f;
 	float sunPathB = 0.1f;
 	float sunPathC = 0.9f;
+
+	float signWidth;
+	float signHeight;
+	float sign_y;
+	
+	static float flashCountdown;
+	static Color flashColor;
 	
 	public Background(Profile profile) {
 		this.timeElapsed = 0;
@@ -109,6 +122,10 @@ public class Background {
 		setToDay();	
 		
 		sunSize = KebabKing.getGlobalX(SUN_SIZE);
+		
+		signWidth = KebabKing.getWidth();
+		signHeight = signWidth *  Assets.neonSign.getKeyFrame(0).getRegionHeight() / Assets.neonSign.getKeyFrame(0).getRegionWidth();
+		sign_y = KebabKing.getGlobalYFloat(0.83f);
 	}
 
 	public void setToDay() {
@@ -243,7 +260,7 @@ public class Background {
 //		nightRate = 0.1f;
 //	}
 
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, float delta) {
 		Gdx.gl.glClearColor(currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -282,19 +299,52 @@ public class Background {
 		// draw plane
 		if (plane != null) {
 //			System.out.println("Drawing plane");
-			TextureRegion toDraw = Assets.face5;
+			TextureRegion toDraw = Assets.plane.getKeyFrame(timeElapsed);
 //			System.out.println(plane.x);
 			batch.draw(toDraw, plane.x, plane.y, planeWidth, planeHeight);
 		}
 		
 		batch.setColor(dayPercent * .2f + .8f, dayPercent * .2f + .8f, dayPercent * .2f + .8f, 1);
 		
-		batch.draw(profile.getLocationBG(), 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+		if (profile.getLocationBG() != currentBg) {
+			updateBg();
+		}
 		
+		batch.draw(currentBg, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+				
 		batch.setColor(orig);
+		
+		if (profile.inventory.adCampaign.isSign()) {				
+			batch.draw(Assets.neonSign.getKeyFrame(timeElapsed), 0, sign_y, signWidth, signHeight);
+		}
 		// draw the background filling entire screen
 		
 //		drawVanityDecorations(batch);
+		if (flashCountdown > 0) {
+			drawFlash(batch, delta);
+		}
+	}
+	
+	public void updateBg() {
+		// don't draw flash on start
+		if (currentBg != null) startFlash();
+		currentBg = profile.getLocationBG();
+	}
+	
+	public static void startFlash() {
+		flashCountdown = FLASH_LENGTH;
+	}
+	
+	public static void drawFlash(SpriteBatch batch, float delta) {
+		if (flashColor == null) {
+			flashColor = new Color(1, 1, 1, 1);
+		}
+		Color o = batch.getColor();
+		flashColor.set(1,  1,  1, flashCountdown / FLASH_LENGTH);
+		batch.setColor(flashColor);
+		batch.draw(Assets.white, 0, 0, KebabKing.getWidth(), KebabKing.getHeight());
+		batch.setColor(o);
+		flashCountdown -= delta;
 	}
 	
 	// draw background vanity decorations
@@ -310,21 +360,17 @@ public class Background {
 //		// for now, just draw currently selected
 //	}
 	
-	public void initialize() {
-		this.clouds = new Cloud[CLOUD_COUNT];
-		
-		this.cloudWidth = KebabKing.getGlobalX(0.35f);
-		this.cloudHeight = KebabKing.getGlobalY(0.1f);
+	public void initialize() {		
+		this.cloudWidth = KebabKing.getGlobalX(0.262f);
+		this.cloudHeight = KebabKing.getGlobalY(0.075f);
 				
 		this.starWidth = KebabKing.getGlobalX(0.02f);
 		this.starHeight = KebabKing.getGlobalY(0.01f);
 	
-		this.planeWidth = KebabKing.getGlobalX(0.1f);
-		this.planeHeight = KebabKing.getGlobalY(0.05f);	
+		this.planeWidth = KebabKing.getGlobalX(0.7f);
+		this.planeHeight = KebabKing.getGlobalY(0.07f);	
 		
-		generateCloud(0);
-		generateCloud(1);
-		generateCloud(2);
+		generateClouds(CLOUD_COUNT);
 		
 		clouds[2].x = KebabKing.getGlobalX(1.0f / 4);
 		clouds[1].x = KebabKing.getGlobalY(3.0f / 4);
@@ -332,6 +378,14 @@ public class Background {
 		generateRandomStars(STAR_COUNT);
 	}
 
+	public void generateClouds(int count) {
+		this.clouds = new Cloud[count];
+		for (int i = 0; i < count; i++) {
+			generateCloud(i);
+			clouds[i].x = (float) (Math.random() * KebabKing.getWidth());
+		}
+	}
+	
 	public void generateCloud(int i) {
 		if (this.clouds[i] == null) this.clouds[i] = new Cloud();
 		this.clouds[i].x = (float) (-cloudWidth * 1.2) + (float) Math.random() * -100;

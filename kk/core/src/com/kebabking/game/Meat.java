@@ -2,7 +2,7 @@ package com.kebabking.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.kebabking.game.Purchases.MeatTypes;
+import com.kebabking.game.Purchases.KebabTypes;
 
 // represents a piece of meat on the grill
 public class Meat {
@@ -27,7 +27,7 @@ public class Meat {
 	enum State {RAW, COOKED, BURNT}
 	
 	Grill grill;
-	MeatTypes.Type type;
+	KebabTypes.Type type;
 	State state;
 	
 	boolean spiced;
@@ -40,7 +40,7 @@ public class Meat {
 	boolean selected;
 
 	// create a raw meat on the grill 
-	public Meat(MeatTypes.Type type, Grill grill) {
+	public Meat(KebabTypes.Type type, Grill grill) {
 		this.grill = grill;
 		this.type = type;
 		if (type == null) throw new java.lang.AssertionError();

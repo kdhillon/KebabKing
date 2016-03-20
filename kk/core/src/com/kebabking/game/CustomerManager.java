@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kebabking.game.Purchases.AdCampaign;
 
@@ -19,6 +20,8 @@ public class CustomerManager {
 	// could do an array of three "lines", at various x unit positions, that people wait in.
 	// start off with just one
 //	static final float[] LINE_POSITIONS = new float[] {4.5f};
+	
+	static final float INIT_WAIT_BEFORE_GENERATE = 3f;
 	
 	// fix this
 	static final float[] LINE_POSITIONS = new float[] {0.75f, 7.2f};
@@ -65,6 +68,8 @@ public class CustomerManager {
 	float lastCustomer; // time since last customer created;
 	float nextCustomer; // generated randomly, when next customer should spawn
 	
+	float initGenerateCountdown;
+	
 	float customerGenerationRate = 1;
 
 	// going to need to iterate through, add, remove
@@ -78,6 +83,8 @@ public class CustomerManager {
 	
 //	private float bonus; // should only be used for resettting customer distribution
 	public AdCampaign.CampaignSpecial campaignSpecial;
+	
+	Color arrowTint;
 
 	public CustomerManager(KebabKing master) {
 		this.master = master;
@@ -93,7 +100,11 @@ public class CustomerManager {
 		lines = new Customer[LINE_COUNT][MAX_IN_LINE];
 		peopleInLine = new int[LINE_COUNT];
 
+		arrowTint = new Color(1, 1, 1, 1);
+		
 		lastCustomer = 0;
+		
+		initGenerateCountdown = INIT_WAIT_BEFORE_GENERATE;
 		
 		resetCustomerDistribution();
 	}
@@ -124,6 +135,12 @@ public class CustomerManager {
 
 	public void act(float delta) {
 		timeElapsed += delta;
+		
+		if (active) initGenerateCountdown = -1;
+		if (initGenerateCountdown > 0) {
+			initGenerateCountdown -= delta;
+			return;
+		}
 
 		// decide whether to generate customers
 		generateCustomers();
@@ -170,11 +187,8 @@ public class CustomerManager {
 		for (int i = 0; i < customers.size(); i++) {
 			Customer c = customers.get(i);
 			if (c == null) continue;
-			c.draw(batch);
-		}
-
-		if (mousedOver != null && mousedOver.action == Customer.CustomerAction.WAIT && active) {
-			mousedOver.highlight(batch);
+			boolean highlight = mousedOver != null && mousedOver.action == Customer.CustomerAction.WAIT && active && mousedOver == c;
+			c.draw(batch, highlight);
 		}
 	}
 
@@ -280,21 +294,47 @@ public class CustomerManager {
 		this.currentBoosted = types;
 //		this.bonus = bonus;
 		
+		// boosting individual customers
 		if (types != null) {
-			for (int i = 0; i < types.length; i++) {
-				int j = Customer.getIndexOf(types[i]);
-				currentCustomerSpread[j] *= bonus;
+			float totalOriginal = 0;
+			float totalBoost = 0;
+
+			for (int i = 0; i < currentCustomerSpread.length; i++) {
+				totalOriginal += currentCustomerSpread[i];
+				totalBoost += currentCustomerSpread[i];
 			}
 			
-//			this.boost = 1 + (bonus - 1) / nonZeroCustomers;
-			System.out.println("PROFILE: setting boost: " + boost);
+			for (int i = 0; i < types.length; i++) {
+				int j = Customer.getIndexOf(types[i]);
+				totalBoost -= currentCustomerSpread[j];
+				currentCustomerSpread[j] *= bonus;
+				totalBoost += currentCustomerSpread[j];
+			}
+			this.boost = totalBoost / totalOriginal;
+			System.out.println("PROFILE: totalBoost: " + totalBoost + " totalOriginal: " + totalOriginal + " setting boost: " + boost);
 		}
+		// boosting all customers
 		else {
 			for (int i = 0; i < currentCustomerSpread.length; i++) {
 				currentCustomerSpread[i] *= bonus;
 			}
+			this.boost = bonus;
+			System.out.println("PROFILE: setting boost: " + boost);
 		}
-		this.boost = bonus;
+		
+		// don't boost everyone based on a single person's boost...
+		
+		// say total of everyone is 15.
+		// fat guys are 0.5
+		// boost for fat guys was to 10, aka 20x
+		// then new total is 24.5
+		// so boost should be 24.5/15
+		
+		// say total of everyone is 15
+		// fat guys are 0.5
+		// boost was to 1, aka 2x
+		// then new total is 15.5
+		// so boost should be 
 	}
 
 	// this ends the existing ad campaign
@@ -307,6 +347,7 @@ public class CustomerManager {
 	}
 	
 	public boolean needCustomer() {
+		if (generatePoliceNext) return true;
 		if (customers.size() == 0) return true;
 		if (customers.size() > 2) return false;
 		if (active) {
@@ -331,6 +372,7 @@ public class CustomerManager {
 		if (!customers.add(customer)) {
 			System.out.println("CANT ADD, ALREADY EXISTS");
 		}
+		
 		lastCustomer = 0;
 		calcNextCustomer();
 		customers.trimToSize();
@@ -454,7 +496,7 @@ public class CustomerManager {
 	
 	public void registerJewelerOrdering() {
 		TutorialEventHandler.handleJewelerOrder();
-		master.profile.stats.jewelerCustomers++;
+		StatsHandler.jewelerOrder();
 	}
 	
 }

@@ -7,20 +7,20 @@ import com.kebabking.game.ProfileInventory;
 // user has one of these
 // later: split this into separate ones for chicken beef, lamb
 public class DrinkQuality extends PurchaseType {
-	static String name = "DRINKS";
-	static String desc = "Better quality beer means more profit!";
+	static String name = "drink_quality";
+	static String desc = "drink_quality_desc";
 	
 	// Specific types that you might own 
 	public static class Quality extends SimplePurchaseable {
 		public static final Quality[] values = new Quality[] {
 		// name, initial cost, unlockAt, sell price, description
-		new Quality ("Qing Mao", 	0,		3,	0,	 1, "lightgreen",	"Yellow water"), 
-		new Quality ("Heimikan", 	200,	6,	3, 1.5f, "green",	 "Premium Lager"),
-		new Quality ("Youngling", 	500,	10, 11, 2f, "brown",	 "Twistoffs! Wow!"), 
-		new Quality ("Stellar",		800,	15, 19, 2.5f, "yellow",  "Only 4 ingredients and 10 preservatives!"),
-		new Quality ("Guinnist", 	1100,	20, 27, 3f, "dark",	 "Bonnie Irish Stout"),
-		new Quality ("Harpspear", 	1500,	30, 35, 3.5f, "red", 	"Delicious, fisherman's favorite."),
-		new Quality ("Trappish", 	2000,	40, 48, 4f,  	"tan",	 "Made by Monks! Holy beer!"),
+		new Quality ("1", 	0,		3,	0, 1,	 1, 	"lightgreen"), 
+		new Quality ("2", 	200,	6,	3, 2, 1.5f, 	"green"),
+		new Quality ("3", 	500,	10, 11,4,  2f, 	"brown"), 
+		new Quality ("4",	800,	15, 19,6, 2.5f,	"yellow"),
+		new Quality ("5", 	1100,	20, 28,10,  3f,	 	"dark"),
+		new Quality ("6", 	1500,	30, 35,12,  3.5f, 	"red"),
+		new Quality ("7", 	2000,	40, 48,16,  4f, 	"tan"),
 		};
 		
 		float sellPrice;
@@ -29,10 +29,10 @@ public class DrinkQuality extends PurchaseType {
 		// for kryo
 		public Quality() {}
 
-		private Quality(String name, float cash, int coins, int unlockAt, float qualityFactor, String color, String description) {
-			super(name, cash, coins, unlockAt, description, "market/icons/" + color + "_thumb");
+		private Quality(String name, float cash, int coins, int unlockAt, int unlockWithLocation, float qualityFactor, String color) {
+			super(DrinkQuality.name + "_" + name, cash, coins, unlockAt, unlockWithLocation, "market/icons/" + color + "_thumb");
 			this.sellPrice = qualityFactor;
-			this.coolerRegion = Assets.getTextureRegion("market/icons/" + color + "_cooler");
+			this.coolerRegion = Assets.getTextureRegion("kebabs/" + color + "_cooler");
 		}
 	};
 

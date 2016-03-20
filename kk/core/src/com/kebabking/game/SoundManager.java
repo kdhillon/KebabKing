@@ -6,7 +6,7 @@ public class SoundManager {
 	static float MUTE_VOL = 0f;
 	
 	static float SIZZLE_VOL = 0.4f;
-	static float MUSIC_VOL = 0.7f;
+	static float MUSIC_VOL = 0.5f;
 	static float ORDER_VOL = 1f;
 	
 //	static float SIZZLE_VOL = 0.0f;
@@ -20,6 +20,8 @@ public class SoundManager {
 	
 	static boolean sizzlePlaying = false;
 	static boolean musicPlaying = false;
+	
+	static float orderVolume;
 	
 	public static void init(KebabKing masterIn) {
 		master = masterIn;
@@ -51,12 +53,14 @@ public class SoundManager {
 		System.out.println("Mute sound");
 		getSettings().muteSound = true;
 		Assets.sizzle.setVolume(0, MUTE_VOL);
+		orderVolume = MUTE_VOL;
 	}
 	
 	public static void unmuteSound() {
 		System.out.println("unMute sound");
 		getSettings().muteSound = false;
 		Assets.sizzle.setVolume(0, SIZZLE_VOL);
+		orderVolume = ORDER_VOL;
 	}
 	
 	public static void muteMusic() {
@@ -90,12 +94,12 @@ public class SoundManager {
 	}
 	
 	// Shouldn't ever be called
-	public static void stopMusic() {
-		if (musicPlaying) {
-			Assets.mainTheme.pause();
-			musicPlaying = false;
-		}
-	}
+//	public static void stopMusic() {
+//		if (musicPlaying) {
+//			Assets.mainTheme.pause();
+//			musicPlaying = false;
+//		}
+//	}
 	
 	public static void playOrderSound(Customer.CustomerType type) {
 		Sound toPlay = null;
@@ -113,7 +117,7 @@ public class SoundManager {
 			return;
 		}
 		
-		toPlay.play(ORDER_VOL);
+		toPlay.play(orderVolume);
 	}
 	
 	public static void playLeavingSound(Customer.CustomerType type, int satisfaction, boolean sick) {
@@ -143,6 +147,6 @@ public class SoundManager {
 		if (sick) toPlay = Assets.sick;
 
 		if (toPlay != null)
-			toPlay.play(ORDER_VOL);
+			toPlay.play(orderVolume);
 	}
 }

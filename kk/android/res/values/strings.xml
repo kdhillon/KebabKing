@@ -3,5 +3,7 @@
 
     <string name="app_name">Kebab King</string>
     <string name="facebook_app_id">785120158234373</string>
+    <string name="back">Back</string>
+    <string name="play">Play</string>
 
 </resources>

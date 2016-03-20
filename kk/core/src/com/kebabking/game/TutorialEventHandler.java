@@ -1,7 +1,7 @@
 package com.kebabking.game;
 
 import com.kebabking.game.Purchases.DrinkQuality;
-import com.kebabking.game.Purchases.MeatTypes;
+import com.kebabking.game.Purchases.KebabTypes;
 
 public class TutorialEventHandler {
 	public static int FIRST_ORDER_MEAT_COUNT = 2;
@@ -10,10 +10,16 @@ public class TutorialEventHandler {
 	
 	static boolean firstMeatPlaced;
 	static boolean secondMeatPlaced;
+	static boolean thirdMeatPlaced;
+	static boolean fourthMeatPlaced;
+	static boolean fifthMeatPlaced;
 	
 	static boolean firstMeatCooked;
 	static boolean secondMeatCooked;
-	
+	static boolean thirdMeatCooked;
+	static boolean fourthMeatCooked;
+	static boolean fifthMeatCooked;
+
 	static boolean firstMeatServed;
 	static boolean secondMeatServed;	
 	
@@ -91,7 +97,7 @@ public class TutorialEventHandler {
 		if (!firstCustomerHasOrdered) {
 			firstCustomerHasOrdered = true;
 			System.out.println("First customer ordered");
-			DrawUI.launchTutorialNotification("Your First Customer!", "", "Drag 2 beef kebabs to the grill to start cooking!", MeatTypes.Type.values[0].coolerClosed);
+			DrawUI.launchTutorialNotification("Your First Customer!", "", "Drag 2 beef kebabs to the grill to start cooking!", KebabTypes.Type.values[0].bigIcon);
 		}
 		else if (!secondCustomerHasOrdered) {
 			secondCustomerHasOrdered = true;
@@ -103,15 +109,28 @@ public class TutorialEventHandler {
 	public static void handleMeatPlaced() {
 		if (firstMeatPlaced || getStats().firstCustomerServed) {
 			if (secondMeatPlaced  || getStats().secondCustomerServed) {
-				// both meats have been placed
-				if (customerHasOrderedSpice && !meatSpiced && !spiceMeatPlaced) {
-					spiceMeatPlaced = true;
-					System.out.println("Meat needs to be spiced");
-					DrawUI.exitTutorialNotification();
-					DrawUI.launchTutorialNotification("The Spice Brush", "This customer ordered a spicy kebab!", "Drag the spice brush over the kebab to spice it!", Assets.getTextureRegion("grill/brush-48"));
+				if (thirdMeatPlaced) {
+					if (fourthMeatPlaced) {
+						if (fifthMeatPlaced) {
+							// first two customers have been served
+							if (customerHasOrderedSpice && !meatSpiced && !spiceMeatPlaced) {
+								spiceMeatPlaced = true;
+								System.out.println("Meat needs to be spiced");
+								DrawUI.exitTutorialNotification();
+								DrawUI.launchTutorialNotification("The Spice Brush", "This customer ordered a spicy kebab!", "Drag the spice brush over the kebab to spice it!", Assets.getTextureRegion("grill/brush-48"));
+							}
+						}
+						else {
+							fifthMeatPlaced = true;
+						}
+					}
+					else {
+						fourthMeatPlaced = true;
+					}
 				}
-							
-				return;
+				else {
+					thirdMeatPlaced = true;
+				}
 			}
 			else {
 				// handle second meat placed
@@ -129,15 +148,24 @@ public class TutorialEventHandler {
 	}
 	
 	public static void handleCooked() {
-		if (getStats().firstCustomerServed) return;
+		if (getStats().tutorialComplete()) return;
 		if (firstMeatCooked) {
 			if (secondMeatCooked) {
-				return;
+				if (thirdMeatCooked) {
+					if (fourthMeatCooked) {
+						if (fifthMeatCooked) {
+							return;
+						}
+						else fifthMeatCooked = true;
+					}
+					else fourthMeatCooked = true;
+				}
+				else thirdMeatCooked = true;
 			}
 			else {
 				System.out.println("Second meat done");
 				secondMeatCooked = true;
-				DrawUI.launchTutorialNotification("Ready to serve!", "", "Drag the cooked kebabs from the grill to the customer. \n You can select multiple kebabs at once!", Assets.getTextureRegion("screens/tutorial_cooked"));
+				DrawUI.launchTutorialNotification("Ready to serve!", "", "Drag both cooked kebabs to the customer.", Assets.getTextureRegion("screens/tutorial_cooked"));
 			}
 		}
 		else {
@@ -211,7 +239,7 @@ public class TutorialEventHandler {
 		if (getStats().spiceCustomerServed || meatSpiced) return;
 		
 		DrawUI.exitTutorialNotification();
-		DrawUI.launchTutorialSuccessNotification("Nice Work!", "", "You're like a spice artist!", Assets.face5);
+		DrawUI.launchTutorialSuccessNotification("Nice Work!", "", "Tip: You can tap the spice brush, then tap a kebab to spice it!", Assets.face5);
 		meatSpiced = true;
 	}
 
@@ -219,7 +247,7 @@ public class TutorialEventHandler {
 		if (getStats().firstCustomerServed) return;
 		
 		DrawUI.exitTutorialNotification();
-		DrawUI.launchTutorialSuccessNotification("Congratulations!", "You just made your first sale!", "The faster you serve your customers, the happier they will be. A high reputation attracts more customers!", Assets.face5);
+		DrawUI.launchTutorialSuccessNotification("Your first sale!", "", "The faster you serve your customers, the happier they will be. A high reputation attracts more customers!", Assets.face5);
 
 		System.out.println("First customer done");
 		getStats().firstCustomerServed = true;	
@@ -252,9 +280,10 @@ public class TutorialEventHandler {
 	
 	public static void handleTrash() {
 		if (getStats().burntMeatThrownAway) return;
+		if (!meatBurnt) return;
 		
 		DrawUI.exitTutorialNotification();
-		DrawUI.launchTutorialSuccessNotification("Great Job!", "", "Throwing away meat wastes money,\nso try not to let your meat burn!", Assets.face5);
+		DrawUI.launchTutorialSuccessNotification("Great Job!", "", "Throwing away meat wastes money, so try not to let your meat burn!", Assets.face5);
 		
 		System.out.println("Threw away burn");
 		getStats().burntMeatThrownAway = true;
@@ -263,20 +292,20 @@ public class TutorialEventHandler {
 	public static void handleServeRaw() {
 		if (getStats().servedRaw || !getStats().tutorialComplete()) return;
 		
-		DrawUI.launchTutorialSuccessNotification("Oh no!", "", "Serving raw meat might make your customers sick!\nBe sure to cook your meat fully before serving!", Assets.faceSick);
+		DrawUI.launchTutorialSuccessNotification("Oh no!", "", "Serving raw meat might make your customers sick! Be sure to cook your meat fully before serving!", Assets.faceSick);
 		getStats().servedRaw = true;
 	}
 
 	public static void handleJewelerOrder() {
 		if (getStats().jewelerCustomers > 0) return;
 		
-		DrawUI.launchTutorialSuccessNotification("The Jeweler", "", "Today's your lucky day! \n The Jeweler gives you free Jade if you complete his order!", Assets.getTextureRegion("screens/tutorial_jeweler"));
+		DrawUI.launchTutorialSuccessNotification("The Jeweler", "", "Today's your lucky day! The Jeweler gives you free Jade if you complete his order!", Assets.getTextureRegion("screens/tutorial_jeweler"));
 
 		System.out.println("First jeweler");
 	}
 	
 	// handle first spice
-	public static void handleSpiceOrder(MeatTypes.Type type) {
+	public static void handleSpiceOrder(KebabTypes.Type type) {
 		if (getStats().spiceCustomerServed || customerHasOrderedSpice) return;
 		
 		System.out.println("First Spice");
@@ -285,7 +314,7 @@ public class TutorialEventHandler {
 		customerHasOrderedSpice = true;
 	}
 
-	public static void handleDoubleOrder(MeatTypes.Type type) {
+	public static void handleDoubleOrder(KebabTypes.Type type) {
 		if (getStats().customerHasOrderedDouble) return;
 		
 		System.out.println("First double");
@@ -328,7 +357,7 @@ public class TutorialEventHandler {
 		System.out.println("Handling third day begun");
 		
 		// launch notification about lamb
-		DrawUI.launchTutorialSuccessNotification("Lamb Unlocked!", "", "Lamb cooks faster than beef, and is more profitable!", MeatTypes.Type.values[1].coolerOpen);
+		DrawUI.launchTutorialSuccessNotification("Lamb Unlocked!", "", "Lamb cooks faster than beef, and is more profitable!", KebabTypes.Type.values[1].bigIcon);
 	}
 	
 	public static void handleFourthDayBegun() {
@@ -380,7 +409,7 @@ public class TutorialEventHandler {
 	
 	// don't allow jeweler for first or second customers
 	public static boolean dontAllowJeweler() {
-		return !getStats().firstCustomerServed || !getStats().secondCustomerServed;
+		return !getStats().tutorialComplete();
 	}
 	
 	// should not allow touching meat boxes if:
@@ -401,10 +430,18 @@ public class TutorialEventHandler {
 	}
 	
 	public static boolean shouldDisableGrill() {
-		if (getStats().firstCustomerServed) return false;
-		return !secondMeatCooked;
+		if (getStats().tutorialComplete()) return false;
+		return !secondMeatCooked || (secondCustomerHasOrdered && !thirdMeatCooked);
 	}
 	
+	public static boolean shouldDisableTrash() {
+		return !getStats().tutorialComplete();
+	}
+	
+	// don't allow serving customers when prompted to throw away
+	public static boolean shouldDisableServe() {
+		return meatBurnt && !getStats().burntMeatThrownAway;
+	}
 	// need to pause when:
 	//		first customer has orderd, but second meat not placed
 	//		meat is cooked, but customer has not been served

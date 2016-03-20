@@ -3,11 +3,13 @@ package com.kebabking.game;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -25,14 +27,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.kebabking.game.StoreScreen.TableType;
-import com.kebabking.game.Purchases.MeatTypes;
+import com.kebabking.game.Purchases.KebabTypes;
 
 public class Assets {	
 	public final static float GRILL_ANIMATION_TIME = 1f;
 	//	final static int GRILL_ANIMATION_FRAMES = 1;
 	final static float CUSTOMER_ANIMATION_TIME = .15f;
 	final static int CUSTOMER_ANIMATION_FRAMES = 1;
+	
+	final static float PLANE_ANIMATION_TIME = .25f;
+	final static float SIGN_ANIMATION_TIME = .5f;
 	
 	final static int WHITE_9PATCH_LEFT = 39;
 	final static int WHITE_9PATCH_RIGHT = 40;
@@ -50,14 +56,17 @@ public class Assets {
 //	final static int GREEN_9PATCH_OFFSET_Y_2 = GREEN_9PATCH_OFFSET_X + 4;
 	
 	final static Color RED = new Color(211/256.0f, 90/256.0f, 68/256.0f, 1f);
+	final static Color YELLOW = new Color(235/256.0f, 169/256.0f, 28/256.0f, 1f);
 
+	final static boolean HINDI = false;
+	
 	public final static String currencyChar = "¥"; // this is the char used for in-game money
 	final static String realCurrencyChar = "$"; // this is used for IAPs
-	final static String lower = "abcdefghijklmnopqrstuvwxyz";
-	final static String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	final static String alpha = lower + upper + "-";
-	final static String nums = "1234567890." + currencyChar;
-	final static String allChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#%^&*()/1234567890:;-'\">+=_[]{}<" + currencyChar;
+//	final static String lower = "abcdefghijklmnopqrstuvwxyz";
+//	final static String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//	final static String alpha = lower + upper + "-";
+	static String nums = currencyChar;
+//	final static String allChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#%^&*()/1234567890:;-'\">+=_[]{}<" + currencyChar;
 //	final static String chars = "a";
 
 	public static AssetManager manager; // must be disposed
@@ -70,7 +79,7 @@ public class Assets {
 	static Texture kebabMain;
 	
 	static TextureAtlas atlas; // must be disposed after load
-	static TextureAtlas uiAtlas; // must be disposed
+//	static TextureAtlas uiAtlas; // must be disposed
 
 	static Skin uiSkin;
 //	static Skin purchaseableTableSkin;
@@ -100,6 +109,11 @@ public class Assets {
 //	static TextureRegion beefBox;
 //	static TextureRegion chickenBox;
 //	static TextureRegion lambBox;
+	// temporary
+//	static TextureRegion coolerOpen;
+//	static TextureRegion coolerClosed;
+
+	
 	static TextureRegion coolerLidOpen;
 	static TextureRegion coolerLidClosed;
 //	static TextureRegion beefBoxOpen;
@@ -138,8 +152,14 @@ public class Assets {
 	static TextureRegionDrawable volMute;
 
 	static TextureRegion facebook;
+	static TextureRegion cash;
+	static TextureRegion smalljade;
 	static TextureRegion bigjade;
 	static TextureRegion minijade;
+	
+	static TextureRegion redBill;
+	static TextureRegion greenBill;
+	static TextureRegion blueBill;
 
 	static TextureRegion speech;
 
@@ -149,12 +169,14 @@ public class Assets {
 
 	static TextureRegion gray;
 	static TextureRegion grayLight;
+	static TextureRegion grayDark;
+	static TextureRegion grayBlue;
 	static TextureRegion white;
 	static TextureRegion whiteAlpha;
 	static TextureRegion grayAlpha;
 	static TextureRegion grayAlphaLight;
 	
-	static TextureRegion notificationBG;
+	static TextureRegion notificationBottom;
 
 	// I think keeping these around is killing memory consumption. see heapdump.
 	static FreeTypeFontParameter p;
@@ -162,6 +184,9 @@ public class Assets {
 	static FreeTypeFontGenerator worksansLight;
 	static FreeTypeFontGenerator worksansHeavy;
 	static FreeTypeFontGenerator china;
+	
+//	static final static
+	static FreeTypeFontGenerator mangal;
 
 	static BitmapFont timefont;
 	
@@ -191,11 +216,22 @@ public class Assets {
 	static TextureRegion jadeBox;
 	static TextureRegion jadeBoxPlay;
 	
+	static TextureRegionDrawable marketGreenD;
+	static TextureRegionDrawable marketDarkGreenD;
+	static TextureRegionDrawable grayD;
+	static TextureRegionDrawable grayLightD;
+
 	static TextureRegion red;
 	static TextureRegion redBright;
 	static TextureRegion yellow;
+	
+	static TextureRegion greenArrow;
 
 	static NinePatchDrawable roundUp;
+	
+	static Animation neonSign;
+	static Animation plane;
+	static TextureRegion selfieStick;
 	
 	// currently allocated fonts, dispose after every screen
 //	static ArrayList<BitmapFont> fonts;
@@ -237,6 +273,10 @@ public class Assets {
 	
 	// for testing
 	static int totalCharsForFonts = 0;
+	
+	
+	// languages and internationalization
+	public static I18NBundle strings;
 
 	// This loads peppercorn screen and preps stuff for second loader
 	public static void preLoad() {
@@ -249,6 +289,8 @@ public class Assets {
 	public static void load() {		
 		manager = new AssetManager();
 
+		loadLanguages();
+	
 		// enqueue everything for loading, instead of just straight loading it. does it asynchronously.
 		manager.load("atlas1.atlas", TextureAtlas.class);
 
@@ -263,78 +305,36 @@ public class Assets {
 		worksansHeavy = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
 		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
 		china = new FreeTypeFontGenerator(Gdx.files.internal("data/CHINA.TTF"));
+		mangal = new FreeTypeFontGenerator(Gdx.files.internal("data/mangal.ttf"));
 
 		styles = new HashMap<String, LabelStyle>();
 		charSets = new HashMap<String, HashSet<Character>>();
-//		fonts = new ArrayList<BitmapFont>();
-
-		registerFonts();
 	}
 	
-	public static void registerFonts() {
-//		int[] wsDarkFonts = {14, DrawUI.CASH_COINS_SIZE, StoreScreen.PURCHASEABLE_TITLE_SIZE, StoreScreen.SELECTED_PURCHASEABLE_TITLE_SIZE};
-//		for (int s : wsDarkFonts) {
-////			System.out.println(s);
-//			generateLabelStyleUI(s);
-//		}
-//
-//		int[] wsGrayFonts = {12, 14};
-//		for (int s : wsGrayFonts) {
-//			generateLabelStyleUIGray(s);
-//		}
-//
-//		int[] wsRed = {12, 24, 30};
-//		for (int s : wsRed) {
-//			generateLabelStyleUIRed(s);
-//		}
+	public static void loadLanguages() {
+
+		// load languages
+		FileHandle baseFileHandle = Gdx.files.internal("data/bundles/strings");
+		Locale hindi = new Locale("hi");
 		
-//		int[] wsWhite = {20, 32, 12, 24, 30, 14, DrawUI.CASH_COINS_SIZE, StoreScreen.PURCHASEABLE_TITLE_SIZE, StoreScreen.SELECTED_PURCHASEABLE_TITLE_SIZE};
-//		for (int s : wsWhite) {
-//			generateLabelStyleUIWhite(s);
-//		}
-
-//		int[] wsLightWhiteFonts = {32, 24, 18, 16, 22, 14};
-//		for (int s : wsLightWhiteFonts) {
-//			generateLabelStyleUILight(s);
-//		}
-
-//		int[] wsHeavyDarkFonts = {26, 14};
-//		for (int s : wsHeavyDarkFonts) {
-//			generateLabelStyleUIHeavy(s);
-//		}
-
-//		int[] wsHeavyWhiteFonts = {26, 14, 22, 16};
-//		for (int s : wsHeavyWhiteFonts) {
-//			generateLabelStyleUIHeavyWhite(s);
-//		}
-
-//		int[] wsHeavyGreen = {22, 16};
-//		for (int s : wsHeavyGreen) {
-//			generateLabelStyleUIHeavyGreen(s);
-//		}
+//		manager.load("data/bundles/strings", I18NBundle.class);
+//		manager.load("data/bundles/strings_hi", I18NBundle.class);
 		
-		// for purchasetype buttons
-//		int[] chinaDark = { 30, 22, 18, 15};
-//		for (int s : chinaDark) {
-//			generateLabelStyleUIChina(s);
-//		}
-//																			// for purchasetype buttons
-//		int[] chinaWhite = {30, 100, 16, 60, 55, 44, 70, 50, 26, 28, 48,  			30, 22, 18, 15};
-//		for (int s : chinaWhite) {
-//			generateLabelStyleUIChinaWhite(s);
-//		}
-		
-//		worksans.dispose();
-//		worksansHeavy.dispose();
-//		worksansLight.dispose();
-//		china.dispose();
+		if (HINDI) 
+			strings = I18NBundle.createBundle(baseFileHandle, hindi);
+		//manager.get("data/bundles/strings_hi", I18NBundle.class);
+		else 
+			strings = I18NBundle.createBundle(baseFileHandle);
+//strings = manager.get("data/bundles/strings", I18NBundle.class);
+
+		nums = nums + strings.get("nums");
 	}
 
-	public static void createUI() {
-		uiAtlas = new TextureAtlas(Gdx.files.internal("ui/ui-orange.atlas"));
-
-		uiSkin = new Skin(uiAtlas);	
-	}
+//	public static void createUI() {
+//		uiAtlas = new TextureAtlas(Gdx.files.internal("ui/ui-orange.atlas"));
+//
+//		uiSkin = new Skin(uiAtlas);	
+//	}
 
 	/** loads music and sound */
 	public static void loadSound() {
@@ -397,6 +397,18 @@ public class Assets {
 		TextureRegion[][] textureArray = walkSheet.split(walkSheet.getRegionWidth()/columns, walkSheet.getRegionHeight()/1);
 		Animation animation = new Animation(time, textureArray[0]);
 		animation.setPlayMode(Animation.PlayMode.LOOP);
+		return animation;
+	}
+	
+	public static Animation createAnimationVertical(String region, float time, int rows) {
+		TextureRegion walkSheet = getTextureRegion(region);
+		TextureRegion[][] textureArray = walkSheet.split(walkSheet.getRegionWidth(), walkSheet.getRegionHeight()/rows);
+		TextureRegion[] animationArray = new TextureRegion[rows];
+		for (int i = 0; i < rows; i++) {
+			animationArray[i] = textureArray[i][0];
+		}
+		Animation animation = new Animation(time, animationArray);
+		animation.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
 		return animation;
 	}
 	
@@ -502,20 +514,17 @@ public class Assets {
 //	public static LabelStyle generateLabelStyleUIRed(int size) {
 //		return generateLabelStyle(worksans, SummaryScreen.RED, size);		
 //	}
-	public static LabelStyle generateLabelStyleUIWhite(int size, String chars) {
+	public static LabelStyle generateLabelStyleUI(int size, String chars) {
+		if (HINDI) {
+			return generateLabelStyle(mangal, size, chars);		
+		}
 		return generateLabelStyle(worksans, size, chars);		
 	}
-//	public static LabelStyle generateLabelStyleUIDark(int size, boolean permanent) {
-//		p.size = size;
-//		LabelStyle ls = new LabelStyle();
-//		ls.font = worksans.generateFont(p);
-//		ls.fontColor = FONT_COLOR;
-//		if (!permanent)
-//			fonts.add(ls.font);
-//		return ls;
-//	}
 
 	public static LabelStyle generateLabelStyleUILight(int size, String chars) {
+		if (HINDI) {
+			return generateLabelStyle(mangal, size, chars);		
+		}
 		return generateLabelStyle(worksansLight, size, chars);
 //		return generateLabelStyle(worksansLight, MainStoreScreen.FONT_COLOR, size);
 	}
@@ -524,7 +533,10 @@ public class Assets {
 //		return generateLabelStyle(worksansHeavy, MainStoreScreen.FONT_COLOR, size);
 //	}
 	
-	public static LabelStyle generateLabelStyleUIHeavyWhite(int size, String chars) {
+	public static LabelStyle generateLabelStyleUIHeavy(int size, String chars) {
+		if (HINDI) {
+			return generateLabelStyle(mangal, size, chars);		
+		}
 		return generateLabelStyle(worksansHeavy, size, chars);
 	}
 	
@@ -534,7 +546,10 @@ public class Assets {
 //	public static LabelStyle generateLabelStyleUIChina(int size) {
 //		return generateLabelStyle(china, Color.BLACK, size);
 //	}	
-	public static LabelStyle generateLabelStyleUIChinaWhite(int size, String chars) {
+	public static LabelStyle generateLabelStyleUIChina(int size, String chars) {
+		if (HINDI) {
+			return generateLabelStyle(mangal, size, chars);		
+		}
 		return generateLabelStyle(china, size, chars);
 	}
 	
@@ -547,6 +562,7 @@ public class Assets {
 		String name = "" + gen.hashCode() + size;// + color.hashCode();
 		
 		p.size = getFontSize(size);
+//		System.out.println("generating size " + p.size);
 		
 //		System.out.println(p.size);
 		
@@ -590,6 +606,7 @@ public class Assets {
 		// lets see how big it is if you only do one bitmap font
 		String name = "" + gen.hashCode() + size;// + color.hashCode();
 		if (styles.containsKey(name)) {
+//			System.out.println("styles already contains this size");
 //			LabelStyle copy = new LabelStyle(styles.get(name));
 //			copy.fontColor = color;
 			
@@ -620,11 +637,13 @@ public class Assets {
 			}
 		}
 		else {
+			System.out.println("styles doesn't contain this size");
 //			else throw new java.lang.AssertionError("You need to register " + gen.toString() + " " + color.toString() + " " + size);
 //			System.out.println("Registering " + gen.toString() + " " + size + " for " + chars);
 			if (chars == null) {
-				registerStyle(gen, size, allChars);
-				totalCharsForFonts += allChars.length();
+//				registerStyle(gen, size, allChars);
+//				totalCharsForFonts += allChars.length();
+				throw new java.lang.AssertionError();
 			}
 			else {
 				registerStyle(gen, size, chars);
@@ -657,64 +676,41 @@ public class Assets {
 		speech = getTextureRegion("customers/Play_speechbubble_element-38");
 		facebook = getTextureRegion("screens/facebook-share-button");
 		minijade = getTextureRegion("screens/minijade");
+		smalljade = getTextureRegion("market/smallJade");
 		bigjade = getTextureRegion("screens/pause-02");
+		redBill = getTextureRegion("screens/bill_red");
+		greenBill = getTextureRegion("screens/bill_green");
+		blueBill = getTextureRegion("screens/bill_blue");
 
-		gray = getTextureRegion("graypixel");
-		grayLight = getTextureRegion("lightgraypixel");
+		grayDark = getTextureRegion("graypixel");
+		gray = getTextureRegion("graypixel2");
+		grayLight = getTextureRegion("lightgraypixel2");
+		grayBlue = getTextureRegion("gray_blue");
 		white = getTextureRegion("whitepixel");
 		whiteAlpha = getTextureRegion("white_alpha");
 		grayAlpha = getTextureRegion("gray_alpha");
 		grayAlphaLight = getTextureRegion("gray_alpha_light");
 		
-		notificationBG = getTextureRegion("screens/Summary-03");
+		notificationBottom = getTextureRegion("screens/summary_bottom");
 
 		title = getTextureRegion("screens/Main-02");
-		//		start = getTexture("start");
-		//		store = getTexture("store");
-		//		quit = getTexture("quit");
 		
-//		spiceBox = getTextureRegion("grill/grill-05");
 		spiceBoxDisabled = getTextureRegion("grill/grill-06");
+
+		coolerLidOpen = getTextureRegion("kebabs/cover-active");
+		coolerLidClosed = getTextureRegion("kebabs/cover-inactive");
+//		coolerOpen = getTextureRegion("kebabs/CoolerOpen");
+//		coolerClosed = getTextureRegion("kebabs/CoolerClosed");
 		
-//		beefBox = getTextureRegion("grill/Cooler-21");
-//		lambBox = getTextureRegion("grill/Cooler-23");
-//		chickenBox = getTextureRegion("grill/Cooler-22");
-//		beefBoxOpen = getTextureRegion("grill/Cooler_open-29");
-//		lambBoxOpen = getTextureRegion("grill/Cooler_open-31");
-//		chickenBoxOpen = getTextureRegion("grill/Cooler_open-30");
-
-		coolerLidOpen = getTextureRegion("market/icons/cover-active");
-		coolerLidClosed = getTextureRegion("market/icons/cover-inactive");
-
-		//		trashBox = getTexture("trashbox");
-
-//		meatMap = new HashMap<String, KebabTextures>();
-//		
-//		meatMap.put(Meat.Type.CHICKEN, generateKebabTextures("kebabs/ChickenKebab"));
-//		meatMap.put(Meat.Type.BEEF,  generateKebabTextures("kebabs/BeefKebab"));
-//		meatMap.put(Meat.Type.LAMB, generateKebabTextures("kebabs/LambKebab"));
-
-//		grillMid = getTextureRegion("grill/grill-03");
-//		grillLeft = getTextureRegion("grill/grill-02");
-//		grillRight = getTextureRegion("grill/grill-04");
-
-//		grillBgMid = getTextureRegion("grill/mid_bg");
-//		grillBgLeft = getTextureRegion("grill/left_bg");
-//		grillBgRight = getTextureRegion("grill/right_bg");
-//		grillCoals = getTextureRegion("coals");
-//		
-//		grillFire = createAnimation("grill/fire", GRILL_ANIMATION_TIME, 3, true);
+		
+		selfieStick = getTextureRegion("screens/selfie");
+		plane = createAnimationVertical("screens/Airplane-01", PLANE_ANIMATION_TIME, 3);
+		neonSign = createAnimationVertical("screens/neonsign", SIGN_ANIMATION_TIME, 3);
 		
 		floatingBeer = getTextureRegion("customers/BeerIcon-53");
 		
 		beerIcon = getTextureRegion("customers/beer_icon");
-//		chickenIcon = getTextureRegion("customers/chicken_icon");
-//		beefIcon = getTextureRegion("customers/beef_icon");
-//		lambIcon = getTextureRegion("customers/lamb_icon");
-//		chickenSpicyIcon = getTextureRegion("chicken_sp_icon");
-//		beefSpicyIcon = getTextureRegion("beef_sp_icon");
-//		lambSpicyIcon = getTextureRegion("lamb_sp_icon");
-
+		
 		face1 = getTextureRegion("customers/face1");
 		face2 = getTextureRegion("customers/face2");
 		face3 = getTextureRegion("customers/face3");
@@ -732,19 +728,10 @@ public class Assets {
 		sun = getTextureRegion("background/SkyElement-04");
 		skyStar = getTextureRegion("background/SkyElement-05");
 
-//		bgVillage = getTextureRegion("background/village2");
-//		bgOutskirts = getTextureRegion("background/outskirts");
-//		bgSuburbs = getTextureRegion("background/suburbs");
-//		bgUniversity = getTextureRegion("background/university");
-//		bgCBD = getTextureRegion("background/cbd");
-
-//		pause = getTextureRegion("pause");
-
-		
 		marketShelf = getTextureRegion("market/Market_menu_element-02");
 		marketTitle = getTextureRegion("market/Market_menu_element-08");
-		marketGreen = getTextureRegion("market/green");
-		marketDarkGreen = getTextureRegion("market/darkGreen");
+		marketGreen = getTextureRegion("lightGreen");
+		marketDarkGreen = getTextureRegion("green");
 		marketJade = getTextureRegion("market/jade");
 		marketLock = getTextureRegion("market/Market_subMenus__template_element-02");
 		purchaseableCheck = getTextureRegion("market/Market_subMenus__template_element-05");
@@ -757,13 +744,23 @@ public class Assets {
 		redBright = getTextureRegion("red");
 		yellow = getTextureRegion("topbar/yellow");
 		
+		greenArrow = getTextureRegion("screens/green_arrow");
+		
+		marketGreenD = new TextureRegionDrawable(marketGreen);
+		marketDarkGreenD = new TextureRegionDrawable(marketDarkGreen);
+		grayD = new TextureRegionDrawable(gray);
+		grayLightD = new TextureRegionDrawable(grayLight);
+		
 		
 //		white9Patch = new NinePatch(getTextureRegion("screens/white9patch"), WHITE_9PATCH_LEFT, WHITE_9PATCH_RIGHT, WHITE_9PATCH_TOP, WHITE_9PATCH_BOT);
 //		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		white9PatchSmall = new NinePatch(getTextureRegion("market/white9patchSmall"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
 		green9PatchSmall = new NinePatch(getTextureRegion("market/green9patchSmallHollow"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
-		limeGreen9PatchSmallFilled = new NinePatch(getTextureRegion("market/limeGreen9patchSmallFilled"), 9, 5, 8, 8);
-//		gray9Patch = new NinePatch(getTextureRegion("market/gray9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
+		
+		
+		limeGreen9PatchSmallFilled = new NinePatch(getTextureRegion("market/limeGreen9patchSmallFilled2"), 8, 4, 8, 8);
+		
+		//		gray9Patch = new NinePatch(getTextureRegion("market/gray9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		gray9PatchSmall = new NinePatch(getTextureRegion("market/gray9patchSmallHollow2"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
 		gray9PatchSmallThin = new NinePatch(getTextureRegion("market/gray9patchSmallHollow"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
 		gray9PatchSmallFilled = new NinePatch(getTextureRegion("market/gray9patchSmallFilled"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
@@ -803,10 +800,10 @@ public class Assets {
 	}
 	
 	public static TextureRegion getStickTexture(Profile profile) {
-		return profile.inventory.skewerType.getFirstSelected().getIcon();
+		return profile.inventory.skewerType.getStick();
 	}
 	
-	public static TextureRegion getMeatTexture(MeatTypes.Type type, Meat.State state, boolean spiced) {
+	public static TextureRegion getMeatTexture(KebabTypes.Type type, Meat.State state, boolean spiced) {
 		KebabTextures kt = type.textures;
 		if (kt == null) return null;
 		switch (state) {

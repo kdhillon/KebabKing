@@ -1,9 +1,15 @@
 package com.kebabking.game;
 
 import com.badlogic.gdx.Screen;
+import com.kebabking.game.Managers.Manager;
 
 public class ScreenTemplate implements Screen {
-
+	public String screenName;
+	
+	public ScreenTemplate(String name) {
+		this.screenName = name;
+	}
+	
 	@Override
 	public void render(float delta) {
 		// TODO Auto-generated method stub
@@ -28,6 +34,10 @@ public class ScreenTemplate implements Screen {
 	public void show() {
 		// TODO Auto-generated method stub
 		System.out.println("show(): " + this.getClass().toString());
+		
+		if (Manager.analytics != null) {
+			Manager.analytics.sendScreenHit(screenName);
+		}
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.kebabking.game;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -15,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kebabking.game.Managers.Manager;
+import com.kebabking.game.Purchases.PurchaseType;
+import com.kebabking.game.Purchases.Purchaseable;
 
 public class SummaryScreen extends ActiveScreen {
 	final static Color RED = new Color(193/256.0f, 39/256.0f, 45/256.0f, 1f);
@@ -48,22 +52,23 @@ public class SummaryScreen extends ActiveScreen {
 	float meatExpenses;
 	float rent;
 	float profit;
+	boolean profitRecord;
+	
 	int customersServed;
 	int sickCount;
 	float rating; // between 0.5 and 5.0
 	
-	// not anymore
+	int lvlDisplayed;
+	int expRemaining; // don't use this anymore.
 	int expDisplayed;
 	String expString;  // corresponds to above
-	
-	int expRemaining; // don't use this anymore.
 	
 	// in case we want to have stars pop on.
 	Table starTable;
 	float currentStarCount;
 	
 	boolean dayCompleteDone = false; // used to switch to info from "day complete"
-	boolean grantingExpDone = false; // used to switch to info from "day complete"
+//	boolean grantingExpDone = false; // used to switch to info from "day complete"
 
 	float alpha = 0;
 	
@@ -80,8 +85,10 @@ public class SummaryScreen extends ActiveScreen {
 	
 	float infoWidth;
 	
+	boolean justUnlockedSomething;
+	
 	public SummaryScreen(KebabKing master, KitchenScreen kitchen) {
-		super(master, true);
+		super(master, true, "Summary");
 		this.kitchen = kitchen;
 
 		grill.deactivate(); // deactivate grill
@@ -100,7 +107,7 @@ public class SummaryScreen extends ActiveScreen {
 //		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");		
 //		float dayWidth = KebabKing.getGlobalX(0.9f);
 //		float dayHeight = dayWidth * bg.getRegionHeight() / bg.getRegionWidth();
-		bigTable.add(dayComplete).center().height(KebabKing.getGlobalY(0.1f)).width(KebabKing.getGlobalX(1f));
+		bigTable.add(dayComplete).center();//.height(KebabKing.getGlobalY(0.1f)).width(KebabKing.getGlobalX(1f));
 		
 //		dayComplete.setPosition(0, KebabKing.getGlobalY(0.45f));
 
@@ -129,39 +136,45 @@ public class SummaryScreen extends ActiveScreen {
 
 		this.rating = kitchen.calculateReputation();
 		
+		updateProfile(master.profile, rating, revenue, expenses);
+		
 		this.expRemaining = this.calcExpForProfit(profit);
-	
+		
+		if (KebabKing.EXP_CITY) 
+			this.expRemaining += 500;
+				
+		addExpAndSave(expRemaining, master.profile);
+		
 		if (kitchen.wasShutDown) {
 			DrawUI.launchPoliceNotification();
 		}
-				
+		
 		// Prepare an ad to be watched
 		Manager.ads.cacheAd();
+	}
+	
+	public void updateProfile(Profile profile, float rating, float revenue, float expenses) {
+		profile.stats.dayEnd(rating, revenue, expenses);
+		this.profitRecord = profile.stats.isRecord(revenue - expenses);
+	}
+	
+	public void addExpAndSave(int exp, Profile profile) {
+		// before we do anything with actual profile, store the previous values
+		expDisplayed = profile.getExp();
+		lvlDisplayed = profile.getLevel();
 		
-		if (KebabKing.EXP_CITY) 
-			this.expRemaining += 300;
+		// now actually save stuff to the profile. All other
+		profile.giveExp(exp);
+		profile.save();
 	}
 	
-	public void updateProfile() {
-		// save rating
-		kitchen.master.profile.subtractDailyExpenses();
-	}
-	
-	// TODO fix this
-	// saving takes a while, so better to do this after a screen is up
-	public void saveProfile() {
-		// save to getProfile()
-		getProfile().addRepuation(kitchen.calculateReputation());		
-		getProfile().endDay(kitchen);
+	// only reason to do this after day complete is so that player can see it decreasing
+	public void subtractExpenses() {
+		master.profile.subtractDailyExpenses();
 	}
 	
 	public Table getDayCompleteButton() {
-		Table button = DrawUI.getBlueButton("DAY COMPLETE", 44);
-//		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");
-//		button.setBackground(new TextureRegionDrawable(bg));
-//		  
-//		Label resume = new Label("    DAY COMPLETE    ", Assets.generateLabelStyleUIChinaWhite(48, " DAY COMPLETE"));
-//		button.add(resume).center().padRight(KebabKing.getGlobalX(0.1f)).padBottom(KebabKing.getGlobalY(0.004f));
+		Table button = DrawUI.getBlueButton(Assets.strings.get("day_complete"), 44);
 	
 		button.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
@@ -190,13 +203,15 @@ public class SummaryScreen extends ActiveScreen {
 		Table window = new Table();
 		bigTable.add(window).width(KebabKing.getGlobalX(0.95f)).height(KebabKing.getGlobalY(0.94f)).top().padTop(KebabKing.getGlobalY(0.015f));
 		
+		Table subTableFull = new Table();
 		Table subTable = new Table();
-		subTable.setBackground(new TextureRegionDrawable(Assets.notificationBG));
+		subTableFull.add(subTable).expand().fill();
+		subTable.setBackground(new TextureRegionDrawable(Assets.white));
 
 		float padX = 0.08f;
 		float padTop = 0.1f;
 		float padBot = 0.09f;
-		window.add(subTable).padLeft(KebabKing.getGlobalX(padX)).padRight(KebabKing.getGlobalX(padX)).padTop(KebabKing.getGlobalY(padTop)).padBottom(KebabKing.getGlobalY(padBot)).expand().fill();//.top();	
+		window.add(subTableFull).padLeft(KebabKing.getGlobalX(padX)).padRight(KebabKing.getGlobalX(padX)).padTop(KebabKing.getGlobalY(padTop)).padBottom(KebabKing.getGlobalY(padBot)).expand().fill();//.top();	
 		
 		Table topBar = generateTopTable();
 		subTable.add(topBar).top().expandX().fillX().padBottom(topBarPadY).padTop(topBarPadY);
@@ -213,13 +228,13 @@ public class SummaryScreen extends ActiveScreen {
 		
 		float infoPadBetween = KebabKing.getGlobalY(0.005f);
 		Table infoTable = new Table();
-		Table revenueTable = generateTable("Revenue", revenue, true, new String[]{}, new float[]{});
+		Table revenueTable = generateTable("revenue", revenue, true, new String[]{}, new float[]{});
 		infoTable.add(revenueTable).expandX().fillX().padBottom(infoPadBetween).colspan(2);
 		infoTable.row();
-		Table expenseTable = generateTable("Expenses", expenses, true, new String[]{"Meat", "Rent"}, new float[]{meatExpenses, rent});
+		Table expenseTable = generateTable("expenses", expenses, true, new String[]{"meat", "rent"}, new float[]{meatExpenses, rent});
 		infoTable.add(expenseTable).expandX().fillX().padBottom(infoPadBetween).colspan(2);
 		infoTable.row();
-		Table customerTable = generateTable("Customers", customersServed, false, new String[]{"Sick"}, new float[]{sickCount});
+		Table customerTable = generateTable("customers", customersServed, false, new String[]{"sick"}, new float[]{sickCount});
 		infoTable.add(customerTable).expandX().fillX().padBottom(infoPadBetween).colspan(2);
 		infoTable.row();
 		
@@ -245,27 +260,34 @@ public class SummaryScreen extends ActiveScreen {
 		float width = KebabKing.getGlobalX(0.7f);
 		float height = width * Assets.jadeBox.getRegionHeight() / Assets.jadeBox.getRegionWidth();
 		float jadePad = KebabKing.getGlobalY(0.01f);
-		subTable.add(jadeTable).expandY().width(width).height(height).padTop(0).padBottom(jadePad*3);
+		subTable.add(jadeTable).expandY().width(width).height(height).padTop(0).padBottom(jadePad*1);
 	
+		
+		Table bottom = new Table();
+		bottom.setBackground(new TextureRegionDrawable(Assets.notificationBottom));
+		subTableFull.row();
+		subTableFull.add(bottom).expandX().fillX().height(KebabKing.getGlobalYFloat(0.026f));
+//		subTableFull.debugAll();
+		
 		// new lines give this extra volume for clicking (hacky)
 //		Label nextRound = new Label("\nnext round >>\n", Assets.generateLabelStyleUIWhite(30, "\nnext round>"));
 //		nextRound.setColor(RED);
-		Table nextRound = DrawUI.getBlueButton("CONTINUE", 40);
+		Table nextRound = DrawUI.getBlueButton(Assets.strings.get("continue"), 40);
 		
 		nextRound.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
 				return true;
 			}
 			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				clickNextRound();
+				clickContinue();
 			}
 		});	
 		
 		bigTable.row();
 		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");		
-		float nextWidth = KebabKing.getGlobalX(0.6f);
-		float nextHeight = nextWidth * bg.getRegionHeight() / bg.getRegionWidth();
-		bigTable.add(nextRound).top().expandY().padTop(KebabKing.getGlobalY(-0.08f)).width(nextWidth).height(nextHeight);
+//		float nextWidth = KebabKing.getGlobalX(0.6f);
+//		float nextHeight = nextWidth * bg.getRegionHeight() / bg.getRegionWidth();
+		bigTable.add(nextRound).top().expandY().padTop(KebabKing.getGlobalY(-0.08f)); //.width(nextWidth).height(nextHeight);
 	}
 	
 	public static Table generateTopTable() {
@@ -278,7 +300,7 @@ public class SummaryScreen extends ActiveScreen {
 		
 		Table topCenter = new Table();
 		
-		TextureRegion topImage = Assets.getTextureRegion("screens/Summary-02 (2)");
+		TextureRegion topImage = Assets.getTextureRegion("screens/Summary-02");
 		float IMAGE_WIDTH = 0.2f;
 		float IMAGE_HEIGHT = IMAGE_WIDTH * topImage.getRegionHeight() / topImage.getRegionWidth();
 		Image image = new Image(topImage);
@@ -286,7 +308,8 @@ public class SummaryScreen extends ActiveScreen {
 //		image.setHeight(KebabKing.getGlobalY(IMAGE_HEIGHT));
 		topCenter.add(image).width(KebabKing.getGlobalX(IMAGE_WIDTH)).height(KebabKing.getGlobalX(IMAGE_HEIGHT));
 		topCenter.row();
-		Label dailyAccounts = new Label("DAILY ACCOUNTS", Assets.generateLabelStyleUIWhite(14, "DAILY ACCOUNTS"));
+		String daily = Assets.strings.get("daily_accounts");
+		Label dailyAccounts = new Label(daily, Assets.generateLabelStyleUI(12, daily));
 		dailyAccounts.setColor(MainStoreScreen.FONT_COLOR);
 	
 		topCenter.add(dailyAccounts);
@@ -310,12 +333,13 @@ public class SummaryScreen extends ActiveScreen {
 		shareMain.add(shareFb).width(width).height(height).expandX();
 		
 		Table rightTable = new Table();
-		String text = "+" + SHARE_REWARD;
-		Label shareValue = new Label(text, Assets.generateLabelStyleUIHeavyWhite(16, text));
+		String text = "+" + LanguageManager.localizeNumber(SHARE_REWARD);
+		Label shareValue = new Label(text, Assets.generateLabelStyleUIHeavy(16, text));
 		shareValue.setColor(MainStoreScreen.FONT_COLOR_GREEN);
 		rightTable.add(shareValue);
 		
-		Image minijade = new Image(Assets.bigjade);
+//		Image minijade = new Image(Assets.bigjade);
+		Image minijade = new Image(Assets.minijade);
 		rightTable.add(minijade).height(height * 0.8f).width(height * 0.8f).padLeft(height * 0.2f);
 		shareMain.add(rightTable).height(height).padLeft(KebabKing.getGlobalX(0.01f));
 		
@@ -342,12 +366,13 @@ public class SummaryScreen extends ActiveScreen {
 		Table table = new Table();
 		table.setBackground(new NinePatchDrawable(Assets.gray9PatchSmallThin));
 		
-		Label title = new Label(mainLabel, Assets.generateLabelStyleUIHeavyWhite(14, Assets.alpha));	
+		String main = Assets.strings.get(mainLabel);
+		Label title = new Label(main, Assets.generateLabelStyleUIHeavy(14, main));	
 		title.setColor(MainStoreScreen.FONT_COLOR);
 		String toPrint;
-		if (money) toPrint = Assets.currencyChar + mainValue;
-		else toPrint = "" + (int) mainValue;
-		Label value = new Label(toPrint, Assets.generateLabelStyleUIHeavyWhite(14, Assets.nums));
+		if (money) toPrint = Assets.currencyChar + LanguageManager.localizeNumber(mainValue);
+		else toPrint = "" + LanguageManager.localizeNumber((int) mainValue);
+		Label value = new Label(toPrint, Assets.generateLabelStyleUIHeavy(14, toPrint));
 		value.setColor(MainStoreScreen.FONT_COLOR);
 		table.add(title).left().expandX();
 		table.add(value).right().expandX();
@@ -355,10 +380,11 @@ public class SummaryScreen extends ActiveScreen {
 		float indentPad = KebabKing.getGlobalX(0.1f);
 		for (int i = 0; i < labels.length; i++) {
 			table.row();
-			Label lab = new Label(labels[i], Assets.generateLabelStyleUILight(14, Assets.alpha));
+			String subLab = Assets.strings.get(labels[i]);
+			Label lab = new Label(subLab, Assets.generateLabelStyleUILight(14, subLab));
 			lab.setColor(MainStoreScreen.FONT_COLOR);
-			if (money) toPrint = Assets.currencyChar + values[i];
-			else toPrint = "" + (int) values[i];
+			if (money) toPrint = Assets.currencyChar + LanguageManager.localizeNumber(values[i]);
+			else toPrint = "" + LanguageManager.localizeNumber((int) values[i]);
 			Label val = new Label(toPrint, Assets.generateLabelStyleUILight(14, Assets.nums));
 			val.setColor(MainStoreScreen.FONT_COLOR);
 			table.add(lab).left().expandX().padLeft(indentPad);
@@ -373,7 +399,8 @@ public class SummaryScreen extends ActiveScreen {
 		
 		float negPadY = -KebabKing.getGlobalY(NEG_PAD);
 		
-		Label reputationLabel = new Label("DAILY RATING", Assets.generateLabelStyleUIWhite(14, "DAILY RATING"));
+		String repString = Assets.strings.get("daily_rating");
+		Label reputationLabel = new Label(repString, Assets.generateLabelStyleUI(14, repString));
 		reputationLabel.setColor(TopBar.REPUTATION_FONT_COLOR);
 		table.add(reputationLabel).center().padTop(negPadY);
 		table.row();
@@ -431,12 +458,13 @@ public class SummaryScreen extends ActiveScreen {
 		
 		float negPadY = -KebabKing.getGlobalY(NEG_PAD);
 		
-		Label profitLabel = new Label("PROFIT", Assets.generateLabelStyleUIWhite(12, "PROFIT"));
+		String profitText = Assets.strings.get("profit");
+		Label profitLabel = new Label(profitText, Assets.generateLabelStyleUI(12, profitText));
 		profitLabel.setColor(RED);
 		table.add(profitLabel).center().padTop(negPadY);
 		table.row();
 
-		Label valueLabel = new Label(Assets.currencyChar + this.profit, Assets.generateLabelStyleUIWhite(24, Assets.nums + "-"));
+		Label valueLabel = new Label(Assets.currencyChar + LanguageManager.localizeNumber(this.profit), Assets.generateLabelStyleUI(24, Assets.nums + "-"));
 		valueLabel.setColor(RED);
 		table.add(valueLabel).center().padBottom(negPadY);
 		
@@ -451,7 +479,7 @@ public class SummaryScreen extends ActiveScreen {
 				return true;
 			}
 			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				transitionToAd();
+				clickEarnJade();
 			}
 		});	
 		
@@ -463,8 +491,10 @@ public class SummaryScreen extends ActiveScreen {
 		table.add(playButton).width(playWidth).height(playWidth).bottom().expandY().padBottom(KebabKing.getGlobalY(0.003f));
 		table.row();
 		
-		Label earnJade = new Label("\nEARN JADE  \n", Assets.generateLabelStyleUIChinaWhite(22, "EARN JADE\n"));
-		table.add(earnJade).bottom().padBottom(KebabKing.getGlobalY(0.025f));
+		String earnJadeText = Assets.strings.get("earn_jade");
+		Label earnJade = new Label(earnJadeText, Assets.generateLabelStyleUIChina(22, earnJadeText));
+		table.add(earnJade).center().padBottom(KebabKing.getGlobalY(0.045f)).padRight(KebabKing.getGlobalX(0.02f));
+//		table.debugAll();
 		return table;
 	}
 	
@@ -473,9 +503,9 @@ public class SummaryScreen extends ActiveScreen {
 
 		float height = KebabKing.getGlobalY(0.03f);
 
-		float expPercent = master.profile.getExp() *1.0f / master.profile.getNextExp();
-//		float expPercent = 0.05f;
-		System.out.println("exp percent:" + expPercent);
+//		float expPercent = expDisplayed *1.0f / master.profile.getExpNeededFor(lvlDisplayed + 1);
+////		float expPercent = 0.05f;
+//		System.out.println("exp percent:" + expPercent);
 
 		expTable = new Table();
 		
@@ -487,14 +517,15 @@ public class SummaryScreen extends ActiveScreen {
 		grayBar = new Table();
 		grayBar.setBackground(new NinePatchDrawable(Assets.gray9PatchSmallFilledCut));
 		
-		exp = new Label("", Assets.generateLabelStyleUIWhite(16, Assets.nums + "XP"));
+		exp = new Label("", Assets.generateLabelStyleUI(16, Assets.nums + "XP"));
 		exp.setColor(MainStoreScreen.FONT_COLOR);
 		exp.setAlignment(Align.right);
 			
 		table.add(expTable).width(infoWidth).height(height);
 //		table.debug();
 		
-		lvlLs = Assets.generateLabelStyleUIWhite(12, "LVL" + Assets.nums);
+		String levelText = Assets.strings.get("lvl");
+		lvlLs = Assets.generateLabelStyleUI(12, levelText + Assets.nums);
 		levelLeft = new Label("", lvlLs);
 		levelLeft.setColor(MainStoreScreen.FONT_COLOR_GRAY);
 //		levelLeft.setAlignment(Align.left);
@@ -516,7 +547,7 @@ public class SummaryScreen extends ActiveScreen {
 	}
 	
 	public void updateExpTable() {
-		float expPercent = master.profile.getExp() *1.0f / master.profile.getNextExp();
+		float expPercent = expDisplayed *1.0f / Profile.getExpNeededFor(lvlDisplayed + 1);
 		float height = KebabKing.getGlobalY(0.03f);
 		
 		expTable.clear();
@@ -530,29 +561,33 @@ public class SummaryScreen extends ActiveScreen {
 		float xpPad = ((infoWidth * (1-expPercent)) + KebabKing.getGlobalX(0.01f));
 		xpPad = Math.min(xpPad, (infoWidth - KebabKing.getGlobalX(0.1f)));
 
-		exp.setText(master.profile.getExp() + "XP");
+		exp.setText(LanguageManager.localizeNumber(expDisplayed) + "XP");
 		expTable.row();
 		expTable.add(exp).right().padRight(xpPad).padTop(-height);
 		
-		levelLeft.setText("LVL " + master.profile.getLevel());
-		levelRight.setText("LVL " + (master.profile.getLevel() + 1));
+		String levelText = Assets.strings.get("lvl");
+		levelLeft.setText(levelText + " " + LanguageManager.localizeNumber(lvlDisplayed));
+		levelRight.setText(levelText + " " + LanguageManager.localizeNumber((lvlDisplayed + 1)));
 	}
 	
-	public void clickNextRound() {
-		System.out.println("Transitioning to next round");
-
-		if (expRemaining > 0) {
-			grantExp(expRemaining);
-			saveProfile();
+	public void clickContinue() {
+		if (justUnlockedSomething) {
+			TopBar.updateLevel(master.profile.getLevel());
+			kitchen.master.summaryToStore();
 		}
-		kitchen.master.summaryToMain(); // change later
+		else {
+			TopBar.updateLevel(master.profile.getLevel());
+			kitchen.master.summaryToMain(); // change later
+		}
 	}
 	
 	public void clickShareButton() {
 		Manager.fb.shareDayComplete(this.profit);
 	}
 	
-	public void transitionToAd() {
+	public void clickEarnJade() {
+		if (DrawUI.notificationActive) return;
+		
 		System.out.println("Transitioning to ads");
 		Manager.ads.showAd();
 	}
@@ -568,13 +603,37 @@ public class SummaryScreen extends ActiveScreen {
 	public void render(float delta) {
 		if (timeElapsed > TIME_TO_WAIT && !dayCompleteDone) {
 			dayCompleteDone = true;
-			this.updateProfile();
+			this.subtractExpenses();
 			initializeTable();
 		}
 		
 		super.renderGrayAlpha(delta, alpha);
 
 //		uiStage.draw();
+	}
+	
+	public void increaseDisplayedExp() {
+		expDisplayed++;
+		if (expDisplayed >= Profile.getExpNeededFor(lvlDisplayed + 1)) {
+			lvlDisplayed++;
+			TopBar.updateLevel(lvlDisplayed);
+			expDisplayed = 0;
+			// "leveling up"
+			LinkedList<Purchaseable> unlocked = new LinkedList<Purchaseable>();
+			for (Purchaseable p : PurchaseType.allPurchaseables) {
+				if (p.unlockAtLevel() == this.lvlDisplayed) {
+					// TODO enable
+					unlocked.add(p);
+				}
+			}
+			if (unlocked.size() > 0) {
+				this.justUnlockedSomething = true;
+				DrawUI.launchUnlockNotification(unlocked);
+//				for (Purchaseable p : unlocked) {
+//					master.store.storeScreen.updatePurchaseableAfterUnlock(p);
+//				}
+			}
+		}
 	}
 
 	@Override
@@ -590,15 +649,15 @@ public class SummaryScreen extends ActiveScreen {
 	
 			if (expRemaining > 0 && expTable != null && !DrawUI.notificationActive) {
 				this.expRemaining--;
-				grantExp(1);
+				increaseDisplayedExp();
 				updateExpTable();
 			}
 			// save profile once done granting exp
-			else if (expRemaining == 0 && !grantingExpDone) {
-				System.out.println("SAVING PROFILE AFTER EXP LOADED");
-				this.grantingExpDone = true;
-				this.saveProfile();
-			}
+//			else if (expRemaining == 0 && !grantingExpDone) {
+//				System.out.println("SAVING PROFILE AFTER EXP LOADED");
+//				this.grantingExpDone = true;
+////				this.saveProfile();
+//			}
 			
 		}
 		uiStage.act();

@@ -10,17 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /* new pause screen created for every kitchen screen */
 public class SettingsScreen extends ActiveScreen  {
-	//	static String defaultDesc = "People are getting sick from your nasty ass meat! Luckily, you've got more options. Want to upgrade?";
-	static String defaultDesc = "This is the settings screen";
-
-
 	Table bigTable;
 	
 	Button musicButton;
 	Button soundButton;
 
 	public SettingsScreen(KebabKing master) {
-		super(master, true);	
+		super(master, true, "Settings");	
 
 		bigTable = new Table();
 		bigTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
@@ -49,7 +45,8 @@ public class SettingsScreen extends ActiveScreen  {
 		topLeft.setBackground(new TextureRegionDrawable(Assets.white));
 		topRight.setBackground(new TextureRegionDrawable(Assets.white));
 
-		Label topText = new Label("SETTINGS", Assets.generateLabelStyleUIChinaWhite(50, "SETTINGS"));
+		String settingsString = Assets.strings.get("settings");
+		Label topText = new Label(settingsString, Assets.generateLabelStyleUIChina(50, settingsString));
 
 		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));
 
@@ -80,7 +77,7 @@ public class SettingsScreen extends ActiveScreen  {
 			}
 		});
 
-		float size = KebabKing.getGlobalXFloat(0.2f);
+		float size = KebabKing.getGlobalXFloat(0.3f);
 
 		textTable.add(soundButton).width(size).height(size).center().padRight(KebabKing.getGlobalXFloat(0.05f));
 
@@ -106,7 +103,8 @@ public class SettingsScreen extends ActiveScreen  {
 	}
 
 	public Table generateResumeButton() {
-		Table button = DrawUI.getBlueButton("BACK" , 44);
+		String backText = Assets.strings.get("back");
+		Table button = DrawUI.getBlueButton(backText , 44);
 
 		button.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
@@ -118,10 +116,6 @@ public class SettingsScreen extends ActiveScreen  {
 		});	
 
 		return button;
-	}
-
-	public void goToMarket() {
-		System.out.println("Go to market!");
 	}
 
 	@Override

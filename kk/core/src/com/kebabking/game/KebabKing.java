@@ -18,17 +18,17 @@ public class KebabKing extends Game {
 	//	public static final boolean TEST_MODE = false;
 	public static final boolean EXP_CITY = true; // get 300 exp after day
 	public static final boolean SHORT_DAY = false;
-	public static final boolean LVL_50 = false;
-	public static final boolean RICH_MODE = false;
+	public static final boolean LVL_50 = true;
+	public static final boolean RICH_MODE = true;
 	public static final boolean FORCE_NEW = true;
-	public static final boolean DISABLE_TUTORIAL = false;
+	public static final boolean DISABLE_TUTORIAL = true;
 	public static final boolean SAVE_AFTER_NEW = false;
 	public static final boolean DONT_SAVE = false;
 	public static final boolean VERIFY_SAVE = false;
+	public static final boolean START_MUTED = true;
 	public static final boolean STRICT_MODE = false; // asserts that save files are in right format, and that only one notification is active at once
 
 	public static final String SAVE_FILENAME = "kk.sav";
-	public static final boolean ENGLISH = true;
 
 	// shut down stand for 5 minutes unless they pay the fine
 	public static final long SHUTDOWN_LENGTH_SECONDS = 300;
@@ -185,7 +185,6 @@ public class KebabKing extends Game {
 
 		// initialize screen
 		mainMenu = new MainMenuScreen(this);
-		setScreen(mainMenu); // have to set this immediately, otherwise height and width won't load properly
 
 		store = new MainStoreScreen(this);
 
@@ -198,6 +197,8 @@ public class KebabKing extends Game {
 		long totalLoadTime = System.currentTimeMillis() - startTime;
 		Manager.analytics.sendUserTiming("Splash Load", totalLoadTime);
 		Manager.analytics.sendEventHit("App", "Started");
+		
+		setScreen(mainMenu); // have to set this immediately, otherwise height and width won't load properly
 	}
 
 	//	public void initialize(long startTime) {
@@ -213,6 +214,7 @@ public class KebabKing extends Game {
 	public void save() {
 		if (DONT_SAVE) return;
 
+		System.out.println("Trying to save");
 		// open android fileoutputstream in internal storage
 		//		FileOutputStream internal = openFileOutput("filename.sav", Context.MODE_PRIVATE);
 
@@ -500,8 +502,23 @@ public class KebabKing extends Game {
 	//		bg.setToDay();
 	//	}
 
+	public void summaryToStore() {		
+		if (summary != null) {
+			summary.dispose();
+			this.summary = null;
+		}
+		System.out.println("summary to store");
+		mainMenu.reset();
+		this.setScreen(store);
+		bg.setToDay();
+	}
+
+	
 	public void summaryToMain() {		
-		if (summary != null) summary.dispose();
+		if (summary != null) {
+			summary.dispose();
+			this.summary = null;
+		}
 		System.out.println("summary to main");
 		mainMenu.reset();
 		this.setScreen(mainMenu);
@@ -509,9 +526,14 @@ public class KebabKing extends Game {
 	}
 
 	public void toStoreFrom(ActiveScreen screen, Purchaseable p) {
+		toStoreFrom(screen);
+		store.switchTo(p);
+	}
+	
+	// go to main store, return to this.
+	public void toStoreFrom(ActiveScreen screen) {
 		this.marketFromThis = screen;
 		this.setScreen(store);
-		store.switchTo(p);
 	}
 
 	public void mainToStore() {

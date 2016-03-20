@@ -5,7 +5,6 @@ import java.util.HashMap;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 //import com.badlogic.gdx.utils.Align;
@@ -128,7 +127,7 @@ public class StoreScreen extends ActiveScreen {
 	// can only access storescreen from summary screen and main menu screen (direct transition after summary screen)
 	// uses scene2d for menus
 	public StoreScreen(KebabKing master, MainStoreScreen mainStoreScreen) {
-		super(master, true);
+		super(master, true, "Substore");
 		this.mainStoreScreen = mainStoreScreen;
 
 		this.tableWidth = KebabKing.getWidth();
@@ -257,11 +256,8 @@ public class StoreScreen extends ActiveScreen {
 	public Table newBackButton() {
 		Table backButton = mainStoreScreen.newBackButtonInit();
 
-		backButton.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+		backButton.addListener(new StrictInputListener() {
+			public void touch(InputEvent event) {
 				clickBack();
 			}
 		});	
@@ -273,23 +269,32 @@ public class StoreScreen extends ActiveScreen {
 		switchToMain();
 	}
 
-	public void updateAll() {
-		foodTable.markAllForUpdate();
-		grillTable.markAllForUpdate();;
-		mapTable.markAllForUpdate();
-		adsTable.markAllForUpdate();
-	}
+//	public void updateAll() {
+//		foodTable.markAllForUpdate();
+//		grillTable.markAllForUpdate();;
+//		mapTable.markAllForUpdate();
+//		adsTable.markAllForUpdate();
+//	}
 	
 	// update the purchasetype subtable for this purchaseable
-	public void updateTableFor(Purchaseable p) {
+	public void updatePurchaseableAfterUnlock(Purchaseable p) {
 		StoreSubtable subtable = getSubtableForType(p.getType());
 		if (subtable == null) {
 			System.out.println("Wanting to update " + p.getName() + " but it doesn't exist");
 			return;
 		}
-		subtable.updateTableFor(p);
+		subtable.updatePurchaseableForUnlock(p);
 	}
 
+//	public void updateAfterConsumableReset(PurchaseType c) {
+//		StoreSubtable subtable = getSubtableForType(c);
+//		if (subtable == null) {
+//			System.out.println("Wanting to update consumable " + c.getName() + " but it doesn't exist");
+//			return;
+//		}
+//		subtable.updateOnConsumableReset(c);
+//	}
+//	
 	//	// switches the table in the current table to the next one, left or right
 	//	public void tableScroll(StoreScrollButton ssb, boolean left) {
 	//		Purchaseable next = ssb.type.getNext(ssb.current, left);
@@ -342,7 +347,7 @@ public class StoreScreen extends ActiveScreen {
 	public void switchTo(TableType switchToThis) {
 		Table newTable = null;
 		String name = "NoType";
-		
+				
 //		resetTable(switchToThis);
 
 		// TODO somehow consolidate the enum "TableType" and the PurchaseType[] arrays
@@ -429,6 +434,6 @@ public class StoreScreen extends ActiveScreen {
 	
 	public void campaignEnded() {
 		System.out.println("campaign ended, updating purchase type table for ad campaign");
-		adsTable.updatePurchaseTypeTable(master.profile.inventory.adCampaign);
+		adsTable.onCampaignEnded(master.profile.inventory.adCampaign);
 	}
 }

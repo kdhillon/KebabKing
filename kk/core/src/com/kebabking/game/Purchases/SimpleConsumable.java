@@ -8,8 +8,8 @@ public class SimpleConsumable extends SimplePurchaseable {
 		super();
 	}
 		
-	public SimpleConsumable(String name, float cashToActivate, int coinsToActivate, int unlockAtLevel, String description, String iconFull, long duration) {
-		super(name, cashToActivate, coinsToActivate, unlockAtLevel, description, iconFull);
+	public SimpleConsumable(String name, float cashToActivate, int coinsToActivate, int unlockAtLevel, int unlockWithLocation, String iconFull, long duration) {
+		super(name, cashToActivate, coinsToActivate, unlockAtLevel, unlockWithLocation, iconFull);
 		this.duration = duration;
 	}
 	

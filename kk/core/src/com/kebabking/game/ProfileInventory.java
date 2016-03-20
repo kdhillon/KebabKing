@@ -7,9 +7,9 @@ import com.kebabking.game.Purchases.DrinkQuality;
 import com.kebabking.game.Purchases.GrillSize;
 import com.kebabking.game.Purchases.GrillStand;
 import com.kebabking.game.Purchases.GrillType;
+import com.kebabking.game.Purchases.KebabTypes;
 import com.kebabking.game.Purchases.LocationType;
 import com.kebabking.game.Purchases.MeatQuality;
-import com.kebabking.game.Purchases.MeatTypes;
 import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.PurchaseTypeConsumable;
 import com.kebabking.game.Purchases.Purchaseable;
@@ -44,7 +44,7 @@ public class ProfileInventory {
 	@Tag(108) public AdCampaign adCampaign;
 	
 	// multiple meat types can be selected
-	@Tag(111) public MeatTypes meatTypes;
+	@Tag(111) public KebabTypes kebabTypes;
 	
 	// testing tags, won't be saved.
 	@Deprecated	@Tag(109) public AdCampaign unused;
@@ -63,7 +63,7 @@ public class ProfileInventory {
 
 		meatQuality = new MeatQuality(this);
 
-		meatTypes = new MeatTypes(this);
+		kebabTypes = new KebabTypes(this);
 		
 		drinkQuality = new DrinkQuality(this);
 
@@ -84,8 +84,8 @@ public class ProfileInventory {
 
 	public void initializeAfterLoad(Profile profile) {
 		// Anything that wasn't in the first generation of purchasetypes should be checked and initialized here
-		if (meatTypes == null) {
-			meatTypes = new MeatTypes(this);
+		if (kebabTypes == null) {
+			kebabTypes = new KebabTypes(this);
 		}
 		if (grillType == null) {
 			grillType = new GrillType(this);
@@ -107,8 +107,9 @@ public class ProfileInventory {
 		profile.spendCoins(coins);
 	}
 
-	public void spendCash(float cash) {
+	public void spendCashOnStore(float cash) {
 		profile.spendCash(cash);
+		StatsHandler.spendCash(cash);
 	}
 
 	public boolean hasUnlockedByLevel(Purchaseable item) {
@@ -152,7 +153,8 @@ public class ProfileInventory {
 		if (!hasUnlockedByLevel(item)) throw new java.lang.AssertionError();
 		if (type.consumable) throw new java.lang.AssertionError();
 		if (!canAffordPurchase(type, item)) return false;
-
+		if (type.isUnlocked(item)) return false;
+		
 		// unlock item
 		type.unlock(item);
 
@@ -163,8 +165,11 @@ public class ProfileInventory {
 			spendCoins(item.coinsToUnlock());
 		}
 		if (item.cashToUnlock() > 0) { 
-			spendCash(item.cashToUnlock());
+			spendCashOnStore(item.cashToUnlock());
 		}
+		
+		StatsHandler.makePurchase();
+		if (type == locationType) StatsHandler.upgradeLocations();
 
 		// save game
 		profile.save();
@@ -190,7 +195,7 @@ public class ProfileInventory {
 
 		// spend money
 		if (item.cashToActivate() > 0) {
-			this.spendCash(item.cashToActivate());
+			this.spendCashOnStore(item.cashToActivate());
 		}
 		if (item.coinsToActivate() > 0) {
 			this.spendCoins(item.coinsToActivate());
@@ -207,16 +212,21 @@ public class ProfileInventory {
 			profile.master.cm.updateCustomerDistribution(this.adCampaign);
 		}
 
+		StatsHandler.purchaseConsumable();
+		if (type == adCampaign) StatsHandler.launchAdCampaign();
+		
 		// save game
 		profile.save();
 
 		return true;
 	}
 
-	public void handleConsumableReset(PurchaseTypeConsumable type) {
-		if (type == this.adCampaign)
-			profile.master.cm.resetCustomerDistribution();
-	}
+//	public void handleConsumableReset(PurchaseTypeConsumable type) {
+//		if (type == this.adCampaign) {
+//			profile.master.cm.resetCustomerDistribution();
+//			profile.master.store.storeScreen.updateAfterConsumableReset(this.adCampaign);
+//		}
+//	}
 
 	public boolean campaignAlreadyActive(Purchaseable item) {
 		if (this.adCampaign.getActive() == item) return true;
@@ -238,12 +248,12 @@ public class ProfileInventory {
 
 	// unlock second meat option without asking player
 	public void forceSecondBoxUpdate() {
-		meatTypes.unlock(MeatTypes.Type.values[1]);
+		kebabTypes.unlock(KebabTypes.Type.values[1]);
 //		meatTypes.addToSelected(1);
 	}
 	
 	public void forceThirdBoxUpdate() {
-		meatTypes.unlock(MeatTypes.Type.values[2]);
+		kebabTypes.unlock(KebabTypes.Type.values[2]);
 //		meatTypes.addToSelected(1);
 	}
 

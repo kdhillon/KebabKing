@@ -11,6 +11,8 @@ public interface Purchaseable {
 	public float cashToUnlock();
 	
 	public int unlockAtLevel();
+
+	public int unlockWithLocation();
 	
 	public float getDailyCost();
 	

@@ -275,6 +275,10 @@ public class IabHelper {
                                 "RemoteException while setting up in-app billing."));
                     }
                     e.printStackTrace();
+                    System.out.println("printed stack trace");
+                    return;
+                }
+                catch(Exception ex){ //ADDED THIS CATCH
                     return;
                 }
 
@@ -657,6 +661,9 @@ public class IabHelper {
                 }
                 catch (IabException ex) {
                     result = ex.getResult();
+                }
+                catch(IllegalStateException ex){ //ADDED THIS CATCH
+                    result = new IabResult(BILLING_RESPONSE_RESULT_ERROR, "Helper is not setup.");
                 }
 
                 flagEndAsync();

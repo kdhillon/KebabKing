@@ -7,19 +7,20 @@ import com.kebabking.game.ProfileInventory;
 
 // this class contains the user's current grill type
 public class GrillType extends PurchaseType {	
-	static String name = "GRILL TYPE";
-	static String grillTypeDescription = "Change your grill type!";
+	static String name = "grill_type";
+	static String grillTypeDescription = "grill_type_desc";
 	
 	// Specific types that you might own 
 	public static class Type extends SimplePurchaseable {
 		public static final Type[] values = new Type[]{
-				new Type("Basic", 			0,	 	0,  0, 1f, 	1, 	 false, "Runs on twigs and firewood."), 
-				new Type("Charcoal", 		500, 	5,  6, 0.9f, 0.9f, false, "Cooks and burns faster than basic."), 
-				new Type("Gas", 			1000, 	8,  13, 0.85f, 	1, false, "Cooks faster and burns slower than charcoal!"),
-				new Type("Gas Warmer", 		1500, 	10, 21, 0.85f, 	1, true, "Cooks faster and burns slower than charcoal!"),
-				new Type("Electric", 		500,	2,  32, 0.8f, 	1, false,	"Adds a warmer section to your grill"), 
-				new Type("Electric Warmer",	1000, 	15, 41, 0.8f, 	1, false, 	"Gives you total control over grill heat!"),
-				new Type("Nuclear", 		1000, 	15, 47, 0.75f, 	1, false, 	"Gives you total control over grill heat!"),
+				new Type("basic", 			0,	 	0,  0, 1,1f, 	1, 	 false), 
+				new Type("charcoal", 		500, 	0,  3, 3,0.9f, 0.9f, false), 
+//				new Type("charcoal", 		500, 	0,  6, 0.9f, 0.9f, false), 
+				new Type("gas", 			1000, 	5,  13,5, 0.85f,  0.9f, false),
+				new Type("gas_warmer", 		1500, 	10, 21,8, 0.85f, 	0.9f, true),
+				new Type("electric", 		2000,	15, 32,11, 0.75f, 	0.8f, false),
+				new Type("electric_warmer",	2500, 	20, 41,14, 0.75f, 	0.8f, true),
+				new Type("nuclear", 		3500, 	25, 47,16, 0.65f, 	0.7f, false),
 		};
 		// name, initial cost, daily cost, description
 		
@@ -36,8 +37,8 @@ public class GrillType extends PurchaseType {
 		// for Kryo
 		private Type() {}
 		
-		private Type(String name, float cash, int coins, int unlockAtLevel, float cookSpeed, float burnSpeed, boolean warmer, String description) {
-			super(name, cash, coins, unlockAtLevel, description, "");
+		private Type(String name, float cash, int coins, int unlockAtLevel, int unlockWithLocation, float cookSpeed, float burnSpeed, boolean warmer) {
+			super(GrillType.name + "_" + name, cash, coins, unlockAtLevel, unlockWithLocation, "");
 			left = Assets.getTextureRegion("grill/" + getPrefix(name) + "_left");
 			center = Assets.getTextureRegion("grill/" + getPrefix(name) + "_center");
 			right = Assets.getTextureRegion("grill/" + getPrefix(name) + "_right");
@@ -46,11 +47,14 @@ public class GrillType extends PurchaseType {
 			this.warming = warmer;
 			if (warmer) {
 				warmingFire = Assets.createAnimation("grill/"  + getPrefix(name) + "_warming", Assets.GRILL_ANIMATION_TIME, 3, true);
+				this.icon = Assets.getTextureRegion("market/icons/" + name + "_icon");
 			}
+			else 
+				this.icon = Assets.getTextureRegion("market/icons/" + getPrefix(name) + "_icon");
+
 			this.cookSpeedFactor = cookSpeed;
 			this.burnSpeedFactor = burnSpeed;
 			
-			this.icon = Assets.getTextureRegion("market/icons/" + getPrefix(name) + "_icon");
 
 //			fire = Assets.getTextureRegion(name.toLowerCase() + "_fire");
 		}
@@ -63,18 +67,18 @@ public class GrillType extends PurchaseType {
 //			if (name.equals("gas")) {
 //				name = "basic";
 //			}
-			if (name.equals("gas warmer")) {
+			if (name.equals("gas_warmer")) {
 				name = "gas";
 			}
-			if (name.equals("electric")) {
-				name = "basic";
+//			if (name.equals("electric")) {
+//				name = "basic";
+//			}
+			if (name.equals("electric_warmer")) {
+				name = "electric";
 			}
-			if (name.equals("electric warmer")) {
-				name = "basic";
-			}
-			if (name.equals("nuclear")) {
-				name = "basic";
-			}
+//			if (name.equals("nuclear")) {
+//				name = "basic";
+//			}
 			return name;
 		}
 	};

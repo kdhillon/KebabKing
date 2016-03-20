@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -19,9 +17,9 @@ public class MainStoreScreen extends ActiveScreen {
 	static float UNITS_WIDTH = 12f;
 	static float UNITS_HEIGHT = 20f;
 	
-	static float BACK_BUTTON_WIDTH = 0.3f;
-	static float BACK_BUTTON_HEIGHT = 0.05f;
-	static float BACK_BOTTOM_PAD = 0.01f;
+	static float BACK_BUTTON_WIDTH = 0.4f;
+	static float BACK_BUTTON_HEIGHT = 0.09f;
+	static float BACK_BOTTOM_PAD = 0.025f;
 	
 	static Color FONT_COLOR = new Color(0.22f, 0.2f, 0.2f, 1); 
 	static Color FONT_COLOR_GRAY = new Color(0.22f, 0.2f, 0.2f, 0.8f); 
@@ -55,7 +53,7 @@ public class MainStoreScreen extends ActiveScreen {
 	Table table;
 	
 	public MainStoreScreen(KebabKing master) {
-		super(master, true);
+		super(master, true, "Main Store");
 		
 		// initialize unit width and height, useful for making layouts
 		this.unitWidth = KebabKing.getWidth() / UNITS_WIDTH;
@@ -103,7 +101,7 @@ public class MainStoreScreen extends ActiveScreen {
 //		mainTable.debugAll();
 		
 		// add title
-		int title_pad_top = KebabKing.getGlobalY(0.15f);
+		int title_pad_top = KebabKing.getGlobalY(0.1f);
 		int title_width = KebabKing.getGlobalX(0.4f);
 		int title_height = KebabKing.getGlobalY(0.07f);
 		Image title = new Image(Assets.marketTitle);
@@ -111,7 +109,7 @@ public class MainStoreScreen extends ActiveScreen {
 		mainTable.row();
 		
 		// add text below title
-		String text = "welcome to the market";
+		String text = Assets.strings.get("welcome_to_the_market");
 		Label label = new Label(text, Assets.generateLabelStyleUILight(32, text));
 		label.setColor(FONT_COLOR);
 		mainTable.add(label).center().expandY().top();
@@ -120,12 +118,13 @@ public class MainStoreScreen extends ActiveScreen {
 		// add shelf
 		int shelf_width = KebabKing.getGlobalX(0.8f);
 		int shelf_height = KebabKing.getGlobalY(0.6f);
-		int shelf_pos_y = KebabKing.getGlobalY(0.1f);
+		int shelf_pos_y = KebabKing.getGlobalY(0.15f);
 		
 		Table shelf = new Table();
 		shelf.setBackground(new TextureRegionDrawable(Assets.marketShelf));
 		shelf.setSize(shelf_width, shelf_height);
 		shelf.setPosition((KebabKing.getWidth() - shelf_width)/2, shelf_pos_y);
+
 		mainTable.addActor(shelf);
 		
 		// This is the padding between buttons.
@@ -146,8 +145,12 @@ public class MainStoreScreen extends ActiveScreen {
 		Button adsButton = generateButton(TableType.ads);
 		
 		Table coinsButton = generateButton(TableType.jade);
-		Label earnJade = new Label("\nGET JADE\n", Assets.generateLabelStyleUIChinaWhite(26, "GETJADE \n"));
-		coinsButton.add(earnJade).bottom().padBottom(KebabKing.getGlobalY(0.018f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
+		
+		String getJade = Assets.strings.get("get_jade");
+		Label earnJade = new Label(getJade, Assets.generateLabelStyleUIChina(26, getJade));
+//		coinsButton.debugAll();
+//		coinsButton.add(earnJade).top().padTop(KebabKing.getGlobalY(0.1f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
+		coinsButton.add(earnJade).center().padTop(KebabKing.getGlobalY(0.06f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
 
 		shelf.add(foodButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonsPadTop).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
 		shelf.add(grillButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonsPadTop).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
@@ -162,33 +165,27 @@ public class MainStoreScreen extends ActiveScreen {
 		addBackButton(newBackButton(), mainTable);
 		
 		this.table.addActor(mainTable);
-		
-		// add back button
-		// TODO make back button a global thing...? like a part of the big layout
 	}
 	
 	public void addBackButton(Table button, Table table) {
-//		System.out.println("ASDFJALSDJFLKASJDFJASDFJKALSDFJKASDJFLAJSKLDFJASDKLFJALKSDFJALSDFKASDJFAKJSDF");
 		int backPad = KebabKing.getGlobalY(0.01f);
-		table.add(button).bottom().right().expandX().width(KebabKing.getGlobalX(BACK_BUTTON_WIDTH)).height(KebabKing.getGlobalY(BACK_BUTTON_HEIGHT)).padBottom(KebabKing.getGlobalY(BACK_BOTTOM_PAD)).padTop(backPad);
+		table.add(button).bottom().center().expandX().padBottom(KebabKing.getGlobalY(BACK_BOTTOM_PAD)).padTop(backPad).height(KebabKing.getGlobalY(BACK_BUTTON_HEIGHT)); //width(KebabKing.getGlobalX(BACK_BUTTON_WIDTH)).height(KebabKing.getGlobalY(BACK_BUTTON_HEIGHT))
 	}
 	
 	public Table newBackButtonInit() {
-		Table backButton = new Table();
-		backButton.setTouchable(Touchable.enabled);
-		Label back = new Label("back", Assets.generateLabelStyleUIWhite(32, "back"));
-		backButton.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("market/back_button")));
-		backButton.add(back);
-		return backButton;
+//		Table backButton = new Table();
+//		backButton.setTouchable(Touchable.enabled);
+//		Label back = new Label("back", Assets.generateLabelStyleUIChinaWhite(36, "back"));
+//		backButton.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("market/Jeweler-11")));
+//		backButton.add(back);
+		return DrawUI.getBlueButton(Assets.strings.get("back"), 44);
 	}
+	
 	public Table newBackButton() {
 		Table backButton = newBackButtonInit();
 		
-		backButton.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+		backButton.addListener(new StrictInputListener() {
+			public void touch(InputEvent event) {
 				clickBack();
 			}
 		});	
@@ -197,12 +194,8 @@ public class MainStoreScreen extends ActiveScreen {
 	
 	public Button generateButton(final TableType type) {
 		Button button = new Button(Assets.getSpecificMarketButtonStyle(type));
-		button.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				return true;
-			}
-
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+		button.addListener(new StrictInputListener() {
+			public void touch(InputEvent event) {
 				// switch to 
 				switchTo(type);
 			}

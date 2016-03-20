@@ -35,6 +35,7 @@ public class AdsHandler {
     	Manager.analytics.sendEventHit("Ads", "ad completed");
 		System.out.println("Ad completed!");
 		
+		StatsHandler.completeAd();
 		// save after ad was watched
 		master.save();
     }

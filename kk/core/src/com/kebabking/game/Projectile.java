@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Projectile {
 	public final static float G = 0.6f;
+	
+	public final static float SPEED = 1.15f;
 
 	public final static float THRESHOLD = 0.02f;
 
@@ -14,15 +16,21 @@ public class Projectile {
 	public final static float CASH_X = 0.65f;
 	public final static float CASH_Y = 0.9f;
 	
-	public final static float MIN_X_VOL = -.1f;
-	public final static float MAX_X_VOL = .3f;
+	public final static float MIN_X_VOL = -.2f;
+	public final static float MAX_X_VOL = .1f;
 	
-	public final static float MIN_Y_VOL = -.1f;
-	public final static float MAX_Y_VOL = .3f;
+	public final static float MIN_Y_VOL = -.2f;
+	public final static float MAX_Y_VOL = .1f;
 	
-	public final static float SIZE_X = 0.05f;
-	public final static float SIZE_Y = 0.03f;
-		
+	public final static float SIZE_X_JADE = 0.010f;
+	public final static float SIZE_Y_JADE = 0.06f;
+
+	public final static float SIZE_X_CASH = 0.066f;
+	public final static float SIZE_Y_CASH = 0.03f;
+	
+	float size_x;
+	float size_y;
+	
 	float xPos;
 	float yPos;
 	float xVel;
@@ -45,11 +53,24 @@ public class Projectile {
 			reg = Assets.bigjade;
 			destX = JADE_X;
 			destY = JADE_Y;
+			size_x = SIZE_X_JADE;
+			size_y = SIZE_Y_JADE;
 		}
 		else {
-			reg = Assets.getTextureRegion("screens/tutorial_jeweler");
+			double rand = Math.random();
+			if (rand < 0.33) {
+				reg = Assets.blueBill;
+			}
+			else if (rand < 0.66) {
+				reg = Assets.redBill;
+			}
+			else {
+				reg = Assets.greenBill;
+			}
 			destX = CASH_X;
 			destY = CASH_Y;
+			size_x = SIZE_X_CASH;
+			size_y = SIZE_Y_CASH;
 		}
 		
 		this.xPos = x;
@@ -62,6 +83,7 @@ public class Projectile {
 	}
 	
 	public void update(float delta) {	
+		delta *= SPEED;
 		updateAccel();
 		updateVel(delta);
 		updatePos(delta);
@@ -107,6 +129,6 @@ public class Projectile {
 	
 	public void draw(SpriteBatch batch) {
 //		System.out.println("drawing at " + xPos + ", " + yPos);
-		batch.draw(reg, KebabKing.getGlobalXFloat(xPos), KebabKing.getGlobalYFloat(yPos), KebabKing.getGlobalX(SIZE_X)/2, KebabKing.getGlobalY(SIZE_Y)/2, KebabKing.getGlobalX(SIZE_X), KebabKing.getGlobalY(SIZE_Y), 1, 1, rot);
+		batch.draw(reg, KebabKing.getGlobalXFloat(xPos), KebabKing.getGlobalYFloat(yPos), KebabKing.getGlobalX(size_x)/2, KebabKing.getGlobalY(size_y)/2, KebabKing.getGlobalX(size_x), KebabKing.getGlobalY(size_y), 1, 1, rot);
 	}
 }

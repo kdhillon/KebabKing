@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.kebabking.game.Managers.Manager;
 import com.kebabking.game.OnlinePurchaseHandler.PurchaseableOnline;
+import com.kebabking.game.Managers.Manager;
 
 public class JewelerTable extends Table {
 	static final float SELECT_TABLE_WIDTH = 0.45f;
@@ -56,10 +56,12 @@ public class JewelerTable extends Table {
 
 	private void initializeMain() {
 //		this.debug();
-		Label theJeweler = new Label("THE JEWELER", Assets.generateLabelStyleUIChinaWhite(40, "THE JEWELER"));
+		String theJewelerText = Assets.strings.get("the_jeweler");
+		Label theJeweler = new Label(theJewelerText, Assets.generateLabelStyleUIChina(40, theJewelerText));
 		this.add(theJeweler).top().padTop(KebabKing.getGlobalY(0.12f));
 
-		Label welcomesYou = new Label("welcomes you", Assets.generateLabelStyleUIWhite(20, "welcomes you"));
+		String welcomesYouText = Assets.strings.get("welcomes_you");
+		Label welcomesYou = new Label(welcomesYouText, Assets.generateLabelStyleUI(20, welcomesYouText));
 		this.row();
 		this.add(welcomesYou).top();
 
@@ -77,7 +79,7 @@ public class JewelerTable extends Table {
 		});
 		
 		this.row();
-		float height = KebabKing.getGlobalY(0.36f);
+		float height = KebabKing.getGlobalY(0.3f);
 		float width = height * jewelerReg.getRegionWidth() / jewelerReg.getRegionHeight();
 		this.add(jeweler).width(width).height(height).expandY().top().padTop(KebabKing.getGlobalY(0.01f));
 	}
@@ -162,13 +164,13 @@ public class JewelerTable extends Table {
 		
 		float totalWidth = KebabKing.getGlobalX(SELECT_TABLE_WIDTH);
 
-		Label title = new Label(op.name, Assets.generateLabelStyleUIChinaWhite(30, Assets.upper));
+		Label title = new Label(op.name, Assets.generateLabelStyleUIChina(30, op.name));
 		title.setWrap(true);
 		title.setAlignment(Align.center);
 		
 		entry.add(title).top().padTop(KebabKing.getGlobalY(0.005f)).center().width(totalWidth);
 		
-		Label price = new Label(Assets.realCurrencyChar + op.price, Assets.generateLabelStyleUIWhite(16, Assets.nums + Assets.realCurrencyChar));
+		Label price = new Label(Assets.realCurrencyChar + LanguageManager.localizeNumber(op.price), Assets.generateLabelStyleUI(16, Assets.nums + Assets.realCurrencyChar));
 		entry.row();
 		entry.add(price).top().expandY();
 		//		Label title = new Label("" + op.coins + " Coins!", Assets.generateLabelStyleUIChinaWhite(30, Assets.nums + " Coins!"));
@@ -179,7 +181,7 @@ public class JewelerTable extends Table {
 //		valueTable.debug();
 		Table jadeTable = new Table();
 		Image jadeImage = new Image(jade);
-		Label jadeCount = new Label("x " + op.jade, Assets.generateLabelStyleUIWhite(20, Assets.nums + "x"));
+		Label jadeCount = new Label("x " + LanguageManager.localizeNumber(op.jade), Assets.generateLabelStyleUI(20, Assets.nums + "x"));
 		float halfWidth = totalWidth * 0.3f;
 		float halfHeight = halfWidth * jade.getRegionHeight() / jade.getRegionWidth();
 //		float imagePad = totalWidth * 0.3f;
@@ -190,7 +192,7 @@ public class JewelerTable extends Table {
 		
 		Table cashTable = new Table();
 		Image cashImage = new Image(cash);
-		Label cashCount = new Label("x " + (int) op.cash, Assets.generateLabelStyleUIWhite(20, Assets.nums + "x"));
+		Label cashCount = new Label("x " + LanguageManager.localizeNumber((int) op.cash), Assets.generateLabelStyleUI(20, Assets.nums + "x"));
 //		float imagePad = totalWidth * 0.3f;
 		cashTable.add(cashImage).width(halfWidth).height(halfHeight);
 		cashTable.row();
@@ -202,10 +204,11 @@ public class JewelerTable extends Table {
 		
 		entry.row();
 		
-		Label completePurchase = new Label("Complete purchase?", Assets.generateLabelStyleUIWhite(16, "Complete purchase?"));
+		String completePurchaseText = Assets.strings.get("complete_purchase");
+		Label completePurchase = new Label(completePurchaseText, Assets.generateLabelStyleUI(16, completePurchaseText));
 		entry.add(completePurchase).padTop(KebabKing.getGlobalY(0.01f));
 				
-		Table okButton = DrawUI.getBlueButton("OK", 40, "market/Jeweler-11");
+		Table okButton = DrawUI.getBlueButton(Assets.strings.get("ok"), 40);
 		entry.row();
 		float buttonWidth = KebabKing.getGlobalX(0.2f);
 		float buttonHeight = KebabKing.getGlobalY(0.07f);

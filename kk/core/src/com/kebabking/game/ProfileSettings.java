@@ -13,6 +13,12 @@ public class ProfileSettings {
 	
 	public void initializeAfterLoad() {
 		// initialize any fields that were empty at load.
+
+		if (KebabKing.START_MUTED) {
+			muteMusic = true;
+			muteSound = true;
+		}
+	
 		if (muteMusic) {
 			SoundManager.muteMusic();
 		}

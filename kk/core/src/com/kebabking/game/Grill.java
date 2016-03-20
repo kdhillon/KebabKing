@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.kebabking.game.Purchases.GrillStand;
 import com.kebabking.game.Purchases.GrillType;
-import com.kebabking.game.Purchases.MeatTypes;
+import com.kebabking.game.Purchases.KebabTypes;
 
 // contains information for the grill, the "trash", spice box, and ice chests
 //
@@ -37,12 +37,15 @@ import com.kebabking.game.Purchases.MeatTypes;
 public class Grill {
 	public static int kebabsTrashedThisSession = 0;
 	public static int kebabsServedThisSession = 0;
-	
+
 	// number of spots on the right of grill that are for warming meat.
 	public static int WARMING_SIZE = 2;
 
 	static final float TIME_TO_TRASH = 0.4f;
+	static final float TIME_TO_MOVE = 0.1f;
+	static final float TAP_TIME = 0.2f;
 	static final boolean ADVANCED_CONTROLS = false;
+	static final boolean DROP_MEAT_UNDER_FINGER = true;
 
 	//	static final boolean DISABLE_DRAG_TO_PLACE = false;
 
@@ -112,12 +115,12 @@ public class Grill {
 	private int indexToPlaceMeatAt = -1;
 
 	// use an array to look up which actual meat that is.
-	public enum Selected {
+	public enum SelectedBox {
 		NONE, FIRST, SECOND, THIRD, SPICE, BEER
 	}
-	MeatTypes.Type[] boxes;
+	KebabTypes.Type[] boxes;
 
-	Selected selected;
+	SelectedBox selectedBox;
 
 	boolean tutorialMode;
 
@@ -126,12 +129,13 @@ public class Grill {
 	boolean disableTouch;
 
 	boolean hoverTrash; // are we hovering over a
+	boolean hoverMove; // are we hovering over a
 
 	float brushRot;
 	boolean brushRotUp; // increaseing or decreasing?
 
 	Profile profile;
-	
+
 	KitchenScreen ks; // only non-null when active
 	int size; 
 	Meat[] meat;
@@ -142,10 +146,15 @@ public class Grill {
 	//	boolean mousedOverTrash = false;
 	//	boolean boxSelectedNotHeld = false; // try to use this to differentiate between holding and clicking
 	boolean meatSelectedNotHeld = false;
+	//	boolean holdingAfterSelect = false;
+
 	boolean placedWhileHeld = false; // true when meat has been placed during the 'hold'
 	int removeOnRelease = -1;
 	int justSelected = -1; // for use with remove on release
 	boolean firstTouch = true;
+
+	boolean holdSpiceOnNextTouch;
+
 	boolean justTappedSpice;
 
 	boolean holding; // is button being held
@@ -163,7 +172,9 @@ public class Grill {
 	//		}
 	//	}
 
+	float moveHoldTime = 0;
 	float trashHoldTime = 0;
+	float holdTime = 0;
 
 	public Grill(Profile profile) {
 		//		this.grillType = profile.grillType;
@@ -171,7 +182,7 @@ public class Grill {
 		this.mousedOver = -1;
 
 		this.selectedSet = new ArrayList<Meat>();
-		selected = Selected.NONE;		
+		selectedBox = SelectedBox.NONE;		
 
 		updateSize();
 
@@ -187,27 +198,27 @@ public class Grill {
 		this.activate();
 		this.updateSize();
 		this.deselectAll();
-		this.selected = null;
+		this.selectedBox = null;
 		SoundManager.stopSizzle();
 	}
 
 	public void updateBoxes() {
-		boxes = new MeatTypes.Type[3];
+		boxes = new KebabTypes.Type[3];
 
 		// Order is based on selected order (customizable)
 		// another option would be to have it come in fixed order.
-		Deque<Integer> boxesDeque = new ArrayDeque<Integer>(profile.inventory.meatTypes.getSelected());
+		Deque<Integer> boxesDeque = new ArrayDeque<Integer>(profile.inventory.kebabTypes.getSelected());
 		if (boxesDeque.size() == 1) {
-			boxes[0] = MeatTypes.Type.values[boxesDeque.pop()];
+			boxes[0] = KebabTypes.Type.values[boxesDeque.pop()];
 		} 
 		else if (boxesDeque.size() == 2) {
-			boxes[0] = MeatTypes.Type.values[boxesDeque.pop()];
-			boxes[1] = MeatTypes.Type.values[boxesDeque.pop()];
+			boxes[0] = KebabTypes.Type.values[boxesDeque.pop()];
+			boxes[1] = KebabTypes.Type.values[boxesDeque.pop()];
 		}
 		else if (boxesDeque.size() == 3) {
-			boxes[0] = MeatTypes.Type.values[boxesDeque.pop()];
-			boxes[1] = MeatTypes.Type.values[boxesDeque.pop()];
-			boxes[2] = MeatTypes.Type.values[boxesDeque.pop()];	
+			boxes[0] = KebabTypes.Type.values[boxesDeque.pop()];
+			boxes[1] = KebabTypes.Type.values[boxesDeque.pop()];
+			boxes[2] = KebabTypes.Type.values[boxesDeque.pop()];	
 		}
 		else throw new java.lang.AssertionError("Num selected boxes == " + boxesDeque.size());
 	}
@@ -244,11 +255,12 @@ public class Grill {
 
 	public void deactivate() {
 		System.out.println("deactivating");
-		this.selected = Selected.NONE;
+		this.selectedBox = SelectedBox.NONE;
 		this.ks = null;
 		this.active = false;
 		hoverTrash = true;
 		clearMeat();
+		deselectAll();
 		SoundManager.stopSizzle();
 	}
 
@@ -256,6 +268,9 @@ public class Grill {
 		if (!active) {
 			return;
 		}
+		//		System.out.println("just tapped spice: " + justTappedSpice);
+		//		System.out.println("hold spice on next touch: " + holdSpiceOnNextTouch);
+		//		System.out.println("spice selected: " + (SelectedBox.SPICE == selectedBox));
 
 		//		if (boxesChanged) {
 		//			this.updateBoxes();
@@ -281,30 +296,30 @@ public class Grill {
 		// play sound
 
 	}
-	
+
 	public boolean isWarming(int index) {
 		return profile.inventory.grillType.isWarming() && index >= getGrillSize() - WARMING_SIZE;
 	}
 
-	public MeatTypes.Type getType(Selected select) {
-		if (select == Selected.FIRST)
+	public KebabTypes.Type getType(SelectedBox select) {
+		if (select == SelectedBox.FIRST)
 			return boxes[0];
-		if (select == Selected.SECOND)
+		if (select == SelectedBox.SECOND)
 			return boxes[1];
-		if (select == Selected.THIRD)
+		if (select == SelectedBox.THIRD)
 			return boxes[2];
 		return null;
 	}
 
-	public Selected getSelectedForType(MeatTypes.Type type) {
+	public SelectedBox getSelectedForType(KebabTypes.Type type) {
 		int selectedIndex = -1;
 		for (int i = 0; i < boxes.length; i++) {
 			if (boxes[i] == type)
 				selectedIndex = i;
 		}
-		if (selectedIndex == 0) return Selected.FIRST;
-		if (selectedIndex == 1) return Selected.SECOND;
-		if (selectedIndex == 2) return Selected.THIRD;
+		if (selectedIndex == 0) return SelectedBox.FIRST;
+		if (selectedIndex == 1) return SelectedBox.SECOND;
+		if (selectedIndex == 2) return SelectedBox.THIRD;
 
 		//		if (select == Selected.FIRST)
 		//			return boxes[0];
@@ -318,7 +333,7 @@ public class Grill {
 	public void draw(SpriteBatch batch, float delta) {
 		// this is required for now.
 		this.updateSize();
-
+		//		System.out.println("holding after select: " + holdingAfterSelect);
 		//		if (ks != null && TrashPile.DRAW_TRASH_PILE) {
 		//			drawTrashPile(batch);
 		//		}
@@ -337,7 +352,6 @@ public class Grill {
 
 		drawBoxes(batch);
 
-
 		if (active)
 			drawMeat(batch);
 		//		else batch.setColor(original);
@@ -347,19 +361,29 @@ public class Grill {
 		if (!ADVANCED_CONTROLS && meatBoxSelected() && this.indexToPlaceMeatAt < 0) {
 			drawFloatingMeat(batch, delta);
 		}
-		
+
 		// draw floating meat below finger
 		if (drawingFloatingSelected()) {
 			drawFloatingSelectedMeat(batch, delta);
 		}
 
-
-		if (selected == Selected.BEER && !ADVANCED_CONTROLS)
+		if (selectedBox == SelectedBox.BEER && !ADVANCED_CONTROLS)
 			drawFloatingBeer(batch, delta);
 
 		// draw spice paintbrush
-		if (this.selected == Selected.SPICE && Gdx.input.isTouched()) {
+		if (this.selectedBox == SelectedBox.SPICE && Gdx.input.isTouched()) {
 			drawPaintbrush(batch, delta);
+		}
+
+		if (moveHover()) {
+			moveHoldTime += delta;
+			if (moveHoldTime > TIME_TO_MOVE) {
+				hoverMove = true;
+			}
+		}
+		else {
+			this.moveHoldTime = 0;
+			hoverMove = false;
 		}
 
 		// draw trash icon if throwing away
@@ -374,6 +398,11 @@ public class Grill {
 			this.trashHoldTime = 0;
 			hoverTrash = false;
 		}
+
+		if (holding) {
+			holdTime += delta;
+		}
+		else holdTime = 0;
 	}
 
 	public void drawGrill(SpriteBatch batch) {
@@ -385,29 +414,28 @@ public class Grill {
 		int xCount = grillLeftX;
 
 		int index = 0;
-		
+
 		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
 		// draw left
 		batch.draw(fire, draw_x + KebabKing.getGlobalX(FIRE_PAD_X), draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width * 2 - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 		index++;
 		index++;
-//		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
+		//		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
 		// draw two fires
-//		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+		//		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 		//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(getGrillLeft(), draw_x, draw_y, draw_width * 2, draw_height); 
 		xCount++;
 		xCount++;
 		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
-		
+
 		// draw middle
 		while (xCount < GRILL_WIDTH - grillLeftX - 4) {
-			if (xCount % 2 == 0) {
-				batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width * 2, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
-			}
 			draw_x = (xCount + GRILL_X) * KitchenScreen.UNIT_WIDTH;
-			//			batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
-			batch.draw(getGrillMiddle(), draw_x, draw_y, draw_width, draw_height);
+			if (index % 2 == 0) {
+				batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width * 2, draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+				batch.draw(getGrillMiddle(), draw_x, draw_y, draw_width * 2, draw_height);
+			}	//			batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 			xCount++;
 			index++;
 			if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
@@ -418,11 +446,11 @@ public class Grill {
 		batch.draw(fire, draw_x, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width * 2 - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 		index++;
 		if (isWarming(index)) fire = getGrillFireWarming().getKeyFrame(time);
-//		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
+		//		batch.draw(fire, draw_x + draw_width, draw_y + (1-GRILL_GRATE_PERCENT) * draw_height, draw_width - KebabKing.getGlobalX(FIRE_PAD_X), draw_height * GRILL_GRATE_PERCENT - KebabKing.getGlobalY(FIRE_PAD_TOP)); 
 		//		batch.draw(Assets.grillCoals, draw_x, draw_y, draw_width, draw_height); 
 		batch.draw(getGrillRight(), draw_x, draw_y, draw_width*2, draw_height); 
 	}
-	
+
 	public TextureRegion getGrillLeft() {
 		return getGrillType().left;
 	}
@@ -438,36 +466,41 @@ public class Grill {
 	public Animation getGrillFireWarming() {
 		return getGrillType().warmingFire;
 	}
-	
+
+	public boolean moveHover() {
+		return canMoveSelectedTo(mousedOver);
+	}
 
 	public boolean trashHover() {
-		if (ks != null && ks.cm != null && ks.cm.mousedOver != null || !holding) return false;
+		if (ks == null) return false;
+		if (ks.cm != null && ks.cm.mousedOver != null || !holding) return false;
 		if (!this.meatSelected()) return false;
 		if (ks.isPaused()) return false;
+		if (TutorialEventHandler.shouldDisableTrash()) return false;
 		//		if (meatSelectedNotHeld) return false;
 		if (this.onGrillAbsolute(Gdx.input.getX(), Gdx.input.getY())) return false;
 
 		// also don't allow trashing if hovering over spice box
-		Selected box = touchBox(KitchenScreen.getUnitX(Gdx.input.getX()), KitchenScreen.getUnitY(Gdx.input.getY()));
+		SelectedBox box = touchBox(KitchenScreen.getUnitX(Gdx.input.getX()), KitchenScreen.getUnitY(Gdx.input.getY()));
 
 		// not good style but for clarity
-		if (box == Selected.SPICE) return false;
+		if (box == SelectedBox.SPICE) return false;
 		return true;
 	}
 
 	public void drawFloatingMeat(SpriteBatch batch, float delta) {
 		TextureRegion toDraw = null;
 
-		MeatTypes.Type type = getType(this.selected);		
+		KebabTypes.Type type = getType(this.selectedBox);		
 		toDraw = Assets.getMeatTexture(type, Meat.State.RAW, false);
 
 		Meat.draw(batch, toDraw, type.doubleWidth, Gdx.input.getX() - Meat.getWidth()/2, (KebabKing.getHeight() - Gdx.input.getY()) - Meat.getHeight() / 2, profile, 0.8f);
 	}
-	
+
 	public boolean drawingFloatingSelected() {
 		return !ADVANCED_CONTROLS && meatSelected() && !mousedOver() && holding;
 	}
-	
+
 	public void drawFloatingSelectedMeat(SpriteBatch batch, float delta) {
 		TextureRegion toDraw = null;
 
@@ -477,15 +510,15 @@ public class Grill {
 		for (Meat m : selectedSet) {
 			if (m.type.doubleWidth) totalWidth++;
 		}
-		
+
 		float offsetDelta = 1.0f/meatCount;
-		
+
 		float scaleEffect = 0.8f;
-		
+
 		float offset = -totalWidth * offsetDelta / 2;
-		
+
 		for (int i = 0; i < meatCount; i++) {
-			MeatTypes.Type type = selectedSet.get(i).type;
+			KebabTypes.Type type = selectedSet.get(i).type;
 			toDraw = Assets.getMeatTexture(selectedSet.get(i));
 
 			Meat.draw(batch, toDraw, type.doubleWidth, Gdx.input.getX() - Meat.getWidth()/2 + (int) (offset * Meat.getWidth()), (KebabKing.getHeight() - Gdx.input.getY()) - Meat.getHeight() / 2, profile, scaleEffect);
@@ -523,76 +556,21 @@ public class Grill {
 				brushWidth / 2, brushHeight / 2, brushWidth, brushHeight, 1, 1, brushRot);
 	}
 
+	public boolean holdingPastTap() {
+		return this.holdTime > TAP_TIME;
+	}
+
 	// say width is 0.4
 	// want to draw at 0.3
 	public void drawTrashIcon(SpriteBatch batch) {
 
 		batch.draw(Assets.trashIcon, (KebabKing.getWidth() - trashWidth)/2, (KebabKing.getHeight() - trashHeight)/2, trashWidth, trashHeight);
 	}
-	
-	//	public void touchInput(int x, int y) {
-	//		if (!active || disableTouch) return;
-	//
-	//		// KitchenScreen.convert to unit coordinates
-	//		int unit_x = KitchenScreen.getUnitX(x);
-	//		int unit_y = KitchenScreen.getUnitY(y);
-	//
-	//		// select spice box for dragging
-	//		Selected box = touchBox(unit_x, unit_y);
-	//		if (box == Selected.SPICE) select(box);
-	//
-	//		// if not on grill
-	////		Selected box = touchBox(unit_x, unit_y);
-	////		if (box != Selected.NONE && !ks.paused) {
-	////			select(box);
-	////			return;
-	////		}
-	//
-	//		// if on grill
-	//		if (onGrillAbsolute(x, y) && (selected == Selected.NONE || meatSelected())) {
-	//			int index = getGrillIndex(x, y);
-	//			if (meat[index] != null) {
-	//				if (selectedSet.contains(meat[index])) {
-	//					if (meatSelectedNotHeld) {
-	//						//						System.out.println("removing from selected");
-	//						removeOnRelease(index);
-	//
-	//
-	//						//						selectedSet.remove(meat[index]);
-	//					}
-	//				}
-	//				else selectMeat(index);
-	//			}
-	//			return;
-	//		}
-	//	}
-
-	//	public void highlightTrash(SpriteBatch batch) {
-	//		int trash_x = KitchenScreen.convertXWithBuffer(TRASH_X);
-	//		int trash_y = KitchenScreen.convertYWithBuffer(TRASH_Y);
-	//		int box_sq_width = KitchenScreen.convertWidth(TRASH_WIDTH);
-	//		int box_sq_height = KitchenScreen.convertHeight(TRASH_HEIGHT);
-	//
-	//		// make this see through
-	//		//		Color myColor = Color.RED;
-	//		//		myColor.a = .4f;
-	//		//		batch.setColor(myColor);
-	//		batch.draw(Assets.white, trash_x, trash_y, box_sq_width, box_sq_height);
-	//		//		batch.setColor(1, 1, 1, 1);
-	//	}
 
 	public void drawTrashPile(SpriteBatch batch) {
 		ks.tp.draw(batch);
 	}
 
-	//	public void drawStandFront(SpriteBatch batch) {
-	//		VanityGrillStand stand = (VanityGrillStand) profile.inventory.grillStand.getCurrentSelected();
-	//		if (stand.front != null) {
-	//			batch.draw(stand.front, KitchenScreen.convertWidth(getGrillCenter()) - KebabKing.getGlobalX(STAND_WIDTH/2), KebabKing.getGlobalY(STAND_Y), 
-	//					KebabKing.getGlobalX(STAND_WIDTH), KebabKing.getGlobalY(STAND_HEIGHT));
-	//		}
-	//		//		System.out.println(getGrillCenter());
-	//	}
 	public void drawStandBack(SpriteBatch batch) {
 		GrillStand.Stand stand = (GrillStand.Stand) profile.inventory.grillStand.getFirstSelected();
 		if (stand.back != null) {
@@ -628,65 +606,64 @@ public class Grill {
 		//		}
 
 		TextureRegion toDraw;
-		MeatTypes.Type currentType;
+		KebabTypes.Type currentType;
+//		MeatQuality.Quality currentQuality;
+
+		float iconPos = 0.2f;
 
 		// Draw first box
-		currentType = getType(Selected.FIRST);
-		toDraw = currentType.coolerClosed;
-		if (selected == Selected.FIRST)
-			toDraw = currentType.coolerOpen;
-		batch.draw(toDraw, first_x, bottom_y, box_hor_width, box_hor_height);		
+		//		currentLevel = 
+		currentType = getType(SelectedBox.FIRST);
+//		currentQuality = (MeatQuality.Quality) profile.inventory.meatQuality.getFirstSelected();
+		
+		TextureRegion coolerOpen = profile.inventory.meatQuality.getCoolerOpen();
+		TextureRegion coolerClosed = profile.inventory.meatQuality.getCoolerClosed();
+		
+		float iconWidth = KebabKing.getGlobalX(0.08f);
+		float iconHeight = iconWidth;
 
+		toDraw = coolerClosed;
+		if (selectedBox == SelectedBox.FIRST)
+			toDraw = coolerOpen;
+		batch.draw(toDraw, first_x, bottom_y, box_hor_width, box_hor_height);
+		batch.draw(currentType.bigIcon, first_x + (box_hor_width - iconWidth)/2, bottom_y + (box_hor_height - iconHeight)*iconPos, iconWidth, iconHeight);
 
 		// Draw second box
 		if (boxes[1] != null) {
-			currentType = getType(Selected.SECOND);
+			currentType = getType(SelectedBox.SECOND);
 
-			toDraw = currentType.coolerClosed;
-			if (selected == Selected.SECOND)
-				toDraw = currentType.coolerOpen;
+			toDraw = coolerClosed;
+			if (selectedBox == SelectedBox.SECOND)
+				toDraw = coolerOpen;
 			batch.draw(toDraw, second_x, bottom_y, box_hor_width, box_hor_height);		
+			batch.draw(currentType.bigIcon, second_x + (box_hor_width - iconWidth)/2, bottom_y + (box_hor_height - iconHeight)*iconPos, iconWidth, iconHeight);		
 		}
 
 		// Draw third box
 		if (boxes[2] != null) {
-			currentType = getType(Selected.THIRD);
-			toDraw = currentType.coolerClosed;
-			if (selected == Selected.THIRD)
-				toDraw = currentType.coolerOpen;
+			currentType = getType(SelectedBox.THIRD);
+			toDraw = coolerClosed;
+			if (selectedBox == SelectedBox.THIRD)
+				toDraw = coolerOpen;
 			batch.draw(toDraw, third_x, bottom_y, box_hor_width, box_hor_height);	
+			batch.draw(currentType.bigIcon, third_x + (box_hor_width - iconWidth)/2, bottom_y + (box_hor_height - iconHeight)*iconPos, iconWidth, iconHeight);
 		}
-
-		//		if (selected == Selected.CHICKEN) 
-		//			batch.draw(Assets.chickenBoxOpen, first_x, bottom_y, box_hor_width, box_hor_height);
-		//		else 
-		//			batch.draw(Assets.chickenBox, first_x, bottom_y, box_hor_width, box_hor_height);
-		//
-		//		if (selected == Selected.BEEF) 
-		//			batch.draw(Assets.beefBoxOpen, 	second_x, bottom_y, box_hor_width, box_hor_height);
-		//		else
-		//			batch.draw(Assets.beefBox, 	second_x, bottom_y, box_hor_width, box_hor_height);
-		//
-		//		if (selected == Selected.LAMB) 
-		//			batch.draw(Assets.lambBoxOpen, third_x, bottom_y, box_hor_width, box_hor_height);
-		//		else
-		//			batch.draw(Assets.lambBox, third_x, bottom_y, box_hor_width, box_hor_height);
 
 		batch.draw(profile.inventory.drinkQuality.getCooler(), beer_x, beer_y, box_ver_width, box_ver_height);
 
-		if (selected == Selected.BEER) 
+		if (selectedBox == SelectedBox.BEER) 
 			batch.draw(Assets.coolerLidOpen, beer_x, beer_y, box_ver_width, box_ver_height);
 		else
 			batch.draw(Assets.coolerLidClosed, beer_x, beer_y, box_ver_width, box_ver_height);
 
-		
+
 		if (disableSpice()) {
 			batch.draw(Assets.spiceBoxDisabled,	spice_x, spice_y, spice_width, spice_height);			
 		}
 		else {
 			batch.draw(getGrillType().spice, spice_x, spice_y, spice_width, spice_height);
 
-			if (selected != Selected.SPICE)
+			if (selectedBox != SelectedBox.SPICE && !holdSpiceOnNextTouch)
 				batch.draw(Assets.paintBrushSide,	spice_x, spice_y, spice_width, spice_height);
 		}
 		//		else 
@@ -700,10 +677,10 @@ public class Grill {
 		removeOnRelease = index;
 	}
 
-	public void select(Selected newSelected) {
-		this.selected = newSelected;
+	public void select(SelectedBox newSelected) {
+		this.selectedBox = newSelected;
 
-		System.out.println("deselecting meat");
+		//		System.out.println("ring meat");
 		this.deselectAll();
 		//		this.boxSelectedNotHeld = false;
 		this.meatSelectedNotHeld = false;
@@ -711,48 +688,97 @@ public class Grill {
 
 	public void selectMeat(int grillIndex) {
 		if (grillIndex < 0 || grillIndex > meat.length) throw new java.lang.ArrayIndexOutOfBoundsException();
-		this.selected = Selected.NONE;
+		this.selectedBox = SelectedBox.NONE;
 		this.selectedSet.add(meat[grillIndex]);
 		meat[grillIndex].selected = true;
 		//		this.boxSelectedNotHeld = false;
 		this.meatSelectedNotHeld = false;
 		this.justSelected = grillIndex;
 	}
-	
+
+	public void deselectMeatNotOrdered(Customer customer) {
+		Order o = customer.order;
+
+		double firstSelected = 0;
+		double secondSelected = 0;
+		double thirdSelected = 0;
+
+		for (Meat m : meat) {
+			//			System.out.println("selectedset contains meat? " + selectedSet.contains(m));
+			if (selectedSet.contains(m)) {				
+				if (!o.hasOrderedType(m.type)) {
+					selectedSet.remove(m);
+					m.selected = false;
+				}
+				else {
+					// customer has ordered this type, but selected too many.
+					if (m.type == this.getType(SelectedBox.FIRST)) {
+						if (m.type.doubleWidth) firstSelected += 0.5;
+						else firstSelected++;
+						if (firstSelected > customer.order.first) {
+							selectedSet.remove(m);
+							m.selected = false;
+						}
+					}
+					if (m.type == this.getType(SelectedBox.SECOND)) {
+						if (m.type.doubleWidth) secondSelected += 0.5;
+						else secondSelected++;
+						if (secondSelected > customer.order.second) {
+							selectedSet.remove(m);
+							m.selected = false;
+						}
+					}
+					if (m.type == this.getType(SelectedBox.THIRD)) {
+						if (m.type.doubleWidth) thirdSelected += 0.5;
+						else thirdSelected++;
+						if (thirdSelected > customer.order.third) {
+							selectedSet.remove(m);
+							m.selected = false;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// use this to control when meat/beer boxes are disabled
-//	public boolean disableMeatBoxes() {
-////		return TutorialEventHandler.dontAllowCustomer() && ks.cm.totalPeopleInLines() == 0;
-//	}
-	
+	//	public boolean disableMeatBoxes() {
+	////		return TutorialEventHandler.dontAllowCustomer() && ks.cm.totalPeopleInLines() == 0;
+	//	}
+
 	public boolean disableSpice() {
-//		if (ks == null || ks.cm == null) return true;
-//		return profile.stats.daysWorked == 0;
-//		return ks.cm.customerNotServed();
+		//		if (ks == null || ks.cm == null) return true;
+		//		return profile.stats.daysWorked == 0;
+		//		return ks.cm.customerNotServed();
 		return TutorialEventHandler.shouldNotOrderSpice();
 	}
-	
+
 	public boolean disableSelectingMeat() {
 		return TutorialEventHandler.shouldDisableGrill();
 	}
-	
+
 	// used for calculating "mouseOver"
 	public void holdInput(int x, int y) {
 		// disable everything
 		holding = true;
 
 		if (firstTouch) {
-			if (selected == Selected.SPICE) {
+			if (holdSpiceOnNextTouch) {
+				select(SelectedBox.SPICE);
+				holdSpiceOnNextTouch = false;
+			}
+			else if (selectedBox == SelectedBox.SPICE) {
 				justTappedSpice = false;
 			}
 			else {
-				Selected box = touchBox(KitchenScreen.getUnitX(x), KitchenScreen.getUnitY(y));
-				System.out.println("first touch is " + box);
-				if (box == Selected.SPICE) {
+				SelectedBox box = touchBox(KitchenScreen.getUnitX(x), KitchenScreen.getUnitY(y));
+				//				System.out.println("first touch is " + box);
+				if (box == SelectedBox.SPICE) {
 					if (disableSpice()) return;
 					this.justTappedSpice = true;
 					this.select(box);
 				}
-				if (!ADVANCED_CONTROLS && box != Selected.NONE) {
+				if (!ADVANCED_CONTROLS && box != SelectedBox.NONE) {
 					if (TutorialEventHandler.shouldDisableBoxes()) return;
 					this.select(box);
 				}
@@ -762,16 +788,6 @@ public class Grill {
 
 		mousedOver = -1;
 
-		if (onGrillArea(x, y) && !ADVANCED_CONTROLS) {
-			if (meatBoxSelected())
-				indexToPlaceMeatAt = getNextOpenSpot();
-		}
-		else {
-			indexToPlaceMeatAt = -1;
-			//			if (selected )
-			//			System.out.println("Not mousing over grill at " + x + ", " + y);
-		}
-
 		//		if (onGrill(unit_x, unit_y)) {
 		if (onGrillAbsolute(x, y)) {
 			mousedOver = getGrillIndex(x, y);
@@ -779,16 +795,30 @@ public class Grill {
 			//			System.out.println("Mousing over grill " + mousedOver + " at " + x + ", " + y);
 		}
 
+		if (onGrillArea(x, y) && !ADVANCED_CONTROLS) {
+			if (meatBoxSelected())
+				indexToPlaceMeatAt = getNextOpenSpot();
+			//			else if (meatSelected() && canMoveSelected() && holdingAfterSelect) {
+			//				indexToPlaceMeatAt = mousedOver;
+			//			}
+			else indexToPlaceMeatAt = -1;
+		}
+		else {
+			indexToPlaceMeatAt = -1;
+			//			if (selected )
+			//			System.out.println("Not mousing over grill at " + x + ", " + y);
+		}
+
 		// if moused over grill and spice is selected then spice whatever is there
 		if (mousedOver != -1 && meat[mousedOver] != null) {
-			if (this.selected == Selected.SPICE) {
+			if (this.selectedBox == SelectedBox.SPICE) {
 				dropSpice();
 			}
-			else if (this.selected == Selected.NONE || ((this.meatBoxSelected() || this.selected == Selected.BEER) && !placedWhileHeld && this.selected != Selected.BEER)) {
-				if ((ADVANCED_CONTROLS || !meatBoxSelected()) && !meat[mousedOver].selected) {
-					if (disableSelectingMeat()) return;
-					this.selected = Selected.NONE;
+			else if (this.selectedBox == SelectedBox.NONE || ((this.meatBoxSelected() || this.selectedBox == SelectedBox.BEER) && !placedWhileHeld && this.selectedBox != SelectedBox.BEER)) {
+				if ((ADVANCED_CONTROLS || !meatBoxSelected()) && !meat[mousedOver].selected && !disableSelectingMeat()) {
+					this.selectedBox = SelectedBox.NONE;
 					//					selectedSet.add(meat[mousedOver]);
+					//					holdingAfterSelect = true;
 					selectMeat(mousedOver);
 				}
 			}
@@ -796,15 +826,32 @@ public class Grill {
 
 		// draw ghost meat under mouse when dragging meat off grill
 		// only if a meat from the grill is selected
-		if ((meatSelected() || selected == Selected.BEER) && ks.cm != null)
+		if ((meatSelected() || selectedBox == SelectedBox.BEER) && ks != null && ks.cm != null)
 			ks.cm.updateMousedOver(x, y);
 	}
 
-	// Returns -1 if no spot found
+	// For placing new meat. Returns -1 if no spot found
 	public int getNextOpenSpot() {
+		if (DROP_MEAT_UNDER_FINGER) {
+			if (mousedOver >= 0) {
+				if (canFitAt(mousedOver, getType(selectedBox))) {
+					return mousedOver;
+				}
+			}
+		}
+
+		for (int i = 0; i < meat.length; i++) {
+			if (canFitAt(i, getType(selectedBox))) return i;
+		}
+
+		return -1;
+	}
+
+	// gets next open spot that's not already selected (for moving)
+	public int getNextOpenSpotNotSelected() {
 		for (int i = 0; i < meat.length; i++) {
 			if (meat[i] == null) {
-				if (!getType(selected).doubleWidth) return i;
+				if (!getType(selectedBox).doubleWidth) return i;
 				else if (i < meat.length - 1 && meat[i + 1] == null) return i;
 			}
 		}
@@ -813,6 +860,7 @@ public class Grill {
 
 	public void release(int x, int y) {
 		this.holding = false;
+		//		this.holdingAfterSelect = false;
 
 		if (!this.active || this.disableTouch) {
 			System.out.println("GRILL NOT ACTIVE OR TOUCH DISABLED");
@@ -824,12 +872,14 @@ public class Grill {
 			this.trashSelected();
 		}
 
+
 		//System.out.println("Releasing. Moused over grill: " + mousedOver() + " " + " new meat selected: " + (newMeatSelected() && mousedOver != 0) + " meat selected: " + meatSelected() + " ");
 		//System.out.println("Customer not null :" + (ks.cm.mousedOver != null));
 		// if (ks.cm.mousedOver != null) System.out.println(" order not null: " + ks.cm.mousedOver.order != null);
 
 		boolean gaveBeerToCustomer = false;
-		// drop stuff onto grill 
+
+		// moused over grill
 		if (mousedOver()) {
 			if (meatBoxSelected()) {
 				//				// if already meat there, select it, but only if just touched
@@ -850,37 +900,34 @@ public class Grill {
 				//					selected = Selected.NONE;
 				//				}
 			}
-			else if (meatSelected() && mousedOver != justSelected) {
-				// remove it from selected if clicking it twice
-				if (!open(mousedOver)) {
-
-					// only remove on release if this isn't the first touch
-					removeOnRelease(mousedOver);
-					//					if (selectedSet.contains(meat[mousedOver]) && meatSelectedNotHeld) 
-					//						selectedSet.remove(meat[mousedOver]);
-				}
-				else if (open(mousedOver) || 
-						(meat[mousedOver] == selectedSet.get(0) && !meat[mousedOver].type.doubleWidth)) {
-					move();
-					select(Selected.NONE);
-				}
+			else if (meatSelected() && shouldDrawGhostMeatForMove()) {
+				moveSelectedTo(mousedOver);
+				select(SelectedBox.NONE);
 			}
-			else if (selected == Selected.SPICE) {
+			else if (meatSelected() && !holdingPastTap() && (justSelected < 0 || meat[mousedOver] != meat[justSelected]) && !open(mousedOver) && selectedSet.contains(meat[mousedOver])) {
+				// remove it from selected if clicking it twice
+				//				if (!canMoveSelectedTo(mousedOver)) {
+				System.out.println("removing on release");
+
+				// only remove on release if this isn't the first touch
+				removeOnRelease(mousedOver);
+				//					if (selectedSet.contains(meat[mousedOver]) && meatSelectedNotHeld) 
+				//						selectedSet.remove(meat[mousedOver]);
+				//				}
+			}
+			else if (selectedBox == SelectedBox.SPICE) {
 				if (!open(mousedOver)) {
 					if (!meat[mousedOver].spiced){
 						dropSpice();
 					}
-					else if (selected != Selected.SPICE) {
-						selectMeat(mousedOver); // unselect if double-spice
-					}
-					select(Selected.NONE);
+					select(SelectedBox.NONE);
 				}
 			}
 			if (ADVANCED_CONTROLS) {
 				// drop fresh meat on grill
 				if (mousedOver != -1 && this.meatBoxSelected()) {
 					if (meat[mousedOver] == null && open(mousedOver)) {
-						ks.dropMeatOnGrill(getType(selected), mousedOver);
+						ks.dropMeatOnGrill(getType(selectedBox), mousedOver);
 						this.placedWhileHeld = true;
 
 						removeOnRelease(this.mousedOver);
@@ -909,11 +956,11 @@ public class Grill {
 		////			trashSelected();
 		//		}
 		// drop meat on customers
-		else if (meatSelected() && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null) {
+		else if (meatSelected() && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null && !TutorialEventHandler.shouldDisableServe()) {
 			ks.serveCustomerAll(ks.cm.mousedOver);
 		}
 		// drop beer on customers
-		else if (selected == Selected.BEER && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null) {
+		else if (selectedBox == SelectedBox.BEER && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null) {
 			gaveBeerToCustomer = ks.serveCustomerBeer(ks.cm.mousedOver);
 		}
 		// trash meat if dropping it onto empty space and you were holding down
@@ -930,13 +977,17 @@ public class Grill {
 		}
 
 
+		//		if (hoverMove) {
+		//			deselectAll();
+		//		}
+
 		// selectButNotHold
 		int unit_x = KitchenScreen.getUnitX(x);
 		int unit_y = KitchenScreen.getUnitY(y);
-		Selected box = touchBox(unit_x, unit_y);
+		SelectedBox box = touchBox(unit_x, unit_y);
 
 		// no meat box was clicked, maybe deselect
-		if (box == Selected.NONE) {
+		if (box == SelectedBox.NONE) {
 			if (onGrillAbsolute(x, y)) {
 				if (selectedSet.contains(meat[getGrillIndex(x, y)])) 
 					this.meatSelectedNotHeld = true;
@@ -944,7 +995,7 @@ public class Grill {
 			else {
 				// don't deselect if just selected meat (unless trashing)
 				if (!gaveBeerToCustomer && (meatSelectedNotHeld || hoverTrash)) {
-					select(Selected.NONE);
+					select(SelectedBox.NONE);
 				}
 			}
 		}
@@ -952,16 +1003,24 @@ public class Grill {
 		else {
 			if (ADVANCED_CONTROLS) {
 				// maybe select spice box, maybe deselect it if already selected
-				if (box == Selected.SPICE) {
-					if (selected != Selected.SPICE) {
+				if (box == SelectedBox.SPICE) {
+					// if touched and released on spice box
+					if (selectedBox != SelectedBox.SPICE) {
 						// don't select Spice box if just deselected meat
 						if (meatSelectedNotHeld || hoverTrash)
 							select(box);
 					}
 					else if (!justTappedSpice) 
-						select(Selected.NONE);
+						select(SelectedBox.NONE);
 				}
-				else select(box);
+				else {
+					select(box);
+				}
+			}
+			else {
+				if (box == SelectedBox.SPICE && selectedBox == SelectedBox.SPICE) {
+					holdSpiceOnNextTouch = true;
+				}
 			}
 
 			//								this.boxSelectedNotHeld = true;
@@ -972,13 +1031,13 @@ public class Grill {
 			//			System.out.println(indexToPlaceMeatAt);
 			if (indexToPlaceMeatAt >= 0) {
 				if (!meatBoxSelected()) indexToPlaceMeatAt = -1;
-				else ks.dropMeatOnGrill(getType(selected), indexToPlaceMeatAt);
+				else ks.dropMeatOnGrill(getType(selectedBox), indexToPlaceMeatAt);
 			}
 
 			if (!meatSelected())
-				select(Selected.NONE);
+				select(SelectedBox.NONE);
 			else 
-				selected = Selected.NONE;
+				selectedBox = SelectedBox.NONE;
 			indexToPlaceMeatAt = -1;
 		}
 
@@ -999,38 +1058,38 @@ public class Grill {
 	/** 
 	 * Given touched units, return the box that was touched, or none if no box was touched
 	 */
-	private Selected touchBox(int unit_x, int unit_y) {
+	private SelectedBox touchBox(int unit_x, int unit_y) {
 		if (unit_x >= FIRST_X && unit_x < FIRST_X + BOX_HOR_WIDTH) {
 			if (unit_y >= BOTTOM_Y && unit_y < BOTTOM_Y + BOX_HOR_HEIGHT){
-				return Selected.FIRST;
+				return SelectedBox.FIRST;
 			}
 		}
 		if (unit_x >= SECOND_X && unit_x < SECOND_X + BOX_HOR_WIDTH) {
 			if (unit_y >= BOTTOM_Y && unit_y < BOTTOM_Y + BOX_HOR_HEIGHT){
 				if (boxes[1] != null)
-					return Selected.SECOND;
+					return SelectedBox.SECOND;
 			}
 		}
 		if (unit_x >= THIRD_X && unit_x < THIRD_X + BOX_HOR_WIDTH) {
 			if (unit_y >= BOTTOM_Y && unit_y < BOTTOM_Y + BOX_HOR_HEIGHT){
 				if (boxes[2] != null)
-					return Selected.THIRD;
+					return SelectedBox.THIRD;
 			}
 		}
 
 		if (unit_x >= BEER_X && unit_x < BEER_X + BEER_WIDTH) {
 			if (unit_y >= BEER_Y && unit_y < BEER_Y + BEER_HEIGHT){
-				return Selected.BEER;
+				return SelectedBox.BEER;
 			}
 		}
 
 		if (unit_x >= grillRightX && unit_x < grillRightX + SPICE_WIDTH) {
 			if (unit_y >= SPICE_Y && unit_y < SPICE_Y + SPICE_HEIGHT){
-				return Selected.SPICE;
+				return SelectedBox.SPICE;
 			}
 		}
 
-		return Selected.NONE;
+		return SelectedBox.NONE;
 	}
 
 	// not regular x, unit y (for off-screen stuff) 
@@ -1043,8 +1102,8 @@ public class Grill {
 	//		return false;
 	//	}
 
-	public boolean isMeat(Selected selected) {
-		return this.selected == Selected.FIRST || this.selected == Selected.SECOND || this.selected == Selected.THIRD;
+	public boolean isMeat(SelectedBox selectedBox) {
+		return this.selectedBox == SelectedBox.FIRST || this.selectedBox == SelectedBox.SECOND || this.selectedBox == SelectedBox.THIRD;
 	}
 
 	private int getGrillSize() {
@@ -1107,88 +1166,62 @@ public class Grill {
 	private int getLiftedYForIndex(int i) {
 		return  (int) (KitchenScreen.UNIT_HEIGHT * (GRILL_Y + grillLeftY + LIFTED_MEAT));
 	}
-	
+
 	public void drawMeat(SpriteBatch batch) {
 		for (Meat m : meat) {
 			if (m == null) continue;
 			int x = getXForIndex(m.index1);
 			int y = getYForIndex(m.index1);
-			
+
 			if (m.selected) {
 				if (drawingFloatingSelected()) continue;
 				y = getLiftedYForIndex(m.index1);
 			}
+
+			if (selectedSet.contains(m) && shouldDrawGhostMeatForMove()) continue;
+
 			m.draw(batch, x, y, profile);
 		}
-		//		System.out.println(meatBoxSelected);
-		// if placing meat on grill or moving meat
-		//		if (this.mousedOver() ) {
 
-		//			batch.setColor(1, 1, 1, .6f);
-		//			TextureRegion toDraw = null;
-		//			int widthFactor = 1;
-		//			if ((selected == Selected.CHICKEN) && this.canFit(Meat.Type.CHICKEN)) {
-		//				toDraw = Assets.chuanrChickenRaw;
-		//				widthFactor = 2;
-		//			}
-		//			if (selected == Selected.BEEF && this.canFit(Meat.Type.BEEF))
-		//				toDraw = Assets.chuanrBeefRaw;
-		//			if (selected == Selected.LAMB && this.canFit(Meat.Type.LAMB))
-		//				toDraw = Assets.chuanrLambRaw;			
-		//			
-		//			if (toDraw != null)
-		//				batch.draw(toDraw, getXForIndex(mousedOver), getYForIndex(mousedOver),  (int) (GRILL_PIECE_WIDTH * widthFactor * KitchenScreen.UNIT_WIDTH / 
-		//					CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
-		//		}
+		// draw ghost meat
 		if (meatBoxSelected() && indexToPlaceMeatAt >= 0 && !ADVANCED_CONTROLS) { // !this.selectedSet.contains(meat[mousedOver])) {
-
-			// TODO fix this, because we're dealing with placing new meat.
-
-			// draw where all the meat will go if dropped!
-			//			for now, just draw the first one
 			batch.setColor(1, 1, 1, .6f);
 			TextureRegion toDraw = null;
 
-			MeatTypes.Type ghostType = getType(this.selected);
+			KebabTypes.Type ghostType = getType(this.selectedBox);
 			toDraw = Assets.getMeatTexture(ghostType, Meat.State.RAW, false);
-
-			//			if (this.selected == Selected.CHICKEN) { // && this.canFit(Meat.Type.CHICKEN)) {
-			//				toDraw = Assets.getMeatTexture(Meat.Type.CHICKEN, Meat.State.RAW, false);
-			//				chickenGhost = true;
-			//			}
-			//			if (this.selected == Selected.BEEF) //  && this.canFit(Meat.Type.BEEF))
-			//				toDraw = Assets.getMeatTexture(Meat.Type.BEEF, Meat.State.RAW, false);
-			//			if (this.selected == Selected.LAMB) //  && this.canFit(Meat.Type.LAMB))
-			//				toDraw = Assets.getMeatTexture(Meat.Type.LAMB, Meat.State.RAW, false);			
 
 			if (toDraw != null) { 
 				Meat.draw(batch, toDraw, ghostType.doubleWidth, getXForIndex(indexToPlaceMeatAt), getYForIndex(indexToPlaceMeatAt), profile, 1);
 			}
 			batch.setColor(1, 1, 1, 1);
-			//				batch.draw(toDraw, getXForIndex(indexToPlaceMeatAt), getYForIndex(indexToPlaceMeatAt),  (int) (GRILL_PIECE_WIDTH * widthFactor * KitchenScreen.UNIT_WIDTH / 
-			//						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * GRILL_PIECE_HEIGHT);
 		}
-//		if (this.meatSelected()) {
-//			//			Color orig = batch.getColor();
-//			for (Meat m : selectedSet) {
-//				//				Color myColor = Color.WHITE;
-//				//				myColor.a = .2f;
-//				//				batch.setColor(myColor);
-//				batch.draw(Assets.whiteAlpha, getXForIndex(m.index1), getYForIndex(m.index1) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
-//						CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
-//				if (m.type.doubleWidth) 
-//					batch.draw(Assets.whiteAlpha, getXForIndex(m.index2), getYForIndex(m.index2) + KitchenScreen.UNIT_HEIGHT * (GRILL_PIECE_HEIGHT - CHUANR_HEIGHT),  (int) (GRILL_PIECE_WIDTH * KitchenScreen.UNIT_WIDTH / 
-//							CHUANR_PER_PIECE), KitchenScreen.UNIT_HEIGHT * CHUANR_HEIGHT);
-//			}
-//			//			batch.setColor(orig);
-//		}
+		else if (meatSelected() && shouldDrawGhostMeatForMove() && !ADVANCED_CONTROLS) { // !this.selectedSet.contains(meat[mousedOver])) {
+			batch.setColor(1, 1, 1, .6f);
+			TextureRegion toDraw = null;
+
+			int currentIndex = mousedOver;
+			for (Meat m : selectedSet) {
+				KebabTypes.Type ghostType = m.type;
+				toDraw = Assets.getMeatTexture(ghostType, m.state, false);
+				if (toDraw != null) { 
+					Meat.draw(batch, toDraw, ghostType.doubleWidth, getXForIndex(currentIndex), getYForIndex(currentIndex), profile, 1);
+				}
+				currentIndex++;
+				if (m.type.doubleWidth) currentIndex++;
+			}
+			batch.setColor(1, 1, 1, 1);
+		}
+		//		if (meatSelected() && indexToPlaceMeatAt >= 0 && !ADVANCED_CONTROLS) {
+		//			
+		//		}
 	}
 
 	// drops meat at mousedOver index
-	public Meat dropMeat(MeatTypes.Type type, int index) {
+	public Meat dropMeat(KebabTypes.Type type, int index) {
 		Meat toDrop = new Meat(type, this);
 
-		if (!canFit(toDrop, index)) return null;
+		if (!canFitAt(index, toDrop)) return null;
 		meat[index] = toDrop;
 		meat[index].setIndex(index);
 		meatOnGrill++;
@@ -1201,26 +1234,26 @@ public class Grill {
 		return toDrop;
 		//		this.boxSelectedNotHeld = false;
 	}
-	
+
 	public GrillType.Type getGrillType() {
 		return (GrillType.Type) profile.inventory.grillType.getFirstSelected();
 	}
-	
+
 	public float getCookSpeedFactor() {
 		return getGrillType().cookSpeedFactor;
 	}
-	
+
 	public float getBurnSpeedFactor() {
 		return getGrillType().burnSpeedFactor;
 	}
-	
+
 	// trashes meat from grill
 	public void trashSelected() {
 		int removed = removeSelected();
 		ks.kebabsTrashed += removed;
 		System.out.println("Kebabs trashed: " + ks.kebabsTrashed);
 		kebabsTrashedThisSession += removed;
-		
+
 		StatsHandler.trashKebab();
 		TutorialEventHandler.handleTrash();
 	}
@@ -1235,18 +1268,18 @@ public class Grill {
 		}
 	}
 
-	//	private boolean canFitAt(int index, Meat.Type type) {
-	//		if (type != Meat.Type.CHICKEN)
-	//			return meat[index] == null;
-	//		else {
-	//			return index + 1 < meat.length && (open(index)) && open(index + 1);
-	//		}
-	//	}
+	private boolean canFitAt(int index, KebabTypes.Type type) {
+		if (!type.doubleWidth) 
+			return meat[index] == null;
+		else {
+			return index + 1 < meat.length && (open(index)) && open(index + 1);
+		}
+	}
 
 	// will this type of meat fit at mousedOver?
-	private boolean canFit(Meat piece, int index) {
-		return canFitAt(index, piece);
-	}
+	//	private boolean canFit(Meat piece, int index) {
+	//		return canFitAt(index, piece);
+	//	}
 
 	//	// will this type of meat fit at mousedOver?
 	//	private boolean canFit(Meat.Type type) {
@@ -1273,60 +1306,124 @@ public class Grill {
 	}
 
 	// moves meat from selected to mousedOver
-	public void move() {
-		if (!mousedOver()) throw new java.lang.IllegalArgumentException();
+	//	public void move() {
+	//		if (!mousedOver()) throw new java.lang.IllegalArgumentException();
+	//
+	//		int grillIndex = mousedOver;
+	//		int selectedIndex = 0;
+	//		while (selectedIndex < selectedSet.size() && grillIndex < this.meat.length) {
+	//			Meat current = selectedSet.get(selectedIndex);
+	//			if (current == null) {
+	//				selectedIndex++;
+	//				continue;
+	//			}
+	//			if (this.canFitAt(grillIndex, current)) {
+	//				moveFrom(current.index1, grillIndex);
+	//				selectedIndex++;
+	//			}
+	//			grillIndex++;
+	//		}
+	//
+	//		deselectAll();
+	//	}
 
-		int grillIndex = mousedOver;
-		int selectedIndex = 0;
-		while (selectedIndex < selectedSet.size() && grillIndex < this.meat.length) {
-			Meat current = selectedSet.get(selectedIndex);
-			if (current == null) {
-				selectedIndex++;
-				continue;
+	public boolean shouldDrawGhostMeatForMove() {
+		//		System.out.println("just selected: " + justSelected + " mousedOver: " + mousedOver);
+		return canMoveSelected() && mousedOver >= 0 && canMoveSelectedTo(mousedOver);// && (justSelected < 0 || meat[mousedOver] != meat[justSelected]);
+	}
+
+	public void moveSelectedTo(int index) {
+		// first set all previous locations to null
+		for (int i = 0; i < meat.length; i++) {
+			if (selectedSet.contains(meat[i])) {
+				meat[i] = null;
 			}
-			if (this.canFitAt(grillIndex, current)) {
-				moveFrom(current.index1, grillIndex);
-				selectedIndex++;
+		}
+		System.out.println("moving selected to " + index);
+
+		// now relocate all selected meat
+		int i = index;
+		for (Meat m : selectedSet) {
+			meat[i] = m;
+			m.setIndex(i);
+			i++;
+			if (m.type.doubleWidth) {
+				meat[i] = m;
+				i++;
 			}
-			grillIndex++;
 		}
 
 		deselectAll();
 	}
 
-	public void moveFrom(int origIndex, int newIndex) {
-		Meat toMove = meat[origIndex];
-		if (toMove == null) return;
-		// we null this out early because we don't want to null it at the end,
-		// when it might actually have the moved meat
-		meat[origIndex] = null;
+	public boolean canMoveSelectedTo(int index) {
+		//		if (index < 0) System.out.println("can't move to " + index);
+		if (index < 0) return false;
+		//		return false;
+		//		return false;
 
-		if (toMove.type.doubleWidth) {
-			meat[origIndex + 1] = null;
+		int size = 0; 
+		for (Meat m : selectedSet) {
+			size++;
+			if (m.type.doubleWidth) size++;
 		}
 
-		meat[newIndex] = toMove;
-		meat[newIndex].setIndex(newIndex);
+		if (index + size > meat.length) return false;
 
-		if (toMove.type.doubleWidth) {
-			meat[newIndex + 1] = meat[newIndex];
+		// don't allow moving unless actually moving and maybe even have a timer
+
+		// check each index and make sure unoccupied
+		int overLapWithExisting = 0;
+		for (int i = index; i < index + size; i++) {
+			if (meat[i] != null) {
+				if (selectedSet.contains(meat[i])) {
+					overLapWithExisting++;
+				}
+				else return false;
+			}
 		}
+		if (overLapWithExisting == size) return false;
+
+		return true;
 	}
+
+	public boolean canMoveSelected() {
+		return hoverMove;
+	}
+
+	//	public void moveFrom(int origIndex, int newIndex) {
+	//		Meat toMove = meat[origIndex];
+	//		if (toMove == null) return;
+	//		// we null this out early because we don't want to null it at the end,
+	//		// when it might actually have the moved meat
+	//		meat[origIndex] = null;
+	//
+	//		if (toMove.type.doubleWidth) {
+	//			meat[origIndex + 1] = null;
+	//		}
+	//
+	//		meat[newIndex] = toMove;
+	//		meat[newIndex].setIndex(newIndex);
+	//
+	//		if (toMove.type.doubleWidth) {
+	//			meat[newIndex + 1] = meat[newIndex];
+	//		}
+	//	}
 
 	public void deselectAll() {
 		for (Meat m : selectedSet) {
 			m.selected = false;
 		}
 		selectedSet.clear();
-		
+
 	}
-	
+
 	public boolean open(int index) {
 		return (meat[index] == null);
 	}
 
 	public boolean meatBoxSelected() {
-		return isMeat(selected);
+		return isMeat(selectedBox);
 	}
 
 	// Is meat from grill selected?

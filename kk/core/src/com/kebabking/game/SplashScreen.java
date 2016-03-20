@@ -50,14 +50,16 @@ public class SplashScreen extends ScreenTemplate  {
 	Label loadText;
 	Label title;
 	
- 	String[] textArray = {"buying coal", "setting up grill", "marinating meat", "sharpening skewers","prepping kebabs", "cooling drinks"};
-//	float arrPercent;
+ 	String[] textArray = {"buying_coal", "setting_up_grill", "marinating_meat", "sharpening_skewers","prepping_kebabs", "cooling_drinks"};
+ 	String allText;
+ 	//	float arrPercent;
 //	float nextSwitch;
 	int currentIndex = 0;
 	
 	static Thread loaderThread;
 	
 	public SplashScreen(KebabKing master) {
+		super("Splash");
 		this.master = master;
 		// start loading assets
 		startTime = System.currentTimeMillis();
@@ -69,7 +71,8 @@ public class SplashScreen extends ScreenTemplate  {
 //		nextSwitch = -1;
 		currentIndex = 0;
 		for (int i = 0; i < textArray.length; i++) {
-			textArray[i] = "( " + textArray[i] + " ... )";
+			textArray[i] = "( " + Assets.strings.get(textArray[i]) + " ... )";
+			allText += textArray[i];
 		}
 	}
 	
@@ -81,8 +84,11 @@ public class SplashScreen extends ScreenTemplate  {
 
 		// Peppercorn screen
 		if (!fadeInComplete) {
+			Gdx.gl.glClearColor((51f/256), 51f/256, 51f/256, 1);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-			Gdx.gl.glClearColor(1, 1, 1, 1);
+			
+//			System.out.println("/");
+
 			// draw logo fading in on top
 			spriteBatch.begin();
 				
@@ -104,7 +110,7 @@ public class SplashScreen extends ScreenTemplate  {
 		}
 		
 		// Second screen
-		if (fadeInComplete && Assets.loadingComplete()) {
+		else if (fadeInComplete && Assets.loadingComplete()) {
 			Gdx.gl.glClearColor((51f/256), 51f/256, 51f/256, 1);
 
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -181,19 +187,19 @@ public class SplashScreen extends ScreenTemplate  {
 		Gdx.gl.glClearColor((51f/256), 51f/256, 51f/256, 1);
 	}
 	
-	class AssetLoader implements Runnable{
-		public void run() {
-			master.initializeAssets();
-//			try {
-//				Thread.sleep(8000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			LoadingFinished = true;
-			return;
-		}
-	}
+//	class AssetLoader implements Runnable{
+//		public void run() {
+//			master.initializeAssets();
+////			try {
+////				Thread.sleep(8000);
+////			} catch (InterruptedException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////			}
+//			LoadingFinished = true;
+//			return;
+//		}
+//	}
 	
 	public String getLoadText() {
 //		if (Assets.getLoadProgress() > nextSwitch && Assets.getLoadProgress() < 1) {
@@ -221,13 +227,13 @@ public class SplashScreen extends ScreenTemplate  {
 	}
 	
 	public void initStage() {
-		System.out.println("Initializing Second Splash screen");
 		ScreenViewport viewport = new ScreenViewport();
 		uiStage = new Stage(viewport, spriteBatch);		
 		table = new Table();
 		table.setSize(KebabKing.getWidth(), KebabKing.getHeight());
 		uiStage.addActor(table);
-		title = new Label("Kebab King", Assets.generateLabelStyleUIChinaWhite(60, "Kebab King"));
+		String titleText = Assets.strings.get("title");
+		title = new Label(titleText, Assets.generateLabelStyleUIChina(60, titleText));
 		title.setAlignment(Align.center);
 		Image image = new Image(kebab);
 		float imageWidth = KebabKing.getGlobalX(0.4f);
@@ -236,7 +242,7 @@ public class SplashScreen extends ScreenTemplate  {
 		table.row();
 		table.add(image).center().top().expandY().padTop(KebabKing.getGlobalY(0.1f)).width(imageWidth).height(imageHeight);
 		table.row();
-		loadText = new Label(getLoadText(), Assets.generateLabelStyleUIWhite(20, Assets.allChars));
+		loadText = new Label(getLoadText(), Assets.generateLabelStyleUI(20, allText));
 		loadText.setAlignment(Align.center);
 		table.add(loadText).center().bottom().padBottom(KebabKing.getGlobalY(0.1f));
 	}
@@ -250,7 +256,7 @@ public class SplashScreen extends ScreenTemplate  {
 	
 	public void specialDispose() {
 		System.out.println("Disposing");
-		Assets.totalCharsForFonts -= Assets.allChars.length();
+//		Assets.totalCharsForFonts -= Assets.allChars.length();
 		System.out.println("total font chars (after disposing splash): " + Assets.totalCharsForFonts);
 		// both of these are used later.
 //		loadText.getStyle().font.dispose();

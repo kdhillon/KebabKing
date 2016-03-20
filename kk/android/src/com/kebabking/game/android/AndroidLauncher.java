@@ -52,9 +52,9 @@ public class AndroidLauncher extends AndroidApplication {
 		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
 		FileManagerAndroid file = new FileManagerAndroid(this);
 		AdsManager ads = new AdsManagerSupersonic(this);
-		SocialMediaFacebook media = new SocialMediaFacebook(this);
+//		SocialMediaFacebook media = new SocialMediaFacebook(this);
 
-		Manager.initAndroid(iab, file, analytics, ads, media);
+		Manager.initAndroid(iab, file, analytics, ads, null);
 		
 		game = new KebabKing();
 

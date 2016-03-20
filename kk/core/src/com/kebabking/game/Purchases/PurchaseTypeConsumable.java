@@ -53,7 +53,7 @@ public class PurchaseTypeConsumable extends PurchaseType {
 		this.startedAtMillis = 0;
 		this.endsAtMillis = 0;
 		
-		this.inventory.handleConsumableReset(this);
+//		this.inventory.handleConsumableReset(this);
 	}
 	
 	public Purchaseable getActive() {

@@ -22,9 +22,6 @@ public class TopBar extends Table {
 
 	static final int CASH_COINS_SIZE = 16;
 
-	static final float TIME_TO_UPDATE = 0.5f; // it should take this long to update the cash/coins every time there is a change	
-	static final float MAX_UPDATE_RATE = 0.1f; // don't let update rate be higher, otherwise it looks slow
-
 	static final boolean COIN_FLASH_ENABLED = true;
 	static final float COINS_FLASH_RATE = 3f; // this much alpha per second.
 	static final float MIN_ALPHA = 0.3f;
@@ -71,15 +68,9 @@ public class TopBar extends Table {
 	static String cashString;
 	static float cashDisplayed; // this should correspond to the above
 
-	static boolean coinsUpdateActive;
-	static boolean cashUpdateActive;
-
-	static float coinsUpdateRate; // update one coin every x seconds
-	static float cashUpdateRate; // update one cash every x seconds
-
-	static float nextUpdateCoins;
-	static float nextUpdateCash;
-
+	static float coinsDisplayedF; // float version of coins displayed
+	static float cashDisplayedF;  // float version of cash displayed
+	
 	static float coinsAlpha = 1;
 	static float cashAlpha = 1;
 	static boolean coinsAlphaUp; // is the alpha increasing or decreasing?
@@ -147,8 +138,8 @@ public class TopBar extends Table {
 	
 		
 		// Add coins and cash table
-		coins = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
-		cash = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
+		coins = new Label("", Assets.generateLabelStyleUI(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
+		cash = new Label("", Assets.generateLabelStyleUI(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
 		coins.setColor(blue);
 		cash.setColor(blue);
 		
@@ -167,7 +158,8 @@ public class TopBar extends Table {
 
 		//		int REPUTATION_TEXT_SIZE = (int) (barHeight * 0.20f);
 		//		System.out.println("REPUTATION TEXT SIZE: " + REPUTATION_TEXT_SIZE);
-		Label reputationLabel = new Label("REPUTATION", Assets.generateLabelStyleUIWhite(REPUTATION_FONT_SIZE, "REPUTATION"));
+		String rep = Assets.strings.get("reputation");
+		Label reputationLabel = new Label(rep, Assets.generateLabelStyleUI(REPUTATION_FONT_SIZE, rep));
 		reputationLabel.setColor(REPUTATION_FONT_COLOR);
 		reputationTable.add(reputationLabel).center();
 		reputationTable.row();
@@ -183,13 +175,14 @@ public class TopBar extends Table {
 		
 		
 		// Add level table
-		level = new Label("", Assets.generateLabelStyleUIWhite(CASH_COINS_SIZE, Assets.nums));
+		level = new Label("", Assets.generateLabelStyleUI(CASH_COINS_SIZE, Assets.nums));
 		level.setColor(blue);
-		Label levelLabel = new Label("LVL", Assets.generateLabelStyleUIWhite(REPUTATION_FONT_SIZE, "LVL"));
+		String lvlText = Assets.strings.get("lvl");
+		Label levelConst = new Label(lvlText, Assets.generateLabelStyleUI(REPUTATION_FONT_SIZE, lvlText));
 		
 		Table levelTable = new Table();
 //		levelTable.debugAll();
-		levelTable.add(levelLabel).left().padLeft(KebabKing.getGlobalX(0.015f));
+		levelTable.add(levelConst).left().padLeft(KebabKing.getGlobalX(0.015f));
 		
 		levelTable.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("topbar/level")));
 		levelTable.add(level).center().expand();
@@ -232,25 +225,29 @@ public class TopBar extends Table {
 		adCampaignTable = new Table();
 		adCampaignTable.setVisible(false);
 		bar = new Table();
-		bar.setBackground(new TextureRegionDrawable(Assets.red));
+		bar.setBackground(new TextureRegionDrawable(Assets.yellow));
 		this.add(adCampaignTable).colspan(5).height(KebabKing.getGlobalY(AD_BAR_HEIGHT)).left();
 
 		coinsDisplayed = master.profile.getCoins();
+		coinsDisplayedF = coinsDisplayed;
 		cashDisplayed = master.profile.getCash();
+		cashDisplayedF = cashDisplayed;
 		updateCoinsString();
 		updateCashString();
+		updateLevel(master.profile.getLevel());
 	}
 
 	public static void update(float delta, Profile profile) {
 		updateCoinCashStrings(delta, profile);
-		updateLevel(profile);
+	
+		// don't update every frame, just on load and when level-up on summary
+//		updateLevel(profile);
 		
 		// update fields of all relevant UI things
 		if (master.getScreen() != master.kitchen && pauseVisible) {
 			// set disabled is actually switching to settings box
 			switchPauseToSettings();
 			pauseVisible = false;
-			System.out.println("switching pause to settings");
 
 //			pauseSettingsButton.
 			//					muteButton.setTouchable(Touchable.disabled);
@@ -261,7 +258,6 @@ public class TopBar extends Table {
 		if (master.getScreen() == master.kitchen && !pauseVisible) {
 			switchSettingsToPause();
 			pauseVisible = true;
-			System.out.println("Switching settings to pause");
 
 			//					muteButton.setTouchable(Touchable.enabled);
 			//					if (uiTable.getCell(pauseButton) != null) {
@@ -269,7 +265,7 @@ public class TopBar extends Table {
 			//					}
 		}
 		if (master.getScreen() == master.settingsScreen) {
-			pauseSettingsButton.setVisible(false);
+//			pauseSettingsButton.setVisible(false);
 		}
 		else 
 			pauseSettingsButton.setVisible(true);
@@ -297,10 +293,10 @@ public class TopBar extends Table {
 		pauseSettingsButton.setTouchable(Touchable.enabled);
 	}
 	
-	public static void updateLevel(Profile profile) {
-		if (levelDisplayed != profile.getLevel()) {
-			levelDisplayed = profile.getLevel();
-			level.setText(""+levelDisplayed);
+	public static void updateLevel(int lvl) {
+		if (levelDisplayed != lvl) {
+			levelDisplayed = lvl;
+			level.setText(LanguageManager.localizeNumber(levelDisplayed));
 		}
 	}
 
@@ -308,80 +304,77 @@ public class TopBar extends Table {
 	public static void updateCoinCashStrings(float delta, Profile profile) {
 		timeElapsed += delta;
 
+		float baseCoinsRate = 1f;
+		float minCoinsRate = 3f;
+		
+		// solution: have hidden variable that is a float, increasing every frame by small amount!
 		if (coinsDisplayed != profile.getCoins()) {
-			if (!coinsUpdateActive) {
-				coinsUpdateActive = true;
-				// TODO make this rate dependent on the difference between displayed and actual
-				coinsUpdateRate = TIME_TO_UPDATE / (profile.getCoins() - coinsDisplayed);
-				coinsUpdateRate = Math.min(coinsUpdateRate, MAX_UPDATE_RATE);
-				nextUpdateCoins = timeElapsed + coinsUpdateRate;
-			}
-			if (timeElapsed > nextUpdateCoins) {
-				if (coinsDisplayed < profile.getCoins()) coinsDisplayed++;
-				else coinsDisplayed--;
-
-				nextUpdateCoins += coinsUpdateRate;
-				updateCoinsString();
-
-				if (!coinsAlphaUp) {
-					coinsAlpha -= COINS_FLASH_RATE * delta;
-					if (coinsAlpha < MIN_ALPHA) {
-						coinsAlpha = MIN_ALPHA; 
-						coinsAlphaUp = true;
-					}
-				}
-				else {
-					coinsAlpha += COINS_FLASH_RATE * delta;
-					if (coinsAlpha > 1) {
-						coinsAlpha = 1; 
-						coinsAlphaUp = false;
-					}
-				}
-				updateCoinsAlpha();
-			}
+			float min = minCoinsRate;
+			if (profile.getCoins() < coinsDisplayedF) min = -baseCoinsRate;
+			float coinsRate = baseCoinsRate * (profile.getCoins() - coinsDisplayedF) + min;
+			coinsDisplayedF += coinsRate * delta;
+			coinsDisplayed = (int) (coinsDisplayedF + 0.5f);
+			updateCoinsString();
+			updateCoinsAlpha();
 		}
 		else {
-			coinsUpdateActive = false;
 			coinsAlpha = 1;
 			updateCoinsAlpha();
 		}
+		
+		float baseCashRate = 2f;
+		float minCashRate = 2f;
 
 		if (cashDisplayed != profile.getCash()) {
-			if (!cashUpdateActive) {
-				cashUpdateActive = true;
-				cashUpdateRate = TIME_TO_UPDATE / (profile.getCash() - cashDisplayed);
-				cashUpdateRate = Math.min(cashUpdateRate, MAX_UPDATE_RATE);
-				nextUpdateCash = timeElapsed + cashUpdateRate;
-			}
-			if (timeElapsed > nextUpdateCash) {
-				if (cashDisplayed < profile.getCash()) cashDisplayed += 0.5;
-				else cashDisplayed -= 0.5;
-
-				nextUpdateCash += cashUpdateRate;
-				updateCashString();
-			}
-
-			if (!cashAlphaUp) {
-				cashAlpha -= COINS_FLASH_RATE * delta;
-				if (cashAlpha < MIN_ALPHA) {
-					cashAlpha = MIN_ALPHA; 
-					cashAlphaUp = true;
-				}
-			}
-			else {
-				cashAlpha += COINS_FLASH_RATE * delta;
-				if (cashAlpha > 1) {
-					cashAlpha = 1; 
-					cashAlphaUp = false;
-				}
-			}
+			float min = minCashRate;
+			if (profile.getCash() < cashDisplayedF) min = -minCashRate;
+			float cashRate = baseCashRate * (profile.getCash() - cashDisplayedF) + min;
+			cashDisplayedF += cashRate * delta;
+			cashDisplayed = ((int) ((cashDisplayedF) * 2) + 1) / 2.0f;
+			updateCashString();
 			updateCashAlpha();
 		}
 		else {
-			cashUpdateActive = false;
 			cashAlpha = 1;
 			updateCashAlpha();
-		} 
+		}
+		
+//		if (cashDisplayed != profile.getCash()) {
+//			if (!cashUpdateActive) {
+//				cashUpdateActive = true;
+//				cashUpdateRate = TIME_TO_UPDATE / (profile.getCash() - cashDisplayed);
+//				cashUpdateRate = Math.min(cashUpdateRate, MAX_UPDATE_RATE);
+//				nextUpdateCash = timeElapsed + cashUpdateRate;
+//			}
+//			if (timeElapsed > nextUpdateCash) {
+//				if (cashDisplayed < profile.getCash()) cashDisplayed += 0.5;
+//				else cashDisplayed -= 0.5;
+//
+//				nextUpdateCash += cashUpdateRate;
+//				updateCashString();
+//			}
+//
+//			if (!cashAlphaUp) {
+//				cashAlpha -= COINS_FLASH_RATE * delta;
+//				if (cashAlpha < MIN_ALPHA) {
+//					cashAlpha = MIN_ALPHA; 
+//					cashAlphaUp = true;
+//				}
+//			}
+//			else {
+//				cashAlpha += COINS_FLASH_RATE * delta;
+//				if (cashAlpha > 1) {
+//					cashAlpha = 1; 
+//					cashAlphaUp = false;
+//				}
+//			}
+//			updateCashAlpha();
+//		}
+//		else {
+//			cashUpdateActive = false;
+//			cashAlpha = 1;
+//			updateCashAlpha();
+//		} 
 	}
 
 
@@ -412,7 +405,7 @@ public class TopBar extends Table {
 			
 			// each "image" can only be in one place at a time.
 			while (starCount >= 1) {
-				starTable.add(star[(int) starCount]).height(starHeight).width(starHeight).padRight(rightPad).padLeft(leftPad).expand();
+				starTable.add(star[(int) starCount - 1]).height(starHeight).width(starHeight).padRight(rightPad).padLeft(leftPad).expand();
 				starCount--;
 			}
 
@@ -435,15 +428,16 @@ public class TopBar extends Table {
 		if (master.profile.inventory.campaignPercent() > 0) {
 			float textWidth = labelText.length() * 0.02f;
 			if (!adCampaignTable.isVisible()) {
-				System.out.println("UPDATING AD CAMPAIGN BAR");
+//				System.out.println("UPDATING AD CAMPAIGN BAR");
 
 				adCampaignTable.setVisible(true);
 
 				Table labelTable = new Table();
-				labelTable.setBackground(new TextureRegionDrawable(Assets.gray));
+				labelTable.setBackground(new TextureRegionDrawable(Assets.red));
 				//				labelTable.debugAll();
 				//			labelTable.setBackground();
-				Label adCampaignLabel = new Label(labelText + ": ", Assets.generateLabelStyleUIChinaWhite(16, Assets.alpha + " :"));
+				Label adCampaignLabel = new Label(labelText + ": ", Assets.generateLabelStyleUIChina(16, labelText + " :"));
+//				adCampaignLabel.setColor(Assets.YELLOW);
 				adCampaignLabel.setAlignment(Align.center);
 				labelTable.add(adCampaignLabel).left();
 				adCampaignTable.add(labelTable).left().width(KebabKing.getGlobalX(textWidth)).height(KebabKing.getGlobalY(AD_BAR_HEIGHT));
@@ -461,15 +455,16 @@ public class TopBar extends Table {
 		}
 	}
 
-
-
 	public static void updateCoinsString() {
 		//		coinsString = "" + coinsDisplayed;
-		coins.setText( "" + coinsDisplayed);
+		String text = LanguageManager.localizeNumber(coinsDisplayed);
+//		System.out.println("UPDATE COINS STRING: " + text);
+		coins.setText(text);
+//		coins.setText(""+coinsDisplayed);
 	}
 
 	public static void updateCashString() {
-		cash.setText("" + cashDisplayed);
+		cash.setText(LanguageManager.localizeNumber(cashDisplayed));
 	}
 
 	public static void updateCoinsAlpha() {

@@ -1,33 +1,40 @@
 package com.kebabking.game.Purchases;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.kebabking.game.Assets;
 import com.kebabking.game.ProfileInventory;
 
 //later: split this into separate ones for chicken beef, lamb
 public class MeatQuality extends PurchaseType {
-	static String name = "MEAT";
-	static String desc = "Better quality meat means more profits per kebab!";
+	static String name = "meat_quality";
+	static String desc = "meat_quality_desc";
 	
 	// Specific types that you might own 
-	static class Quality extends SimplePurchaseable {
+	public static class Quality extends SimplePurchaseable {
 		public static final Quality[] values = new Quality[] {
-//				// 				name, 	cash,  coins, unlock at, sellboost, qual factor, description		
-				new Quality  ("Grade C", 	0,	 0,		0, 		0,		1, 		"Pretty fishy smell to it"), 
-				new Quality  ("Grade B", 	500, 2, 	8, 		0.5f,	1.1f,	"I think it's meat"),
-				new Quality  ("Grade A", 	1000, 5, 	17, 	1f,		1.2f,	"Definitely meat"),
-				new Quality  ("Grade AA", 	2000, 10, 	27, 	1.5f,	1.3f,	"Great organic meat"), 
-				new Quality  ("Grade AAA",	5000, 15, 	39, 	2f,		1.5f,  	"Mouth-watering meat"),
+//				// 		name, 	cash,  coins, unlock at, sellboost, qual factor, description		
+				new Quality  ("1", 	0,	 0,		0, 	1,	0,		1), 
+				new Quality  ("2", 	500, 2, 	8, 	3,	0.5f,	1.1f),
+				new Quality  ("3", 	1000, 5, 	17, 5,	1f,		1.2f),
+				new Quality  ("4", 	2000, 10, 	27, 9,	1.5f,	1.3f), 
+				new Quality  ("5",	5000, 15, 	39, 13,	2f,		1.5f),
 		};
 		
-		float qualityFactor;
+//		float qualityFactor;
 		float sellBoost; // added to sell price of kebabs
-		
+		TextureRegion coolerOpen;
+		TextureRegion coolerClosed;
+
 		// for kryo
 		private Quality(){}
 
-		private Quality(String name, float cash, int coins, int unlockAt, float sellBoost, float qualityFactor, String description) {
-			super(name, cash, coins, unlockAt, description, "market/Market_subMenus__template_element-06");			
-			this.qualityFactor = qualityFactor;
+		private Quality(String name, float cash, int coins, int unlockAt, int unlockWithLocation, float sellBoost, float qualityFactor) {
+			super(MeatQuality.name + "_" + name, cash, coins, unlockAt, unlockWithLocation, "kebabs/CoolerOpen" + name);			
+//			this.qualityFactor = qualityFactor;
 			this.sellBoost = sellBoost;
+			
+			this.coolerClosed = Assets.getTextureRegion("kebabs/CoolerClosed" + name);
+			this.coolerOpen = Assets.getTextureRegion("kebabs/CoolerOpen" + name);
 		}
 	};
 
@@ -43,6 +50,13 @@ public class MeatQuality extends PurchaseType {
 	
 	public float getSellBoost() {
 		return ((Quality) this.getFirstSelected()).sellBoost;
+	}
+	
+	public TextureRegion getCoolerOpen() {
+		return ((Quality) this.getFirstSelected()).coolerOpen;
+	}
+	public TextureRegion getCoolerClosed() {
+		return ((Quality) this.getFirstSelected()).coolerClosed;
 	}
 }
 

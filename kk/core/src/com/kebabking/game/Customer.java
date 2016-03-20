@@ -17,6 +17,7 @@ import static com.kebabking.game.Customer.CustomerType.WOMAN;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -32,12 +33,16 @@ public class Customer implements Comparable<Customer> {
 	// if the meat given to them was undercooked, your reputation goes down and your sickness level goes up
 	// if they leave before their order is complete, your reputation decreases.
 	static final float ALT_PROB = 0.2f;
+	
+	static final float SELFIE_WAIT_LENGTH = 1f;
 
 	static final float BASE_HUNGER_FACTOR = 0.1f;
-	static final float BASE_WAIT_TIME = 90; // customers will stick around for this time, 
+	static final float BASE_WAIT_TIME = 60; // customers will stick around for this time, 
 	static final float BASE_WALK_SPEED_X = .25f; // avg customer moves this much of the screen every second
 	static final float BASE_WALK_SPEED_Y = .2f;
 	static final float SQUISH_FACTOR = .4f; // for the line
+	
+	static final float SAT_SIZE = 0.35f;
 	
 	static final float POLICE_SHUTDOWN_BASE = 0.3f;
 	static final int JEWELER_COINS = 5;
@@ -53,6 +58,10 @@ public class Customer implements Comparable<Customer> {
 
 	static final float TEXTURE_WIDTH = 4f; 	// double the old values before Vic's textures
 	static final float TEXTURE_HEIGHT = 4f; 
+	
+	static final float SELFIE_OFFSET_X = 0.24f;
+	static final float SELFIE_OFFSET_Y = 0.08f;
+	static final float SELFIE_STICK_HEIGHT = 0.15f;
 	
 //	static final float TEXTURE_WIDTH_BACK = 2.2f; 	
 //	static final float TEXTURE_HEIGHT_BACK = 3.8f;
@@ -86,8 +95,8 @@ public class Customer implements Comparable<Customer> {
 	Order order; 
 	float waitTime; 		// amount of time this customer will wait, counts down
 	float originalWaitTime;	// original wait time, fixed
-	float position_x; 		// position along path between 0 and 1
-	float position_y; 		// position along path between 0 and 1
+	float position_x_range; 		// position along path between 0 and 1
+	float position_y_full; 		// position along path between 0 and height
 	float path_y; 			// path y for this specific character (randomized)
 	int satisfaction; 	// maybe need this
 	boolean sick;			// if true, person is sick
@@ -111,6 +120,12 @@ public class Customer implements Comparable<Customer> {
 	
 	boolean specialTexture;
 	
+	boolean drawArrow;
+	
+	float selfieTimer;
+	float selfieWidth;
+	float selfieHeight;
+	
 	// reference to the parent cm.
 	transient CustomerManager cm;
 
@@ -124,20 +139,20 @@ public class Customer implements Comparable<Customer> {
 
 	public enum CustomerType {
 					// pat, 	min,max, 	beer, 	speed
-		OLD_MAN(		1, 		1, 	5, 		.2f, 	.55f, "OldMan", "old men"),
-		OLD_WOMAN(		1.2f, 	1,	3, 		.05f, 	.55f, "OldWoman", "old women"),
-		STUDENT(		.8f, 	2,	8, 		.8f, 	.8f, "Student", "students"), //
-		FAT_MAN(		1, 		3, 	9, 		.6f,	 .5f, "FatMan", "fat men"), //
-		WOMAN(			1, 		2,	4, 		.2f, 	.7f, "Woman", "women"),
-		MAN(			1, 		2, 	7, 		.5f, 	.55f, "Man", "men"),
-		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, "Businessman", "businessmen"),
-		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, "Policeman", "police"),
-		SOLDIER(		.8f, 	2,	7, 		.4f, 	.53f, "Soldier", "soldiers"),
-		GIRL(			1f, 	2, 	6, 		.05f, 	.75f, "Girl", "girls"),
-		TOURIST(		1f, 	3, 	9, 		.4f, 	.53f, "FatAmerican", "tourists"),
-		FOREIGNER(		.8f, 	3, 	8, 		.5f, 	.75f, "American", "foreigners"),//
-		FARMER(			.8f, 	2, 	8, 		.3f, 	.7f, "Farmer", "farmers"),//
-		JEWELER(		1f, 	1, 	8, 		.2f, 	.6f, "Jeweler", "jewelers"),//
+		OLD_MAN(		1, 		1, 	5, 		.2f, 	.55f, "OldMan", Assets.strings.get("old_men")),
+		OLD_WOMAN(		1.2f, 	1,	3, 		.05f, 	.55f, "OldWoman", Assets.strings.get("old_women")),
+		STUDENT(		.8f, 	2,	8, 		.8f, 	.8f, "Student", Assets.strings.get("students")), //
+		FAT_MAN(		1, 		3, 	9, 		.6f,	 .5f, "FatMan", Assets.strings.get("fat_men")), //
+		WOMAN(			1, 		2,	4, 		.2f, 	.7f, "Woman", Assets.strings.get("women")),
+		MAN(			1, 		2, 	7, 		.5f, 	.55f, "Man", Assets.strings.get("men")),
+		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, "Businessman", Assets.strings.get("businessmen")),
+		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, "Policeman", Assets.strings.get("police")),
+		SOLDIER(		.8f, 	2,	7, 		.4f, 	.53f, "Soldier", Assets.strings.get("soldiers")),
+		GIRL(			1f, 	2, 	6, 		.05f, 	.75f, "Girl", Assets.strings.get("girls")),
+		TOURIST(		1f, 	3, 	9, 		.4f, 	.53f, "FatAmerican", Assets.strings.get("tourists")),
+		FOREIGNER(		.8f, 	3, 	8, 		.5f, 	.75f, "American", Assets.strings.get("foreigners")),//
+		FARMER(			.8f, 	2, 	8, 		.3f, 	.7f, "Farmer", Assets.strings.get("farmers")),//
+		JEWELER(		1f, 	1, 	8, 		.2f, 	.6f, "Jeweler", Assets.strings.get("jewelers")),//
 ;
 
 		Animation walkUp;
@@ -221,18 +236,18 @@ public class Customer implements Comparable<Customer> {
 		this.cm = cm;
 		
 		this.orient = Orient.RIGHT;
-		this.position_x = END_LEFT;
+		this.position_x_range = END_LEFT;
 		if (Math.random() < 0.5) {
 			orient = Orient.LEFT;
 			walkingLeft = true;
-			this.position_x = END_RIGHT;
+			this.position_x_range = END_RIGHT;
 		}
 
 		// randomize line_y
-		this.position_y = (CustomerManager.PATH_Y + (float) Math.random() - 0.5f) * KitchenScreen.UNIT_HEIGHT;
+		this.position_y_full = (CustomerManager.PATH_Y + (float) Math.random() - 0.5f) * KitchenScreen.UNIT_HEIGHT;
 //				this.position_y = CustomerManager.PATH_Y * KitchenScreen.UNIT_HEIGHT;
 
-		this.path_y = this.position_y;
+		this.path_y = this.position_y_full;
 
 		// first decide customer type, then generate customer
 		this.type = generateCustomerType();
@@ -243,6 +258,9 @@ public class Customer implements Comparable<Customer> {
 		
 		// decide which line to go in
 		this.lineChoice = chooseLine();
+		
+		selfieHeight = KebabKing.getGlobalYFloat(SELFIE_STICK_HEIGHT);
+		selfieWidth = selfieHeight * Assets.selfieStick.getRegionWidth() / Assets.selfieStick.getRegionHeight();	
 		
 		//		System.out.println("line choice: " + this.lineChoice);
 		this.initTimeOffset = (float) (Math.random() * 10);
@@ -263,18 +281,22 @@ public class Customer implements Comparable<Customer> {
 			}
 		}
 		
+		if (type.idleAlt != null) {
+			if (type.walkLeftAlt == null) throw new java.lang.AssertionError();
+		}
+		
 		if (Math.random() < ALT_PROB && type.idleAlt != null) {
 			this.altTexture = true;
 		}
 		
-		if (this.type == CustomerType.STUDENT && cm.profile.inventory.adCampaign.isTshirts()) {
+		if (this.type.idleSpc != null && cm.profile.inventory.adCampaign.isTshirts()) {
 			this.specialTexture = true;
 		}
 	}
 
 	public CustomerType generateCustomerType() {
 //		 testing for now
-//		if (Math.random() < 1) 
+//		if (Math.random() < .01) ;
 //			return CustomerType.SOLDIER;
 //		else if (Math.random() < 0.5) 
 //			return CustomerType.FOREIGNER;
@@ -315,26 +337,26 @@ public class Customer implements Comparable<Customer> {
 		if (this.action == CustomerAction.PASS_START || this.action == CustomerAction.PASS_END) {
 			
 			if (walkingLeft) {
-				this.position_x -= BASE_WALK_SPEED_X * this.type.walkSpeed * delta;				
+				this.position_x_range -= BASE_WALK_SPEED_X * this.type.walkSpeed * delta;				
 			}
 			else {
-				this.position_x += BASE_WALK_SPEED_X * this.type.walkSpeed * delta;
+				this.position_x_range += BASE_WALK_SPEED_X * this.type.walkSpeed * delta;
 			}
-			if (!walkingLeft && this.position_x * KitchenScreen.WIDTH >= CustomerManager.LINE_POSITIONS[lineChoice] && this.action == CustomerAction.PASS_START) {
+			if (!walkingLeft && this.position_x_range * KitchenScreen.WIDTH >= CustomerManager.LINE_POSITIONS[lineChoice] && this.action == CustomerAction.PASS_START) {
 				makeDecision();
 			}
-			if (walkingLeft && this.position_x * KitchenScreen.WIDTH <= CustomerManager.LINE_POSITIONS[lineChoice] && this.action == CustomerAction.PASS_START) makeDecision();
+			if (walkingLeft && this.position_x_range * KitchenScreen.WIDTH <= CustomerManager.LINE_POSITIONS[lineChoice] && this.action == CustomerAction.PASS_START) makeDecision();
 		}
 		
 		// if not on path, walk to stand. but for now, don't worry about this
 
 		// move down
 		if (this.action == CustomerAction.ARRIVE) {
-			this.position_x = CustomerManager.LINE_POSITIONS[lineChoice] / KitchenScreen.WIDTH;
-			this.position_y -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
-			if (this.position_y <= targetY) {
+			this.position_x_range = CustomerManager.LINE_POSITIONS[lineChoice] / KitchenScreen.WIDTH;
+			this.position_y_full -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
+			if (this.position_y_full <= targetY) {
 				this.placeOrder();
-				this.position_y = targetY;
+				this.position_y_full = targetY;
 			}
 			CustomerManager.SHOULD_ORDER = true;
 		}
@@ -342,25 +364,30 @@ public class Customer implements Comparable<Customer> {
 		if (this.action == CustomerAction.WAIT) {
 			this.waitTime -= delta;
 			if (this.waitTime < 0) startLeaving();
-			else if (this.position_y > targetY){
-				this.position_y -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
+			else if (this.position_y_full > targetY){
+				this.position_y_full -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			}
-			else if (this.position_y < targetY) {
-				this.position_y = targetY;
+			else if (this.position_y_full < targetY) {
+				this.position_y_full = targetY;
 			}
 		}
 		else this.order = null;
 
 		// move up
-		if (this.action == CustomerAction.LEAVE) {			
-			this.position_y += KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
-			//			System.out.println("leaving");
-			//			System.out.println(position_y + " " + targetY);
-			if (this.position_y >= targetY) {
-				this.finishLeaving();
-				this.position_y = targetY;
+		if (this.action == CustomerAction.LEAVE) {	
+			if (selfieTimer > 0) {
+				updateSelfie(delta);
 			}
-			CustomerManager.SHOULD_ORDER = true; // only time we need to reorder
+			else {
+				this.position_y_full += KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
+				//			System.out.println("leaving");
+				//			System.out.println(position_y + " " + targetY);
+				if (this.position_y_full >= targetY) {
+					this.finishLeaving();
+					this.position_y_full = targetY;
+				}
+				CustomerManager.SHOULD_ORDER = true; // only time we need to reorder
+			}
 		}
 
 		if (this.action == CustomerAction.PASS_END) {
@@ -368,10 +395,20 @@ public class Customer implements Comparable<Customer> {
 		}
 	}
 
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, boolean highlight) {
+		// if should draw selfie stick
+		if (selfieTimer > 0) {
+			batch.draw(Assets.selfieStick, KebabKing.getGlobalXFloat(position_x_range + SELFIE_OFFSET_X), position_y_full + KebabKing.getGlobalY(SELFIE_OFFSET_Y), selfieWidth, selfieHeight);
+		}
+		
 		// two possible animations, depending on the state and direction
 		TextureRegion toDraw;
 		float time = cm.timeElapsed + initTimeOffset;
+		
+		// don't be moving if taking selfie
+		if (selfieTimer > 0) {
+			time = 0;
+		}
 		
 		// default
 		if (type.walkDown == null) toDraw = type.idle.getKeyFrame(0);
@@ -382,7 +419,7 @@ public class Customer implements Comparable<Customer> {
 					toDraw = type.walkUpSpc.getKeyFrame(time);
 					break;
 				case DOWN:
-					if (Math.abs(targetY - position_y) < 4) toDraw = type.idleSpc.getKeyFrame(time);
+					if (Math.abs(targetY - position_y_full) < 4) toDraw = type.idleSpc.getKeyFrame(time);
 					else toDraw = type.walkDownSpc.getKeyFrame(time);
 					break;
 				case LEFT:
@@ -392,29 +429,13 @@ public class Customer implements Comparable<Customer> {
 					toDraw = type.walkRightSpc.getKeyFrame(time);
 				}
 			}
-			else if (!this.altTexture) {
-				switch (orient) {
-				case UP:
-					toDraw = type.walkUp.getKeyFrame(time);
-					break;
-				case DOWN:
-					if (Math.abs(targetY - position_y) < 4) toDraw = type.idle.getKeyFrame(time);
-					else toDraw = type.walkDown.getKeyFrame(time);
-					break;
-				case LEFT:
-					toDraw = type.walkLeft.getKeyFrame(time);
-					break;
-				default:
-					toDraw = type.walkRight.getKeyFrame(time);
-				}
-			}
-			else {
+			else if (this.altTexture) {
 				switch (orient) {
 				case UP:
 					toDraw = type.walkUpAlt.getKeyFrame(time);
 					break;
 				case DOWN:
-					if (Math.abs(targetY - position_y) < 4) toDraw = type.idleAlt.getKeyFrame(time);
+					if (Math.abs(targetY - position_y_full) < 4) toDraw = type.idleAlt.getKeyFrame(time);
 					else toDraw = type.walkDownAlt.getKeyFrame(time);
 					break;
 				case LEFT:
@@ -424,15 +445,43 @@ public class Customer implements Comparable<Customer> {
 					toDraw = type.walkRightAlt.getKeyFrame(time);
 				}
 			}
+			else {
+				switch (orient) {
+				case UP:
+					toDraw = type.walkUp.getKeyFrame(time);
+					break;
+				case DOWN:
+					if (Math.abs(targetY - position_y_full) < 4) toDraw = type.idle.getKeyFrame(time);
+					else toDraw = type.walkDown.getKeyFrame(time);
+					break;
+				case LEFT:
+					toDraw = type.walkLeft.getKeyFrame(time);
+					break;
+				default:
+					toDraw = type.walkRight.getKeyFrame(time);
+				}
+			}
 		}
 
+		int x_pos_orig = (int) (KebabKing.getGlobalX(this.position_x_range));
+		int y_pos_orig = (int) (this.position_y_full);
+		
 		// calculate global position
-		int x_pos = (int) (KebabKing.getGlobalX(this.position_x));
-		int y_pos = (int) (this.position_y);
+		int x_pos = x_pos_orig;
+		int y_pos = y_pos_orig;
 
 		width =  (int) (TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH);
-		height = (int) (TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT);
+		height = (int) (TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT);		
 
+		float highlightScale = 1.1f;
+		
+		if (highlight) {
+			x_pos -= ((width * highlightScale) - width)/2;
+			y_pos -= ((height * highlightScale) - height)/2;
+			width *= highlightScale;
+			height *= highlightScale;
+		}
+		
 		int LINE_TOP = (int) (((CustomerManager.MAX_IN_LINE - 1) * Customer.TEXTURE_HEIGHT * Customer.SQUISH_FACTOR + CustomerManager.LINES_START_Y) * KitchenScreen.UNIT_HEIGHT);
 
 
@@ -464,19 +513,23 @@ public class Customer implements Comparable<Customer> {
 //			drawOrder(batch, x_pos, y_pos);
 			batch.end();
 			// each character will have their own stage. Probably bad practice but definitely helps.
-			this.order.draw(x_pos, y_pos);
+			this.order.draw(x_pos_orig, y_pos_orig);
 			batch.begin();
 		}
 
-		// just for testing
-		if (this.action == CustomerAction.LEAVE && this.satisfaction > 0) {
+		if (this.action == CustomerAction.LEAVE) {
+//			if (this.satisfaction <= 0) System.out.println("SAT LESS THAN 0");
 			//			this.satisfaction = 2;
-			this.drawHappyness(batch, x_pos, y_pos);
+			if (this.satisfaction > 0) this.drawHappyness(batch, x_pos_orig, y_pos_orig);
 		}
+		
+//		if (highlight) {
+//			highlight(batch);
+//		}
 	}
 	
 	public float getStrictLeft() {
-		int x_pos = KebabKing.getGlobalX(this.position_x);
+		int x_pos = KebabKing.getGlobalX(this.position_x_range);
 		return x_pos + (TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH - highlightWidth) / 2;
 	}
 	
@@ -485,7 +538,7 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	public float getStrictBottom() {
-		int y_pos = (int) (this.position_y);
+		int y_pos = (int) (this.position_y_full);
 		return y_pos + (TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT - highlightHeight)/2;
 	}
 	
@@ -493,7 +546,6 @@ public class Customer implements Comparable<Customer> {
 		return getStrictBottom() + highlightHeight;
 	}
 	
-	// TODO Overhaul this
 	public void drawHappyness(SpriteBatch batch, int x_pos, int y_pos) {
 		int happiness_x = x_pos - KebabKing.getGlobalX(0.05f);
 
@@ -520,11 +572,34 @@ public class Customer implements Comparable<Customer> {
 			icon = Assets.face5;
 		} 
 		else {
+			System.out.println(satisfaction);
 			throw new java.lang.AssertionError();
 		}
 		if (this.sick) icon = Assets.faceSick;
 
-		batch.draw(icon, happiness_x + width, y_position, (int) (width * 0.4f), (int) (width * 0.4f));
+		float arrowHeight = width * SAT_SIZE * 0.4f;
+		float arrowWidth = arrowHeight * Assets.greenArrow.getRegionWidth() / Assets.greenArrow.getRegionHeight();
+		                
+		float arrowOffsetY = (width*SAT_SIZE - arrowHeight) / 2;
+		arrowOffsetY = width * SAT_SIZE * 0.1f;
+		
+		batch.draw(icon, happiness_x + width, y_position, (int) (width * SAT_SIZE), (int) (width * SAT_SIZE));
+
+		if (drawArrow && satisfaction > 1 && !sick) {
+			float percent = cm.timeElapsed - (int) cm.timeElapsed;
+			float alpha = 0;
+			if (percent < 0.5) {
+				alpha = percent * 2;
+			}
+			else {
+				alpha = (1 - percent) * 2;
+			}
+			Color o = batch.getColor();
+			cm.arrowTint.set(1,  1,  1, alpha);
+			batch.setColor(cm.arrowTint);
+			batch.draw(Assets.greenArrow, happiness_x + width, y_position + arrowOffsetY, arrowWidth, arrowHeight);
+			batch.setColor(o);
+		}
 	}
 
 	public void highlight(SpriteBatch batch) {
@@ -614,8 +689,7 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	// walk away from the stand
-	public void startLeaving() {
-		
+	public void startLeaving() {		
 //		if (this.tutorialFirst) {
 //			cm.shouldAddSecondCustomer = true;
 //			
@@ -641,39 +715,14 @@ public class Customer implements Comparable<Customer> {
 			return;
 		}
 
-		// calculate order satisfaction (0 to 5)
-		// positives: low wait time, no burnt meat
-		// negatives: high wait time, burnt meat
-
-		// wait time can be between 0 and 1
-		// better than half of the original wait time is a perfect 1
-		// 0 wait time is a 0
-		// better than 1/3 of the original wait time is a perfect 1
-
-		float difficulty = 8.5f/10;
-
-		float waitTimeFactor = Math.min(1, this.waitTime / (this.originalWaitTime * difficulty));
-		//		System.out.println("wait time factor: " + waitTimeFactor);
-
-		// accuracy factor can be between 1 and 0
-		// perfect order (everything satisfied, no burnt) is a perfect 1
-
-		// factor = (quantity given / total quantity) * (total well cooked / total quantity)
-		float accuracyFactor = ((order.total - order.remaining) / (float) order.total) * ((order.total - (order.burnt + order.raw + order.wrongSpiciness)) / (float) order.total);
-		//		System.out.println("accuracy factor: " + accuracyFactor);
-
 		// satisfaction is between 1 and 5 (don't round for now)
-		satisfaction = (int) (((((waitTimeFactor + accuracyFactor) * 4 / 2)) + 1) * cm.profile.inventory.skewerType.getSatBoost());
-		//		System.out.println("total satisfaction: " + satisfaction);
+		satisfaction = calculateSatisfaction();
 
-		satisfaction = Math.min(5, satisfaction);
+		sick = calculateSick();
+		if (sick) {
+			cm.totalSick++;
+		}
 		
-		// calculate if the person gets sick or not
-		double sickChance = .8;
-
-		this.sick = false;
-		if (Math.random() * order.raw  > 1 - sickChance) this.sick = true;
-
 		// save this stuff to the total
 		if (this.waitTime > 0) cm.happyCustomers++;
 		cm.totalCustomers++;
@@ -690,17 +739,86 @@ public class Customer implements Comparable<Customer> {
 			// should STILL be shut down
 			if (Math.random() < generatePoliceNextProb) {
 				cm.generatePoliceNext();
-				cm.totalSick++;
 				cm.master.kitchen.preShutDown();
 			}
+		}
+		
+		if (cm.profile.inventory.adCampaign.isSelfie() && satisfaction >= 4 && !sick) {
+			this.startSelfie();
 		}
 		
 		System.out.println("Playing leaving sounds");
 		SoundManager.playLeavingSound(type, satisfaction, sick);
 	}
 	
+	public int calculateSatisfaction() {
+		// increase leniency by increasing this
+		float SAT_BOOST = 1.0f;
+		
+		// or by increasing base customer wait time
+		
+		float minCookTime = order.calcMinCookTime();
+		float maxWait = originalWaitTime;
+		
+		float adjustedMax = maxWait - minCookTime;
+	
+		float waitTimeFactor = waitTime / adjustedMax;
+		waitTimeFactor = Math.min(1, waitTimeFactor);
+		
+		float rawSat = waitTimeFactor * 5;
+		
+		// boost raw sat so even if you take forever, they wont be furious
+		System.out.println("raw sat pre adjust: " + rawSat);
+		rawSat *= 4f/5;
+		rawSat += 1;
+		System.out.println("raw sat post adjust: " + rawSat);
+		
+		// accuracy factor can be between 1 and 0
+		// perfect order (everything satisfied, no burnt) is a perfect 1
+
+		float accuracyFactor = ((order.total - order.remaining) / (float) order.total) * ((order.total - (order.burnt + order.raw + order.wrongSpiciness)) / (float) order.total);
+		if (accuracyFactor < 0) accuracyFactor = 0;
+		
+//		accuracy factor can only hurt you.
+		rawSat *= accuracyFactor;
+		rawSat *= cm.profile.inventory.skewerType.getSatBoost() * SAT_BOOST;
+		
+		float adBoost = cm.profile.inventory.adCampaign.getSatBoost(this.type);
+		if (adBoost != 1) {
+			rawSat *= adBoost;
+			this.drawArrow = true;
+			System.out.println("Boosting satisfaction by " + adBoost);
+		}
+		
+		System.out.println("raw sat post boost: " + rawSat);
+
+		// round to nearest score
+		// so 4.5 is perfect, 3.5-4.5 is weaker
+		int satisfaction = (int) (rawSat + 0.5);
+		
+		// only a 4.5 or better will get you 5 stars
+		// 3.5-4.5 will get you 4 stars
+
+		satisfaction = Math.min(5, satisfaction);
+		satisfaction = Math.max(1, satisfaction);
+		if (satisfaction < 0) throw new java.lang.AssertionError();
+		System.out.println("final sat: " + rawSat);
+		
+		return satisfaction;
+	}
+	
+	public boolean calculateSick() {
+		// calculate if the person gets sick or not
+		double sickChance = .8;
+
+		boolean toReturn = false;
+		if (Math.random() * order.raw  > 1 - sickChance) toReturn = true;
+		
+		return toReturn;
+	}
+	
 	public boolean canShutDown() {
-		return cm.profile.stats.tutorialComplete();
+		return cm.profile.stats.tutorialComplete() && cm.profile.getLevel() >= 3;
 	}
 
 	public void finishLeaving() {
@@ -715,11 +833,22 @@ public class Customer implements Comparable<Customer> {
 
 	// is this person done with their path?
 	public boolean shouldRemove() {
-		if (!walkingLeft && this.position_x > END_RIGHT) return true;
-		if (walkingLeft && this.position_x < END_LEFT) return true;
+		if (!walkingLeft && this.position_x_range > END_RIGHT) return true;
+		if (walkingLeft && this.position_x_range < END_LEFT) return true;
 		return false;
 	}
+	
+	public void startSelfie() {
+		selfieTimer = SELFIE_WAIT_LENGTH;
+	}
 
+	public void updateSelfie(float delta) {
+		selfieTimer -= delta;
+		if (selfieTimer <= 0) {
+			DrawUI.startFlash();
+		}
+	}
+	
 
 	// given this profile's wait factor, calculate wait time
 	public float calcWaitTime(float customerPatienceFactor) {
@@ -849,6 +978,12 @@ public class Customer implements Comparable<Customer> {
 //		}
 	}
 
+	public void handleMoneyEarned(float moneyPaid) {
+		if (moneyPaid == 0) return;
+		int roundUp = (int) Math.ceil(moneyPaid);
+		createProjectiles(roundUp, false);
+	}
+	
 	public void orderComplete() {
 		this.startLeaving();
 		if (this.type == CustomerType.JEWELER) {
@@ -858,8 +993,18 @@ public class Customer implements Comparable<Customer> {
 	
 	public void handleJewelerComplete() {
 		// give coins based on satisfaction
+		int coinReward = Math.max(0, this.satisfaction - 3);
+		if (coinReward <= 0) {
+			return;
+		}
+
 		cm.master.profile.giveCoins(this.satisfaction);
+		createProjectiles(this.satisfaction, true);
 		// launch a window?
+	}
+	
+	public void createProjectiles(int count, boolean jade) {
+		DrawUI.createProjectiles(count, this.position_x_range + this.width / 2 / KebabKing.getWidth(), (this.position_y_full + this.height/2) / KebabKing.getHeight(), jade);		
 	}
 
 	// returns revcost array (first element is rev, second is cost)
@@ -869,6 +1014,7 @@ public class Customer implements Comparable<Customer> {
 		if (order.remaining == 0) {
 			this.orderComplete();
 		}
+		handleMoneyEarned(moneyPaid[0] - moneyPaid[1]);
 		return moneyPaid;
 	}
 
@@ -878,16 +1024,17 @@ public class Customer implements Comparable<Customer> {
 		if (order.remaining == 0) {
 			this.orderComplete();
 		}
-		//		order.print();
+		handleMoneyEarned(toReturn);
+	//		order.print();
 		return toReturn;
 	}
 
 	@Override
 	public int compareTo(Customer that) {
-		float diff = (that.position_y - this.position_y);
+		float diff = (that.position_y_full - this.position_y_full);
 		//		System.out.println(diff);
 		if (diff == 0) {
-			float diff2 = (this.position_x - that.position_x);
+			float diff2 = (this.position_x_range - that.position_x_range);
 			if (diff2 == 0) return 0;
 			else if (diff2 > 0) return -1;
 			else return 1;

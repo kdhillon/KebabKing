@@ -2,12 +2,12 @@ package com.kebabking.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
-import com.kebabking.game.Purchases.MeatTypes;
+import com.kebabking.game.Purchases.KebabTypes;
 
 public class KitchenScreen extends ActiveScreen {
 	static final boolean LAST_CUSTOMER_MODE = true;
 	
-	static final String LAST_CUSTOMER_TEXT = "Last customer";
+//	static final String LAST_CUSTOMER_TEXT = "Last customer";
 	static final float LAST_CUSTOMER_FADE = 2;
 	static final float COUNTDOWN_TIME = 10;
 
@@ -20,7 +20,9 @@ public class KitchenScreen extends ActiveScreen {
 	//	static final float PAUSE_WIDTH = 2.1f; // this times unit width
 	//	static final float PAUSE_HEIGHT = 1.5f;
 
-	static float LAST_CUSTOMER_AFTER = 100; // 2 minutes per day
+	static float LAST_CUSTOMER_AFTER = 100;
+	static float LAST_CUSTOMER_FIRST_FEW_DAYS = 50;
+	static int DAYS_BEFORE_NORMAL = 3;
 	static float DAY_LENGTH = 100; // 2 minutes per day
 	//	static final float DAY_LENGTH = 10;
 
@@ -63,7 +65,7 @@ public class KitchenScreen extends ActiveScreen {
 	// A new Kitchen Screen is created every time the player starts a new day.
 	// handles user input and the main render / update loop
 	public KitchenScreen(KebabKing master) {
-		super(master, false);
+		super(master, false, "Kitchen");
 		roundStartTime = System.currentTimeMillis();
 
 		this.bg.reset();
@@ -76,8 +78,13 @@ public class KitchenScreen extends ActiveScreen {
 			LAST_CUSTOMER_AFTER = 3;
 		}
 
-		if (LAST_CUSTOMER_MODE) 
+
+		if (LAST_CUSTOMER_MODE) {
 			this.time = LAST_CUSTOMER_AFTER * master.profile.inventory.grillStand.getLengthBoost();
+			if (master.profile.stats.daysWorked <= DAYS_BEFORE_NORMAL) {
+				this.time = LAST_CUSTOMER_FIRST_FEW_DAYS;
+			}
+		}
 		else 
 			this.time = DAY_LENGTH;
 
@@ -213,6 +220,10 @@ public class KitchenScreen extends ActiveScreen {
 	}
 
 	public void serveCustomerAll(Customer customer) {
+		// first deselect any meat that the customer didn't order
+		grill.deselectMeatNotOrdered(customer);
+		if (grill.selectedSet.size() == 0) return;
+		
 		float[] revCost = customer.giveMeat(grill.selectedSet);
 		earnMoney(revCost[0] - revCost[1]);
 		totalRevenue += revCost[0];
@@ -221,7 +232,7 @@ public class KitchenScreen extends ActiveScreen {
 		int served = grill.selectedSet.size();
 		Grill.kebabsServedThisSession += served;
 		grill.removeSelected(); // deletes selected meat from grill;
-		grill.select(Grill.Selected.NONE);
+		grill.select(Grill.SelectedBox.NONE);
 	}
 
 	public boolean serveCustomerBeer(Customer customer) {
@@ -234,7 +245,7 @@ public class KitchenScreen extends ActiveScreen {
 			return false;
 		}
 
-		spendMoney(getDrinkBuyPrice());
+//		spendMoney(getDrinkBuyPrice());
 
 		earnMoney(moneyEarned);
 
@@ -242,7 +253,7 @@ public class KitchenScreen extends ActiveScreen {
 		//		}
 	}
 
-	public Meat dropMeatOnGrill(MeatTypes.Type type, int index) {
+	public Meat dropMeatOnGrill(KebabTypes.Type type, int index) {
 		//		if (!canAfford(Meat.getBuyPrice(type))
 		//				|| !grill.open(grill.mousedOver)) return null;
 		System.out.println("Dropping meat on grill");
@@ -260,9 +271,9 @@ public class KitchenScreen extends ActiveScreen {
 		this.master.profile.giveMoney(money);
 	}
 
-	public void spendMoney(float money) {
-		master.profile.spendCash(money);
-	}
+//	public void spendMoney(float money) {
+//		master.profile.spendCash(money);
+//	}
 
 	public static int getUnitX(int x) {
 		return x / UNIT_WIDTH;
@@ -318,7 +329,7 @@ public class KitchenScreen extends ActiveScreen {
 	@Override
 	public void pause() {
 		// this check prevents problems during tutorial
-		if (!DrawUI.notificationActive) {
+		if (!DrawUI.notificationActive && master.profile.stats.tutorialComplete()) {
 			grill.deselectAll();
 			master.kitchenPause();
 		}

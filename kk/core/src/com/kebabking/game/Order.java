@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kebabking.game.Customer.CustomerType;
-import com.kebabking.game.Grill.Selected;
-import com.kebabking.game.Purchases.MeatTypes;
+import com.kebabking.game.Grill.SelectedBox;
+import com.kebabking.game.Purchases.KebabTypes;
 
 public class Order {
 	static final boolean ACCEPT_WRONG_SPICINESS = true;
@@ -104,13 +104,13 @@ public class Order {
 
 		// because Val wanted it.
 		// reduces orders of "double" sized meats.
-		MeatTypes.Type firstType = ks.grill.getType(Selected.FIRST);
+		KebabTypes.Type firstType = getFirstType();
 		if (firstType.doubleWidth) first = (first + 1) / 2;
 
-		MeatTypes.Type secondType = ks.grill.getType(Selected.SECOND);
+		KebabTypes.Type secondType = getSecondType();
 		if (secondType != null && secondType.doubleWidth) second = (second + 1) / 2;
 
-		MeatTypes.Type thirdType = ks.grill.getType(Selected.THIRD);
+		KebabTypes.Type thirdType = getThirdType();
 		if (thirdType != null && thirdType.doubleWidth) third = (third + 1) / 2;
 
 		double beerRandom = Math.random();
@@ -153,9 +153,9 @@ public class Order {
 	}
 
 	public float[] giveMeat(Meat meat) {
-		Grill.Selected selected = ks.grill.getSelectedForType(meat.type);
+		Grill.SelectedBox selectedBox = ks.grill.getSelectedForType(meat.type);
 
-		switch (selected) {
+		switch (selectedBox) {
 		case FIRST:
 			if (first == 0 || (meat.spiced != firstSpicy && !ACCEPT_WRONG_SPICINESS)) {
 				System.out.println("I don't want chicken");
@@ -193,11 +193,11 @@ public class Order {
 		}
 
 		//		Meat.Type type = meat.type;
-		if (selected == Selected.FIRST)
+		if (selectedBox == SelectedBox.FIRST)
 			first--;
-		else if (selected == Selected.SECOND)
+		else if (selectedBox == SelectedBox.SECOND)
 			second--;
-		else if (selected == Selected.THIRD)
+		else if (selectedBox == SelectedBox.THIRD)
 			third--;
 
 		remaining--;
@@ -237,6 +237,20 @@ public class Order {
 		return ks.getDrinkSellPrice();
 	}
 
+	public float calcMinCookTime() {
+		float max = 0;
+		if (getFirstType() != null) {
+			max = Math.max(getFirstType().cookTime, max);
+		}
+		if (getSecondType() != null) {
+			max = Math.max(getSecondType().cookTime, max);
+		}
+		if (getThirdType() != null) {
+			max = Math.max(getThirdType().cookTime, max);	
+		}
+		return max;
+	}
+	
 	// table should include the speech bubble, orders, everything
 	public void updateTable() {
 		table.clear();
@@ -262,15 +276,15 @@ public class Order {
 
 		// TODO will have to make this "first, second, third" as well
 		if (this.first > 0) {
-			orders.add(createSubTable(ks.grill.getType(Selected.FIRST), firstSpicy, this.first)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
+			orders.add(createSubTable(getFirstType(), firstSpicy, this.first)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
 			orders.row();
 		}
 		if (this.second > 0) {
-			orders.add(createSubTable(ks.grill.getType(Selected.SECOND), secondSpicy, this.second)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
+			orders.add(createSubTable(getSecondType(), secondSpicy, this.second)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
 			orders.row();
 		}
 		if (this.third > 0) {
-			orders.add(createSubTable(ks.grill.getType(Selected.THIRD), thirdSpicy, this.third)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
+			orders.add(createSubTable(getThirdType(), thirdSpicy, this.third)).width(subTableWidth).height(subTableHeight).padBottom(subTablePadY);
 			orders.row();
 		}
 
@@ -281,11 +295,23 @@ public class Order {
 
 		table.add(orders).padTop(tablePadTop).padBottom(tablePadBottom).padLeft(tablePadLeft).padRight(tablePadRight);
 	}
+	
+	public KebabTypes.Type getFirstType() {
+		return ks.grill.getType(SelectedBox.FIRST);
+	}
+	
+	public KebabTypes.Type getSecondType() {
+		return ks.grill.getType(SelectedBox.SECOND);
+	}
+	
+	public KebabTypes.Type getThirdType() {
+		return ks.grill.getType(SelectedBox.THIRD);
+	}
 
 	public Table createSubTable(TextureRegion icon, boolean spice, int quantity) {
 		Table subTable = new Table();
 		Label count;		
-		count = new Label("" + quantity, Assets.generateLabelStyleUIHeavyWhite(22, Assets.nums));
+		count = new Label("" + LanguageManager.localizeNumber(quantity), Assets.generateLabelStyleUIHeavy(24, Assets.nums));
 		if (!spice) {
 			count.setColor(MainStoreScreen.FONT_COLOR);
 		}
@@ -294,20 +320,15 @@ public class Order {
 		int iconPad = KebabKing.getGlobalX(0.01f);
 
 		// Make sure same or less than above
-		int iconHeight = KebabKing.getGlobalY(0.025f);
+		int iconHeight = KebabKing.getGlobalY(0.030f);
 		int iconWidth = icon.getRegionWidth() * iconHeight / icon.getRegionHeight();
 		subTable.add(new Image(icon)).width(iconWidth).height(iconHeight).padLeft(iconPad);
 		if (spice) subTable.setBackground(new TextureRegionDrawable(Assets.redBright));
 
-		//		int subTableWidth = ChuanrC.getGlobalX(0.13f);
-		//		int subTableHeight = ChuanrC.getGlobalY(0.04f);
-		//		subTable.setWidth(subTableWidth);
-		//		subTable.setHeight(subTableHeight);
-
 		return subTable;		
 	}
 
-	public Table createSubTable(MeatTypes.Type type, boolean spice, int quantity) {
+	public Table createSubTable(KebabTypes.Type type, boolean spice, int quantity) {
 		return createSubTable(type.icon, spice, quantity);
 	}
 
@@ -356,13 +377,13 @@ public class Order {
 				(thirdSpicy && third > 0);
 	}
 	
-	public MeatTypes.Type getSpicyType() {
+	public KebabTypes.Type getSpicyType() {
 		if (firstSpicy && first > 0)
-			return ks.grill.getType(Selected.FIRST);
+			return getFirstType();
 		if (secondSpicy && second > 0)
-			return ks.grill.getType(Selected.SECOND);
+			return getSecondType();
 		if (thirdSpicy && third > 0)
-			return ks.grill.getType(Selected.THIRD);
+			return getThirdType();
 		return null;
 	}
 	
@@ -371,14 +392,14 @@ public class Order {
 //	}
 
 	public boolean hasDouble() {
-		if (ks.grill.getType(Selected.FIRST) != null) {
-			if (ks.grill.getType(Selected.FIRST).doubleWidth) return true;
+		if (getFirstType() != null) {
+			if (getFirstType().doubleWidth) return true;
 		}
-		if (ks.grill.getType(Selected.SECOND) != null) {
-			if (ks.grill.getType(Selected.SECOND).doubleWidth) return true;
+		if (getSecondType() != null) {
+			if (getSecondType().doubleWidth) return true;
 		}
-		if (ks.grill.getType(Selected.THIRD) != null)
-			if (ks.grill.getType(Selected.THIRD).doubleWidth) return true;
+		if (getThirdType() != null)
+			if (getThirdType().doubleWidth) return true;
 		return false;
 	}
 	
@@ -390,13 +411,13 @@ public class Order {
 //		this.beer = 0;
 //	}
 	
-	public MeatTypes.Type getDoubleType() {
-		if (ks.grill.getType(Selected.FIRST).doubleWidth)
-			return ks.grill.getType(Selected.FIRST);
-		if (ks.grill.getType(Selected.SECOND).doubleWidth)
-			return ks.grill.getType(Selected.SECOND);
-		if (ks.grill.getType(Selected.THIRD).doubleWidth) 
-			return ks.grill.getType(Selected.THIRD);
+	public KebabTypes.Type getDoubleType() {
+		if (getFirstType().doubleWidth)
+			return getFirstType();
+		if (getSecondType().doubleWidth)
+			return getSecondType();
+		if (getThirdType().doubleWidth) 
+			return getThirdType();
 		return null;
 	}
 	
@@ -409,5 +430,18 @@ public class Order {
 
 		if (beer > 0) types++;
 		return types;
+	}
+	
+	public boolean hasOrderedType(KebabTypes.Type type) {
+		if (type == getFirstType()) {
+			if (first > 0) return true;
+		}
+		if (type == getSecondType()) {
+			if (second > 0) return true;
+		}
+		if (type == getThirdType()) {
+			if (third > 0) return true;
+		}
+		return false;
 	}
 }

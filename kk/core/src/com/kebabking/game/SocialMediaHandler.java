@@ -44,6 +44,8 @@ public class SocialMediaHandler {
         System.out.println("Share rewarded!");
 
         master.profile.gameQuitDuringShare = false;
+        StatsHandler.shareOnFb();
+        
         master.save();
     }
 
