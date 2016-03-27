@@ -29,7 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.I18NBundle;
 import com.kebabking.game.StoreScreen.TableType;
-import com.kebabking.game.Purchases.KebabTypes;
+import com.kebabking.game.Purchases.MeatTypes;
 
 public class Assets {	
 	public final static float GRILL_ANIMATION_TIME = 1f;
@@ -50,11 +50,6 @@ public class Assets {
 	final static int PATCH_OFFSET_X = 9;
 	final static int PATCH_OFFSET_Y = 9;
 	
-//	final static int GREEN_9PATCH_OFFSET_X = 17;
-//	final static int GREEN_9PATCH_OFFSET_X_2 = GREEN_9PATCH_OFFSET_X + 2;
-//	final static int GREEN_9PATCH_OFFSET_Y = 17;
-//	final static int GREEN_9PATCH_OFFSET_Y_2 = GREEN_9PATCH_OFFSET_X + 4;
-	
 	final static Color RED = new Color(211/256.0f, 90/256.0f, 68/256.0f, 1f);
 	final static Color YELLOW = new Color(235/256.0f, 169/256.0f, 28/256.0f, 1f);
 
@@ -73,16 +68,12 @@ public class Assets {
 //
 	public static BitmapFont arial;
 
-//	public static BitmapFont topBarFont; // must be disposed
-
 	static Texture peppercornLogo; // must be disposed
 	static Texture kebabMain;
 	
 	static TextureAtlas atlas; // must be disposed after load
-//	static TextureAtlas uiAtlas; // must be disposed
 
 	static Skin uiSkin;
-//	static Skin purchaseableTableSkin;
 
 	static TextureRegion title;
 
@@ -94,8 +85,6 @@ public class Assets {
 		Animation up;
 	}
 	
-//	static HashMap<Customer.CustomerType, CustomerTextures> customerMap;
-	
 	static public class KebabTextures {
 		TextureRegion raw;
 		TextureRegion cooked;
@@ -104,40 +93,14 @@ public class Assets {
 		TextureRegion burnt;
 	}
 	
-//	static HashMap<String, KebabTextures> meatMap;
-
-//	static TextureRegion beefBox;
-//	static TextureRegion chickenBox;
-//	static TextureRegion lambBox;
-	// temporary
-//	static TextureRegion coolerOpen;
-//	static TextureRegion coolerClosed;
-
-	
 	static TextureRegion coolerLidOpen;
 	static TextureRegion coolerLidClosed;
-//	static TextureRegion beefBoxOpen;
-//	static TextureRegion chickenBoxOpen;
-//	static TextureRegion lambBoxOpen;
-//	static TextureRegion spiceBox;
 	static TextureRegion spiceBoxDisabled;
-
-//	static TextureRegion beefIcon;
-//	static TextureRegion chickenIcon;
-//	static TextureRegion lambIcon;
-//	static TextureRegion beefSpicyIcon;
-//	static TextureRegion chickenSpicyIcon;
-//	static TextureRegion lambSpicyIcon;
+	
 	static TextureRegion beerIcon;
 	static TextureRegion floatingBeer;
 	
 	static TextureRegion face1, face2, face3, face4, face5, faceSick;
-
-//	static TextureRegion bgVillage;
-//	static TextureRegion bgOutskirts;
-//	static TextureRegion bgSuburbs;
-//	static TextureRegion bgUniversity;
-//	static TextureRegion bgCBD;
 
 	static TextureRegion cloud1;
 	static TextureRegion cloud2;
@@ -148,6 +111,9 @@ public class Assets {
 	static TextureRegion paintBrushSide;
 	static TextureRegion trashIcon;
 
+	static TextureRegion halfWheel;
+	static TextureRegion wheelPointer;
+	
 	static TextureRegionDrawable volOn;
 	static TextureRegionDrawable volMute;
 
@@ -163,8 +129,6 @@ public class Assets {
 
 	static TextureRegion speech;
 
-//	static TextureRegion pause;
-	
 	static TextureRegion purchaseableCheck;
 
 	static TextureRegion gray;
@@ -728,6 +692,9 @@ public class Assets {
 		sun = getTextureRegion("background/SkyElement-04");
 		skyStar = getTextureRegion("background/SkyElement-05");
 
+		halfWheel = getTextureRegion("screens/wheel3");
+		wheelPointer = getTextureRegion("screens/triangle");
+
 		marketShelf = getTextureRegion("market/Market_menu_element-02");
 		marketTitle = getTextureRegion("market/Market_menu_element-08");
 		marketGreen = getTextureRegion("lightGreen");
@@ -767,6 +734,7 @@ public class Assets {
 		gray9PatchSmallFilledCut = new NinePatch(getTextureRegion("market/gray9patchSmallFilledCut"), 2,9,8, 8);
 		red9PatchSmall = new NinePatch(getTextureRegion("market/red9patchSmall"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
 	
+		
 //		createUI();
 
 		loadSound();
@@ -803,7 +771,7 @@ public class Assets {
 		return profile.inventory.skewerType.getStick();
 	}
 	
-	public static TextureRegion getMeatTexture(KebabTypes.Type type, Meat.State state, boolean spiced) {
+	public static TextureRegion getMeatTexture(MeatTypes.Type type, Meat.State state, boolean spiced) {
 		KebabTextures kt = type.textures;
 		if (kt == null) return null;
 		switch (state) {

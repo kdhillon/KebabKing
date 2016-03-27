@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.kebabking.game.Purchases.LocationType;
 import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.PurchaseTypeConsumable;
 import com.kebabking.game.Purchases.Purchaseable;
@@ -124,8 +125,11 @@ public class StorePurchaseableTable extends Table {
 		info.row();
 
 		String descText = purchaseable.getDescription();
-		if (lockedByRound) 
-			descText = "Available at level " + purchaseable.unlockAtLevel();
+		if (lockedByRound) {
+			if (purchaseable.getType() != master.profile.inventory.locationType)
+				descText = "Available at " + LocationType.getLocationAt(purchaseable.unlockWithLocation()).getName();
+			else descText = "Available at level " + purchaseable.unlockAtLevel();
+		}
 		else if (purchaseable.getDescription() == null || purchaseable.getDescription().length() == 0) {
 //			pDesc = new Label("???", Assets.generateLabelStyleUILight(PURCHASEABLE_DESCRIPTION_SIZE, "???"));
 			descText = "";
@@ -437,7 +441,7 @@ public class StorePurchaseableTable extends Table {
 		
 		// update this table when selected
 		int oldSelected = parent.selectedIndex;
-		type.addToSelected(index);
+		type.removeOrSelect(index);
 		this.updateForSelect();
 		parent.selectedIndex = index;
 		if (oldSelected >= 0 && oldSelected != this.index) 

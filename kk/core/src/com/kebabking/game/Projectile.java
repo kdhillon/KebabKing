@@ -4,11 +4,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Projectile {
-	public final static float G = 0.6f;
+//	public final static float G = 0.6f;
+	public final static float G = 1f;
 	
-	public final static float SPEED = 1.15f;
+	public final static float CASH_SPEED = 1.0f;
+	
+	public final static float JADE_SPEED = 0.75f;
 
-	public final static float THRESHOLD = 0.02f;
+//	public final static float THRESHOLD = 0.015f;
+//	public final static float THRESHOLD = 0.003f;
+	public final static float THRESHOLD_Y = 1 - TopBar.UI_BAR_HEIGHT * 2.5f;
 
 	public final static float JADE_X = 0.9f;
 	public final static float JADE_Y = 0.9f;
@@ -22,7 +27,7 @@ public class Projectile {
 	public final static float MIN_Y_VOL = -.2f;
 	public final static float MAX_Y_VOL = .1f;
 	
-	public final static float SIZE_X_JADE = 0.010f;
+	public final static float SIZE_X_JADE = 0.10f;
 	public final static float SIZE_Y_JADE = 0.06f;
 
 	public final static float SIZE_X_CASH = 0.066f;
@@ -44,6 +49,8 @@ public class Projectile {
 	float destX;
 	float destY;
 
+	float speed;
+	
 	TextureRegion reg;
 	
 	boolean shouldDestroy;
@@ -55,6 +62,7 @@ public class Projectile {
 			destY = JADE_Y;
 			size_x = SIZE_X_JADE;
 			size_y = SIZE_Y_JADE;
+			speed = JADE_SPEED;
 		}
 		else {
 			double rand = Math.random();
@@ -71,10 +79,12 @@ public class Projectile {
 			destY = CASH_Y;
 			size_x = SIZE_X_CASH;
 			size_y = SIZE_Y_CASH;
+			speed = CASH_SPEED;
 		}
 		
-		this.xPos = x;
-		this.yPos = y;
+	
+		this.xPos = x - (size_x / 2);
+		this.yPos = y - size_y / 2;
 		
 		this.xVel = (float) (MIN_X_VOL + Math.random() * (MAX_X_VOL - MIN_X_VOL));
 		this.yVel = (float) (MIN_Y_VOL + Math.random() * (MAX_Y_VOL - MIN_Y_VOL));
@@ -83,7 +93,7 @@ public class Projectile {
 	}
 	
 	public void update(float delta) {	
-		delta *= SPEED;
+		delta *= speed;
 		updateAccel();
 		updateVel(delta);
 		updatePos(delta);
@@ -101,10 +111,11 @@ public class Projectile {
 		// Calculate total sqared distance from body i to j
 		double distsqr = (distx*distx) + (disty*disty);
 
-		if (this.xPos > 1 || this.yPos > 1 || distsqr < THRESHOLD) this.shouldDestroy = true;
+		if (this.yPos >= THRESHOLD_Y) this.shouldDestroy = true;
 
 		// Calculate total gravitational force from body j to i
-		double ftotal = G / distsqr;
+//		double ftotal = G / distsqr;
+		double ftotal = G / Math.sqrt(distsqr);
 
 		// Calculate x and y components of ftotal
 		xAccel = (float) (ftotal*distx/(Math.sqrt(distsqr)));

@@ -332,6 +332,7 @@ public class StoreScreen extends ActiveScreen {
 
 
 	public void switchToMain() {
+		DrawUI.stopDrawingProjectiles();
 		mainTable.clear();
 		Manager.analytics.sendEventHit("Store", "Switch To", "Main");
 		this.currentTable = null;
@@ -346,7 +347,7 @@ public class StoreScreen extends ActiveScreen {
 	
 	public void switchTo(TableType switchToThis) {
 		Table newTable = null;
-		String name = "NoType";
+//		String name = "NoType";
 				
 //		resetTable(switchToThis);
 
@@ -360,33 +361,38 @@ public class StoreScreen extends ActiveScreen {
 //			preparePurchaseTypes(foodTypes);
 			newTable = foodTable;
 			foodTable.updateCurrent();
+			Manager.analytics.sendScreenHit("Food and Drinks");
 //			name = "Food";
 			break;
 		case grill:
 //			preparePurchaseTypes(grillTypes);
 			newTable = grillTable;
-			name = "Grill";
+//			name = "Grill";
+			Manager.analytics.sendScreenHit("Tools");
 			grillTable.updateCurrent();
 			break;
 		case map:
 //			preparePurchaseTypes(locationTypes);
 			newTable = mapTable;
-			name = "Map";
+//			name = "Map";
+			Manager.analytics.sendScreenHit("Real Estate");
 			mapTable.updateCurrent();
 			break;
 		case ads:
 //			preparePurchaseTypes(adTypes);
 			newTable = adsTable;
-			name = "Ads";
+//			name = "Ads";
+			Manager.analytics.sendScreenHit("Advertisements");
 			adsTable.updateCurrent();
 			break;
 		case jade:
 			newTable = jadeTable;
-			name = "Coins";
+			Manager.analytics.sendScreenHit("Jeweler");
+//			name = "Coins";
 			break;
 		case vanity:
 			newTable = vanityTable;
-			name = "Vanity";
+//			name = "Vanity";
 			break;
 		}
 		
@@ -418,7 +424,7 @@ public class StoreScreen extends ActiveScreen {
 
 		this.currentTable = switchToThis;
 
-		Manager.analytics.sendEventHit("Store", "Switch To", name);
+//		Manager.analytics.sendEventHit("Store", "Switch To", name);
 	}
 	
 	public void switchToType(PurchaseType type) {

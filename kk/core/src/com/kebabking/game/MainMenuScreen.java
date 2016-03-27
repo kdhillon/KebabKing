@@ -80,7 +80,7 @@ public class MainMenuScreen extends ActiveScreen {
 
 		table.row();
 
-		Table marketButton = DrawUI.getBlueButton(Assets.strings.get("market"), 55);
+		Table marketButton = DrawUI.getBlueButton(Assets.strings.get("market"), 60);
 
 		//		float width2 = KebabKing.getGlobalX(0.7f);
 		//		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();

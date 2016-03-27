@@ -7,15 +7,22 @@ import com.kebabking.game.Managers.Manager;
  * Created by Kyle on 1/2/2016.
  */
 public class AdsHandler {
-    static final int ADS_REWARD = 2;
+//    static final int ADS_REWARD = 3;
     static final long MILLIS_TO_WAIT_BEFORE_REWARD = 1000; //
-
+    
     static long adWatchedAt;
     static boolean adJustFinished;
     static KebabKing master;
-
+    
+//    static JadeWheel wheel;
+      
     public static void init(KebabKing masterIn) {
         master = masterIn;
+    }
+    
+    public static void showAd() {
+		Manager.ads.showAd();
+		Manager.analytics.sendScreenHit("Watching Ad");
     }
 
     // call this in onResume
@@ -27,9 +34,8 @@ public class AdsHandler {
     		master.profile.endViolation();
     	}
     	else {
-    		int coins = ADS_REWARD;
-    		master.profile.giveCoins(coins);
-    		DrawUI.launchAdSuccessNotification(coins);
+    		// launch wheel table  
+    		master.switchToJadeWheelScreen();
     	}
         // the problem is that this is called before onResume, simple fix is use a boolean flag.
     	Manager.analytics.sendEventHit("Ads", "ad completed");
@@ -64,6 +70,7 @@ public class AdsHandler {
     public static void handleAdNotAvailable() {
         Manager.analytics.sendEventHit("Ads", "ad not available");
         DrawUI.launchAdNotAvailableNotification();
+        StatsHandler.adNotAvailable();
         System.out.println("Ad not available!");
     }
 

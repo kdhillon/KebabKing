@@ -13,11 +13,11 @@ public class GrillSize extends PurchaseType {
 		public static final Size[] values = new Size[] {
 				new Size("tiny", 		0,		0, 	0, 	1, 4,"grill-00"),
 //				new Size("small", 		100,	2,	4,  5, "grill-01"), 
-				new Size("med", 		100,	2,	4,  2, 6,"grill-02"), 
+				new Size("med", 		200,	3,	4,  2, 6,"grill-02"), 
 //				new Size("big", 		500,	4,	10, 7,  "grill-03"),
-				new Size("large", 		500,	4,	12, 7, 8, "grill-04"),
+				new Size("large", 		1000,	10,	12, 7, 8, "grill-04"),
 //				new Size("huge", 		1000,	10,	24, 9, "grill-05"),
-				new Size("enormous", 	1000,	10,	33, 11, 10,"grill-07"),
+				new Size("enormous", 	9500,	20,	33, 11, 10,"grill-07"),
 		};
 	
 		int size;

@@ -111,5 +111,6 @@ public class StatsHandler {
 		Manager.analytics.sendEventHit("OnLevelUp", ""+master.profile.getLevel(), "Shares on FB", getStats().sharesOnFb);	
 		Manager.analytics.sendEventHit("OnLevelUp", ""+master.profile.getLevel(), "Shares Crashed But Rewarded", getStats().sharesCrashedButRewarded);	
 		Manager.analytics.sendEventHit("OnLevelUp", ""+master.profile.getLevel(), "Last Share Day", getStats().lastShareDay);	
+		Manager.analytics.sendEventHit("OnLevelUp", ""+master.profile.getLevel(), "Times Shut Down", getStats().timesShutDown);	
 	}
 }

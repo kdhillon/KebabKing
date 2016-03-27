@@ -19,9 +19,9 @@ public class LocationType extends PurchaseType {
 		new Location(	new double[] {1,	0.2,	1,	1,	1,	0.1,	0.5,	0,	0,		0.1,	0.1,	.1,	.5,	0.1},1, 0, 0, 0, 0, "village"),
 		new Location(	new double[] {1,	0.2,	1,	1,	1,	0.1,	0.5,	0,	0.1,	0.1,	0.1,	.4,	2,	0.1},1, 0, 3, 250, 3, "paddy"),
 		
-		new Location(	new double[] {1,	0.4,	1,	1,	1,	0.4,	0.5,	0,	0.1,	0.3,	0.3,	.4,	.1,	0.1},2, 5, 6, 0, 10, "suburbs"),
-		new Location(	new double[] {1,	0.4,	1,	1,	1,	0.4,	0.5,	0,	0.05,	0.3, 	0.3,	.4,	.1,	0.1},2, 5, 9, 200, 10, "subway"),
-		new Location(	new double[] {1,	0.6,	1,	1,	1,	0.4,	0.5,	0,	0.05,	0.2,	0.2,	.4,	.1,	0.1},2, 5, 12, 250, 10, "urbancomplex"),
+		new Location(	new double[] {1,	0.4,	1,	1,	1,	0.4,	0.5,	0,	0.1,	0.3,	0.3,	.4,	.1,	0.1},2, 0, 6, 0, 10, "suburbs"),
+		new Location(	new double[] {1,	0.4,	1,	1,	1,	0.4,	0.5,	0,	0.05,	0.3, 	0.3,	.4,	.1,	0.1},2, 0, 9, 200, 10, "subway"),
+		new Location(	new double[] {1,	0.6,	1,	1,	1,	0.4,	0.5,	0,	0.05,	0.2,	0.2,	.4,	.1,	0.1},2, 0, 12, 250, 10, "urbancomplex"),
 		
 		new Location(	new double[] {1,	0.6,	1,	1,	1,	0.4,	0.5,	0.1,0.1,	0.3,	0.3,	.4,	.1,	0.1},3, 10, 15, 0, 15,  "smallcity"),
 		new Location(	new double[] {0.5,	0.7,	0.7,0.6,0.6,2,		0.8,	0.6,0.7,	0.4,	0.2,	.8,	.1,	0.1},3, 10, 18, 0, 20, "university"),
@@ -58,6 +58,7 @@ public class LocationType extends PurchaseType {
 //			bgName = "background/" + bg;
 			fullBG = Assets.getTextureRegion("background/" + name);
 			//(fullBG.getRegionHeight()*0.66f
+			
 			this.icon = Assets.getTextureRegion("background/icon/" + name);
 //			this.icon = new TextureRegion(fullBG, 0, (int) (fullBG.getRegionHeight()*0.1f), fullBG.getRegionWidth(), (int) (fullBG.getRegionHeight()*0.22f));
 			

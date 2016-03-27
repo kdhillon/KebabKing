@@ -38,6 +38,9 @@ public class ProfileStats {
 	@Tag(322) public int kebabsTrashed;
 	@Tag(323) public float moneySpentInStore;
 	@Tag(324) public int jadeSpentInStore;
+
+	@Deprecated @Tag(325) public int locationUpgradesPurchased;
+
 	@Tag(326) public int totalConsumablesPurchased;
 	
 	@Tag(327) public int adsCompleted;
@@ -85,6 +88,7 @@ public class ProfileStats {
 	}
 
 	public void dayEnd(float rating, float revenue, float expenses) {
+		daysWorked++;
 		reputationHistory.add((int) (rating * 2));
 		revenueHistory.add(revenue);
 		expensesHistory.add(expenses);

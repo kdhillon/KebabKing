@@ -31,7 +31,7 @@ public class Profile {
 	// Don't tag these, instead kryo load and initialize separately. 
 	ProfileSettings settings; 		// persistent game settings
 	ProfileInventory inventory; 	// items that have been purchased, and consumables that are active!
-	ProfileStats stats;				// stats about the user
+	public ProfileStats stats;				// stats about the user
 	
 	@Tag(0) private float cash; 			// current cash
 	@Tag(1) private int coins; 				// special currency!
@@ -70,7 +70,7 @@ public class Profile {
 			this.coins = 350;
 		}
 		if (KebabKing.LVL_50) {
-			level = 50;
+			level = 5;
 		}
 		
 		pastFiveDaysReputation = new float[] {START_REP, START_REP, START_REP, START_REP, START_REP};
@@ -160,20 +160,6 @@ public class Profile {
 //		master.profile.spendCoins(BRIBE_COST);
 		shutdownAt = Long.MAX_VALUE;
 		DrawUI.handleViolationEnded();
-	}
-	
-	// the most important method of ProfileRobust
-	// at the end of the day, we need to update everything in the profile (including stats/exp) and save it.
-	// TODO move everything from summary screen constructor to here.
-	// only update stats at end of day, otherwise 
-	public void endDay(KitchenScreen screen) {
-		stats.daysWorked++;
-
-	
-		// unlock everything that should be unlocked based on days?
-		// two levels of unlock - unlock by round, then unlock by money?
-		
-		master.save();		
 	}
 	
 	void updateReputation() {

@@ -27,6 +27,16 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (!isTaskRoot()
+				&& getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
+				&& getIntent().getAction() != null
+				&& getIntent().getAction().equals(Intent.ACTION_MAIN)) {
+
+			finish();
+			return;
+		}
+
 		System.loadLibrary("gdx");
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
@@ -52,9 +62,9 @@ public class AndroidLauncher extends AndroidApplication {
 		AnalyticsManagerAndroid analytics = new AnalyticsManagerAndroid(this);
 		FileManagerAndroid file = new FileManagerAndroid(this);
 		AdsManager ads = new AdsManagerSupersonic(this);
-//		SocialMediaFacebook media = new SocialMediaFacebook(this);
+		SocialMediaFacebook media = new SocialMediaFacebook(this);
 
-		Manager.initAndroid(iab, file, analytics, ads, null);
+		Manager.initAndroid(iab, file, analytics, ads, media);
 		
 		game = new KebabKing();
 

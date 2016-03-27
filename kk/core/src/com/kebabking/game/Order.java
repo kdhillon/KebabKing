@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kebabking.game.Customer.CustomerType;
 import com.kebabking.game.Grill.SelectedBox;
-import com.kebabking.game.Purchases.KebabTypes;
+import com.kebabking.game.Purchases.MeatTypes;
 
 public class Order {
 	static final boolean ACCEPT_WRONG_SPICINESS = true;
@@ -104,13 +104,13 @@ public class Order {
 
 		// because Val wanted it.
 		// reduces orders of "double" sized meats.
-		KebabTypes.Type firstType = getFirstType();
+		MeatTypes.Type firstType = getFirstType();
 		if (firstType.doubleWidth) first = (first + 1) / 2;
 
-		KebabTypes.Type secondType = getSecondType();
+		MeatTypes.Type secondType = getSecondType();
 		if (secondType != null && secondType.doubleWidth) second = (second + 1) / 2;
 
-		KebabTypes.Type thirdType = getThirdType();
+		MeatTypes.Type thirdType = getThirdType();
 		if (thirdType != null && thirdType.doubleWidth) third = (third + 1) / 2;
 
 		double beerRandom = Math.random();
@@ -296,15 +296,15 @@ public class Order {
 		table.add(orders).padTop(tablePadTop).padBottom(tablePadBottom).padLeft(tablePadLeft).padRight(tablePadRight);
 	}
 	
-	public KebabTypes.Type getFirstType() {
+	public MeatTypes.Type getFirstType() {
 		return ks.grill.getType(SelectedBox.FIRST);
 	}
 	
-	public KebabTypes.Type getSecondType() {
+	public MeatTypes.Type getSecondType() {
 		return ks.grill.getType(SelectedBox.SECOND);
 	}
 	
-	public KebabTypes.Type getThirdType() {
+	public MeatTypes.Type getThirdType() {
 		return ks.grill.getType(SelectedBox.THIRD);
 	}
 
@@ -328,7 +328,7 @@ public class Order {
 		return subTable;		
 	}
 
-	public Table createSubTable(KebabTypes.Type type, boolean spice, int quantity) {
+	public Table createSubTable(MeatTypes.Type type, boolean spice, int quantity) {
 		return createSubTable(type.icon, spice, quantity);
 	}
 
@@ -377,7 +377,7 @@ public class Order {
 				(thirdSpicy && third > 0);
 	}
 	
-	public KebabTypes.Type getSpicyType() {
+	public MeatTypes.Type getSpicyType() {
 		if (firstSpicy && first > 0)
 			return getFirstType();
 		if (secondSpicy && second > 0)
@@ -411,7 +411,7 @@ public class Order {
 //		this.beer = 0;
 //	}
 	
-	public KebabTypes.Type getDoubleType() {
+	public MeatTypes.Type getDoubleType() {
 		if (getFirstType().doubleWidth)
 			return getFirstType();
 		if (getSecondType().doubleWidth)
@@ -432,7 +432,7 @@ public class Order {
 		return types;
 	}
 	
-	public boolean hasOrderedType(KebabTypes.Type type) {
+	public boolean hasOrderedType(MeatTypes.Type type) {
 		if (type == getFirstType()) {
 			if (first > 0) return true;
 		}

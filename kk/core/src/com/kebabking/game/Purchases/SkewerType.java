@@ -14,10 +14,10 @@ public class SkewerType extends PurchaseType {
 	static class Type extends SimplePurchaseable {
 		public static final Type[] values = new Type[]{
 				new Type("bamboo", 		0,	 0,	  0,	1,	1.0f),
-				new Type("wood", 		50,	 10,  10,	4,	1.1f), 
-				new Type("iron", 		200,  20, 26, 	9,	1.2f),
-				new Type("steel", 		400,  30, 36, 	12,	1.3f),
-				new Type("titanium", 	1000,  40, 46,	16,	1.4f),
+				new Type("wood", 		400,  10,  10,	4,	1.1f), 
+				new Type("iron", 		2000,  15, 26, 	9,	1.2f),
+				new Type("steel", 		5000,  20, 36, 	12,	1.3f),
+				new Type("titanium", 	15000,  25, 46,	16,	1.4f),
 		};
 	
 		float satBoost;

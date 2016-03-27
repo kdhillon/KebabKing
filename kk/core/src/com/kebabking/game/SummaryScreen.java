@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -40,6 +41,7 @@ public class SummaryScreen extends ActiveScreen {
 	public static int adsWatchedThisSession = 0;
 
 	Table bigTable;
+	Table continueButton;
 	
 	KitchenScreen kitchen;
 	
@@ -141,7 +143,7 @@ public class SummaryScreen extends ActiveScreen {
 		this.expRemaining = this.calcExpForProfit(profit);
 		
 		if (KebabKing.EXP_CITY) 
-			this.expRemaining += 500;
+			this.expRemaining += 50;
 				
 		addExpAndSave(expRemaining, master.profile);
 		
@@ -155,6 +157,7 @@ public class SummaryScreen extends ActiveScreen {
 	
 	public void updateProfile(Profile profile, float rating, float revenue, float expenses) {
 		profile.stats.dayEnd(rating, revenue, expenses);
+		profile.addRepuation(rating);
 		this.profitRecord = profile.stats.isRecord(revenue - expenses);
 	}
 	
@@ -162,6 +165,8 @@ public class SummaryScreen extends ActiveScreen {
 		// before we do anything with actual profile, store the previous values
 		expDisplayed = profile.getExp();
 		lvlDisplayed = profile.getLevel();
+		
+		StatsHandler.updateStatsFor(this);
 		
 		// now actually save stuff to the profile. All other
 		profile.giveExp(exp);
@@ -175,6 +180,9 @@ public class SummaryScreen extends ActiveScreen {
 	
 	public Table getDayCompleteButton() {
 		Table button = DrawUI.getBlueButton(Assets.strings.get("day_complete"), 44);
+		
+		button.setColor(new Color(1, 1, 1, 0));
+		button.addAction(Actions.fadeIn(0.5f));
 	
 		button.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
@@ -197,11 +205,13 @@ public class SummaryScreen extends ActiveScreen {
 	}
 	
 	public void initializeTable() {
+		System.out.println("initializing table");
 		bigTable.clear();
+//		bigTable.debugAll();
 		float topBarPadY = KebabKing.getGlobalY(0.02f);
 		
 		Table window = new Table();
-		bigTable.add(window).width(KebabKing.getGlobalX(0.95f)).height(KebabKing.getGlobalY(0.94f)).top().padTop(KebabKing.getGlobalY(0.015f));
+		bigTable.add(window).width(KebabKing.getGlobalX(0.95f)).height(KebabKing.getGlobalY(0.94f)).top().padTop(KebabKing.getGlobalY(0.015f)).expandY();
 		
 		Table subTableFull = new Table();
 		Table subTable = new Table();
@@ -267,27 +277,12 @@ public class SummaryScreen extends ActiveScreen {
 		bottom.setBackground(new TextureRegionDrawable(Assets.notificationBottom));
 		subTableFull.row();
 		subTableFull.add(bottom).expandX().fillX().height(KebabKing.getGlobalYFloat(0.026f));
+		
 //		subTableFull.debugAll();
 		
 		// new lines give this extra volume for clicking (hacky)
 //		Label nextRound = new Label("\nnext round >>\n", Assets.generateLabelStyleUIWhite(30, "\nnext round>"));
 //		nextRound.setColor(RED);
-		Table nextRound = DrawUI.getBlueButton(Assets.strings.get("continue"), 40);
-		
-		nextRound.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				clickContinue();
-			}
-		});	
-		
-		bigTable.row();
-		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");		
-//		float nextWidth = KebabKing.getGlobalX(0.6f);
-//		float nextHeight = nextWidth * bg.getRegionHeight() / bg.getRegionWidth();
-		bigTable.add(nextRound).top().expandY().padTop(KebabKing.getGlobalY(-0.08f)); //.width(nextWidth).height(nextHeight);
 	}
 	
 	public static Table generateTopTable() {
@@ -589,7 +584,7 @@ public class SummaryScreen extends ActiveScreen {
 		if (DrawUI.notificationActive) return;
 		
 		System.out.println("Transitioning to ads");
-		Manager.ads.showAd();
+		AdsHandler.showAd();
 	}
 	
 	public int calcExpForProfit(float profit) {
@@ -605,6 +600,7 @@ public class SummaryScreen extends ActiveScreen {
 			dayCompleteDone = true;
 			this.subtractExpenses();
 			initializeTable();
+			if (expRemaining <= 0) addContinueButton();
 		}
 		
 		super.renderGrayAlpha(delta, alpha);
@@ -618,21 +614,25 @@ public class SummaryScreen extends ActiveScreen {
 			lvlDisplayed++;
 			TopBar.updateLevel(lvlDisplayed);
 			expDisplayed = 0;
-			// "leveling up"
-			LinkedList<Purchaseable> unlocked = new LinkedList<Purchaseable>();
-			for (Purchaseable p : PurchaseType.allPurchaseables) {
-				if (p.unlockAtLevel() == this.lvlDisplayed) {
-					// TODO enable
-					unlocked.add(p);
-				}
+			launchUnlockNotificationIfNecessary();
+		}
+	}
+	
+	public void launchUnlockNotificationIfNecessary() {
+		// "leveling up"
+		LinkedList<Purchaseable> unlocked = new LinkedList<Purchaseable>();
+		for (Purchaseable p : PurchaseType.allPurchaseables) {
+			if (p.unlockAtLevel() == this.lvlDisplayed) {
+				// TODO enable
+				unlocked.add(p);
 			}
-			if (unlocked.size() > 0) {
-				this.justUnlockedSomething = true;
-				DrawUI.launchUnlockNotification(unlocked);
-//				for (Purchaseable p : unlocked) {
-//					master.store.storeScreen.updatePurchaseableAfterUnlock(p);
-//				}
-			}
+		}
+		if (unlocked.size() > 0) {
+			this.justUnlockedSomething = true;
+			DrawUI.launchUnlockNotification(unlocked);
+//			for (Purchaseable p : unlocked) {
+//				master.store.storeScreen.updatePurchaseableAfterUnlock(p);
+//			}
 		}
 	}
 
@@ -640,6 +640,7 @@ public class SummaryScreen extends ActiveScreen {
 	// actually run a game loop
 	public void update(float delta, boolean ff) {
 		super.update(delta, ff);
+
 		this.timeElapsed += delta;
 		if (timeElapsed < TIME_TO_WAIT) {
 			alpha = (timeElapsed / TIME_TO_WAIT) * ALPHA_GOAL;
@@ -652,6 +653,12 @@ public class SummaryScreen extends ActiveScreen {
 				increaseDisplayedExp();
 				updateExpTable();
 			}
+			
+			// display the continue table
+			if (expRemaining <= 0 && continueButton == null && dayCompleteDone) {
+				addContinueButton();
+			}
+			
 			// save profile once done granting exp
 //			else if (expRemaining == 0 && !grantingExpDone) {
 //				System.out.println("SAVING PROFILE AFTER EXP LOADED");
@@ -663,6 +670,29 @@ public class SummaryScreen extends ActiveScreen {
 		uiStage.act();
 	}
 	
+	public void addContinueButton() {
+		continueButton = DrawUI.getBlueButton(Assets.strings.get("continue"), 40);
+
+		System.out.println("exp remaining: " + expRemaining + " continue button " + (continueButton != null));
+		
+		continueButton.setColor(new Color(1, 1, 1, 0));
+		continueButton.addAction(Actions.fadeIn(1));
+		
+		continueButton.addListener(new InputListener() {
+			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+				return true;
+			}
+			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+				clickContinue();
+			}
+		});
+		
+		bigTable.row();
+//		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");		
+//		float nextWidth = KebabKing.getGlobalX(0.6f);
+//		float nextHeight = nextWidth * bg.getRegionHeight() / bg.getRegionWidth();
+		bigTable.add(continueButton).top().padTop(KebabKing.getGlobalY(-0.11f)); //.width(nextWidth).height(nextHeight);
+	}
 	
 	public Profile getProfile() {
 		return kitchen.master.profile;

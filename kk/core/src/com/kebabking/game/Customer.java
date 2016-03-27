@@ -363,7 +363,7 @@ public class Customer implements Comparable<Customer> {
 
 		if (this.action == CustomerAction.WAIT) {
 			this.waitTime -= delta;
-			if (this.waitTime < 0) startLeaving();
+			if (this.waitTime < 0 && !TutorialEventHandler.shouldDisableRageLeave()) startLeaving();
 			else if (this.position_y_full > targetY){
 				this.position_y_full -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			}
@@ -721,6 +721,7 @@ public class Customer implements Comparable<Customer> {
 		sick = calculateSick();
 		if (sick) {
 			cm.totalSick++;
+			satisfaction = 1;
 		}
 		
 		// save this stuff to the total
@@ -993,13 +994,13 @@ public class Customer implements Comparable<Customer> {
 	
 	public void handleJewelerComplete() {
 		// give coins based on satisfaction
-		int coinReward = Math.max(0, this.satisfaction - 3);
+		int coinReward = Math.max(0, this.satisfaction - 2);
 		if (coinReward <= 0) {
 			return;
 		}
-
-		cm.master.profile.giveCoins(this.satisfaction);
-		createProjectiles(this.satisfaction, true);
+		
+		cm.master.profile.giveCoins(coinReward);
+		createProjectiles(coinReward, true);
 		// launch a window?
 	}
 	

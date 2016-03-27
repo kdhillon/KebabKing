@@ -19,7 +19,7 @@ public class ActiveScreen extends ScreenTemplate {
 	float timeElapsed = 0;
 	Color grillTintColor;
 
-	public ActiveScreen(KebabKing master, boolean uiStage, String name) {
+	public ActiveScreen(KebabKing master, boolean needsStage, String name) {
 		super(name);
 		this.master = master;
 		this.bg = master.bg;
@@ -27,7 +27,7 @@ public class ActiveScreen extends ScreenTemplate {
 		this.cm = master.cm;
 		this.batch = master.batch;
 		grillTintColor = new Color(1, 1, 1, 1);
-		if (uiStage) {
+		if (needsStage) {
 			ScreenViewport viewport = new ScreenViewport();
 			this.uiStage = new Stage(viewport, batch);		
 		}
@@ -69,7 +69,7 @@ public class ActiveScreen extends ScreenTemplate {
 			batch.begin();
 		}
 
-		DrawUI.drawFullUI(delta, batch, master.profile);
+		DrawUI.render(delta, batch, master.profile);
 
 		batch.end();
 

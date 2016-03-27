@@ -10,10 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.kebabking.game.OnlinePurchaseHandler.PurchaseableOnline;
-import com.kebabking.game.Managers.Manager;
 
 public class JewelerTable extends Table {
 	static final float SELECT_TABLE_WIDTH = 0.45f;
+	
+	static final float playLocX = 0.5f;
+	static final float playLocY = 0.585f;
 	
 	KebabKing master;
 
@@ -74,7 +76,7 @@ public class JewelerTable extends Table {
 				return true;
 			}
 			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				Manager.ads.showAd();
+				AdsHandler.showAd();
 			}
 		});
 		
@@ -214,11 +216,8 @@ public class JewelerTable extends Table {
 		float buttonHeight = KebabKing.getGlobalY(0.07f);
 		entry.add(okButton).width(buttonWidth).height(buttonHeight).padTop(KebabKing.getGlobalY(0.01f));
 		
-		okButton.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+		okButton.addListener(new StrictInputListener() {
+			public void touch(InputEvent event) {
 				OnlinePurchaseHandler.attemptPurchase(options[currentOption]);
 			}
 		});

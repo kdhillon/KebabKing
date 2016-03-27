@@ -14,11 +14,11 @@ public class GrillStand extends PurchaseType {
 	public static class Stand extends SimplePurchaseable {
 		public static final Stand[] values = new Stand[] {
 								//    round, coins, desc, dayLengthBoost
-				new Stand("metal", 0, 1, 0f, 0, 1.0f, "grill_stand-01", "grill_stand_thumb-06"),
-				new Stand("wooden",17,6, 0f, 5, 1.1f, "grill_stand-03", "grill_stand_thumb-08"),
-				new Stand("metal_table", 25,10, 0f, 10, 1.2f, "grill_stand-02", "grill_stand_thumb-07"),
-				new Stand("bicycle",	 34,13, 0f, 15, 1.3f, "grill_stand-04", "grill_stand_thumb-09"),
-				new Stand("motorcycle",  43,15, 0f, 20, 1.4f, "grill_stand-05", "grill_stand_thumb-10"),
+				new Stand("metal", 		 0, 1, 0f, 0, 1.0f, "grill_stand-01", "grill_stand_thumb-06"),
+				new Stand("wooden",		 17,6, 1200f, 5, 1.15f, "grill_stand-03", "grill_stand_thumb-08"),
+				new Stand("metal_table", 25,10, 2500f, 10, 1.3f, "grill_stand-02", "grill_stand_thumb-07"),
+				new Stand("bicycle",	 34,13, 4500f, 15, 1.45f, "grill_stand-04", "grill_stand_thumb-09"),
+				new Stand("motorcycle",  43,15, 7500f, 20, 1.6f, "grill_stand-05", "grill_stand_thumb-10"),
 		};
 	
 		public TextureRegion back;

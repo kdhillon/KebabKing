@@ -15,9 +15,9 @@ public class MeatQuality extends PurchaseType {
 //				// 		name, 	cash,  coins, unlock at, sellboost, qual factor, description		
 				new Quality  ("1", 	0,	 0,		0, 	1,	0,		1), 
 				new Quality  ("2", 	500, 2, 	8, 	3,	0.5f,	1.1f),
-				new Quality  ("3", 	1000, 5, 	17, 5,	1f,		1.2f),
-				new Quality  ("4", 	2000, 10, 	27, 9,	1.5f,	1.3f), 
-				new Quality  ("5",	5000, 15, 	39, 13,	2f,		1.5f),
+				new Quality  ("3", 	2000, 5, 	17, 5,	1f,		1.2f),
+				new Quality  ("4", 	5000, 10, 	27, 9,	2f,		1.3f), 
+				new Quality  ("5",	10000, 15, 	39, 13,	3f,		1.5f),
 		};
 		
 //		float qualityFactor;

@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.kebabking.game.Purchases.GrillStand;
 import com.kebabking.game.Purchases.GrillType;
-import com.kebabking.game.Purchases.KebabTypes;
+import com.kebabking.game.Purchases.MeatTypes;
 
 // contains information for the grill, the "trash", spice box, and ice chests
 //
@@ -118,7 +118,7 @@ public class Grill {
 	public enum SelectedBox {
 		NONE, FIRST, SECOND, THIRD, SPICE, BEER
 	}
-	KebabTypes.Type[] boxes;
+	MeatTypes.Type[] boxes;
 
 	SelectedBox selectedBox;
 
@@ -203,22 +203,22 @@ public class Grill {
 	}
 
 	public void updateBoxes() {
-		boxes = new KebabTypes.Type[3];
+		boxes = new MeatTypes.Type[3];
 
 		// Order is based on selected order (customizable)
 		// another option would be to have it come in fixed order.
-		Deque<Integer> boxesDeque = new ArrayDeque<Integer>(profile.inventory.kebabTypes.getSelected());
+		Deque<Integer> boxesDeque = new ArrayDeque<Integer>(profile.inventory.meatTypes.getSelected());
 		if (boxesDeque.size() == 1) {
-			boxes[0] = KebabTypes.Type.values[boxesDeque.pop()];
+			boxes[0] = MeatTypes.Type.values[boxesDeque.pop()];
 		} 
 		else if (boxesDeque.size() == 2) {
-			boxes[0] = KebabTypes.Type.values[boxesDeque.pop()];
-			boxes[1] = KebabTypes.Type.values[boxesDeque.pop()];
+			boxes[0] = MeatTypes.Type.values[boxesDeque.pop()];
+			boxes[1] = MeatTypes.Type.values[boxesDeque.pop()];
 		}
 		else if (boxesDeque.size() == 3) {
-			boxes[0] = KebabTypes.Type.values[boxesDeque.pop()];
-			boxes[1] = KebabTypes.Type.values[boxesDeque.pop()];
-			boxes[2] = KebabTypes.Type.values[boxesDeque.pop()];	
+			boxes[0] = MeatTypes.Type.values[boxesDeque.pop()];
+			boxes[1] = MeatTypes.Type.values[boxesDeque.pop()];
+			boxes[2] = MeatTypes.Type.values[boxesDeque.pop()];	
 		}
 		else throw new java.lang.AssertionError("Num selected boxes == " + boxesDeque.size());
 	}
@@ -301,7 +301,7 @@ public class Grill {
 		return profile.inventory.grillType.isWarming() && index >= getGrillSize() - WARMING_SIZE;
 	}
 
-	public KebabTypes.Type getType(SelectedBox select) {
+	public MeatTypes.Type getType(SelectedBox select) {
 		if (select == SelectedBox.FIRST)
 			return boxes[0];
 		if (select == SelectedBox.SECOND)
@@ -311,7 +311,7 @@ public class Grill {
 		return null;
 	}
 
-	public SelectedBox getSelectedForType(KebabTypes.Type type) {
+	public SelectedBox getSelectedForType(MeatTypes.Type type) {
 		int selectedIndex = -1;
 		for (int i = 0; i < boxes.length; i++) {
 			if (boxes[i] == type)
@@ -491,7 +491,7 @@ public class Grill {
 	public void drawFloatingMeat(SpriteBatch batch, float delta) {
 		TextureRegion toDraw = null;
 
-		KebabTypes.Type type = getType(this.selectedBox);		
+		MeatTypes.Type type = getType(this.selectedBox);		
 		toDraw = Assets.getMeatTexture(type, Meat.State.RAW, false);
 
 		Meat.draw(batch, toDraw, type.doubleWidth, Gdx.input.getX() - Meat.getWidth()/2, (KebabKing.getHeight() - Gdx.input.getY()) - Meat.getHeight() / 2, profile, 0.8f);
@@ -518,7 +518,7 @@ public class Grill {
 		float offset = -totalWidth * offsetDelta / 2;
 
 		for (int i = 0; i < meatCount; i++) {
-			KebabTypes.Type type = selectedSet.get(i).type;
+			MeatTypes.Type type = selectedSet.get(i).type;
 			toDraw = Assets.getMeatTexture(selectedSet.get(i));
 
 			Meat.draw(batch, toDraw, type.doubleWidth, Gdx.input.getX() - Meat.getWidth()/2 + (int) (offset * Meat.getWidth()), (KebabKing.getHeight() - Gdx.input.getY()) - Meat.getHeight() / 2, profile, scaleEffect);
@@ -606,7 +606,7 @@ public class Grill {
 		//		}
 
 		TextureRegion toDraw;
-		KebabTypes.Type currentType;
+		MeatTypes.Type currentType;
 //		MeatQuality.Quality currentQuality;
 
 		float iconPos = 0.2f;
@@ -1188,7 +1188,7 @@ public class Grill {
 			batch.setColor(1, 1, 1, .6f);
 			TextureRegion toDraw = null;
 
-			KebabTypes.Type ghostType = getType(this.selectedBox);
+			MeatTypes.Type ghostType = getType(this.selectedBox);
 			toDraw = Assets.getMeatTexture(ghostType, Meat.State.RAW, false);
 
 			if (toDraw != null) { 
@@ -1202,7 +1202,7 @@ public class Grill {
 
 			int currentIndex = mousedOver;
 			for (Meat m : selectedSet) {
-				KebabTypes.Type ghostType = m.type;
+				MeatTypes.Type ghostType = m.type;
 				toDraw = Assets.getMeatTexture(ghostType, m.state, false);
 				if (toDraw != null) { 
 					Meat.draw(batch, toDraw, ghostType.doubleWidth, getXForIndex(currentIndex), getYForIndex(currentIndex), profile, 1);
@@ -1218,7 +1218,7 @@ public class Grill {
 	}
 
 	// drops meat at mousedOver index
-	public Meat dropMeat(KebabTypes.Type type, int index) {
+	public Meat dropMeat(MeatTypes.Type type, int index) {
 		Meat toDrop = new Meat(type, this);
 
 		if (!canFitAt(index, toDrop)) return null;
@@ -1268,7 +1268,7 @@ public class Grill {
 		}
 	}
 
-	private boolean canFitAt(int index, KebabTypes.Type type) {
+	private boolean canFitAt(int index, MeatTypes.Type type) {
 		if (!type.doubleWidth) 
 			return meat[index] == null;
 		else {

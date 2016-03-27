@@ -17,10 +17,10 @@ import com.kebabking.game.Purchases.Purchaseable;
 public class KebabKing extends Game {
 	//	public static final boolean TEST_MODE = false;
 	public static final boolean EXP_CITY = true; // get 300 exp after day
-	public static final boolean SHORT_DAY = false;
-	public static final boolean LVL_50 = true;
-	public static final boolean RICH_MODE = true;
-	public static final boolean FORCE_NEW = true;
+	public static final boolean SHORT_DAY = true;
+	public static final boolean LVL_50 = false;
+	public static final boolean RICH_MODE = false;
+	public static final boolean FORCE_NEW = false;
 	public static final boolean DISABLE_TUTORIAL = true;
 	public static final boolean SAVE_AFTER_NEW = false;
 	public static final boolean DONT_SAVE = false;
@@ -58,13 +58,13 @@ public class KebabKing extends Game {
 	// these three screens are permanent
 	MainMenuScreen mainMenu;
 	MainStoreScreen store;
+	JadeWheelScreen jadeWheelScreen;
+	SettingsScreen settingsScreen;
 
 	// these three screens are created each day, and need to be disposed of each day
 	CountdownScreen countdown;
 	KitchenScreen kitchen;
 	PauseScreen pause;
-	SettingsScreen settingsScreen;
-
 	SummaryScreen summary; 
 
 	// timing variables
@@ -73,6 +73,7 @@ public class KebabKing extends Game {
 	ActiveScreen marketFromThis;
 
 	Screen settingsFromThis;
+	Screen jadeWheelFromThis;
 	// Summary Screens are temporary
 
 
@@ -190,6 +191,8 @@ public class KebabKing extends Game {
 
 		settingsScreen = new SettingsScreen(this);
 
+		jadeWheelScreen = new JadeWheelScreen(this);
+		
 		bg.initialize(); // have to do  this after setScreen, so height and width work
 
 		Manager.analytics.sendUserTiming("Remaining Finalization", System.currentTimeMillis() - finalRemainingStart);
@@ -477,6 +480,19 @@ public class KebabKing extends Game {
 		if (settingsFromThis == null) throw new java.lang.AssertionError();
 		this.setScreen(settingsFromThis);
 		this.settingsFromThis = null;
+	}
+	
+	public void switchToJadeWheelScreen() {
+		if (this.getScreen() == jadeWheelScreen) return;
+		
+		this.jadeWheelFromThis = this.getScreen();
+		this.setScreen(jadeWheelScreen);
+	}
+	
+	public void jadeWheelBack() {
+		if (jadeWheelFromThis == null) throw new java.lang.AssertionError();
+		this.setScreen(jadeWheelFromThis);
+		this.jadeWheelFromThis = null;
 	}
 
 	//	public void summaryToStore() {

@@ -27,8 +27,8 @@ public class AdCampaign extends PurchaseTypeConsumable {
 	static float SMALL_BOOST = 4f;
 	static float MEDIUM_BOOST = 6.0f;
 	static float LARGE_BOOST = 10.0f; // bigger because not universal
-	static float HUGE_BOOST = 10.0f;
-	static float INSANE_BOOST = 10.0f;
+	static float HUGE_BOOST = 2.0f;
+	static float INSANE_BOOST = 4.0f;
 	
 	static float TINY_SAT = 1.1f;
 	static float SMALL_SAT = 1.2f;
@@ -97,8 +97,8 @@ public class AdCampaign extends PurchaseTypeConsumable {
 		new Campaign ("tv",			20,	8,	15,		300,	Boost.LARGE,		new Customer.CustomerType[] {FAT_MAN},		 "tv"),
 		new Campaign ("tourist",	22,	10,	15,		300,	Boost.LARGE,		new Customer.CustomerType[] {FOREIGNER, TOURIST}, "tourist"),
 		new Campaign ("tshirts",	30,	12,	25,		300,	Boost.HUGE,			new Customer.CustomerType[] {MAN, WOMAN},	"tshirt", CampaignSpecial.TSHIRTS),
-		new Campaign ("selfie",		34,	14,	35,		300,	Boost.HUGE,		all,	 "selfie", CampaignSpecial.SELFIE),
-		new Campaign ("plane",		48,	17,	50,		300,	Boost.INSANE,		all,	 "plane", CampaignSpecial.PLANE),
+		new Campaign ("selfie",		34,	14,	25,		300,	Boost.HUGE,		all,	 "selfie", CampaignSpecial.SELFIE),
+		new Campaign ("plane",		48,	17,	25,		300,	Boost.INSANE,		all,	 "plane", CampaignSpecial.PLANE),
 		};
 		
 		public CampaignSpecial special;

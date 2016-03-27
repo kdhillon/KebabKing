@@ -17,10 +17,10 @@ public class GrillType extends PurchaseType {
 				new Type("charcoal", 		500, 	0,  3, 3,0.9f, 0.9f, false), 
 //				new Type("charcoal", 		500, 	0,  6, 0.9f, 0.9f, false), 
 				new Type("gas", 			1000, 	5,  13,5, 0.85f,  0.9f, false),
-				new Type("gas_warmer", 		1500, 	10, 21,8, 0.85f, 	0.9f, true),
-				new Type("electric", 		2000,	15, 32,11, 0.75f, 	0.8f, false),
-				new Type("electric_warmer",	2500, 	20, 41,14, 0.75f, 	0.8f, true),
-				new Type("nuclear", 		3500, 	25, 47,16, 0.65f, 	0.7f, false),
+				new Type("gas_warmer", 		2500, 	15, 21,8, 0.85f, 	0.9f, true),
+				new Type("electric", 		5000,	15, 32,11, 0.75f, 	0.8f, false),
+				new Type("electric_warmer",	5000, 	20, 41,14, 0.75f, 	0.8f, true),
+				new Type("nuclear", 		10000, 	25, 47,16, 0.65f, 	0.7f, false),
 		};
 		// name, initial cost, daily cost, description
 		

@@ -213,7 +213,7 @@ public class StoreSubtable extends Table {
 //		if (typeTables[currentTypeIndex] != null)
 //			System.out.println("needs update: " + typeTables[currentTypeIndex].needsFullUpdate);
 		
-		if (typeTables[currentTypeIndex] == null || typeTables[currentTypeIndex].needsInitialization) {
+		if (typeTables[currentTypeIndex] == null) {
 			updatePurchaseTypeTable(currentTypeIndex);
 			
 			this.currentTypeContainer.clear();

@@ -15,23 +15,23 @@ public class PauseScreen extends ActiveScreen  {
 //	static String defaultDesc = "Hope you're enjoying Kebab King!";
 	
 	static final String[] tips = {
-		"You can serve multiple kebabs by tapping them, then tapping a customer!",
+			// temp tips should go here, permanent in strings.properties
 		"Days feel too short? Upgrade your Grill Stand to increase day length!",
 		"Customers getting impatient? Better Skewers will increase their satisfaction!",
-		"Buying better quality meat will pay for itself in profits!",
-		"New seafood kebabs coming soon!",
 		"Vegetarian? New veggie kebabs coming soon!",
-		"Some kebab types, like chicken, require two sticks and take up twice as much space on the grill.",
-		"Any meat still on your grill at the end of the day is refunded!",
-		"The Jeweler gives you jade based on how satisfied he is!",
 		"Drink and meat upgrades bring more profit per item!",
-		"Don't forget to use marketing campaigns to bring more customers to your stand.",
-		"Remember: a good chef is always cooking!",
+		"Vegetarian? New veggie kebabs coming soon!",
 		"Kebabs cooking too slowly? Upgrade your grill type to increase cook speed!",
-		"Customers won't accept kebabs they didn't order!",
-		"Love Kebab King? We love you too!",
-		"You can tap the spice brush once, then tap meat to spice it!",
+		"New seafood kebabs coming soon!",
+			Assets.strings.get("tip1"),
+			Assets.strings.get("tip2"),
+			Assets.strings.get("tip3"),
+			Assets.strings.get("tip4"),
+			Assets.strings.get("tip5"),
+			Assets.strings.get("tip6"),
+			Assets.strings.get("tip7"),
 	};
+	
 
 	Table bigTable;
 	Label text;

@@ -2,7 +2,7 @@ package com.kebabking.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
-import com.kebabking.game.Purchases.KebabTypes;
+import com.kebabking.game.Purchases.MeatTypes;
 
 public class KitchenScreen extends ActiveScreen {
 	static final boolean LAST_CUSTOMER_MODE = true;
@@ -253,7 +253,7 @@ public class KitchenScreen extends ActiveScreen {
 		//		}
 	}
 
-	public Meat dropMeatOnGrill(KebabTypes.Type type, int index) {
+	public Meat dropMeatOnGrill(MeatTypes.Type type, int index) {
 		//		if (!canAfford(Meat.getBuyPrice(type))
 		//				|| !grill.open(grill.mousedOver)) return null;
 		System.out.println("Dropping meat on grill");

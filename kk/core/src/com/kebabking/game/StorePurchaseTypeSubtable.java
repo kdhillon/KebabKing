@@ -114,32 +114,37 @@ public class StorePurchaseTypeSubtable extends Table {
 //		if (purchaseable != null)
 //			iconReg = purchaseable.getIcon();
 //		else
-		if (type.icon == null)
-			iconReg = type.values[0].getIcon();
-		else 
+		float padAboveTitle = 0;
+		if (type.icon == null) {
+//			iconReg = type.values[0].getIcon();
+			padAboveTitle = KebabKing.getGlobalYFloat(0.1f);
+		}
+		else {
 			iconReg = type.icon;
-		
-		if (iconReg == null)
-			iconReg = Assets.questionMark;
-		int regHeight = 1;
-		int regWidth = 2;
-		if (iconReg != null) {
-			regWidth = iconReg.getRegionWidth();
-			regHeight = iconReg.getRegionHeight();
+
+			if (iconReg == null)
+				iconReg = Assets.questionMark;
+			int regHeight = 1;
+			int regWidth = 2;
+			if (iconReg != null) {
+				regWidth = iconReg.getRegionWidth();
+				regHeight = iconReg.getRegionHeight();
+			}
+			int imageWidth = imageHeight * regWidth / regHeight;
+
+			// adjust for big images
+			if (imageWidth > mainWidth) {
+				imageWidth = mainWidth;
+				imageHeight = imageWidth * regHeight / regWidth;
+			}
+
+			int iconPad = KebabKing.getGlobalY(0.05f);
+			Image icon = new Image(iconReg); 
+
+			typeSummary.add(icon).width(imageWidth).height(imageHeight).padTop(iconPad);
+			typeSummary.row();
+
 		}
-		int imageWidth = imageHeight * regWidth / regHeight;
-
-		// adjust for big images
-		if (imageWidth > mainWidth) {
-			imageWidth = mainWidth;
-			imageHeight = imageWidth * regHeight / regWidth;
-		}
-
-		int iconPad = KebabKing.getGlobalY(0.05f);
-		Image icon = new Image(iconReg); 
-
-		typeSummary.add(icon).width(imageWidth).height(imageHeight).padTop(iconPad);
-		typeSummary.row();
 		String titleText;
 //		if (purchaseable != null) titleText = purchaseable.getName();
 //		else {
@@ -151,7 +156,7 @@ public class StorePurchaseTypeSubtable extends Table {
 		
 		Label title = new Label(titleText, Assets.generateLabelStyleUI(SELECTED_PURCHASEABLE_TITLE_SIZE, titleText));
 		title.setColor(MainStoreScreen.FONT_COLOR);
-		typeSummary.add(title);
+		typeSummary.add(title).padTop(padAboveTitle);
 		typeSummary.row();
 		
 		String descText;

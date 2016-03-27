@@ -2,17 +2,15 @@
 // https://github.com/libgdx/libgdx/wiki/Setting-Up-Google-In-App-Billing
 package com.kebabking.game.android;
 
-import android.content.Intent;
-import android.os.RemoteException;
-import android.util.Log;
-
 import com.kebabking.game.OnlinePurchaseHandler;
 import com.kebabking.game.Managers.IABManager;
-import com.google.android.gms.analytics.ecommerce.Product;
-import com.google.android.gms.analytics.ecommerce.ProductAction;
 import com.kebabking.game.android.util.IabHelper;
 import com.kebabking.game.android.util.IabResult;
 import com.kebabking.game.android.util.Inventory;
+
+import android.content.Intent;
+import android.os.RemoteException;
+import android.util.Log;
 
 /**
  * Created by Kyle on 11/8/2015.
@@ -80,25 +78,32 @@ public class IABManagerAndroid implements IABManager {
         if (iabHelper != null) iabHelper.flagEndAsync();
         iabHelper.launchPurchaseFlow(androidLauncher, productID, REQUEST_CODE, mPurchaseFinishedListener, "");
     }
+    
+    public void checkConsumables() {
+        System.out.println("checking consumables");
+        for (OnlinePurchaseHandler.PurchaseableOnline product : OnlinePurchaseHandler.PurchaseableOnline.values) {
+            consumeIfAlreadyOwned(product.productID);
+        }
+    }
 
     private void consumeIfAlreadyOwned(final String productID) {
-//        IabHelper.QueryInventoryFinishedListener mGotInventoryListener
-//                = new IabHelper.QueryInventoryFinishedListener() {
-//            public void onQueryInventoryFinished(IabResult result,
-//                                                 Inventory inventory) {
-//
-//                if (result.isFailure()) {
-//                    // handle error here
-//                    System.out.println("Inventory could not be queried");
-//                }
-//                else {
-//                    if (inventory.hasPurchase(productID)) {
-//                        System.out.println("You already own " + productID + ", consuming now");
-//                        consumePurchase(inventory.getPurchase(productID));
-//                    }
-//                }
-//            }
-//        };
+        IabHelper.QueryInventoryFinishedListener mGotInventoryListener
+                = new IabHelper.QueryInventoryFinishedListener() {
+            public void onQueryInventoryFinished(IabResult result,
+                                                 Inventory inventory) {
+
+                if (result.isFailure()) {
+                    // handle error here
+                    System.out.println("Inventory could not be queried");
+                }
+                else {
+                    if (inventory.hasPurchase(productID)) {
+                        System.out.println("You already own " + productID + ", consuming now");
+                        consumePurchase(inventory.getPurchase(productID));
+                    }
+                }
+            }
+        };
     }
 
     private void consumePurchase(com.kebabking.game.android.util.Purchase purchase) {

@@ -188,16 +188,21 @@ public class PurchaseType {
 	//	@Override
 	public void unlock(Purchaseable toUnlock) {
 		if (!availableForUnlock(toUnlock)) throw new java.lang.AssertionError();
+		if (this.unlocked.contains(toUnlock)) return;
 		this.unlocked.add(getIndexOf(toUnlock));
-		this.addToSelected(toUnlock);
+		this.select(toUnlock);
 	}
 
-	public int addToSelected(Purchaseable toAdd) {
-		return addToSelected(getIndexOf(toAdd));
+	public int select(Purchaseable toAdd) {
+		return select(getIndexOf(toAdd));
+	}
+
+	public int removeOrSelec(Purchaseable toAdd) {
+		return removeOrSelect(getIndexOf(toAdd));
 	}
 
 	// returns the index that was removed, or -1 if none removed
-	public int addToSelected(int index) {
+	public int removeOrSelect(int index) {
 		// if already selected, try to remove
 		if (isSelected(index)) {
 			// don't remove if less 1
@@ -208,15 +213,19 @@ public class PurchaseType {
 			return -1;
 		}
 		else {
-			System.out.println("Adding " + index + " to selected");
-			int ret = -1;
-			if (selected.size() >= this.getMaxSelectable()) {
-				System.out.println(selected.size() + " >= " + this.getMaxSelectable());
-				ret = selected.removeFirst();
-			}
-			this.selected.add(index);
-			return ret;
+			return select(index);
 		}
+	}
+
+	public int select(int index) {
+		System.out.println("Adding " + index + " to selected");
+		int ret = -1;
+		if (selected.size() >= this.getMaxSelectable()) {
+			System.out.println(selected.size() + " >= " + this.getMaxSelectable());
+			ret = selected.removeFirst();
+		}
+		this.selected.add(index);
+		return ret;
 	}
 
 	public boolean isSelected(int index) {

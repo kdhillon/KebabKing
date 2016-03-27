@@ -7,9 +7,9 @@ import com.kebabking.game.Purchases.DrinkQuality;
 import com.kebabking.game.Purchases.GrillSize;
 import com.kebabking.game.Purchases.GrillStand;
 import com.kebabking.game.Purchases.GrillType;
-import com.kebabking.game.Purchases.KebabTypes;
 import com.kebabking.game.Purchases.LocationType;
 import com.kebabking.game.Purchases.MeatQuality;
+import com.kebabking.game.Purchases.MeatTypes;
 import com.kebabking.game.Purchases.PurchaseType;
 import com.kebabking.game.Purchases.PurchaseTypeConsumable;
 import com.kebabking.game.Purchases.Purchaseable;
@@ -26,25 +26,18 @@ public class ProfileInventory {
 
 	@Tag(103) public SkewerType skewerType;
 
-	// Info about grill
-	//	@Tag(0) public GrillSpecs grillSpecs; // contains two relevant items, can remove later
-
 	@Tag(104) public GrillSize grillSize;
 
 	@Tag(105) public GrillType grillType;
 
 	@Tag(106) public GrillStand grillStand;
 
-	// Current location
 	@Tag(107) public LocationType locationType;
-
-	// Ad campaigns
-	//	public AdCampaign adCampaign;
 
 	@Tag(108) public AdCampaign adCampaign;
 	
 	// multiple meat types can be selected
-	@Tag(111) public KebabTypes kebabTypes;
+	@Tag(111) public MeatTypes meatTypes;
 	
 	// testing tags, won't be saved.
 	@Deprecated	@Tag(109) public AdCampaign unused;
@@ -63,7 +56,7 @@ public class ProfileInventory {
 
 		meatQuality = new MeatQuality(this);
 
-		kebabTypes = new KebabTypes(this);
+		meatTypes = new MeatTypes(this);
 		
 		drinkQuality = new DrinkQuality(this);
 
@@ -84,13 +77,19 @@ public class ProfileInventory {
 
 	public void initializeAfterLoad(Profile profile) {
 		// Anything that wasn't in the first generation of purchasetypes should be checked and initialized here
-		if (kebabTypes == null) {
-			kebabTypes = new KebabTypes(this);
+		if (meatTypes == null) {
+			meatTypes = new MeatTypes(this);
 		}
 		if (grillType == null) {
 			grillType = new GrillType(this);
 		}
-	
+
+		if (profile.stats.daysWorked >= 2 && !meatTypes.isUnlocked(MeatTypes.Type.values[1])) {
+			meatTypes.unlock(MeatTypes.Type.values[1]);
+		}
+		if (profile.stats.daysWorked >= 3 & !meatTypes.isUnlocked(MeatTypes.Type.values[2])) {
+			meatTypes.unlock(MeatTypes.Type.values[2]);
+		}
 		
 		this.profile = profile;
 	}
@@ -248,12 +247,13 @@ public class ProfileInventory {
 
 	// unlock second meat option without asking player
 	public void forceSecondBoxUpdate() {
-		kebabTypes.unlock(KebabTypes.Type.values[1]);
+		System.out.println("");
+		meatTypes.unlock(MeatTypes.Type.values[1]);
 //		meatTypes.addToSelected(1);
 	}
 	
 	public void forceThirdBoxUpdate() {
-		kebabTypes.unlock(KebabTypes.Type.values[2]);
+		meatTypes.unlock(MeatTypes.Type.values[2]);
 //		meatTypes.addToSelected(1);
 	}
 

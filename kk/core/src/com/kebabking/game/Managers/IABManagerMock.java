@@ -21,4 +21,9 @@ public class IABManagerMock implements IABManager {
 		
 	}
 
+	@Override
+	public void checkConsumables() {
+		System.out.println("checking purchased consumables");
+	}
+
 }
