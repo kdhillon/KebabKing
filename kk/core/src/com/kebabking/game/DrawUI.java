@@ -41,8 +41,8 @@ public class DrawUI {
 
 	static final float FLASH_LENGTH = 1f;
 
-	static final float CREATE_CASH_EVERY = 0.1f;
-	static final float CREATE_JADE_EVERY = 0.2f;
+	static final float CREATE_CASH_EVERY = 0.025f;
+	static final float CREATE_JADE_EVERY = 0.3f;
 
 	//	static final float xStarOffset = 0.06f;
 	//	static final float X_STAR_INIT = 0.12f;
@@ -228,15 +228,17 @@ public class DrawUI {
 		if (jadeProjLeft > 0) {
 			timeToNextJade -= delta;
 			if (timeToNextJade <= 0) {
-				createOneProjectile(jadeGenX, jadeGenY, true);
+				createOneProjectile(jadeGenX, jadeGenY, true, 1);
 				jadeProjLeft--;
+				timeToNextJade = CREATE_JADE_EVERY;
 			}	
 		}
 		if (cashProjLeft > 0) {
 			timeToNextCash -= delta;
 			if (timeToNextCash <= 0) {
-				createOneProjectile(cashGenX, cashGenY, false);
+				createOneProjectile(cashGenX, cashGenY, false, 1);
 				cashProjLeft--;
+				timeToNextCash = CREATE_CASH_EVERY;
 			}
 		}		
 	}
@@ -246,7 +248,10 @@ public class DrawUI {
 		for (int i = 0; i < proj.length; i++) {
 			if (proj[i] != null) {
 				proj[i].draw(batch);
-				if (proj[i].shouldDestroy) proj[i] = null;
+				if (proj[i].shouldDestroy) {
+					TopBar.updateFor(proj[i]);
+					proj[i] = null;
+				}
 			}
 		}
 	}
@@ -256,10 +261,10 @@ public class DrawUI {
 		cashProjLeft = 0;
 	}
 
-	public static void createOneProjectile(float posX, float posY, boolean jade) {
+	public static void createOneProjectile(float posX, float posY, boolean jade, float value) {
 		for (int i = 0; i < proj.length; i++) {
 			if (proj[i] == null) {
-				proj[i] = new Projectile(posX, posY, jade);
+				proj[i] = new Projectile(posX, posY, jade, value);
 				break;
 			}
 		}
@@ -601,6 +606,8 @@ public class DrawUI {
 
 			for (Purchaseable toUnlock : available) {
 				if (toUnlock.cashToUnlock() == 0 && toUnlock.coinsToUnlock() == 0) {
+//					System.out.println(toUnlock.getName());
+//					System.out.println(master.profile.getLevel());
 					master.profile.inventory.unlock(toUnlock, toUnlock.getType());
 					master.store.storeScreen.updatePurchaseableAfterUnlock(toUnlock);
 				}
@@ -692,7 +699,7 @@ public class DrawUI {
 		subTable.add(obey).center().expandX().fillX().padTop(KebabKing.getGlobalY(0.01f));
 		subTable.row();
 		//		subTable.debug();
-		TextureRegion reg = Customer.CustomerType.POLICE.walkDown.getKeyFrame(0);
+		TextureRegion reg = Customer.CustomerType.POLICE.male.idle.getKeyFrame(0);
 		float policeWidth = KebabKing.getGlobalX(0.3f);
 		float policeHeight = reg.getRegionHeight() * policeWidth / reg.getRegionWidth();
 		Image police = new Image(reg);
@@ -836,10 +843,10 @@ public class DrawUI {
 		labelTop.setColor(MainStoreScreen.FONT_COLOR);
 		labelTop.setWrap(true);
 		float padTop = 0.02f;
-		subTable.add(labelTop).center().expandX().fillX().padTop(KebabKing.getGlobalY(padTop)).top();
+		subTable.add(labelTop).center().expandX().fillX().padTop(KebabKing.getGlobalY(padTop)).top().padLeft(KebabKing.getGlobalXFloat(0.05f)).padRight(KebabKing.getGlobalXFloat(0.05f));
 		subTable.row();
 
-		TextureRegion reg = Customer.CustomerType.POLICE.walkDown.getKeyFrame(0);
+		TextureRegion reg = Customer.CustomerType.POLICE.male.idle.getKeyFrame(0);
 		float policeWidth = KebabKing.getGlobalX(0.3f);
 		float policeHeight = reg.getRegionHeight() * policeWidth / reg.getRegionWidth();
 		Image police = new Image(reg);
@@ -1199,11 +1206,12 @@ public class DrawUI {
 		float padLeft = resume.getPrefWidth() * 0.25f;
 		float padYTop = resume.getPrefHeight() * 0.3f;
 		float padYBot = padYTop * 1.5f;
-		if (Assets.HINDI) {
+		if (Assets.getLanguage().extraPadding) {
 			padYBot *= 0.3f;
 			padYTop *= -0.0f;
 			padRight *= 1.5f;
 			padLeft *= 1.5f;
+			System.out.println("adding extra padding: " + padLeft + text);
 		}
 
 		button.add(resume).padLeft(padLeft).padRight(padRight).padBottom(padYBot).padTop(padYTop);

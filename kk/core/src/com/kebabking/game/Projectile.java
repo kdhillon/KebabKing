@@ -53,9 +53,15 @@ public class Projectile {
 	
 	TextureRegion reg;
 	
+	
+	float lifeSpan = 5;
 	boolean shouldDestroy;
 	
-	public Projectile(float x, float y, boolean jade) {
+	float currencyValue; // this determines how much to increase 
+	boolean jade;
+	
+	public Projectile(float x, float y, boolean jade, float value) {
+		this.jade = jade;
 		if (jade) {
 			reg = Assets.bigjade;
 			destX = JADE_X;
@@ -82,7 +88,8 @@ public class Projectile {
 			speed = CASH_SPEED;
 		}
 		
-	
+		this.currencyValue = value;
+		
 		this.xPos = x - (size_x / 2);
 		this.yPos = y - size_y / 2;
 		
@@ -97,6 +104,8 @@ public class Projectile {
 		updateAccel();
 		updateVel(delta);
 		updatePos(delta);
+		lifeSpan -= delta;
+		if (lifeSpan < 0) this.shouldDestroy = true;
 	}
 	
 	public void updateAccel() {

@@ -47,7 +47,8 @@ public class Grill {
 	static final boolean ADVANCED_CONTROLS = false;
 	static final boolean DROP_MEAT_UNDER_FINGER = true;
 
-	//	static final boolean DISABLE_DRAG_TO_PLACE = false;
+	static final boolean SELECT_BY_SWIPE = false;
+	//static final boolean DISABLE_DRAG_TO_PLACE = false;
 
 	static final int GRILL_X = 0;
 	static final float GRILL_Y = 2f;
@@ -151,6 +152,7 @@ public class Grill {
 	boolean placedWhileHeld = false; // true when meat has been placed during the 'hold'
 	int removeOnRelease = -1;
 	int justSelected = -1; // for use with remove on release
+	int meatJustTouched = -1; // for tapping meat on grill
 	boolean firstTouch = true;
 
 	boolean holdSpiceOnNextTouch;
@@ -689,7 +691,8 @@ public class Grill {
 	public void selectMeat(int grillIndex) {
 		if (grillIndex < 0 || grillIndex > meat.length) throw new java.lang.ArrayIndexOutOfBoundsException();
 		this.selectedBox = SelectedBox.NONE;
-		this.selectedSet.add(meat[grillIndex]);
+		if (!selectedSet.contains(meat[grillIndex])) 
+			this.selectedSet.add(meat[grillIndex]);
 		meat[grillIndex].selected = true;
 		//		this.boxSelectedNotHeld = false;
 		this.meatSelectedNotHeld = false;
@@ -707,8 +710,7 @@ public class Grill {
 			//			System.out.println("selectedset contains meat? " + selectedSet.contains(m));
 			if (selectedSet.contains(m)) {				
 				if (!o.hasOrderedType(m.type)) {
-					selectedSet.remove(m);
-					m.selected = false;
+					deselectMeat(m);
 				}
 				else {
 					// customer has ordered this type, but selected too many.
@@ -716,29 +718,36 @@ public class Grill {
 						if (m.type.doubleWidth) firstSelected += 0.5;
 						else firstSelected++;
 						if (firstSelected > customer.order.first) {
-							selectedSet.remove(m);
-							m.selected = false;
+							deselectMeat(m);
 						}
 					}
 					if (m.type == this.getType(SelectedBox.SECOND)) {
 						if (m.type.doubleWidth) secondSelected += 0.5;
 						else secondSelected++;
 						if (secondSelected > customer.order.second) {
-							selectedSet.remove(m);
-							m.selected = false;
+							deselectMeat(m);
 						}
 					}
 					if (m.type == this.getType(SelectedBox.THIRD)) {
 						if (m.type.doubleWidth) thirdSelected += 0.5;
 						else thirdSelected++;
 						if (thirdSelected > customer.order.third) {
-							selectedSet.remove(m);
-							m.selected = false;
+							deselectMeat(m);
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	public void deselectMeat(int index) {
+		if (index < 0 ||meat[index] == null) return;
+		deselectMeat(meat[index]);
+	}
+	
+	public void deselectMeat(Meat m) {
+		selectedSet.remove(m);
+		m.selected = false;
 	}
 
 	// use this to control when meat/beer boxes are disabled
@@ -783,6 +792,12 @@ public class Grill {
 					this.select(box);
 				}
 			}
+			
+			// if first touch on meat on grill, mark that as just touched (for tapping meat)
+			if (!SELECT_BY_SWIPE && onGrillAbsolute(x, y) && meat[getGrillIndex(x)] != null) {
+				meatJustTouched = getGrillIndex(x);
+			}
+			
 			firstTouch = false;
 		}
 
@@ -790,9 +805,13 @@ public class Grill {
 
 		//		if (onGrill(unit_x, unit_y)) {
 		if (onGrillAbsolute(x, y)) {
-			mousedOver = getGrillIndex(x, y);
+			mousedOver = getGrillIndex(x);
 			if (mousedOver < 0) System.out.println("GetGrillIndex is broken: moused over is " + mousedOver);
 			//			System.out.println("Mousing over grill " + mousedOver + " at " + x + ", " + y);
+		}
+		// if you have just selected meat but you're sliding your finger off grill, select it.
+		else if (!SELECT_BY_SWIPE) {
+			if (meatJustTouched >= 0) selectMeat(meatJustTouched);
 		}
 
 		if (onGrillArea(x, y) && !ADVANCED_CONTROLS) {
@@ -809,17 +828,20 @@ public class Grill {
 			//			System.out.println("Not mousing over grill at " + x + ", " + y);
 		}
 
-		// if moused over grill and spice is selected then spice whatever is there
+		// sliding over grill
 		if (mousedOver != -1 && meat[mousedOver] != null) {
+			// if moused over grill and spice is selected then spice whatever is there
 			if (this.selectedBox == SelectedBox.SPICE) {
 				dropSpice();
 			}
-			else if (this.selectedBox == SelectedBox.NONE || ((this.meatBoxSelected() || this.selectedBox == SelectedBox.BEER) && !placedWhileHeld && this.selectedBox != SelectedBox.BEER)) {
-				if ((ADVANCED_CONTROLS || !meatBoxSelected()) && !meat[mousedOver].selected && !disableSelectingMeat()) {
-					this.selectedBox = SelectedBox.NONE;
-					//					selectedSet.add(meat[mousedOver]);
-					//					holdingAfterSelect = true;
-					selectMeat(mousedOver);
+			else if (SELECT_BY_SWIPE) {
+				if (this.selectedBox == SelectedBox.NONE || ((this.meatBoxSelected() || this.selectedBox == SelectedBox.BEER) && !placedWhileHeld && this.selectedBox != SelectedBox.BEER)) {
+					if ((ADVANCED_CONTROLS || !meatBoxSelected()) && !meat[mousedOver].selected && !disableSelectingMeat()) {
+						this.selectedBox = SelectedBox.NONE;
+						//					selectedSet.add(meat[mousedOver]);
+						//					holdingAfterSelect = true;
+						selectMeat(mousedOver);
+					}
 				}
 			}
 		}
@@ -833,16 +855,39 @@ public class Grill {
 	// For placing new meat. Returns -1 if no spot found
 	public int getNextOpenSpot() {
 		if (DROP_MEAT_UNDER_FINGER) {
-			if (mousedOver >= 0) {
-				if (canFitAt(mousedOver, getType(selectedBox))) {
-					return mousedOver;
+			int index = getGrillIndex(Gdx.input.getX());
+			if (index < 0) index = 0; 
+			if (index > meat.length - 1) index = meat.length - 1;
+
+			//				if (getType(selectedBox).doubleWidth && index == meat.length - 1) {
+			//					index = meat.length - 2;
+			//				}
+			//				System.out.println("returning " + index);
+
+			if (canFitAt(index, getType(selectedBox))) {
+				System.out.println("returning " + index);
+				return index;
+			}
+
+
+			if (index < meat.length / 2) {
+				for (int i = 0; i < meat.length; i++) {
+					if (canFitAt(i, getType(selectedBox))) return i;
+				}
+			}
+			else {
+				for (int i = meat.length - 1; i >= 0; i--) {
+					if (canFitAt(i, getType(selectedBox))) return i;
 				}
 			}
 		}
-
+		
+		// go from left to right
 		for (int i = 0; i < meat.length; i++) {
 			if (canFitAt(i, getType(selectedBox))) return i;
 		}
+		
+		// do right to left if too far to right
 
 		return -1;
 	}
@@ -872,6 +917,13 @@ public class Grill {
 			this.trashSelected();
 		}
 
+		if (!SELECT_BY_SWIPE && meatJustTouched >= 0 && getGrillIndex(x) == meatJustTouched) {
+			if (!selectedSet.contains(meat[meatJustTouched]))
+				selectMeat(meatJustTouched);
+			else 
+				deselectMeat(meatJustTouched);
+		}
+		meatJustTouched = -1;
 
 		//System.out.println("Releasing. Moused over grill: " + mousedOver() + " " + " new meat selected: " + (newMeatSelected() && mousedOver != 0) + " meat selected: " + meatSelected() + " ");
 		//System.out.println("Customer not null :" + (ks.cm.mousedOver != null));
@@ -989,7 +1041,7 @@ public class Grill {
 		// no meat box was clicked, maybe deselect
 		if (box == SelectedBox.NONE) {
 			if (onGrillAbsolute(x, y)) {
-				if (selectedSet.contains(meat[getGrillIndex(x, y)])) 
+				if (selectedSet.contains(meat[getGrillIndex(x)])) 
 					this.meatSelectedNotHeld = true;
 			}
 			else {
@@ -1142,10 +1194,15 @@ public class Grill {
 	}
 
 	// can add vertical grills later
-	public int getGrillIndex(int x, int y) {
+	public int getGrillIndex(int x) {
 		int distanceFromLeft = x - (GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH; 		
 		return (int) (distanceFromLeft * CHUANR_PER_PIECE / (KitchenScreen.UNIT_WIDTH * GRILL_PIECE_WIDTH));
 	}
+	
+//	public int getClosestGrillIndex(int x) {
+//		int distanceFromLeft = x - (GRILL_X + grillLeftX) * KitchenScreen.UNIT_WIDTH; 		
+//		return (int) (distanceFromLeft * CHUANR_PER_PIECE / (KitchenScreen.UNIT_WIDTH * GRILL_PIECE_WIDTH));
+//	}
 
 	//	public void highlightIndex(SpriteBatch batch, int i) {
 	//		int x = (int) (i * (KitchenScreen.UNIT_WIDTH * GRILL_PIECE_WIDTH / CHUANR_PER_PIECE) + KitchenScreen.UNIT_WIDTH * (xOffset + GRILL_X));

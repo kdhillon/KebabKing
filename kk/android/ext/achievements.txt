@@ -1,0 +1,12 @@
+Achievements ideas with rewards:
+
+Kebab Peddler
+Serve 10 Kebab
+Reward: 30xp
+
+Kebab Vendor
+Serve 50 Kebabs
+Reward: 50xp
+
+Garbage Man
+Trash 10 Kebabs

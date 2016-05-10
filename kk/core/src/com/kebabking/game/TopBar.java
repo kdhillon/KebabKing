@@ -11,6 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
+
+// TODO: combine topbar and projectiles
+// 		use the same decelerating algorithm as here, but use it to generate projectiles, not update the top bar.
+//		depending on total increase, projectiles might be worth more than actual value.
+// 		for example, if difference is 1000, might generate a few with value 20, then 10, then 5, then 2, etc. 
+//		in fact, keep constant speed of projectile generation, just change their value
 public class TopBar extends Table {
 	static final float UI_BAR_HEIGHT = 0.052f; 
 	static final float AD_BAR_HEIGHT = 0.015f; 
@@ -138,8 +144,8 @@ public class TopBar extends Table {
 	
 		
 		// Add coins and cash table
-		coins = new Label("", Assets.generateLabelStyleUI(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
-		cash = new Label("", Assets.generateLabelStyleUI(CASH_COINS_SIZE, Assets.nums + "." + Assets.currencyChar));
+		coins = new Label("", Assets.generateLabelStyleUI(CASH_COINS_SIZE, Assets.nums + "."));
+		cash = new Label("", Assets.generateLabelStyleUI(CASH_COINS_SIZE, Assets.nums + "."));
 		coins.setColor(blue);
 		cash.setColor(blue);
 		
@@ -278,6 +284,7 @@ public class TopBar extends Table {
 			campaignActive = false;
 			updateAdCampaignBar(null);
 			
+			
 			// hacky, but should work.
 			master.store.storeScreen.campaignEnded();
 		}
@@ -300,6 +307,8 @@ public class TopBar extends Table {
 		}
 	}
 
+	// change this to generate projectiles with appropriate values
+	// update coins/cash strings only when the projectiles are destroyed
 	// called every frame, updates strings and ints as necessary
 	public static void updateCoinCashStrings(float delta, Profile profile) {
 		timeElapsed += delta;
@@ -375,6 +384,15 @@ public class TopBar extends Table {
 //			cashAlpha = 1;
 //			updateCashAlpha();
 //		} 
+	}
+	
+	public static void updateFor(Projectile projectile) {
+		if (projectile.jade) {
+			
+		}
+		else {
+			
+		}
 	}
 
 

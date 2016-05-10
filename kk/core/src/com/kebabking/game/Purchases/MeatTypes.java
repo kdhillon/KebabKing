@@ -11,12 +11,13 @@ public class MeatTypes extends PurchaseType {
 	
 	public static class Type extends SimplePurchaseable {
 		public static final Type[] values = new Type[] {
-				//			name		buy		sell	cook burn	double	veg
-				new Type ("beef", 		2f, 	3.5f,  	8, 	12, 	false, false),
-				new Type ("lamb", 		1.5f, 	3f,  	7, 	10, 	false, false),
-				new Type ("chicken",	2.5f, 	4f,  	5, 	8,  	true, false),
-				new Type ("squid", 		2f, 	3.5f,  	8, 	12, 	false, false),
-				new Type ("fish", 		2.5f, 	4f,  	5, 	8,  	true, false),
+				//			name	unlk, cash, coins,	buy		sell	cook burn	double	veg
+				new Type ("beef", 	1,	0,		0,	2f, 	4f,  	8, 	12, 	false, false),
+				new Type ("lamb", 	1,	0,		0,	2f, 	4f,  	7, 	10, 	false, false),
+				new Type ("chicken",1,	0,		0,	2f, 	4f,  	6, 	9,  	true, false),
+				
+				new Type ("squid", 	3,	500,	5,	2f, 	4f,  	7, 	12, 	false, false), // squid (or tofu) should unlock very early
+				new Type ("fish", 	5,	1000,	10,	2f, 	4f,  	5, 	8,  	true, false),  // add these to the unlock waterfall
 //				new Type ("pork", 		2f, 	3.5f,  	8, 	12, 	false, false),
 //				new Type ("veggie", 		2f, 	3.5f,  	8, 	12, 	false, false),
 //				new Type ("goat", 		2f, 	3.5f,  	8, 	12, 	false, false),
@@ -46,8 +47,8 @@ public class MeatTypes extends PurchaseType {
 		
 		public TextureRegion icon;
 
-		public Type(String name, float buyPrice, float sellPrice, float cookTime, float burnTime, boolean doubleWidth, boolean vegetarian) {
-			super(name, 0, 0, 0, 1, "", null);
+		public Type(String name, int unlockWith, float cash, int coins, float buyPrice, float sellPrice, float cookTime, float burnTime, boolean doubleWidth, boolean vegetarian) {
+			super(name, cash, coins, 1, unlockWith, "", "kebabs/" + name + "_cooked"); // remove the quotes to add description
 
 			this.name = Assets.strings.get(name);
 			
@@ -82,6 +83,10 @@ public class MeatTypes extends PurchaseType {
 	};
 
 	public int getMaxSelectable() {
+		return MAX_SELECTABLE;
+	}
+	
+	public int getMinSelectable() {
 		return MAX_SELECTABLE;
 	}
 	

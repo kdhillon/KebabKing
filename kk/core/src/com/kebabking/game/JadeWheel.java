@@ -7,19 +7,26 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 public class JadeWheel extends Group {
-	static final float DECEL = 12f;
-	static final float START_SPEED = 100f;
-	static final float EPSILON = 0.1f; // if this close to a boundary, push it a bit
+	static final float OFFSET = 90;
+	static final float DECEL = 18f;
+	static final float START_SPEED = 150f;
+//	static final float START_SPEED = 0.01f;
+
+	static final float EPSILON = 0.0f; // if this close to a boundary, push it a bit
 
 	static final int LOW = 1;
-	static final int MED = 2;
-	static final int HIGH = 3;
-	static final int SILVER = 5;
-	static final int GOLD = 10;
+	static final int MED = 3;
+	static final int HIGH = 5;
+	static final int SILVER = 10;
+	static final int GOLD = 25;
 	static final int JACKPOT = 50;
 
-	static final int[] degrees = {5, 30, 45, 60, 75, 90, 105, 120, 135, 150, 180};
-	static final int[] rewards = {JACKPOT, MED, LOW, HIGH, LOW, MED, LOW, MED, GOLD, MED, LOW};
+	
+	static final int[] degrees = {15, 20, 35, 50, 65, 80, 85, 100, 115, 130, 145, 150, 165, 180};
+	static final int[] rewards = {LOW, GOLD, LOW, MED, HIGH, MED, JACKPOT, MED, HIGH, MED, LOW, SILVER, LOW, MED};
+			
+//	static final int[] degrees = {5, 30, 45, 60, 75, 90, 105, 120, 135, 150, 180};
+//	static final int[] rewards = {JACKPOT, MED, LOW, HIGH, LOW, MED, LOW, MED, GOLD, MED, LOW};
 	
 //	static final float[] degrees = {2.5f, 7.5f, 15, 22.5f, 30, 37.5f, 45, 52.5f, 60, 67.5f, 75, 82.5f, 90, 
 //									97.5f, 105, 112.5f, 120, 127.5f, 135, 142.5f, 150, 157.5f, 165, 172.5f, 177.5f};
@@ -40,14 +47,15 @@ public class JadeWheel extends Group {
 	int finalIndex;
 
 	Group group;
-	JadeWheelScreen wheelScreen;
+	JadeWheelTable wheelTable;
 
-	public JadeWheel(float x, float y, float size, JadeWheelScreen wheelScreen) {
+	public JadeWheel(float x, float y, float size, JadeWheelTable wheelTable) {
 		this.x = x;
 		this.y = y;
 		this.width = size;
 		this.height = size/2;
-		this.wheelScreen = wheelScreen;
+		this.wheelTable = wheelTable;
+		
 		finalIndex = -1;
 		
 		jadeHeight = KebabKing.getGlobalYFloat(0.06f);
@@ -62,7 +70,7 @@ public class JadeWheel extends Group {
 		//		text.setSize(width, height);
 
 		//    	float offsetRot = 5;
-		float offset = height * 0.9f;
+		float offset = height * 0.95f;
 		//    	text.setRotation(50);
 		for (int i = 0; i < degrees.length * 2; i++) {
 			String toDraw = LanguageManager.localizeNumber(rewards[i % degrees.length]);
@@ -83,12 +91,13 @@ public class JadeWheel extends Group {
 
 			Label label;
 //			if (rewards[i % degrees.length] == JACKPOT) {
-			label = new Label(toDraw, Assets.generateLabelStyleUI((int) rotOffset  + 12, toDraw));
+			label = new Label(toDraw, Assets.generateLabelStyleUI((int) rotOffset * 3  + 8, toDraw));
 			////				label.setColor(Color.WHITE);
 			if (rewards[i % rewards.length] == JACKPOT || rewards[i % rewards.length] == SILVER || rewards[i % rewards.length] == GOLD) 
 				label.setColor(Color.WHITE);
 			else
 				label.setColor(MainStoreScreen.FONT_COLOR);
+			
 //
 //			}
 //			else {
@@ -98,8 +107,8 @@ public class JadeWheel extends Group {
 //			
 			labels[i] = label;
 
-			smallGroup.setPosition(-label.getPrefWidth()/2, offset + -label.getPrefHeight() / 2);
-			smallGroup.setOrigin(label.getPrefWidth()/2, -offset + label.getPrefHeight() / 2);
+			smallGroup.setPosition(-label.getPrefWidth()/2, offset + -label.getPrefHeight());
+			smallGroup.setOrigin(label.getPrefWidth()/2, -offset + label.getPrefHeight());
 			smallGroup.addActor(label);
 //			System.out.println("pref height: " + label.getPrefWidth());
 
@@ -109,22 +118,21 @@ public class JadeWheel extends Group {
 		}
 		currentRot = (float) (Math.random() * 360);
 		
-		this.addActor(group);;
-		wheelScreen.uiStage.addActor(this);
-//		currentRot = 181f;
+		this.addActor(group);
+//		currentRot = 359f;
 	}
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		if (waitingForSpin || spinning || finalIndex >= 0) {
-			batch.draw(Assets.halfWheel, x, y, width/2, 0, width, height, 1, 1, -currentRot);
-			batch.draw(Assets.halfWheel, x, y-1, width/2, 1, width, height, 1, 1, -currentRot + 180);
+			batch.draw(Assets.halfWheel, x, y, width/2, 0, width, height, 1, 1, -currentRot + OFFSET);
+			batch.draw(Assets.halfWheel, x, y, width/2, 0, width, height, 1, 1, -currentRot + 180 + OFFSET);
 			group.setRotation(-currentRot);
 			group.draw(batch, 1);
 			float pointerWidth = KebabKing.getGlobalXFloat(0.05f);
 			float pointerHeight = pointerWidth * Assets.wheelPointer.getRegionHeight() / Assets.wheelPointer.getRegionWidth();
 			batch.draw(Assets.wheelPointer, x + width/2 - pointerWidth / 2, y + height - pointerHeight * 0.5f, pointerWidth, pointerHeight);
-			batch.draw(Assets.bigjade, x + width / 2 -jadeWidth/2, y-jadeHeight/2, jadeWidth/2, jadeHeight/2, jadeWidth, jadeHeight, 1, 1, -currentRot*0);
+			batch.draw(Assets.bigjade, x + width / 2 -jadeWidth/2, y-jadeHeight/2, jadeWidth/2, jadeHeight/2, jadeWidth, jadeHeight, 1, 1, 0);
 		}
 	}
 
@@ -166,9 +174,13 @@ public class JadeWheel extends Group {
 		this.waitingForSpin = false;
 		this.spinning = true;
 		this.currentSpeed = START_SPEED + (float) (Math.random() * (START_SPEED / 2));
+		
+		wheelTable.master.store.storeScreen.disableBack();
 	}
 
 	public void endSpin() {
+		wheelTable.master.store.storeScreen.enableBack();
+
 		this.spinning = false;
 //		this.currentRot += 180;
 //		this.currentRot %= 360;
@@ -200,45 +212,46 @@ public class JadeWheel extends Group {
 		for (int i = 0; i < degrees.length; i++) {
 			if (180 - (currentRot % 180) < degrees[i]) {
 				finalIndex = i;
-				if (currentRot < 180) finalIndex += degrees.length;
+				if (currentRot < 165 || currentRot > 345) finalIndex += degrees.length;
 				break;
 			}
 		}
 		// jackpot case
-		if (finalIndex == 0) {
-			if (currentRot < 177.5 || currentRot > 357.5) {
-				finalIndex = 25;
-			}
-		}
+//		if (finalIndex == 0) {
+//			if (currentRot < 177.5 || currentRot > 357.5) {
+//				finalIndex = 25;
+//			}
+//		}
 		
 		System.out.println("final index: " + finalIndex);
 		
 		System.out.println("adjusted current rot: " + currentRot);
-		wheelScreen.handleJadeWheelStopped();
+		wheelTable.handleJadeWheelStopped();
 
-//		System.out.println("Expected value: " + calcExpectedValue());
+		System.out.println("Expected value: " + calcExpectedValue());
 	}
 
 	public int getReward() {
 		return rewards[finalIndex % degrees.length];
 	}
 
-	// not accurate with jackpot
-//	public float calcExpectedValue() {
-//		float prevDegrees = 0;
-//		float totalValue = 0;
-//		for (int i = 0; i < degrees.length; i++) {
-//			totalValue += rewards[i] * (degrees[i] - prevDegrees);
-//			prevDegrees = degrees[i];
-//		}
-//		return totalValue / 180;
-//	}
+	public float calcExpectedValue() {
+		float prevDegrees = 0;
+		float totalValue = 0;
+		for (int i = 0; i < degrees.length; i++) {
+			totalValue += rewards[i] * (degrees[i] - prevDegrees);
+			prevDegrees = degrees[i];
+		}
+		return totalValue / 180;
+	}
 	
 	public void reset() {
 		waitingForSpin = false;
 		spinning = false;
 //		finalIndex = -1;
 		//		for (Label l : labels) {
+		if (finalIndex < 0) return;
+			
 		labels[finalIndex].clearActions();
 		if (rewards[finalIndex % rewards.length] == JACKPOT || rewards[finalIndex % rewards.length] == SILVER || rewards[finalIndex % rewards.length] == GOLD) 
 			labels[finalIndex].setColor(Color.WHITE);

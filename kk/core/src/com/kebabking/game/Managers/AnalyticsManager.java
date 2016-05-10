@@ -4,6 +4,9 @@ package com.kebabking.game.Managers;
  * Created by Kyle on 11/10/2015.
  */
 public interface AnalyticsManager {
+
+    public void promptForRating();
+
     public void sendScreenHit(String screenName);
 
     public void sendEventHit(String category, String action);

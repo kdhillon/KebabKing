@@ -4,10 +4,13 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.ecommerce.Product;
 import com.google.android.gms.analytics.ecommerce.ProductAction;
+import com.kebabking.game.Assets;
 import com.kebabking.game.Managers.AnalyticsManager;
 import com.google.android.gms.analytics.Tracker;
 
 import android.util.Log;
+
+import im.delight.apprater.AppRater;
 
 /**
  * Created by Kyle on 11/10/2015.
@@ -24,6 +27,27 @@ public class AnalyticsManagerAndroid implements AnalyticsManager {
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(androidLauncher);
         tracker = analytics.newTracker(TRACKING_ID);
         tracker.enableAdvertisingIdCollection(true);
+    }
+
+    @Override
+    public void promptForRating() {
+        System.out.println("promptForRating");
+        androidLauncher.runOnUiThread(new Runnable() {
+            public void run() {
+                AppRater appRater = new AppRater(androidLauncher.getContext());
+                appRater.setDaysBeforePrompt(0);
+                appRater.setLaunchesBeforePrompt(0);
+                appRater.setPhrases(
+                        Assets.strings.get("rating_title"),
+                        Assets.strings.get("rating_desc"),
+                        Assets.strings.get("rate_now"),
+                        Assets.strings.get("not_now"),
+                        Assets.strings.get("never"));
+                appRater.show();
+                appRater.demo();
+                System.out.println("prompted for rating");
+            }
+        });
     }
 
     @Override

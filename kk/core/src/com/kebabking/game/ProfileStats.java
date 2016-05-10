@@ -77,6 +77,15 @@ public class ProfileStats {
 			profile.inventory.forceSecondBoxUpdate();
 			profile.inventory.forceThirdBoxUpdate();
 		}
+		else if (KebabKing.DISABLE_FIRST_DAY) {
+			firstCustomerServed = true;
+			secondCustomerServed = true;
+//			spiceCustomerServed = true;
+
+			// TODO if we want more robust solution, use booleans instead of daysWorked
+			if (daysWorked <= 1) daysWorked = 1;
+//			profile.inventory.forceSecondBoxUpdate();
+		}
 		// don't have tutorials if loading an old save:
 		if (daysWorked >= 1) {
 			firstCustomerServed = true;

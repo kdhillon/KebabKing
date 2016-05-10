@@ -11,7 +11,7 @@ import com.kebabking.game.Purchases.Purchaseable;
 public class Profile {
 	static final int FIRST_LEVEL_EXP = 90;
 	static final double EXP_GROWTH_RATE = 1.15;
-	static final float EXP_RATE = 1f;
+	static final float EXP_RATE = 1.33f;
 	static final int MAX_LEVEL = 1000;
 
 	static final float STARTING_CASH = 50;
@@ -47,6 +47,9 @@ public class Profile {
 	@Tag(6) public boolean gameQuitDuringShare;
 	@Tag(7) public boolean gameQuitDuringAd;
 	
+	// enable this after ad watched, disable after rewarded after spin.
+	@Tag(8) public boolean canSpin;
+	
 	// updated based on past few days, calculated on the fly based on current location
 	float currentReputation;	
 	
@@ -70,7 +73,7 @@ public class Profile {
 			this.coins = 350;
 		}
 		if (KebabKing.LVL_50) {
-			level = 5;
+			level = 48;
 		}
 		
 		pastFiveDaysReputation = new float[] {START_REP, START_REP, START_REP, START_REP, START_REP};
@@ -124,22 +127,29 @@ public class Profile {
 			SocialMediaHandler.shareSuccess();
 			StatsHandler.shareCrashedButRewarded();
 		}
+		System.out.println("can spin: " + canSpin);
+		
+		if (this.exp < 0) this.exp = 0;
 	}
 	
 	// only used at the end of the day
 	public void giveMoney(float money) {
+		if (money <= 0) return;
 		validateMoney();
 		this.cash += money;
 		validateMoney();
 //		master.store.storeScreen.updateAll();
+		SoundManager.playCash();
 	}
 
 	public void giveCoins(int coins) {
+		if (coins <= 0) return;
 		validateCoins();
 		this.coins += coins;
 		validateCoins();
 //		master.store.storeScreen.updateAll();
 		StatsHandler.earnJade(coins);
+		SoundManager.playCoin();
 	}
 	
 	public long getViolationSecondsRemaining() {
@@ -267,6 +277,9 @@ public class Profile {
 	}
 	
 	public void giveExp(int exp) {
+		System.out.println("giving exp");
+		if (this.exp < 0) this.exp = 0;
+		if (exp <= 0) return;
 //		System.out.println("Granting " + exp + " exp");
 		this.exp += exp * EXP_RATE;
 		if (this.exp > this.getNextExp()) this.levelUp();
@@ -276,6 +289,7 @@ public class Profile {
 		while (this.exp > this.getNextExp()) {
 			this.level++;
 			this.exp -= this.getNextExp();
+			if (this.exp < 0) this.exp = 0;
 			
 			System.out.println("You are now at level " + level + "!");
 
@@ -288,6 +302,7 @@ public class Profile {
 				}
 			}
 		}
+		if (this.exp < 0) this.exp = 0;
 		StatsHandler.onLevelUp();
 	}
 	
@@ -309,5 +324,9 @@ public class Profile {
 	
 	public void save() {
 		master.save();
+	}
+	
+	public void letSpin() {
+		canSpin = true;
 	}
 }

@@ -69,6 +69,8 @@ project(":android") {
     }
 
     dependencies {
+        compile files('libs/AppRater.jar')
+
         compile 'com.android.support:multidex:1.0.0'
 
         compile 'com.android.support:appcompat-v7:18.0.+'

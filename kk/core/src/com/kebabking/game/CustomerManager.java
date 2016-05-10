@@ -229,49 +229,17 @@ public class CustomerManager {
 	}
 	
 	public void generateCustomers() {
-//		if (needCustomer() && tutorialCustomerNeeded()) {
-////			addTutorialCustomer();
-//			addCustomer(this.active);
-//			return;
-//		}
-//		if (dontAllowNormalCustomer()) {
-//			// don't allow other customers to be generated until first is served
-//			return;
-//		}
-		// tutorial mode
-//		if (profile.tutorialNeeded && master.getScreen() == master.kitchen) {
-//			if (!tutFirstCustomer) {
-//				this.reset();
-//				addFirstTutorialCustomer();
-//				this.tutFirstCustomer = true;
-//			}
-////			if (!tutSecondCustomer && shouldAddSecondCustomer) {
-////				addSecondTutorialCustomer();
-////				this.tutSecondCustomer = true;
-////				this.shouldAddSecondCustomer = false;
-//////				TutorialScreen ts = (TutorialScreen) this.master.kitchen;
-//////				ts.transitionToNext();
-////			}
-////			System.out.println("tutorial needed");
-//			return;
-//		}
-		
 		// decide whether to create a customer this frame
 		if (needCustomer()) {
 			addCustomer(this.active);
 			return;
 		}
 		else if (lastCustomer > nextCustomer) addCustomer(this.active);
-
-		//TODO make this based on location you're in.
 	}
 
 	// this reapplies any existing ad campaign, used when changing locations.
 	public void updateCustomerDistribution() {
-//		if (boost == 1) resetCustomerDistribution();
-//		else {
 		updateCustomerDistribution(currentBoosted, boost);
-//		}
 	}
 
 	public void updateCustomerDistribution(AdCampaign adCampaign) {

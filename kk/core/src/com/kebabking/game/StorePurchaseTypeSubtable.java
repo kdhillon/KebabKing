@@ -30,7 +30,7 @@ public class StorePurchaseTypeSubtable extends Table {
 //	ArrayList<Table> currentPurchaseableTables;
 	
 //	Table[] purchaseableTables;
-	StorePurchaseableTable[] purchaseableTables2;
+	StorePurchaseableTable[] purchaseableTables;
 	PurchaseType type;
 	
 	int selectedIndex;
@@ -43,6 +43,8 @@ public class StorePurchaseTypeSubtable extends Table {
 	
 	boolean needsInitialization;
 	int needsPurchaseableUpdate;
+	
+	int checksCurrentlyDrawn; // count of purchaseables that are drawn with green check.
 
 	// create 
 	public StorePurchaseTypeSubtable(StoreSubtable parent, PurchaseType type, int mainWidth) {
@@ -55,45 +57,20 @@ public class StorePurchaseTypeSubtable extends Table {
 				
 		this.purchaseables = type.values;
 //		purchaseableTables = new Table[purchaseables.length];
-		purchaseableTables2 = new StorePurchaseableTable[purchaseables.length];
+		purchaseableTables = new StorePurchaseableTable[purchaseables.length];
 		
 		this.selectedIndex = -1;
 		
 		for (int i = 0; i < purchaseables.length; i++) {
-			purchaseableTables2[i] = new StorePurchaseableTable(master, this, purchaseables[i], mainWidth, i);
+			purchaseableTables[i] = new StorePurchaseableTable(master, this, purchaseables[i], mainWidth, i);
 			if (type.isSelected(i)) {
 				System.out.println(type.values[i].getName());
-				purchaseableTables2[i].select();
+				purchaseableTables[i].select();
 			}
 		}
 		
 		this.needsInitialization = true;
-		
-//		if (type.allowsMultipleSelect()) {
-////			currentPurchaseableTables = new ArrayList<Table>();
-//			currentPurchaseableIndices = new Deque<Integer>();
-//		
-//		}
-//		if (!type.consumable)
-//			selectPurchaseable(0);
-//		else selectPurchaseable(-1);
 	}
-	
-//	public Table createPurchaseableTable(int index) {
-//		purchaseableTables2[index] = new Table();
-////		updatePurchaseableTable(index);
-//		return purchaseableTables[index];
-//	}
-	
-//	private int getIndex(Purchaseable p) {
-//		int index = -1;
-//		for (int i = 0; i < this.purchaseableTables2.length; i++) {
-//			if (purchaseables[i] == p)
-//				index = i;
-//		}
-//		return index;
-//	}
-
 	
 	// creates a table of dimensions 8 x 3.5 describing the purchaseable in question
 	// There should be selected Purchaseable tables for each Purchasetype
@@ -211,7 +188,7 @@ public class StorePurchaseTypeSubtable extends Table {
 		for (int i = 0; i < purchaseables.length; i++) {
 			System.out.println("creating purchaseable list table: " + i);
 			//			System.out.println("updating purchaseable table " + i);
-			purchaseableListTable.add(purchaseableTables2[i]).expandX().left().padTop(purchaseablePad).fillX();
+			purchaseableListTable.add(purchaseableTables[i]).expandX().left().padTop(purchaseablePad).fillX();
 			purchaseableListTable.row();
 		}
 
@@ -226,8 +203,8 @@ public class StorePurchaseTypeSubtable extends Table {
 	
 	public void updateAllUnlocks() {
 		System.out.println("updating all unlocks");
-		for (int i = 0; i < purchaseableTables2.length; i++) {
-			purchaseableTables2[i].updateForUnlock(false);
+		for (int i = 0; i < purchaseableTables.length; i++) {
+			purchaseableTables[i].updateForUnlock(false);
 		}
 	}
 	
@@ -242,7 +219,7 @@ public class StorePurchaseTypeSubtable extends Table {
 		}
 		if (index >= 0) {
 //			purchaseableTables2[index].updateForDeselect();
-			purchaseableTables2[index].updateForUnlock(false);
+			purchaseableTables[index].updateForUnlock(false);
 		}
 		else {
 			System.out.println("index less than 1");

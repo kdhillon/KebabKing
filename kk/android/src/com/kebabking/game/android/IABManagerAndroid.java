@@ -9,8 +9,15 @@ import com.kebabking.game.android.util.IabResult;
 import com.kebabking.game.android.util.Inventory;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by Kyle on 11/8/2015.
@@ -81,30 +88,85 @@ public class IABManagerAndroid implements IABManager {
     
     public void checkConsumables() {
         System.out.println("checking consumables");
-        for (OnlinePurchaseHandler.PurchaseableOnline product : OnlinePurchaseHandler.PurchaseableOnline.values) {
-            consumeIfAlreadyOwned(product.productID);
+
+        // send get purchases request
+        //
+        Bundle ownedItems;
+        try {
+            if (iabHelper == null || iabHelper.getService() == null) return;
+            ownedItems = iabHelper.getService().getPurchases(3, getPackageName(), "inapp", null);
+            if (ownedItems == null) return;
+
+            int responseCode = ownedItems.getInt("RESPONSE_CODE");
+            if (responseCode != 0) {
+                return;
+//                throw new java.lang.AssertionError("error fetching owned items");
+            }
+         //   Toast.makeText(androidLauncher.getContext(), "getPurchases() - success return Bundle", Toast.LENGTH_SHORT).show();
+            Log.i("kk", "getPurchases() - success return Bundle");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+
+        //    Toast.makeText(androidLauncher.getContext(), "getPurchases - fail!", Toast.LENGTH_SHORT).show();
+            Log.w("kk", "getPurchases() - fail!");
+            return;
+        }
+//        ArrayList<String> ownedSkus = ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+        ArrayList<String> purchaseDataList =
+                ownedItems.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
+        if (purchaseDataList == null) return;
+
+        int response;
+        for (String data : purchaseDataList) {
+            JSONObject o = null;
+            try {
+                o = new JSONObject(data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
+            String purchaseToken = o.optString("token", o.optString("purchaseToken"));
+            if (purchaseToken == null) return;
+            try {
+                response = iabHelper.getService().consumePurchase(3, getPackageName(), purchaseToken);
+                if (response == 0) {
+                    handlePurchaseSuccess(o.optString("productId"));
+                    Log.i("kk", "consumePurchase() - success : " + purchaseToken + " return " + String.valueOf(response));
+                }
+                else
+                    Log.w("kk", "consumePurchase() - response not 0! " + purchaseToken);
+
+//                Toast.makeText(context, "consumePurchase() - success : return " + String.valueOf(response), Toast.LENGTH_SHORT).show();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+
+//                Toast.makeText(context, "consumePurchase() - fail!", Toast.LENGTH_SHORT).show();
+                Log.w("kk", "consumePurchase() - fail! " + purchaseToken);
+                return;
+            }
+//            consumePurchase(OnlinePurchaseHandler.getPurchaseableForID(sku).pro);
         }
     }
 
-    private void consumeIfAlreadyOwned(final String productID) {
-        IabHelper.QueryInventoryFinishedListener mGotInventoryListener
-                = new IabHelper.QueryInventoryFinishedListener() {
-            public void onQueryInventoryFinished(IabResult result,
-                                                 Inventory inventory) {
-
-                if (result.isFailure()) {
-                    // handle error here
-                    System.out.println("Inventory could not be queried");
-                }
-                else {
-                    if (inventory.hasPurchase(productID)) {
-                        System.out.println("You already own " + productID + ", consuming now");
-                        consumePurchase(inventory.getPurchase(productID));
-                    }
-                }
-            }
-        };
-    }
+//    private void consumeIfAlreadyOwned(final String productID) {
+//        IabHelper.QueryInventoryFinishedListener mGotInventoryListener
+//                = new IabHelper.QueryInventoryFinishedListener() {
+//            public void onQueryInventoryFinished(IabResult result,
+//                                                 Inventory inventory) {
+//
+//                if (result.isFailure()) {
+//                    // handle error here
+//                    System.out.println("Inventory could not be queried");
+//                }
+//                else {
+//                    if (inventory.hasPurchase(productID)) {
+//                        System.out.println("You already own " + productID + ", consuming now");
+//                        consumePurchase(inventory.getPurchase(productID));
+//                    }
+//                }
+//            }
+//        };
+//    }
 
     private void consumePurchase(com.kebabking.game.android.util.Purchase purchase) {
         com.kebabking.game.android.util.IabHelper.OnConsumeFinishedListener mConsumeFinishedListener =
@@ -114,7 +176,7 @@ public class IABManagerAndroid implements IABManager {
                             // provision the in-app purchase to the user
                             // (for example, credit 50 gold coins to player's character)
                             System.out.println("Confirming purchase");
-                            handlePurchaseSuccess(purchase);
+                            handlePurchaseSuccess(purchase.getSku());
                         }
                         else {
                             // handle error
@@ -129,8 +191,8 @@ public class IABManagerAndroid implements IABManager {
                 mConsumeFinishedListener);
     }
 
-    private void handlePurchaseSuccess(com.kebabking.game.android.util.Purchase purchase) {
-        OnlinePurchaseHandler.handlePurchaseSuccess(purchase.getSku());
+    private void handlePurchaseSuccess(String productId) {
+        OnlinePurchaseHandler.handlePurchaseSuccess(productId);
 //        System.out.println("Purchase success " + purchase.getSku() + " ");
 //        Product product =  new Product()
 //                .setId(purchase.getSku())

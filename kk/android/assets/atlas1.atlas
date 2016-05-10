@@ -434,121 +434,128 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-customers/American
-  rotate: false
-  xy: 2, 1187
-  size: 680, 816
-  orig: 680, 816
-  offset: 0, 0
-  index: -1
 customers/BeerIcon-53
   rotate: false
-  xy: 2, 6
+  xy: 377, 222
   size: 62, 157
   orig: 62, 157
   offset: 0, 0
   index: -1
 customers/Businessman
   rotate: false
-  xy: 2, 369
+  xy: 2, 1199
   size: 680, 816
   orig: 680, 816
+  offset: 0, 0
+  index: -1
+customers/Businessman_blink
+  rotate: false
+  xy: 2, 107
+  size: 227, 272
+  orig: 227, 272
   offset: 0, 0
   index: -1
 customers/Farmer
   rotate: false
-  xy: 684, 1187
-  size: 680, 816
-  orig: 680, 816
-  offset: 0, 0
-  index: -1
-customers/FatAmerican
-  rotate: false
-  xy: 1366, 1187
-  size: 680, 816
-  orig: 680, 816
-  offset: 0, 0
-  index: -1
-customers/FatAmerican_alt
-  rotate: false
-  xy: 684, 369
+  xy: 2, 381
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
 customers/FatMan
   rotate: false
-  xy: 1366, 369
+  xy: 684, 1199
+  size: 680, 816
+  orig: 680, 816
+  offset: 0, 0
+  index: -1
+customers/Foreigner_f
+  rotate: false
+  xy: 1366, 1199
+  size: 680, 816
+  orig: 680, 816
+  offset: 0, 0
+  index: -1
+customers/Foreigner_f_alt
+  rotate: false
+  xy: 684, 381
+  size: 680, 816
+  orig: 680, 816
+  offset: 0, 0
+  index: -1
+customers/Foreigner_m
+  rotate: false
+  xy: 1366, 381
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
 customers/Play_speechbubble_element-38
   rotate: false
-  xy: 2, 165
+  xy: 231, 177
   size: 144, 202
   orig: 144, 202
   offset: 0, 0
   index: -1
 customers/beer_icon
   rotate: false
-  xy: 66, 12
+  xy: 231, 126
   size: 55, 49
   orig: 55, 49
   offset: 0, 0
   index: -1
 customers/face1
   rotate: false
-  xy: 148, 267
+  xy: 2, 5
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face2
   rotate: false
-  xy: 148, 165
+  xy: 441, 279
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face3
   rotate: false
-  xy: 66, 63
+  xy: 103, 5
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face4
   rotate: false
-  xy: 249, 267
+  xy: 542, 279
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face5
   rotate: false
-  xy: 249, 165
+  xy: 643, 279
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/face_s
   rotate: false
-  xy: 167, 63
+  xy: 744, 279
   size: 99, 100
   orig: 99, 100
   offset: 0, 0
   index: -1
 customers/red
   rotate: false
-  xy: 2, 2
+  xy: 377, 218
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 customers/red o
   rotate: false
-  xy: 350, 366
+  xy: 2, 2
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -566,35 +573,35 @@ customers/Jeweler
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Man
+customers/Normal_f
   rotate: false
   xy: 2, 2
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Man_alt
+customers/Normal_f_spc
   rotate: false
   xy: 684, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Man_spc
+customers/Normal_m
   rotate: false
   xy: 1366, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/OldMan
+customers/Normal_m_alt
   rotate: false
   xy: 684, 2
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/OldMan_alt
+customers/Normal_m_spc
   rotate: false
   xy: 1366, 2
   size: 680, 816
@@ -607,42 +614,42 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-customers/OldWoman
+customers/Oldie_f
   rotate: false
   xy: 2, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Policeman
+customers/Oldie_m
   rotate: false
   xy: 2, 2
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Soldier
+customers/Oldie_m_alt
   rotate: false
   xy: 684, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Student
+customers/Policeman
   rotate: false
   xy: 1366, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Woman
+customers/Soldier
   rotate: false
   xy: 684, 2
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Woman_spc
+customers/Student
   rotate: false
   xy: 1366, 2
   size: 680, 816
@@ -1368,323 +1375,358 @@ filter: Nearest,Nearest
 repeat: none
 market/Jeweler-08
   rotate: false
-  xy: 1316, 389
+  xy: 1234, 386
   size: 638, 584
   orig: 638, 584
   offset: 0, 0
   index: -1
 market/Jeweler-09
   rotate: false
-  xy: 1104, 3
+  xy: 1789, 1758
   size: 127, 115
   orig: 127, 115
   offset: 0, 0
   index: -1
 market/Jeweler-10
   rotate: false
-  xy: 1233, 3
+  xy: 1789, 1641
   size: 127, 115
   orig: 127, 115
   offset: 0, 0
   index: -1
 market/Jeweler-11
   rotate: false
-  xy: 909, 4
+  xy: 525, 6
   size: 193, 102
   orig: 193, 102
   offset: 0, 0
   index: -1
 market/Jeweler-12
   rotate: false
-  xy: 2, 480
+  xy: 2, 477
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
 market/Jeweler-13
   rotate: false
-  xy: 1309, 151
+  xy: 1789, 1514
   size: 126, 125
   orig: 126, 125
   offset: 0, 0
   index: -1
 market/Jeweler-14
   rotate: false
-  xy: 1362, 24
+  xy: 1789, 1387
   size: 126, 125
   orig: 126, 125
   offset: 0, 0
   index: -1
-market/Market-menu_element-03
-  rotate: false
-  xy: 942, 640
-  size: 333, 333
-  orig: 333, 333
-  offset: 0, 0
-  index: -1
 market/Market_menu_element-02
   rotate: false
-  xy: 942, 975
+  xy: 942, 972
   size: 845, 1068
   orig: 845, 1068
   offset: 0, 0
   index: -1
 market/Market_menu_element-08
   rotate: false
-  xy: 334, 10
+  xy: 2, 2
   size: 300, 96
   orig: 300, 96
   offset: 0, 0
   index: -1
 market/Market_menu_element-09
   rotate: false
-  xy: 959, 223
+  xy: 1111, 525
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-02
   rotate: false
-  xy: 1789, 1709
+  xy: 942, 485
   size: 167, 167
   orig: 167, 167
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-03
   rotate: false
-  xy: 636, 33
+  xy: 801, 35
   size: 271, 73
   orig: 271, 73
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-04
   rotate: false
-  xy: 1011, 148
+  xy: 1074, 35
   size: 78, 73
   orig: 78, 73
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-05
   rotate: false
-  xy: 1011, 108
+  xy: 1234, 346
   size: 41, 38
   orig: 41, 38
   offset: 0, 0
   index: -1
 market/Market_subMenus__template_element-06
   rotate: false
-  xy: 854, 204
+  xy: 1111, 580
   size: 103, 72
   orig: 103, 72
   offset: 0, 0
   index: -1
-market/advertising_icon
-  rotate: false
-  xy: 685, 278
-  size: 629, 200
-  orig: 629, 200
-  offset: 0, 0
-  index: -1
 market/bluePixel
   rotate: false
-  xy: 2, 2
+  xy: 506, 74
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 market/drink_quality_icon
   rotate: false
-  xy: 1789, 1878
+  xy: 1789, 1875
   size: 199, 165
   orig: 199, 165
   offset: 0, 0
   index: -1
 market/gray9patchSmall
   rotate: false
-  xy: 25, 7
+  xy: 327, 9
   size: 23, 21
   orig: 23, 21
   offset: 0, 0
   index: -1
 market/gray9patchSmallFilled
   rotate: false
-  xy: 50, 7
+  xy: 352, 9
   size: 23, 21
   orig: 23, 21
   offset: 0, 0
   index: -1
 market/gray9patchSmallFilledCut
   rotate: false
-  xy: 75, 7
+  xy: 377, 9
   size: 23, 21
   orig: 23, 21
   offset: 0, 0
   index: -1
 market/gray9patchSmallHollow
   rotate: false
-  xy: 2, 5
+  xy: 304, 7
   size: 21, 23
   orig: 21, 23
   offset: 0, 0
   index: -1
 market/gray9patchSmallHollow2
   rotate: false
-  xy: 125, 7
+  xy: 427, 9
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
 market/green9patch
   rotate: false
-  xy: 1014, 234
+  xy: 1234, 302
   size: 40, 42
   orig: 40, 42
   offset: 0, 0
   index: -1
 market/green9patchSmall
   rotate: false
-  xy: 147, 7
+  xy: 449, 9
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
 market/green9patchSmallHollow
   rotate: false
-  xy: 169, 7
+  xy: 471, 9
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
+market/grill
+  rotate: false
+  xy: 1629, 21
+  size: 341, 363
+  orig: 341, 363
+  offset: 0, 0
+  index: -1
 market/grill_size_icon
   rotate: false
-  xy: 685, 210
-  size: 167, 66
-  orig: 167, 66
+  xy: 304, 32
+  size: 200, 66
+  orig: 200, 66
   offset: 0, 0
   index: -1
 market/grill_stand_icon
   rotate: false
-  xy: 1490, 12
+  xy: 2, 100
   size: 521, 375
   orig: 521, 375
   offset: 0, 0
   index: -1
 market/grill_type_icon
   rotate: false
-  xy: 1091, 120
+  xy: 942, 814
   size: 216, 156
   orig: 216, 156
   offset: 0, 0
   index: -1
 market/grill_type_icon2
   rotate: false
-  xy: 942, 480
+  xy: 942, 654
   size: 200, 158
   orig: 200, 158
   offset: 0, 0
   index: -1
 market/jade
   rotate: false
-  xy: 1316, 314
+  xy: 1154, 35
   size: 73, 73
   orig: 73, 73
   offset: 0, 0
   index: -1
-market/jadeBox
-  rotate: false
-  xy: 2, 182
-  size: 681, 296
-  orig: 681, 296
-  offset: 0, 0
-  index: -1
 market/limeGreen9patchSmallFilled2
   rotate: false
-  xy: 235, 7
+  xy: 506, 77
   size: 13, 21
   orig: 13, 21
   offset: 0, 0
   index: -1
 market/location_icon
   rotate: false
-  xy: 191, 7
+  xy: 493, 9
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
-market/meat_quality_icon
+market/promo
   rotate: false
-  xy: 334, 108
-  size: 594, 72
-  orig: 594, 72
+  xy: 892, 110
+  size: 340, 365
+  orig: 340, 365
   offset: 0, 0
   index: -1
 market/question
   rotate: false
-  xy: 1391, 314
+  xy: 1229, 35
   size: 52, 73
   orig: 52, 73
   offset: 0, 0
   index: -1
+market/real_estate
+  rotate: false
+  xy: 1283, 20
+  size: 344, 364
+  orig: 344, 364
+  offset: 0, 0
+  index: -1
 market/red9patchSmall
   rotate: false
-  xy: 100, 7
+  xy: 402, 9
   size: 23, 21
   orig: 23, 21
   offset: 0, 0
   index: -1
-market/skewers_icon
-  rotate: false
-  xy: 2, 30
-  size: 330, 150
-  orig: 330, 150
-  offset: 0, 0
-  index: -1
 market/smallJade
   rotate: false
-  xy: 930, 127
+  xy: 720, 33
   size: 79, 75
   orig: 79, 75
   offset: 0, 0
   index: -1
+market/wheel_solo_stand
+  rotate: false
+  xy: 525, 110
+  size: 365, 365
+  orig: 365, 365
+  offset: 0, 0
+  index: -1
 market/white9patchSmall
   rotate: false
-  xy: 213, 7
+  xy: 801, 12
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
 market/white9patchSmall - Copy
   rotate: false
-  xy: 213, 7
+  xy: 801, 12
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
 
 atlas119.png
-size: 1024,512
+size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-market/Market-menu_element-04
+market/Jeweler_bo
+  rotate: false
+  xy: 584, 566
+  size: 340, 340
+  orig: 340, 340
+  offset: 0, 0
+  index: -1
+market/advertising_icon
+  rotate: false
+  xy: 849, 1189
+  size: 629, 200
+  orig: 629, 200
+  offset: 0, 0
+  index: -1
+market/food_drink
+  rotate: false
+  xy: 1423, 1615
+  size: 344, 361
+  orig: 344, 361
+  offset: 0, 0
+  index: -1
+market/jadeBox
   rotate: false
   xy: 2, 2
-  size: 333, 333
-  orig: 333, 333
+  size: 681, 296
+  orig: 681, 296
   offset: 0, 0
   index: -1
-market/Market-menu_element-05
+market/meat_quality_icon
   rotate: false
-  xy: 337, 2
-  size: 333, 333
-  orig: 333, 333
+  xy: 849, 1115
+  size: 594, 72
+  orig: 594, 72
   offset: 0, 0
   index: -1
-market/Market-menu_element-06
+market/shelf
   rotate: false
-  xy: 672, 2
-  size: 333, 333
-  orig: 333, 333
+  xy: 2, 908
+  size: 845, 1068
+  orig: 845, 1068
+  offset: 0, 0
+  index: -1
+market/skewers_icon
+  rotate: false
+  xy: 1423, 1463
+  size: 330, 150
+  orig: 330, 150
+  offset: 0, 0
+  index: -1
+market/wheel_icon
+  rotate: false
+  xy: 2, 300
+  size: 580, 606
+  orig: 580, 606
+  offset: 0, 0
+  index: -1
+market/wheel_solo
+  rotate: false
+  xy: 849, 1391
+  size: 572, 585
+  orig: 572, 585
   offset: 0, 0
   index: -1
 
@@ -1995,314 +2037,334 @@ filter: Nearest,Nearest
 repeat: none
 screens/Airplane-01
   rotate: false
-  xy: 785, 1546
+  xy: 785, 1541
   size: 938, 500
   orig: 938, 500
   offset: 0, 0
   index: -1
 screens/Main-02
   rotate: false
-  xy: 1725, 1663
+  xy: 1725, 1658
   size: 252, 383
   orig: 252, 383
   offset: 0, 0
   index: -1
-screens/Main-03
-  rotate: false
-  xy: 1471, 2
-  size: 206, 63
-  orig: 206, 63
-  offset: 0, 0
-  index: -1
-screens/Main-04
-  rotate: false
-  xy: 404, 10
-  size: 293, 60
-  orig: 293, 60
-  offset: 0, 0
-  index: -1
-screens/Summary-02
-  rotate: false
-  xy: 1780, 672
-  size: 210, 101
-  orig: 210, 101
-  offset: 0, 0
-  index: -1
 screens/Summary-08
   rotate: false
-  xy: 1725, 1310
+  xy: 673, 11
   size: 313, 101
   orig: 313, 101
   offset: 0, 0
   index: -1
 screens/bill_blue
   rotate: false
-  xy: 1780, 1029
+  xy: 1838, 1090
   size: 208, 125
   orig: 208, 125
   offset: 0, 0
   index: -1
 screens/bill_green
   rotate: false
-  xy: 1780, 902
+  xy: 1838, 963
   size: 208, 125
   orig: 208, 125
   offset: 0, 0
   index: -1
 screens/bill_red
   rotate: false
-  xy: 1780, 775
+  xy: 1568, 844
   size: 208, 125
   orig: 208, 125
   offset: 0, 0
   index: -1
 screens/blueSwipe
   rotate: false
-  xy: 1736, 482
-  size: 196, 86
-  orig: 196, 86
-  offset: 0, 0
-  index: -1
-screens/blueSwipe n
-  rotate: false
-  xy: 1736, 394
+  xy: 1290, 6
   size: 196, 86
   orig: 196, 86
   offset: 0, 0
   index: -1
 screens/blueSwipeSm
   rotate: false
-  xy: 785, 1283
+  xy: 1725, 971
   size: 96, 70
   orig: 96, 70
   offset: 0, 0
   index: -1
-screens/facebook-share-button
-  rotate: false
-  xy: 1679, 217
-  size: 194, 71
-  orig: 194, 71
-  offset: 0, 0
-  index: -1
 screens/green_arrow
   rotate: false
-  xy: 785, 741
+  xy: 2011, 1959
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 screens/jadeBox
   rotate: false
-  xy: 2, 72
+  xy: 2, 176
   size: 681, 296
   orig: 681, 296
   offset: 0, 0
   index: -1
 screens/minijade
   rotate: false
-  xy: 2, 12
+  xy: 1979, 1951
   size: 30, 28
   orig: 30, 28
   offset: 0, 0
   index: -1
 screens/music_off
   rotate: false
-  xy: 942, 734
+  xy: 1568, 425
   size: 417, 417
   orig: 417, 417
   offset: 0, 0
   index: -1
 screens/music_on
   rotate: false
-  xy: 1361, 734
+  xy: 1568, 6
   size: 417, 417
   orig: 417, 417
   offset: 0, 0
   index: -1
 screens/neonsign
   rotate: false
-  xy: 2, 763
+  xy: 785, 1039
   size: 938, 500
   orig: 938, 500
   offset: 0, 0
   index: -1
 screens/pause-02
   rotate: false
-  xy: 1725, 1413
+  xy: 1725, 1408
   size: 262, 248
   orig: 262, 248
   offset: 0, 0
   index: -1
 screens/pause-03
   rotate: false
-  xy: 685, 176
+  xy: 685, 114
   size: 474, 137
   orig: 474, 137
   offset: 0, 0
   index: -1
 screens/pause-04
   rotate: false
-  xy: 1087, 64
+  xy: 1778, 871
   size: 267, 90
   orig: 267, 90
   offset: 0, 0
   index: -1
 screens/pause-042
   rotate: false
-  xy: 699, 5
+  xy: 404, 94
   size: 267, 80
   orig: 267, 80
   offset: 0, 0
   index: -1
 screens/pause-05
   rotate: false
-  xy: 1725, 1218
+  xy: 988, 2
   size: 300, 90
   orig: 300, 90
   offset: 0, 0
   index: -1
 screens/pause-052
   rotate: false
-  xy: 1725, 1156
+  xy: 2, 25
   size: 300, 60
   orig: 300, 60
   offset: 0, 0
   index: -1
-screens/pause-053
-  rotate: false
-  xy: 968, 2
-  size: 270, 60
-  orig: 270, 60
-  offset: 0, 0
-  index: -1
-screens/pause-054
-  rotate: false
-  xy: 1736, 352
-  size: 250, 40
-  orig: 250, 40
-  offset: 0, 0
-  index: -1
-screens/pause-055
-  rotate: false
-  xy: 1240, 2
-  size: 229, 60
-  orig: 229, 60
-  offset: 0, 0
-  index: -1
-screens/pause-056
-  rotate: false
-  xy: 1679, 290
-  size: 208, 60
-  orig: 208, 60
-  offset: 0, 0
-  index: -1
 screens/red
   rotate: false
-  xy: 2040, 2044
+  xy: 2040, 2039
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 screens/selfie
   rotate: false
-  xy: 1623, 369
+  xy: 1725, 1043
   size: 111, 363
   orig: 111, 363
   offset: 0, 0
   index: -1
-screens/sound_off
-  rotate: false
-  xy: 785, 315
-  size: 417, 417
-  orig: 417, 417
-  offset: 0, 0
-  index: -1
-screens/sound_on
-  rotate: false
-  xy: 1204, 315
-  size: 417, 417
-  orig: 417, 417
-  offset: 0, 0
-  index: -1
-screens/spicy_order
-  rotate: false
-  xy: 1736, 570
-  size: 200, 100
-  orig: 200, 100
-  offset: 0, 0
-  index: -1
 screens/spicy_order_old
   rotate: false
-  xy: 685, 320
+  xy: 1568, 989
   size: 69, 48
   orig: 69, 48
   offset: 0, 0
   index: -1
-screens/summary_bottom
-  rotate: false
-  xy: 2, 42
-  size: 400, 28
-  orig: 400, 28
-  offset: 0, 0
-  index: -1
 screens/triangle
   rotate: false
-  xy: 1979, 1986
+  xy: 1979, 1981
   size: 59, 60
   orig: 59, 60
   offset: 0, 0
   index: -1
 screens/tutorial_burnt
   rotate: false
-  xy: 1356, 67
+  xy: 404, 5
   size: 197, 87
   orig: 197, 87
   offset: 0, 0
   index: -1
 screens/tutorial_chicken
   rotate: false
-  xy: 1161, 156
+  xy: 1161, 94
   size: 400, 157
   orig: 400, 157
   offset: 0, 0
   index: -1
 screens/tutorial_cooked
   rotate: false
-  xy: 685, 87
+  xy: 2, 87
   size: 400, 87
   orig: 400, 87
   offset: 0, 0
   index: -1
 screens/tutorial_jeweler
   rotate: false
-  xy: 785, 1355
+  xy: 1838, 1217
   size: 141, 189
   orig: 141, 189
   offset: 0, 0
   index: -1
 screens/wheel
   rotate: false
-  xy: 2, 1265
+  xy: 2, 1260
   size: 781, 781
   orig: 781, 781
   offset: 0, 0
   index: -1
 screens/wheel3
   rotate: false
-  xy: 2, 370
+  xy: 2, 867
   size: 781, 391
   orig: 781, 391
   offset: 0, 0
   index: -1
 screens/wheel6
   rotate: false
-  xy: 942, 1153
+  xy: 785, 646
+  size: 781, 391
+  orig: 781, 391
+  offset: 0, 0
+  index: -1
+screens/wheel7
+  rotate: false
+  xy: 2, 474
+  size: 781, 391
+  orig: 781, 391
+  offset: 0, 0
+  index: -1
+screens/wheel7 o
+  rotate: false
+  xy: 785, 253
   size: 781, 391
   orig: 781, 391
   offset: 0, 0
   index: -1
 
 atlas122.png
+size: 2048,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+screens/Main-03
+  rotate: false
+  xy: 1052, 304
+  size: 206, 63
+  orig: 206, 63
+  offset: 0, 0
+  index: -1
+screens/Main-04
+  rotate: false
+  xy: 840, 431
+  size: 293, 60
+  orig: 293, 60
+  offset: 0, 0
+  index: -1
+screens/Summary-02
+  rotate: false
+  xy: 840, 266
+  size: 210, 101
+  orig: 210, 101
+  offset: 0, 0
+  index: -1
+screens/blueSwipe n
+  rotate: false
+  xy: 840, 76
+  size: 196, 86
+  orig: 196, 86
+  offset: 0, 0
+  index: -1
+screens/facebook-share-button
+  rotate: false
+  xy: 1366, 420
+  size: 194, 71
+  orig: 194, 71
+  offset: 0, 0
+  index: -1
+screens/pause-053
+  rotate: false
+  xy: 840, 369
+  size: 270, 60
+  orig: 270, 60
+  offset: 0, 0
+  index: -1
+screens/pause-054
+  rotate: false
+  xy: 2, 2
+  size: 250, 40
+  orig: 250, 40
+  offset: 0, 0
+  index: -1
+screens/pause-055
+  rotate: false
+  xy: 1135, 431
+  size: 229, 60
+  orig: 229, 60
+  offset: 0, 0
+  index: -1
+screens/pause-056
+  rotate: false
+  xy: 1112, 369
+  size: 208, 60
+  orig: 208, 60
+  offset: 0, 0
+  index: -1
+screens/sound_off
+  rotate: false
+  xy: 2, 74
+  size: 417, 417
+  orig: 417, 417
+  offset: 0, 0
+  index: -1
+screens/sound_on
+  rotate: false
+  xy: 421, 74
+  size: 417, 417
+  orig: 417, 417
+  offset: 0, 0
+  index: -1
+screens/spicy_order
+  rotate: false
+  xy: 840, 164
+  size: 200, 100
+  orig: 200, 100
+  offset: 0, 0
+  index: -1
+screens/summary_bottom
+  rotate: false
+  xy: 2, 44
+  size: 400, 28
+  orig: 400, 28
+  offset: 0, 0
+  index: -1
+
+atlas123.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest

@@ -3,6 +3,10 @@ package com.kebabking.game.Managers;
 public class AnalyticsManagerMock implements AnalyticsManager {
 
 	@Override
+	public void promptForRating() {
+		System.out.println("prompt for rating mock");
+	}
+		@Override
 	public void sendScreenHit(String screenName) {
 		System.out.println("Send screen hit mock: " + screenName);
 	}

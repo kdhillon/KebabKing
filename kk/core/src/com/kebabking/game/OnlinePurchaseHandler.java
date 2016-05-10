@@ -35,7 +35,6 @@ public class OnlinePurchaseHandler {
 		master = masterIn;
 		
 		// attempt to consume any purchases
-		Manager.iab.checkConsumables();
 	}
 	
 	public static void attemptPurchase(PurchaseableOnline op) {

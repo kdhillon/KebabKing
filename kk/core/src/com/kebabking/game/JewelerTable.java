@@ -70,15 +70,17 @@ public class JewelerTable extends Table {
 		TextureRegion jewelerReg = Assets.getTextureRegion("market/Jeweler-08");
 		Image jeweler = new Image(jewelerReg);
 		
-		jeweler.setTouchable(Touchable.enabled);
-		jeweler.addListener(new InputListener() {
-			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				AdsHandler.showAd();
-			}
-		});
+		// jeweler is no longer touchable.
+//		jeweler.setTouchable(Touchable.enabled);
+//		jeweler.addListener(new InputListener() {
+//			public boolean touchDown(InputEvent event, float x,	float y, int pointer, int button) {
+//				return true;
+//			}
+//			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
+////				master.switchToJadeWheelScreen();
+//				// TODO fix this.
+//			}
+//		});
 		
 		this.row();
 		float height = KebabKing.getGlobalY(0.3f);
@@ -172,7 +174,7 @@ public class JewelerTable extends Table {
 		
 		entry.add(title).top().padTop(KebabKing.getGlobalY(0.005f)).center().width(totalWidth);
 		
-		Label price = new Label(Assets.realCurrencyChar + LanguageManager.localizeNumber(op.price), Assets.generateLabelStyleUI(16, Assets.nums + Assets.realCurrencyChar));
+		Label price = new Label(Assets.getIAPCurrency() + LanguageManager.localizeNumber(op.price) + " " + Assets.getIAPCurrencyAbbrev(), Assets.generateLabelStyleUI(16, Assets.nums + Assets.getIAPCurrency() + Assets.getIAPCurrencyAbbrev()));
 		entry.row();
 		entry.add(price).top().expandY();
 		//		Label title = new Label("" + op.coins + " Coins!", Assets.generateLabelStyleUIChinaWhite(30, Assets.nums + " Coins!"));
@@ -212,9 +214,9 @@ public class JewelerTable extends Table {
 				
 		Table okButton = DrawUI.getBlueButton(Assets.strings.get("ok"), 40);
 		entry.row();
-		float buttonWidth = KebabKing.getGlobalX(0.2f);
-		float buttonHeight = KebabKing.getGlobalY(0.07f);
-		entry.add(okButton).width(buttonWidth).height(buttonHeight).padTop(KebabKing.getGlobalY(0.01f));
+//		float buttonWidth = KebabKing.getGlobalX(0.2f);
+//		float buttonHeight = KebabKing.getGlobalY(0.07f);
+		entry.add(okButton).padTop(KebabKing.getGlobalY(0.0f));
 		
 		okButton.addListener(new StrictInputListener() {
 			public void touch(InputEvent event) {

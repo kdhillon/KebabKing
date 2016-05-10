@@ -77,7 +77,7 @@ public class SocialMediaFacebook implements SocialMediaManager {
         if (ShareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent content = new ShareLinkContent.Builder()
                     .setContentUrl(Uri.parse("https://kebabking.io"))
-                    .setContentTitle("I earned " + Assets.currencyChar + profit + " in Kebab King!")
+                    .setContentTitle("I earned " + Assets.getCurrency() + profit + " in Kebab King!")
                     .setContentDescription("Cook kebabs and serve your hungry customers in this awesome Android game!")
                     .setImageUrl(Uri.parse("https://lh3.googleusercontent.com/mqZXECxUdd8vEznthMNAU_sZBENxhDc4lVbzWE-P4jvYcPo0_GrGUoGK0oTJJl-NpGg=w300-rw"))
                     .build();

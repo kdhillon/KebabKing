@@ -64,8 +64,8 @@ public class PurchaseTypeConsumable extends PurchaseType {
 		return values[active];
 	}
 	
-	// TODO remove
-	public Purchaseable getCurrentSelected() {
+	@Override
+	public Purchaseable getFirstSelected() {
 		return getActive();
 //		throw new java.lang.AssertionError();
 	}

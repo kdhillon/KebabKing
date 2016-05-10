@@ -14,7 +14,7 @@ public class Background {
 //	static final Color duskSky = new Color(255f/256, 225f/256, 135f/256, 1);
 	static final Color nightSky = new Color(.1f, .1f, .2f, 1);
 	static final float nightStartTime = 15; // when night transition starts
-	static final int CLOUD_COUNT = 5;
+	static final int CLOUD_COUNT = 3;
 	static final int STAR_COUNT = 50;
 	static final float STAR_ALPHA_RATE = 0.3f;
 	

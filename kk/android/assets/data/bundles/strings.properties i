@@ -1,0 +1,337 @@
+lang_name=English
+title=Kebab King
+title_fem=Kebab Queen
+
+currency=¥
+currency_iaps=$
+
+buying_coal=buying coal
+setting_up_grill=setting up grill
+marinating_meat=marinating meat
+sharpening_skewers=sharpening skewers
+prepping_kebabs=prepping kebabs
+cooling_drinks=cooling drinks
+
+play=Play
+market=Market
+continue=Continue
+back=Back
+spin=Spin
+reputation=REPUTATION
+lvl=LVL
+
+last_customer=Last Customer
+day_complete=Day Complete
+
+revenue=Revenue
+expenses=Expenses
+customers=Customers
+meat=Meat
+rent=Rent
+sick=Sick
+daily_rating=DAILY RATING
+profit=PROFIT
+
+earn_jade=EARN JADE
+daily_accounts=DAILY ACCOUNTS
+tutorial=TUTORIAL
+
+you_reached=You reached
+level=LEVEL
+new_upgrade_available=New upgrade available:
+new_upgrades_available=new upgrades available:
+location_unlocked=NEW LOCATION UNLOCKED
+
+
+settings=SETTINGS
+paused=PAUSED
+resume=RESUME
+
+go_to_market=GO TO MARKET
+bribe=BRIBE
+wait=WAIT
+continue=CONTINUE
+or=OR
+ok=OK
+
+violation_expires_in=Violation expires in:
+no_videos=No videos available! Check your internet connection.
+
+police_shut_down=The police have shut you down!
+customers_getting_sick=Customers are getting sick from your kebabs! Make sure to cook your meat thoroughly before serving!
+congratulations=Congratulations!
+you_earned=You earned:
+let_you_off=We'll let you off this time... Just don't let it happen again!
+
+wheel_of_jade=WHEEL OF JADE
+wheel=WHEEL
+of=OF
+jade=JADE
+
+welcome_to_the_market=welcome to the market
+get_jade=GET JADE
+
+the_jeweler=THE JEWELER
+welcomes_you=welcomes you
+complete_purchase=Complete purchase?
+
+unlock=UNLOCK
+activate=ACTIVATE
+day=DAY
+
+advertising=MARKETING
+ad_desc=Ads boost your popularity and customer satisfaction. Different ads affect different customers, so use them at the right locations to maximize effectiveness!
+advertising_sign=Neon Sign
+advertising_sign_d=This bright sign gives a tiny satisfaction boost for all customers.
+advertising_posters=Poster Ads
+advertising_posters_d=These official looking posters will give a small boost to policemen and soldiers.
+advertising_newspapers=Newspaper Ads
+advertising_newspapers_d=Extra, extra! Gives a small boost to businessmen and farmers.
+advertising_radio=Radio Ads
+advertising_radio_d=Kebab FM! Old folks will love these cheesy ads.
+advertising_online=Online Ads
+advertising_online_d=Young customers will obsess over your kebabs.
+advertising_tv=TV Ads
+advertising_tv_d=These prime-time ads will be very popular among your... "larger" customers.
+advertising_tshirts=T-Shirts
+advertising_tshirts_d=These custom t-shirts give a large boost to men and women. 
+advertising_tourist=Tourist Brochure
+advertising_tourist_d=Gives a large boost to foreigners.
+advertising_selfie=Selfies
+advertising_selfie_d=Everyone loves selfies! Gives a HUGE boost to all customers!
+advertising_two_for_one=Two for One
+advertising_two_for_one_d=Don't use this!
+advertising_plane=Plane Banner
+advertising_plane_d=The whole city will see it and flock to your stand!!!
+
+grill_size=GRILL SIZE
+grill_size_desc=Larger grills will let you cook more meat at once!
+grill_size_tiny=Tiny Grill
+grill_size_tiny_d=Only fits 4 kebabs
+grill_size_small=Small Grill
+grill_size_small_d=Fits just 5 kebabs
+grill_size_med=Medium Grill
+grill_size_med_d=Fits 6 kebabs
+grill_size_big=Big Grill
+grill_size_big_d=Fits 7 kebabs
+grill_size_large=Large Grill
+grill_size_large_d=Fits 8 kebabs
+grill_size_huge=Huge Grill
+grill_size_huge_d=Fits 9 kebabs
+grill_size_enormous=Mega Grill
+grill_size_enormous_d=Fits 10 kebabs
+
+grill_stand=GRILL STAND
+grill_stand_desc=Better grill stands extend the length of your day!
+grill_stand_metal=Metal Stand
+grill_stand_metal_d=Simple metal frame
+grill_stand_wooden=Wooden Table
+grill_stand_wooden_d=A nice oak table
+grill_stand_metal_table=Metal Table
+grill_stand_metal_table_d=Durable steel table
+grill_stand_bicycle=Bicycle
+grill_stand_bicycle_d=Light and agile
+grill_stand_motorcycle=Motorcycle
+grill_stand_motorcycle_d=A Harvey Davilson chopper!
+
+grill_type=GRILL TYPE
+grill_type_desc=Better grills will cook (and burn) faster.
+grill_type_basic=Basic
+grill_type_basic_d=Runs on twigs and firewood.
+grill_type_charcoal=Charcoal
+grill_type_charcoal_d=Cooks and burns faster than basic.
+grill_type_gas=Gas
+grill_type_gas_d=Cooks faster than charcoal!
+grill_type_gas_warmer=Gas Warmer
+grill_type_gas_warmer_d=Adds a warmer section to the gas grill!
+grill_type_electric=Electric
+grill_type_electric_d=Cooks faster than gas!
+grill_type_electric_warmer=Electric Warmer
+grill_type_electric_warmer_d=Adds a warmer section to the electric grill!
+grill_type_nuclear=Nuclear
+grill_type_nuclear_d=The fastest cooking grill around!
+
+location=REAL ESTATE
+location_desc=More popular locations will make your stand more successful. Make sure you can afford rent!
+location_village=Village
+location_village_d=The humble beginnings of your kebab empire.
+location_paddy=Rice Paddies
+location_paddy_d=Every village needs its breadbasket.
+location_subway=Subway Stop
+location_subway_d=This station leads to the city... and success!
+location_suburbs=Suburbs
+location_suburbs_d=The 'burbs ain't pretty, but they sure are better than the countryside.
+location_urbancomplex=Urban Complex
+location_urbancomplex_d=A soulless residential area. Serve kebabs to feed the soul.
+location_smallcity=Small City
+location_smallcity_d=This town needs kebabs, now! Give the people what they want.
+location_university=University
+location_university_d=What's that sound? The rumbling of hungry students' stomachs!
+location_birdsnest=Bird's Nest
+location_birdsnest_d=The one thing the Olympics didn't have? Kebabs.
+location_temple=Temple
+location_temple_d=A mysterious force pulses from the temple, calling out for kebabs.
+location_nightclub=Nightclub District
+location_nightclub_d=Serve these swanky customers before they hit the clubs.
+location_drum=Drum Tower
+location_drum_d=Deep in the alleys of the city lies an ancient tower. And a kebab cart.
+location_forbidden=Forbidden City
+location_forbidden_d=Mmmm, the scent of the Emporer's fresh kebabs.
+location_summerpalace=Summer Palace
+location_summerpalace_d=Escape the heat and set up shop at the Summer Palace.
+location_shanghai=Shanghai Skyline
+location_shanghai_d=A metropolis of skyscrapers, flashing lights, and delicious kebabs.
+location_terracotta=Terra Cotta Warriors
+location_terracotta_d=Satisfy the hungry spirits of these ancient soldiers.
+location_panda=Panda Sanctuary
+location_panda_d=The pandas love to eat bamboo. The visitors love to eat kebabs!
+location_silkroad=Silk Road
+location_silkroad_d=The kebab originated thousands of years ago, thousands of miles away...
+location_cbd=Business District
+location_cbd_d=Business people don't have time for anything... except kebabs!
+
+meat_quality=KEBAB QUALITY
+meat_quality_desc=Better quality kebabs means more profit per kebab!
+meat_quality_1=Grade C
+meat_quality_1_d=Found in a nearby dumpster.
+meat_quality_2=Grade B
+meat_quality_2_d=Bought from the back of a truck.
+meat_quality_3=Grade A
+meat_quality_3_d=Was refrigerated at some point.
+meat_quality_4=Grade AA
+meat_quality_4_d=Bought from a licensed store.
+meat_quality_5=Grade AAA
+meat_quality_5_d=Organic, healthy, restaurant-quality kebabs.
+
+drink_quality=DRINK QUALITY
+drink_quality_desc=Better quality beer means more profit!
+drink_quality_1=Qing Mao
+drink_quality_1_d=Yellow water
+drink_quality_2=Heimikan
+drink_quality_2_d=Premium Lager
+drink_quality_3=Youngling
+drink_quality_3_d=Twistoffs! Wow!
+drink_quality_4=Stellar
+drink_quality_4_d=Only 4 ingredients and 10 preservatives!
+drink_quality_5=Guinnist
+drink_quality_5_d=Bonnie Irish Stout
+drink_quality_6=Harpspear
+drink_quality_6_d=Delicious, fisherman's favorite
+drink_quality_7=Trappish
+drink_quality_7_d=Made by Monks! Holy beer!
+
+kebab_types=KEBAB TYPES
+kebab_types_desc=Choose which types of kebabs you serve!
+beef=Beef
+lamb=Lamb
+chicken=Chicken
+pork=Pork
+goat=Goat
+
+veggie=Vegetable
+tofu=Tofu
+potato=Potato
+corn=Corn
+mushroom=Mushroom
+
+squid=Squid
+fish=Fish
+shrimp=Prawns
+scallops=Scallops
+fishballs=Fish Balls
+
+
+skewers=SKEWERS
+skewers_desc=Better skewers make your customers happier!
+skewers_bamboo=Bamboo Skewers
+skewers_bamboo_d=Simple bamboo skewers
+skewers_wood=Wood Skewers
+skewers_wood_d=Customers love wood skewers
+skewers_iron=Iron Skewers
+skewers_iron_d=Even better than wood
+skewers_steel=Steel Skewers
+skewers_steel_d=Strong and durable
+skewers_titanium=Titanium Skewers
+skewers_titanium_d=State-of-the-art
+
+peasant_pack=Peasant Pack
+vendor_pack=Vendor Pack
+merchant_pack=Merchant Pack
+tycoon_pack=Tycoon Pack
+kebab_king_pack=Kebab King Pack
+
+old_men=old men
+old_women=old women
+students=students
+fat_men=fat men
+women=women
+men=men
+businessmen=businessmen
+police=police
+soldiers=soldiers
+girls=girls
+tourists=tourists
+foreigners=foreigners
+farmers=farmers
+jewelers=jewelers
+
+,=,
+-=-
+.=.
+0=0
+1=1
+2=2
+3=3
+4=4
+5=5
+6=6
+7=7
+8=8
+9=9
+nums=0123456789.
+
+tip1=Love Kebab King? We love you too!
+tip2=Always be cooking!
+tip3=Tap the spice brush, then tap a kebab to quickly spice it!
+tip4=Customers won't accept kebabs they didn't order!
+tip5=Any meat still on your grill at the end of the day is refunded!
+tip6=The Jeweler gives you jade based on how satisfied he is!
+tip7=You can serve multiple kebabs by tapping them, then tapping a customer!
+
+tut_1_title=Your First Customer!
+tut_1=Drag 2 beef kebabs to the grill to start cooking!
+tut_1_placed_title=Nice Work!
+tut_1_placed=Now, wait for your kebabs to cook!
+tut_1_cooked_title=Ready to Serve!
+tut_1_cooked=Drag both cooked kebabs to the customer.
+tut_1_served_title=Your First Sale!
+tut_1_served=The faster you serve your customers, the happier they will be. A high reputation attracts more customers!
+
+
+tut_2_title=Drink Time!
+tut_2=Drag a drink from the cooler to the customer!
+tut_2_served_title=Nice Work!
+tut_2_served=Tip: You can upgrade the quality of your drinks at the Market!
+
+tut_3_order_title=Spicy Kebabs
+tut_3_order=This customer ordered a spicy kebab! Place a kebab on the grill.
+tut_3_title=Spicy Kebabs
+tut_3=Drag the spice brush over the kebab to spice it!
+tut_3_spiced_title=Nice Work!
+tut_3_spiced=Tip: You can tap the spice brush, then tap a kebab to spice it!
+
+tut_burnt_title=Burnt Kebab
+tut_burnt=Oh no, this kebab has burned! Select the kebab and hold your finger off the grill to put it in the trash.
+tut_trashed_title=Great Job!
+tut_trashed=Throwing away meat wastes money, so try not to let your meat burn!
+
+tut_raw_title=Whoops!
+tut_raw=Serving raw meat might make your customers sick! Be sure to cook your meat fully before serving!
+
+tut_jeweler_title=The Jeweler
+tut_jeweler=Today's your lucky day! The Jeweler might give you free jade if you complete his order.
+
+tut_lamb_title=Lamb Unlocked!
+tut_lamb=Lamb cooks faster and is more profitable than beef!
+tut_chicken_title=Chicken Unlocked!
+tut_chicken=Chicken is very profitable! But be careful: it's twice the size of lamb or beef and it burns quickly!

@@ -112,7 +112,7 @@ public class MainStoreScreen extends ActiveScreen {
 		String text = Assets.strings.get("welcome_to_the_market");
 		Label label = new Label(text, Assets.generateLabelStyleUILight(32, text));
 		label.setColor(FONT_COLOR);
-		mainTable.add(label).center().expandY().top();
+		mainTable.add(label).center().expandY().top().padTop(KebabKing.getGlobalY(0.015f));
 		mainTable.row();
 		
 		// add shelf
@@ -139,18 +139,19 @@ public class MainStoreScreen extends ActiveScreen {
 		float buttonsPadTop = 1.0f/18.1f * shelf_height;
 		
 		// add buttons
-		Button foodButton = generateButton(TableType.food);
-		Button grillButton = generateButton(TableType.grill);
-		Button mapButton = generateButton(TableType.map);
-		Button adsButton = generateButton(TableType.ads);
+		Table foodButton = generateButton(TableType.food, buttonWidth, buttonHeight);
+		Table grillButton = generateButton(TableType.grill, buttonWidth, buttonHeight);
+		Table mapButton = generateButton(TableType.map, buttonWidth, buttonHeight);
+		Table adsButton = generateButton(TableType.ads, buttonWidth, buttonHeight);
 		
-		Table coinsButton = generateButton(TableType.jade);
+		Table wheelButton = generateButton(TableType.wheel, buttonWidth, buttonHeight);
+		Table coinsButton = generateButton(TableType.jeweler, buttonWidth, buttonHeight);
 		
 		String getJade = Assets.strings.get("get_jade");
-		Label earnJade = new Label(getJade, Assets.generateLabelStyleUIChina(26, getJade));
+//		Label earnJade = new Label(getJade, Assets.generateLabelStyleUIChina(26, getJade));
 //		coinsButton.debugAll();
 //		coinsButton.add(earnJade).top().padTop(KebabKing.getGlobalY(0.1f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
-		coinsButton.add(earnJade).center().padTop(KebabKing.getGlobalY(0.06f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
+//		coinsButton.add(earnJade).center().padTop(KebabKing.getGlobalY(0.06f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
 
 		shelf.add(foodButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonsPadTop).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
 		shelf.add(grillButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonsPadTop).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
@@ -159,9 +160,16 @@ public class MainStoreScreen extends ActiveScreen {
 		shelf.add(adsButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
 		shelf.row();
 		
-		// TODO add Play button directly on top of coinsbutton
-		shelf.add(coinsButton).width(buttonWidth * 2).height(buttonHeight * 0.9f).center().top().expandY().padTop(buttonPadY*2f).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX).colspan(2);
+		shelf.add(wheelButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX).expandY();
+		shelf.add(coinsButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
+
 		
+		System.out.println("BUTTON WIDTH: " + buttonWidth + " BUTTON HEIGHT: " + buttonHeight);
+		
+		// TODO add Play button directly on top of coinsbutton
+//		shelf.add(wheelButton).width(buttonWidth).height(buttonHeight).center().top().expandY().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
+//		shelf.add(coinsButton).width(buttonWidth).height(buttonHeight).center().top().expandY().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
+		shelf.row();
 		addBackButton(newBackButton(), mainTable);
 		
 		this.table.addActor(mainTable);
@@ -192,7 +200,8 @@ public class MainStoreScreen extends ActiveScreen {
 		return backButton;
 	}
 	
-	public Button generateButton(final TableType type) {
+	public Table generateButton(final TableType type, float buttonWidth, float buttonHeight) {
+		Table container = new Table();
 		Button button = new Button(Assets.getSpecificMarketButtonStyle(type));
 		button.addListener(new StrictInputListener() {
 			public void touch(InputEvent event) {
@@ -200,7 +209,46 @@ public class MainStoreScreen extends ActiveScreen {
 				switchTo(type);
 			}
 		});
-		return button;
+		container.add(button).expand().width(buttonWidth).height(buttonHeight);
+		
+		Table labelTable = new Table();
+		labelTable.setBackground(new TextureRegionDrawable(Assets.whiteAlpha));
+		
+		String text;
+		switch(type) {
+		case food:
+			text = Assets.strings.get("food_n_drink");
+			break;
+		case grill:
+			text = Assets.strings.get("grill_n_tools");
+			break;
+		case map:
+			text = Assets.strings.get("location");
+			break;
+		case ads:
+			text = Assets.strings.get("advertising");
+			break;
+		case jeweler:
+			text = Assets.strings.get("the_jeweler");
+			break;
+		case wheel:
+			text = Assets.strings.get("wheel_of_jade");
+			break;
+		default:
+			text = "";
+		}
+		
+		float padTop = KebabKing.getGlobalYFloat(0.000f);
+		float labelHeight = KebabKing.getGlobalYFloat(0.035f);
+		
+		Label title = new Label(text, Assets.generateLabelStyleUI(22, text));
+		title.setColor(FONT_COLOR);
+		labelTable.add(title);
+		container.row();
+		container.add(labelTable).padTop(-buttonHeight * 2 + labelHeight + padTop).width(buttonWidth).height(labelHeight);
+		container.toBack();
+		
+		return container;
 	}
 	
 	public void switchTo(Purchaseable p) {

@@ -3,7 +3,6 @@ package com.kebabking.game;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -32,6 +31,8 @@ import com.kebabking.game.StoreScreen.TableType;
 import com.kebabking.game.Purchases.MeatTypes;
 
 public class Assets {	
+	static HashMap<String, Language> languages;
+	
 	public final static float GRILL_ANIMATION_TIME = 1f;
 	//	final static int GRILL_ANIMATION_FRAMES = 1;
 	final static float CUSTOMER_ANIMATION_TIME = .15f;
@@ -52,15 +53,13 @@ public class Assets {
 	
 	final static Color RED = new Color(211/256.0f, 90/256.0f, 68/256.0f, 1f);
 	final static Color YELLOW = new Color(235/256.0f, 169/256.0f, 28/256.0f, 1f);
-
-	final static boolean HINDI = false;
 	
-	public final static String currencyChar = "¥"; // this is the char used for in-game money
-	final static String realCurrencyChar = "$"; // this is used for IAPs
+//	public static String currencyChar; // this is the char used for in-game money
+//	static String realCurrencyChar; // this is used for IAPs
 //	final static String lower = "abcdefghijklmnopqrstuvwxyz";
 //	final static String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 //	final static String alpha = lower + upper + "-";
-	static String nums = currencyChar;
+	static String nums;
 //	final static String allChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,!?@#%^&*()/1234567890:;-'\">+=_[]{}<" + currencyChar;
 //	final static String chars = "a";
 
@@ -216,6 +215,13 @@ public class Assets {
 	static Sound fatAmericanSound;
 	static Sound policemanSound;
 	
+	static Sound coinSound;
+	static Sound cashSound;
+	static Sound dayCompleteSound;
+	static Sound buttonClickSound;
+	static Sound levelUpSound;
+	static Sound unlockSound;
+	static Sound dayStartSound;
 	
 //	static NinePatch green9Patch;
 //	static NinePatch white9Patch;
@@ -245,16 +251,14 @@ public class Assets {
 	// This loads peppercorn screen and preps stuff for second loader
 	public static void preLoad() {
 		
-//TODO		
+// TODO		
 	}
 	
 	// static class containing relevant images, etc
 	// should prepare animations and set regions to the appropriate size
 	public static void load() {		
 		manager = new AssetManager();
-
-		loadLanguages();
-	
+		
 		// enqueue everything for loading, instead of just straight loading it. does it asynchronously.
 		manager.load("atlas1.atlas", TextureAtlas.class);
 
@@ -270,30 +274,52 @@ public class Assets {
 		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
 		china = new FreeTypeFontGenerator(Gdx.files.internal("data/CHINA.TTF"));
 		mangal = new FreeTypeFontGenerator(Gdx.files.internal("data/mangal.ttf"));
+		
+		loadLanguages();
 
 		styles = new HashMap<String, LabelStyle>();
 		charSets = new HashMap<String, HashSet<Character>>();
 	}
 	
+	public static Language getLanguage() {
+		return languages.get(KebabKing.lang);
+	}
+	
 	public static void loadLanguages() {
-
+		languages = new HashMap<String, Language>();
+		languages.put("en", new Language("en", worksans, worksansHeavy, worksansLight, china, false)); 
+		languages.put("hi", new Language("hi", mangal, mangal, mangal, mangal, true)); 
+		
 		// load languages
 		FileHandle baseFileHandle = Gdx.files.internal("data/bundles/strings");
-		Locale hindi = new Locale("hi");
 		
 //		manager.load("data/bundles/strings", I18NBundle.class);
 //		manager.load("data/bundles/strings_hi", I18NBundle.class);
 		
-		if (HINDI) 
-			strings = I18NBundle.createBundle(baseFileHandle, hindi);
-		//manager.get("data/bundles/strings_hi", I18NBundle.class);
-		else 
-			strings = I18NBundle.createBundle(baseFileHandle);
+		strings = I18NBundle.createBundle(baseFileHandle, languages.get(KebabKing.lang).locale);
+		
+//		currencyChar = strings.get("currency");
+//		realCurrencyChar = strings.get("currency_iaps");
+//		System.out.println("currency: " + currencyChar);
+		
 //strings = manager.get("data/bundles/strings", I18NBundle.class);
 
-		nums = nums + strings.get("nums");
+		nums = strings.get("nums") + getCurrency() + "." + "-";
+	}
+	
+	public static String getCurrency() {
+//		return "¥";
+		return strings.get("currency");
+	}
+	
+	public static String getIAPCurrency() {
+		return strings.get("currency_iaps");
 	}
 
+	public static String getIAPCurrencyAbbrev() {
+		return strings.get("currency_abbrev");
+	}
+	
 //	public static void createUI() {
 //		uiAtlas = new TextureAtlas(Gdx.files.internal("ui/ui-orange.atlas"));
 //
@@ -318,6 +344,15 @@ public class Assets {
 		yum = getSound("Yum.mp3");
 		veryYum = getSound("Very_satisfied.mp3");
 		trash = getSound("trash.mp3");
+		
+		// TODO convert all wavs to mp3
+		coinSound = getSound("coin1.wav");
+		cashSound = getSound("cash.mp3");
+		dayCompleteSound = getSound("success2.mp3");
+		buttonClickSound = getSound("button2.mp3");
+		levelUpSound = getSound("success1.mp3");
+		unlockSound = getSound("3up.mp3");
+		dayStartSound = getSound("success2.mp3");
 	}
 	
 	public static Sound getSound(String file) {
@@ -479,17 +514,11 @@ public class Assets {
 //		return generateLabelStyle(worksans, SummaryScreen.RED, size);		
 //	}
 	public static LabelStyle generateLabelStyleUI(int size, String chars) {
-		if (HINDI) {
-			return generateLabelStyle(mangal, size, chars);		
-		}
-		return generateLabelStyle(worksans, size, chars);		
+		return generateLabelStyle(getLanguage().regular, size, chars);		
 	}
 
 	public static LabelStyle generateLabelStyleUILight(int size, String chars) {
-		if (HINDI) {
-			return generateLabelStyle(mangal, size, chars);		
-		}
-		return generateLabelStyle(worksansLight, size, chars);
+		return generateLabelStyle(getLanguage().light, size, chars);
 //		return generateLabelStyle(worksansLight, MainStoreScreen.FONT_COLOR, size);
 	}
 	
@@ -498,10 +527,7 @@ public class Assets {
 //	}
 	
 	public static LabelStyle generateLabelStyleUIHeavy(int size, String chars) {
-		if (HINDI) {
-			return generateLabelStyle(mangal, size, chars);		
-		}
-		return generateLabelStyle(worksansHeavy, size, chars);
+		return generateLabelStyle(getLanguage().heavy, size, chars);
 	}
 	
 //	public static LabelStyle generateLabelStyleUIHeavyGreen(int size) {
@@ -511,10 +537,7 @@ public class Assets {
 //		return generateLabelStyle(china, Color.BLACK, size);
 //	}	
 	public static LabelStyle generateLabelStyleUIChina(int size, String chars) {
-		if (HINDI) {
-			return generateLabelStyle(mangal, size, chars);		
-		}
-		return generateLabelStyle(china, size, chars);
+		return generateLabelStyle(getLanguage().chinaFont, size, chars);
 	}
 	
 //	public static LabelStyle generateLabelStyleUIChinaRed(int size) {
@@ -601,7 +624,7 @@ public class Assets {
 			}
 		}
 		else {
-			System.out.println("styles doesn't contain this size");
+//			System.out.println("styles doesn't contain this size");
 //			else throw new java.lang.AssertionError("You need to register " + gen.toString() + " " + color.toString() + " " + size);
 //			System.out.println("Registering " + gen.toString() + " " + size + " for " + chars);
 			if (chars == null) {
@@ -692,10 +715,10 @@ public class Assets {
 		sun = getTextureRegion("background/SkyElement-04");
 		skyStar = getTextureRegion("background/SkyElement-05");
 
-		halfWheel = getTextureRegion("screens/wheel3");
+		halfWheel = getTextureRegion("screens/wheel7");
 		wheelPointer = getTextureRegion("screens/triangle");
 
-		marketShelf = getTextureRegion("market/Market_menu_element-02");
+		marketShelf = getTextureRegion("market/shelf");
 		marketTitle = getTextureRegion("market/Market_menu_element-08");
 		marketGreen = getTextureRegion("lightGreen");
 		marketDarkGreen = getTextureRegion("green");
@@ -740,10 +763,9 @@ public class Assets {
 		loadSound();
 	}
 	
-	public static CustomerTextures generateCustomerTextures(String prefix, float speed) {
+	public static CustomerTextures generateCustomerTextures(String prefix, float time) {
 		prefix = "customers/" + prefix;
 		CustomerTextures ct = new CustomerTextures();
-		float time = 1/speed * CUSTOMER_ANIMATION_TIME;
 		if (!regionExists(prefix)) return null;
 		
 		ct.idle = createAnimation(prefix, time, 2, 3, 1);
@@ -752,7 +774,7 @@ public class Assets {
 		ct.left = createAnimationWithRepeatFirstFlipped(prefix, time, 1, 3);
 		ct.up = createAnimationWithRepeatFirst(prefix, time, 3, 3);
 		ct.down = createAnimationWithRepeatFirst(prefix, time, 2, 3);
-		if (ct.idle == null || ct.right == null || ct.up == null || ct.down == null)
+		if (ct.idle == null || ct.right == null || ct.left == null || ct.up == null || ct.down == null)
 			throw new java.lang.NullPointerException();
 		return ct;
 	}
@@ -915,15 +937,17 @@ public class Assets {
 //		return tbs;
 		switch(type) {
 			case food:
-				return getStyleFromRegion("market/Market-menu_element-03");
+				return getStyleFromRegion("market/food_drink");
 			case grill:
-				return getStyleFromRegion("market/Market-menu_element-04");
+				return getStyleFromRegion("market/grill");
 			case map:
-				return getStyleFromRegion("market/Market-menu_element-05");
+				return getStyleFromRegion("market/real_estate");
 			case ads:
-				return getStyleFromRegion("market/Market-menu_element-06");
-			case jade:
-				return getStyleFromRegion("market/jadeBox");
+				return getStyleFromRegion("market/promo");
+			case jeweler:
+				return getStyleFromRegion("market/Jeweler_bo");
+			case wheel:
+				return getStyleFromRegion("market/wheel_solo_stand");
 			case vanity:
 				return null;
 			default:

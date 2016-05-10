@@ -53,7 +53,8 @@ public class AdsListener implements RewardedVideoListener {
     @Override
     public void onRewardedVideoAdRewarded(Placement placement) {
         System.out.println("onRewardedVideoAdRewarded!");
-        AdsHandler.handleAdJustWatched();
+        if (androidLauncher.game != null && androidLauncher.game.profile != null)
+            AdsHandler.handleAdJustWatched();
     }
 
     @Override

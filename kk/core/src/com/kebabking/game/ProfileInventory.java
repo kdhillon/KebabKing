@@ -91,6 +91,10 @@ public class ProfileInventory {
 			meatTypes.unlock(MeatTypes.Type.values[2]);
 		}
 		
+		// do this to make sure no lingering ad campaigns are drawn
+		if (adCampaign.getActive() != null)
+			adCampaign.update();
+		
 		this.profile = profile;
 	}
 
@@ -153,6 +157,8 @@ public class ProfileInventory {
 		if (type.consumable) throw new java.lang.AssertionError();
 		if (!canAffordPurchase(type, item)) return false;
 		if (type.isUnlocked(item)) return false;
+		
+		SoundManager.playUnlock();
 		
 		// unlock item
 		type.unlock(item);
@@ -247,13 +253,15 @@ public class ProfileInventory {
 
 	// unlock second meat option without asking player
 	public void forceSecondBoxUpdate() {
-		System.out.println("");
+		System.out.println("forcing second box update");
 		meatTypes.unlock(MeatTypes.Type.values[1]);
+//		profile.master.store.storeScreen.foodTable.updatePurchaseableForUnlock(MeatTypes.Type.values[1]);
 //		meatTypes.addToSelected(1);
 	}
 	
 	public void forceThirdBoxUpdate() {
 		meatTypes.unlock(MeatTypes.Type.values[2]);
+//		profile.master.store.storeScreen.foodTable.updatePurchaseableForUnlock(MeatTypes.Type.values[2]);
 //		meatTypes.addToSelected(1);
 	}
 

@@ -20,7 +20,6 @@ public class MainMenuScreen extends ActiveScreen {
 	static final float DISPOSE_SPLASH_TIME = 1;
 
 	Table table;
-
 	Table startDay;
 	//	Image mute;
 	//	Image connectToFB;
@@ -235,6 +234,8 @@ public class MainMenuScreen extends ActiveScreen {
 			DrawUI.launchPoliceNotification();
 			return;
 		}
+		
+		SoundManager.playDayStart();
 
 		this.fadeout = true;
 		uiStage.addAction(Actions.fadeOut(FADEOUT_TIME));

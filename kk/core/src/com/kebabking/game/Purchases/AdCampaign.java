@@ -5,14 +5,11 @@ import static com.kebabking.game.Customer.CustomerType.FARMER;
 import static com.kebabking.game.Customer.CustomerType.FAT_MAN;
 import static com.kebabking.game.Customer.CustomerType.FOREIGNER;
 import static com.kebabking.game.Customer.CustomerType.GIRL;
-import static com.kebabking.game.Customer.CustomerType.MAN;
-import static com.kebabking.game.Customer.CustomerType.OLD_MAN;
-import static com.kebabking.game.Customer.CustomerType.OLD_WOMAN;
+import static com.kebabking.game.Customer.CustomerType.NORMAL;
+import static com.kebabking.game.Customer.CustomerType.OLDIE;
 import static com.kebabking.game.Customer.CustomerType.POLICE;
 import static com.kebabking.game.Customer.CustomerType.SOLDIER;
 import static com.kebabking.game.Customer.CustomerType.STUDENT;
-import static com.kebabking.game.Customer.CustomerType.TOURIST;
-import static com.kebabking.game.Customer.CustomerType.WOMAN;
 
 import com.kebabking.game.Customer;
 import com.kebabking.game.ProfileInventory;
@@ -89,14 +86,14 @@ public class AdCampaign extends PurchaseTypeConsumable {
 	public static class Campaign extends SimpleConsumable {
 		public static final Campaign[] values = new Campaign[] {
 					// name,		round,	jade, 	time, description
-		new Campaign ("sign",		3,	2,	3,		300,	Boost.TINY,		all, "sign", CampaignSpecial.SIGN),
+		new Campaign ("sign",		3,	2,	3,		300,		Boost.TINY,		all, "sign", CampaignSpecial.SIGN),
 		new Campaign ("posters", 	7,	3,	5, 		300,	Boost.SMALL,		new Customer.CustomerType[] {POLICE, SOLDIER}, "poster"),
 		new Campaign ("newspapers",	9,	4,	5,	 	300,	Boost.SMALL, 		new Customer.CustomerType[] {BUSINESSMAN, FARMER}, "newspaper"), 
-		new Campaign ("radio",		12,	5,	10,		300,	Boost.MEDIUM, 		new Customer.CustomerType[] {OLD_MAN, OLD_WOMAN}, "radio"),
+		new Campaign ("radio",		12,	5,	10,		300,	Boost.MEDIUM, 		new Customer.CustomerType[] {OLDIE}, "radio"),
 		new Campaign ("online", 	16,	7,	10,		300,	Boost.MEDIUM,		new Customer.CustomerType[] {STUDENT, GIRL}, "online"),
 		new Campaign ("tv",			20,	8,	15,		300,	Boost.LARGE,		new Customer.CustomerType[] {FAT_MAN},		 "tv"),
-		new Campaign ("tourist",	22,	10,	15,		300,	Boost.LARGE,		new Customer.CustomerType[] {FOREIGNER, TOURIST}, "tourist"),
-		new Campaign ("tshirts",	30,	12,	25,		300,	Boost.HUGE,			new Customer.CustomerType[] {MAN, WOMAN},	"tshirt", CampaignSpecial.TSHIRTS),
+		new Campaign ("tourist",	22,	10,	15,		300,	Boost.LARGE,		new Customer.CustomerType[] {FOREIGNER}, "tourist"),
+		new Campaign ("tshirts",	30,	12,	25,		300,	Boost.HUGE,			new Customer.CustomerType[] {NORMAL},	"tshirt", CampaignSpecial.TSHIRTS),
 		new Campaign ("selfie",		34,	14,	25,		300,	Boost.HUGE,		all,	 "selfie", CampaignSpecial.SELFIE),
 		new Campaign ("plane",		48,	17,	25,		300,	Boost.INSANE,		all,	 "plane", CampaignSpecial.PLANE),
 		};
@@ -178,7 +175,7 @@ public class AdCampaign extends PurchaseTypeConsumable {
 	};
 	
 	public Campaign getCurrent() {
-		return (Campaign) this.getCurrentSelected();
+		return (Campaign) this.getFirstSelected();
 	}
 	
 	public boolean isPlane() {
@@ -230,7 +227,7 @@ public class AdCampaign extends PurchaseTypeConsumable {
 		this.consumable = true;
 	}
 	
-	public void reset() {
-		this.unlocked.clear();
-	}
+//	public void reset() {
+//		this.unlocked.clear();
+//	}
 }

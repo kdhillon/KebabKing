@@ -6,19 +6,15 @@ import static com.kebabking.game.Customer.CustomerType.FAT_MAN;
 import static com.kebabking.game.Customer.CustomerType.FOREIGNER;
 import static com.kebabking.game.Customer.CustomerType.GIRL;
 import static com.kebabking.game.Customer.CustomerType.JEWELER;
-import static com.kebabking.game.Customer.CustomerType.MAN;
-import static com.kebabking.game.Customer.CustomerType.OLD_MAN;
-import static com.kebabking.game.Customer.CustomerType.OLD_WOMAN;
+import static com.kebabking.game.Customer.CustomerType.NORMAL;
+import static com.kebabking.game.Customer.CustomerType.OLDIE;
 import static com.kebabking.game.Customer.CustomerType.POLICE;
 import static com.kebabking.game.Customer.CustomerType.SOLDIER;
 import static com.kebabking.game.Customer.CustomerType.STUDENT;
-import static com.kebabking.game.Customer.CustomerType.TOURIST;
-import static com.kebabking.game.Customer.CustomerType.WOMAN;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.kebabking.game.Assets.CustomerTextures;
@@ -94,6 +90,8 @@ public class Customer implements Comparable<Customer> {
 	
 	Order order; 
 	float waitTime; 		// amount of time this customer will wait, counts down
+	int currentPatience;	// counts down from 5 to 1
+	
 	float originalWaitTime;	// original wait time, fixed
 	float position_x_range; 		// position along path between 0 and 1
 	float position_y_full; 		// position along path between 0 and height
@@ -115,16 +113,19 @@ public class Customer implements Comparable<Customer> {
 	boolean policeShutdown; // if this is a policeman who is going to shut down stand
 
 	boolean wantsChuanr;
-	
-	boolean altTexture;
-	
-	boolean specialTexture;
+		
+	boolean female;
+//	boolean altTexture;
+//	boolean specialTexture;
+	CustomerTextures animations;
 	
 	boolean drawArrow;
 	
 	float selfieTimer;
 	float selfieWidth;
 	float selfieHeight;
+	
+	float stompTimer;
 	
 	// reference to the parent cm.
 	transient CustomerManager cm;
@@ -139,46 +140,37 @@ public class Customer implements Comparable<Customer> {
 
 	public enum CustomerType {
 					// pat, 	min,max, 	beer, 	speed
-		OLD_MAN(		1, 		1, 	5, 		.2f, 	.55f, "OldMan", Assets.strings.get("old_men")),
-		OLD_WOMAN(		1.2f, 	1,	3, 		.05f, 	.55f, "OldWoman", Assets.strings.get("old_women")),
-		STUDENT(		.8f, 	2,	8, 		.8f, 	.8f, "Student", Assets.strings.get("students")), //
-		FAT_MAN(		1, 		3, 	9, 		.6f,	 .5f, "FatMan", Assets.strings.get("fat_men")), //
-		WOMAN(			1, 		2,	4, 		.2f, 	.7f, "Woman", Assets.strings.get("women")),
-		MAN(			1, 		2, 	7, 		.5f, 	.55f, "Man", Assets.strings.get("men")),
-		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, "Businessman", Assets.strings.get("businessmen")),
-		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, "Policeman", Assets.strings.get("police")),
-		SOLDIER(		.8f, 	2,	7, 		.4f, 	.53f, "Soldier", Assets.strings.get("soldiers")),
-		GIRL(			1f, 	2, 	6, 		.05f, 	.75f, "Girl", Assets.strings.get("girls")),
-		TOURIST(		1f, 	3, 	9, 		.4f, 	.53f, "FatAmerican", Assets.strings.get("tourists")),
-		FOREIGNER(		.8f, 	3, 	8, 		.5f, 	.75f, "American", Assets.strings.get("foreigners")),//
-		FARMER(			.8f, 	2, 	8, 		.3f, 	.7f, "Farmer", Assets.strings.get("farmers")),//
-		JEWELER(		1f, 	1, 	8, 		.2f, 	.6f, "Jeweler", Assets.strings.get("jewelers")),//
+		OLDIE(		1, 		1, 	5, 		.2f, 	.55f, Gender.EITHER, "Oldie", Assets.strings.get("old_folks")),
+		STUDENT(		.8f, 	2,	8, 		.8f, 	.8f, Gender.MALE, "Student", Assets.strings.get("students")), //
+		FAT_MAN(		1, 		3, 	9, 		.6f,	 .5f, Gender.MALE, "FatMan", Assets.strings.get("fat_men")), //
+		NORMAL(			1, 		2,	4, 		.2f, 	.7f, Gender.EITHER, "Normal", Assets.strings.get("normal_people")),
+		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, Gender.MALE, "Businessman", Assets.strings.get("businessmen")),
+		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, Gender.MALE, "Policeman", Assets.strings.get("police")),
+		SOLDIER(		.8f, 	2,	7, 		.4f, 	.53f, Gender.MALE, "Soldier", Assets.strings.get("soldiers")),
+		GIRL(			1f, 	2, 	6, 		.05f, 	.75f, Gender.FEMALE, "Girl", Assets.strings.get("girls")),
+		FOREIGNER(		1f, 	3, 	9, 		.4f, 	.53f, Gender.EITHER, "Foreigner", Assets.strings.get("foreigners")),
+		FARMER(			.8f, 	2, 	8, 		.3f, 	.7f, Gender.MALE,"Farmer", Assets.strings.get("farmers")),//
+		JEWELER(		1f, 	1, 	8, 		.2f, 	.6f, Gender.MALE,"Jeweler", Assets.strings.get("jewelers")),//
 ;
+		enum Gender {MALE, FEMALE, EITHER};
 
-		Animation walkUp;
-		Animation walkDown;
-		Animation walkLeft;
-		Animation walkRight;
-		Animation idle;
+		CustomerTextures male;
+		CustomerTextures female;
 		
-		Animation walkUpAlt;
-		Animation walkDownAlt;
-		Animation walkLeftAlt;
-		Animation walkRightAlt;
-		Animation idleAlt;
+		CustomerTextures male_alt;
+		CustomerTextures female_alt;
 		
-		Animation walkUpSpc;
-		Animation walkDownSpc;
-		Animation walkLeftSpc;
-		Animation walkRightSpc;
-		Animation idleSpc;
+		CustomerTextures male_spc;
+		CustomerTextures female_spc;
 
 		float walkSpeed; // just for looks
+		float animationTime;
 		float patienceFactor;
 		int minOrder;
 		int maxOrder;
 		float beerFactor;
 		public String plural;
+		Gender gender;
 				
 		/**
 		 * @param patienceFactor: relative amount of time they're willing to wait, a factor
@@ -195,41 +187,48 @@ public class Customer implements Comparable<Customer> {
 		//			this.beerFactor = beerFactor;	
 		//		}
 
-		private CustomerType(float patienceFactor, int minOrder, int maxOrder, float beerFactor, float speed, String prefix, String plural) {
-			CustomerTextures ct = Assets.generateCustomerTextures(prefix, speed);
-			this.idle = ct.idle;
-			this.walkUp = ct.up;
-			this.walkDown = ct.down;
-			this.walkLeft = ct.left;
-			this.walkRight = ct.right;
-		
-			CustomerTextures ctAlt = Assets.generateCustomerTextures(prefix + "_alt", speed);
-			if (ctAlt != null) {
-				this.idleAlt = ctAlt.idle;
-				this.walkUpAlt = ctAlt.up;
-				this.walkDownAlt = ctAlt.down;
-				this.walkLeftAlt = ctAlt.left;
-				this.walkRightAlt = ctAlt.right;
+		private CustomerType(float patienceFactor, int minOrder, int maxOrder, float beerFactor, float speed, Gender gender, String prefix, String plural) {
+			this.animationTime = 1/speed * Assets.CUSTOMER_ANIMATION_TIME;
+			if (gender == Gender.EITHER) {
+				this.male = Assets.generateCustomerTextures(prefix + "_m", animationTime);
+				this.male_alt = Assets.generateCustomerTextures(prefix + "_m_alt", animationTime);
+				this.male_spc = Assets.generateCustomerTextures(prefix + "_m_spc", animationTime);
+				this.female = Assets.generateCustomerTextures(prefix + "_f", animationTime);
+				this.female_alt = Assets.generateCustomerTextures(prefix + "_f_alt", animationTime);
+				this.female_spc = Assets.generateCustomerTextures(prefix + "_f_spc", animationTime);
 			}
-			
-			CustomerTextures ctSpc = Assets.generateCustomerTextures(prefix + "_spc", speed);
-			if (ctSpc != null) {
-				this.idleSpc = ctSpc.idle;
-				this.walkUpSpc = ctSpc.up;
-				this.walkDownSpc = ctSpc.down;
-				this.walkLeftSpc = ctSpc.left;
-				this.walkRightSpc = ctSpc.right;
+			else if (gender == Gender.MALE) {
+				this.male = Assets.generateCustomerTextures(prefix, animationTime);
+				this.male_alt = Assets.generateCustomerTextures(prefix + "_alt", animationTime);
+				this.male_spc = Assets.generateCustomerTextures(prefix + "_spc", animationTime);
 			}
-			
+			else if (gender == Gender.FEMALE) {
+				this.female = Assets.generateCustomerTextures(prefix, animationTime);
+				this.female_alt = Assets.generateCustomerTextures(prefix + "_alt", animationTime);
+				this.female_spc = Assets.generateCustomerTextures(prefix + "_spc", animationTime);
+			}
+	
 			this.walkSpeed = speed;
+
 			this.patienceFactor = patienceFactor;
 			this.minOrder = minOrder;
 			this.maxOrder = maxOrder;
 			this.beerFactor = beerFactor;	
 			this.plural = plural;
+			
+			this.gender = gender;
+		}
+		
+		public boolean hasAlt(boolean female) {
+			if (female) return this.female_alt != null;
+			else return this.male_alt != null;
+		}
+		public boolean hasSpc(boolean female) {
+			if (female) return this.female_spc != null;
+			else return this.male_spc != null;
 		}
 	}
-	static final CustomerType[] genOrder = 	{MAN, FAT_MAN, WOMAN, OLD_MAN, OLD_WOMAN, STUDENT, GIRL, TOURIST, FOREIGNER, POLICE, SOLDIER, BUSINESSMAN, FARMER, JEWELER};
+	static final CustomerType[] genOrder = 	{NORMAL, FAT_MAN, OLDIE, STUDENT, GIRL, FOREIGNER, POLICE, SOLDIER, BUSINESSMAN, FARMER, JEWELER};
 	
 	public Customer(float currentWaitFactor, CustomerManager cm, boolean active) {
 		this.action = CustomerAction.PASS_START;
@@ -281,16 +280,41 @@ public class Customer implements Comparable<Customer> {
 			}
 		}
 		
-		if (type.idleAlt != null) {
-			if (type.walkLeftAlt == null) throw new java.lang.AssertionError();
+
+		switch(type.gender) {
+		case MALE: 
+			this.female = false;
+			break;
+		case FEMALE:
+			this.female = true;
+			break;
+		case EITHER: 
+			this.female = Math.random() < 0.5;
+			break;
 		}
 		
-		if (Math.random() < ALT_PROB && type.idleAlt != null) {
-			this.altTexture = true;
+//		if (type.idleAlt != null) {
+//			if (type.walkLeftAlt == null) throw new java.lang.AssertionError();
+//		}
+
+		if (this.type.hasSpc(female) && cm.profile.inventory.adCampaign.isTshirts()) {
+			if (female) this.animations = type.female_spc;
+			else this.animations = type.male_spc;
 		}
+		if (Math.random() < ALT_PROB && type.hasAlt(female)) {
+			if (female) this.animations = type.female_alt;
+			else this.animations = type.male_alt;
+
+		}
+		else {
+			if (female) this.animations = type.female;
+			else this.animations = type.male;
+		}
+		if (animations == null) {
+			System.out.println(type);
+			System.out.println("female: " + female);
 		
-		if (this.type.idleSpc != null && cm.profile.inventory.adCampaign.isTshirts()) {
-			this.specialTexture = true;
+			throw new java.lang.AssertionError();	
 		}
 	}
 
@@ -362,13 +386,16 @@ public class Customer implements Comparable<Customer> {
 		}
 
 		if (this.action == CustomerAction.WAIT) {
-			this.waitTime -= delta;
+			updatePatience(delta);
 			if (this.waitTime < 0 && !TutorialEventHandler.shouldDisableRageLeave()) startLeaving();
 			else if (this.position_y_full > targetY){
 				this.position_y_full -= KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
 			}
 			else if (this.position_y_full < targetY) {
 				this.position_y_full = targetY;
+			}
+			if (stompTimer > 0) {
+				this.stompTimer -= delta;
 			}
 		}
 		else this.order = null;
@@ -410,58 +437,32 @@ public class Customer implements Comparable<Customer> {
 			time = 0;
 		}
 		
-		// default
-		if (type.walkDown == null) toDraw = type.idle.getKeyFrame(0);
-		else {
-			if (this.specialTexture) {
-				switch (orient) {
-				case UP:
-					toDraw = type.walkUpSpc.getKeyFrame(time);
-					break;
-				case DOWN:
-					if (Math.abs(targetY - position_y_full) < 4) toDraw = type.idleSpc.getKeyFrame(time);
-					else toDraw = type.walkDownSpc.getKeyFrame(time);
-					break;
-				case LEFT:
-					toDraw = type.walkLeftSpc.getKeyFrame(time);
-					break;
-				default:
-					toDraw = type.walkRightSpc.getKeyFrame(time);
+		switch (orient) {
+		case UP:
+			toDraw = animations.up.getKeyFrame(time);
+			break;
+		case DOWN:
+			if ((Math.abs(targetY - position_y_full) < 4 || this.action == CustomerAction.WAIT)) {
+				if (stompTimer > 0) {					
+					toDraw =  animations.down.getKeyFrame(stompTimer);
 				}
-			}
-			else if (this.altTexture) {
-				switch (orient) {
-				case UP:
-					toDraw = type.walkUpAlt.getKeyFrame(time);
-					break;
-				case DOWN:
-					if (Math.abs(targetY - position_y_full) < 4) toDraw = type.idleAlt.getKeyFrame(time);
-					else toDraw = type.walkDownAlt.getKeyFrame(time);
-					break;
-				case LEFT:
-					toDraw = type.walkLeftAlt.getKeyFrame(time);
-					break;
-				default:
-					toDraw = type.walkRightAlt.getKeyFrame(time);
-				}
+				else 
+					toDraw =  animations.idle.getKeyFrame(time);
 			}
 			else {
-				switch (orient) {
-				case UP:
-					toDraw = type.walkUp.getKeyFrame(time);
-					break;
-				case DOWN:
-					if (Math.abs(targetY - position_y_full) < 4) toDraw = type.idle.getKeyFrame(time);
-					else toDraw = type.walkDown.getKeyFrame(time);
-					break;
-				case LEFT:
-					toDraw = type.walkLeft.getKeyFrame(time);
-					break;
-				default:
-					toDraw = type.walkRight.getKeyFrame(time);
-				}
+				toDraw =  animations.down.getKeyFrame(time);
 			}
+			break;
+		case LEFT:
+			toDraw =  animations.left.getKeyFrame(time);
+			break;
+		case RIGHT:
+			toDraw =  animations.right.getKeyFrame(time);
+			break;
+		default:
+			toDraw = animations.right.getKeyFrame(time);
 		}
+		
 
 		int x_pos_orig = (int) (KebabKing.getGlobalX(this.position_x_range));
 		int y_pos_orig = (int) (this.position_y_full);
@@ -544,6 +545,28 @@ public class Customer implements Comparable<Customer> {
 	
 	public float getStrictTop() {
 		return getStrictBottom() + highlightHeight;
+	}
+	
+	public void updatePatience(float delta) {
+		this.waitTime -= delta;
+		if (waitTime < 0) return;
+		if (order == null) return;
+		
+		float adjustedMax = originalWaitTime - order.calcMinCookTime();
+	
+		float waitTimeFactor = waitTime / adjustedMax;
+		waitTimeFactor = Math.min(1, waitTimeFactor);
+//		System.out.println(waitTimeFactor + " " + (int) (waitTimeFactor * 5 + 0.49));
+		
+		if (this.currentPatience != (int) (waitTimeFactor * 5 + 0.49)) {
+			this.currentPatience = (int) (waitTimeFactor * 5 + 0.49);			
+			stompFeet(5-currentPatience);
+		}
+	}
+	
+	public void stompFeet(int times) {
+		System.out.println("STOMPING FEET");
+		this.stompTimer = 2 * times * this.type.animationTime;
 	}
 	
 	public void drawHappyness(SpriteBatch batch, int x_pos, int y_pos) {
@@ -644,7 +667,7 @@ public class Customer implements Comparable<Customer> {
 		
 		if (this.policeShutdown) {
 			
-			if (cm.totalPeopleInLines() == CustomerManager.MAX_IN_LINE) {
+			if (cm.peopleInLine[this.lineChoice] >= CustomerManager.MAX_IN_LINE) {
 				cm.master.shutdownStand();
 			}
 			else {
@@ -754,19 +777,11 @@ public class Customer implements Comparable<Customer> {
 	
 	public int calculateSatisfaction() {
 		// increase leniency by increasing this
-		float SAT_BOOST = 1.0f;
+		float SAT_BOOST = 1.03f;
 		
 		// or by increasing base customer wait time
 		
-		float minCookTime = order.calcMinCookTime();
-		float maxWait = originalWaitTime;
-		
-		float adjustedMax = maxWait - minCookTime;
-	
-		float waitTimeFactor = waitTime / adjustedMax;
-		waitTimeFactor = Math.min(1, waitTimeFactor);
-		
-		float rawSat = waitTimeFactor * 5;
+		float rawSat = currentPatience;
 		
 		// boost raw sat so even if you take forever, they wont be furious
 		System.out.println("raw sat pre adjust: " + rawSat);
@@ -926,6 +941,7 @@ public class Customer implements Comparable<Customer> {
 			return;
 		}
 		
+		this.currentPatience = 5;
 		SoundManager.playOrderSound(this.type);
 
 		this.order = new Order(this.type, this.cm.master.kitchen);

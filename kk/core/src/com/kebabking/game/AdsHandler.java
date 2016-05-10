@@ -35,9 +35,10 @@ public class AdsHandler {
     	}
     	else {
     		// launch wheel table  
-    		master.switchToJadeWheelScreen();
+    		master.profile.letSpin();
     	}
-        // the problem is that this is called before onResume, simple fix is use a boolean flag.
+
+    	// the problem is that this is called before onResume, simple fix is use a boolean flag.
     	Manager.analytics.sendEventHit("Ads", "ad completed");
 		System.out.println("Ad completed!");
 		

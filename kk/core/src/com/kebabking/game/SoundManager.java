@@ -21,7 +21,7 @@ public class SoundManager {
 	static boolean sizzlePlaying = false;
 	static boolean musicPlaying = false;
 	
-	static float orderVolume;
+	static float soundsVolume;
 	
 	public static void init(KebabKing masterIn) {
 		master = masterIn;
@@ -53,14 +53,14 @@ public class SoundManager {
 		System.out.println("Mute sound");
 		getSettings().muteSound = true;
 		Assets.sizzle.setVolume(0, MUTE_VOL);
-		orderVolume = MUTE_VOL;
+		soundsVolume = MUTE_VOL;
 	}
 	
 	public static void unmuteSound() {
 		System.out.println("unMute sound");
 		getSettings().muteSound = false;
 		Assets.sizzle.setVolume(0, SIZZLE_VOL);
-		orderVolume = ORDER_VOL;
+		soundsVolume = ORDER_VOL;
 	}
 	
 	public static void muteMusic() {
@@ -74,7 +74,38 @@ public class SoundManager {
 		getSettings().muteMusic = false;
 		Assets.mainTheme.setVolume(MUSIC_VOL);
 	}
+	
+	public static void playCoin() {
+		Assets.coinSound.play(soundsVolume);
+	}
+	
+	public static void playCash() {
+		Assets.cashSound.play(soundsVolume * 0.7f);
+	}
 
+	public static void playDayComplete() {
+		Assets.dayCompleteSound.play(soundsVolume);
+	}
+	
+	public static void playShutdown() {
+		Assets.policemanSound.play(soundsVolume);
+	}
+	
+	public static void playDayStart() {
+		Assets.dayStartSound.play(soundsVolume);
+	}
+	
+	public static void playLevelUp() {
+		Assets.levelUpSound.play(soundsVolume);
+	}
+	
+	public static void playUnlock() {
+		Assets.unlockSound.play(soundsVolume);
+	}
+	
+	public static void playButtonClick() {
+		Assets.buttonClickSound.play(soundsVolume);
+	}
 	
 	public static void pauseAll() {
 		Assets.mainTheme.pause();
@@ -110,14 +141,14 @@ public class SoundManager {
 		case FOREIGNER:
 			toPlay = Assets.danSound;
 			break;
-		case TOURIST:
-			toPlay = Assets.fatAmericanSound;
-			break;
+//		case FOREIGNER:
+//			toPlay = Assets.fatAmericanSound;
+//			break;
 		default:
 			return;
 		}
 		
-		toPlay.play(orderVolume);
+		toPlay.play(soundsVolume);
 	}
 	
 	public static void playLeavingSound(Customer.CustomerType type, int satisfaction, boolean sick) {
@@ -147,6 +178,6 @@ public class SoundManager {
 		if (sick) toPlay = Assets.sick;
 
 		if (toPlay != null)
-			toPlay.play(orderVolume);
+			toPlay.play(soundsVolume);
 	}
 }

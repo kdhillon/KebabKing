@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 //import com.badlogic.gdx.utils.Align;
@@ -60,7 +61,8 @@ public class StoreScreen extends ActiveScreen {
 	StoreSubtable grillTable;
 	StoreSubtable mapTable;
 	StoreSubtable adsTable;
-	JewelerTable jadeTable;
+	JewelerTable jewelerTable;
+	JadeWheelTable wheelTable;
 	Table vanityTable;
 	
 	// tables should be created only when they're first opened.
@@ -68,7 +70,7 @@ public class StoreScreen extends ActiveScreen {
 	//		subsequent ones can be initialized when they are switched to?
 	// otherwise they should be null
 	
-	public enum TableType {food, grill, map, ads, jade, vanity}; // keeps track of which table is currently selected
+	public enum TableType {food, grill, map, ads, jeweler, wheel, vanity}; // keeps track of which table is currently selected
 
 	TableType currentTable;
 
@@ -92,6 +94,8 @@ public class StoreScreen extends ActiveScreen {
 	//	int titleHeight;
 	float buttonWidth, buttonHeight;
 
+	Table currentBack;
+	
 	TextButtonStyle tbs;
 //
 //	PurchaseType[] types;
@@ -106,7 +110,7 @@ public class StoreScreen extends ActiveScreen {
 //	Table currentPurchaseableTable;
 //	Table[] purchaseableTables;
 	
-	PurchaseType[] foodTypes = new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.drinkQuality, master.profile.inventory.skewerType};
+	PurchaseType[] foodTypes = new PurchaseType[] {master.profile.inventory.meatTypes, master.profile.inventory.meatQuality, master.profile.inventory.drinkQuality, master.profile.inventory.skewerType};
 	PurchaseType[] grillTypes = new PurchaseType[] {master.profile.inventory.grillSize, master.profile.inventory.grillType, master.profile.inventory.grillStand};
 	PurchaseType[] locationTypes = new PurchaseType[] {master.profile.inventory.locationType};
 	PurchaseType[] adTypes = new PurchaseType[] {master.profile.inventory.adCampaign};
@@ -218,9 +222,13 @@ public class StoreScreen extends ActiveScreen {
 //		case vanity:
 //			vanityTable = createTable("Vanity", new PurchaseType[] {master.profile.inventory.decorations, });
 //			break;
-		case jade:
+		case wheel:
 			//coinsTable = createTable("Coins", new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.grillSpecs.getType(), master.profile.inventory.grillSpecs.getGrillSize()});
-			jadeTable = new JewelerTable(master);
+			wheelTable = new JadeWheelTable(master);
+			break;
+		case jeweler:
+			//coinsTable = createTable("Coins", new PurchaseType[] {master.profile.inventory.meatQuality, master.profile.inventory.grillSpecs.getType(), master.profile.inventory.grillSpecs.getGrillSize()});
+			jewelerTable = new JewelerTable(master);
 			break;
 		default:
 			break;
@@ -230,7 +238,7 @@ public class StoreScreen extends ActiveScreen {
 	@Override
 	public void render(float delta) {
 //		System.out.println("rendering store table");
-		if (this.currentTable == TableType.jade) 
+		if (this.currentTable == TableType.jeweler || this.currentTable == TableType.wheel) 
 			super.renderGrayAlpha(delta, 0.8f);
 		else
 			super.renderWhiteAlpha(delta, DrawUI.WHITE_ALPHA);
@@ -247,6 +255,10 @@ public class StoreScreen extends ActiveScreen {
 	public void update(float delta, boolean ff) {
 		super.update(delta, ff);
 		uiStage.act(delta);
+		
+		if (currentTable == TableType.wheel) {
+			wheelTable.update(delta, ff);
+		}
 	}
 
 //	public void drawStore(SpriteBatch batch) {
@@ -337,6 +349,7 @@ public class StoreScreen extends ActiveScreen {
 		Manager.analytics.sendEventHit("Store", "Switch To", "Main");
 		this.currentTable = null;
 		master.setScreen(mainStoreScreen);
+		wheelTable.hide();
 	}
 	
 //	public void preparePurchaseTypes(PurchaseType[] types) {
@@ -385,8 +398,16 @@ public class StoreScreen extends ActiveScreen {
 			Manager.analytics.sendScreenHit("Advertisements");
 			adsTable.updateCurrent();
 			break;
-		case jade:
-			newTable = jadeTable;
+		case wheel:
+			newTable = wheelTable;
+			wheelTable.show();
+			Manager.analytics.sendScreenHit("Jade Wheel");
+//			name = "Coins";
+			break;
+			
+			// TODO make wheel table parallel to jade table
+		case jeweler:
+			newTable = jewelerTable;
 			Manager.analytics.sendScreenHit("Jeweler");
 //			name = "Coins";
 			break;
@@ -395,7 +416,10 @@ public class StoreScreen extends ActiveScreen {
 //			name = "Vanity";
 			break;
 		}
-		
+	
+		if (newTable != wheelTable) wheelTable.hide();
+			
+			
 		mainTable.clear();
 		mainTable.row();
 		//		table.add(title).height(titleHeight);
@@ -403,7 +427,7 @@ public class StoreScreen extends ActiveScreen {
 		mainTable.add(newTable).expandY().top();
 		mainTable.row();
 		
-		if (newTable == jadeTable) {
+		if (newTable == jewelerTable || newTable == wheelTable) {
 //			mainTable.setSize(KebabKing.getWidth(), KebabKing.getHeight());
 			mainTable.setBackground(new TextureRegionDrawable(Assets.getTextureRegion("market/Jeweler-12")));
 		}
@@ -412,9 +436,8 @@ public class StoreScreen extends ActiveScreen {
 			mainTable.setBackground(nu);
 		}
 
-
-		Table back = newBackButton();
-		mainStoreScreen.addBackButton(back, mainTable);
+		currentBack = newBackButton();
+		mainStoreScreen.addBackButton(currentBack, mainTable);
 
 		//		Button back = newBackButton();
 		//		//		table.debugAll();
@@ -433,6 +456,18 @@ public class StoreScreen extends ActiveScreen {
 		StoreSubtable s = typeTables.get(p);
 		s.switchToPurchaseType(type);
 	}
+	
+	// disable back button
+	public void disableBack() {
+		currentBack.setTouchable(Touchable.disabled);
+		currentBack.setVisible(false);
+	}
+	
+	// enable back button
+	public void enableBack() {
+		currentBack.setTouchable(Touchable.enabled);
+		currentBack.setVisible(true);	
+	}
 
 	public Profile getProfile() {
 		return master.profile;
@@ -441,5 +476,6 @@ public class StoreScreen extends ActiveScreen {
 	public void campaignEnded() {
 		System.out.println("campaign ended, updating purchase type table for ad campaign");
 		adsTable.onCampaignEnded(master.profile.inventory.adCampaign);
+//		master.save();
 	}
 }

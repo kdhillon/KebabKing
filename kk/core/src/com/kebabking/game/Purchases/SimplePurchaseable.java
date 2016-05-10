@@ -40,7 +40,7 @@ public class SimplePurchaseable implements Purchaseable {
 		this.textureName = iconFull;
 		this.unlockAtLevel = unlockAtLevel;
 		this.unlockWithLocation = unlockWithLocation;
-		System.out.println("setting unlockwithlocation to " + this.unlockWithLocation + " for " + name);
+//		System.out.println("setting unlockwithlocation to " + this.unlockWithLocation + " for " + name);
 		if (iconFull != null && !iconFull.equals(""))
 			this.icon = Assets.getTextureRegion(iconFull);
 		else this.icon = null;	}

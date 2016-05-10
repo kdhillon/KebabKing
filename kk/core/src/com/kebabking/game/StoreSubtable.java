@@ -189,7 +189,9 @@ public class StoreSubtable extends Table {
 	
 	// update the purchaseable
 	public void updatePurchaseableForUnlock(Purchaseable p) {
+		System.out.println("trying to update purchaseable after unlock");
 		if (typeTables != null && p != null && getIndexOfType(p.getType()) >= 0 && typeTables[getIndexOfType(p.getType())] != null) {
+			System.out.println("actually updating purchaseable after unlock");
 			typeTables[getIndexOfType(p.getType())].updatePurchaseableAfterUnlock(p);
 		}
 	}

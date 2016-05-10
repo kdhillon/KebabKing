@@ -197,16 +197,16 @@ public class PurchaseType {
 		return select(getIndexOf(toAdd));
 	}
 
-	public int removeOrSelec(Purchaseable toAdd) {
-		return removeOrSelect(getIndexOf(toAdd));
-	}
+//	public int removeOrSelec(Purchaseable toAdd) {
+//		return removeOrSelect(getIndexOf(toAdd));
+//	}
 
 	// returns the index that was removed, or -1 if none removed
 	public int removeOrSelect(int index) {
 		// if already selected, try to remove
 		if (isSelected(index)) {
 			// don't remove if less 1
-			if (this.selected.size() > 1) {
+			if (this.selected.size() > this.getMinSelectable()) {
 				this.selected.remove(index);
 				return index;
 			}
@@ -282,6 +282,11 @@ public class PurchaseType {
 	public int getMaxSelectable() {
 		return 1;
 	}
+	
+	public int getMinSelectable() {
+		return 1;
+	}
+	
 	//	public void setTable(StoreScreen screen, StoreScreen.TableType table) {
 	//		this.storeScreen = screen;
 	//		this.storeTable = table;
