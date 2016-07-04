@@ -679,7 +679,7 @@ public class Grill {
 		removeOnRelease = index;
 	}
 
-	public void select(SelectedBox newSelected) {
+	public void selectBox(SelectedBox newSelected) {
 		this.selectedBox = newSelected;
 
 		//		System.out.println("ring meat");
@@ -773,7 +773,7 @@ public class Grill {
 
 		if (firstTouch) {
 			if (holdSpiceOnNextTouch) {
-				select(SelectedBox.SPICE);
+				selectBox(SelectedBox.SPICE);
 				holdSpiceOnNextTouch = false;
 			}
 			else if (selectedBox == SelectedBox.SPICE) {
@@ -785,11 +785,11 @@ public class Grill {
 				if (box == SelectedBox.SPICE) {
 					if (disableSpice()) return;
 					this.justTappedSpice = true;
-					this.select(box);
+					this.selectBox(box);
 				}
 				if (!ADVANCED_CONTROLS && box != SelectedBox.NONE) {
 					if (TutorialEventHandler.shouldDisableBoxes()) return;
-					this.select(box);
+					this.selectBox(box);
 				}
 			}
 			
@@ -917,9 +917,11 @@ public class Grill {
 			this.trashSelected();
 		}
 
-		if (!SELECT_BY_SWIPE && meatJustTouched >= 0 && getGrillIndex(x) == meatJustTouched) {
-			if (!selectedSet.contains(meat[meatJustTouched]))
+		if (!SELECT_BY_SWIPE && meatJustTouched >= 0 && getGrillIndex(x) == meatJustTouched && this.selectedBox != SelectedBox.SPICE) {
+			if (!selectedSet.contains(meat[meatJustTouched])) {
+				System.out.println("selecting meat just touched");
 				selectMeat(meatJustTouched);
+			}
 			else 
 				deselectMeat(meatJustTouched);
 		}
@@ -954,7 +956,7 @@ public class Grill {
 			}
 			else if (meatSelected() && shouldDrawGhostMeatForMove()) {
 				moveSelectedTo(mousedOver);
-				select(SelectedBox.NONE);
+				selectBox(SelectedBox.NONE);
 			}
 			else if (meatSelected() && !holdingPastTap() && (justSelected < 0 || meat[mousedOver] != meat[justSelected]) && !open(mousedOver) && selectedSet.contains(meat[mousedOver])) {
 				// remove it from selected if clicking it twice
@@ -968,11 +970,13 @@ public class Grill {
 				//				}
 			}
 			else if (selectedBox == SelectedBox.SPICE) {
+				System.out.println("releasing with spice selected");
 				if (!open(mousedOver)) {
 					if (!meat[mousedOver].spiced){
 						dropSpice();
+						selectBox(SelectedBox.NONE);
 					}
-					select(SelectedBox.NONE);
+					selectBox(SelectedBox.NONE);
 				}
 			}
 			if (ADVANCED_CONTROLS) {
@@ -1047,7 +1051,7 @@ public class Grill {
 			else {
 				// don't deselect if just selected meat (unless trashing)
 				if (!gaveBeerToCustomer && (meatSelectedNotHeld || hoverTrash)) {
-					select(SelectedBox.NONE);
+					selectBox(SelectedBox.NONE);
 				}
 			}
 		}
@@ -1060,13 +1064,13 @@ public class Grill {
 					if (selectedBox != SelectedBox.SPICE) {
 						// don't select Spice box if just deselected meat
 						if (meatSelectedNotHeld || hoverTrash)
-							select(box);
+							selectBox(box);
 					}
 					else if (!justTappedSpice) 
-						select(SelectedBox.NONE);
+						selectBox(SelectedBox.NONE);
 				}
 				else {
-					select(box);
+					selectBox(box);
 				}
 			}
 			else {
@@ -1087,7 +1091,7 @@ public class Grill {
 			}
 
 			if (!meatSelected())
-				select(SelectedBox.NONE);
+				selectBox(SelectedBox.NONE);
 			else 
 				selectedBox = SelectedBox.NONE;
 			indexToPlaceMeatAt = -1;
@@ -1311,6 +1315,7 @@ public class Grill {
 		System.out.println("Kebabs trashed: " + ks.kebabsTrashed);
 		kebabsTrashedThisSession += removed;
 
+		SoundManager.playTrash();
 		StatsHandler.trashKebab();
 		TutorialEventHandler.handleTrash();
 	}
@@ -1495,5 +1500,9 @@ public class Grill {
 	public int getGrillCenter() {
 		//		System.out.println(grillRightX + " " + grillLeftX);
 		return (this.grillRightX - this.grillLeftX) / 2 + this.grillLeftX;
+	}
+	
+	public void pause() {
+		deselectAll();
 	}
 }

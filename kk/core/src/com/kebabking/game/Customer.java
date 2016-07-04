@@ -30,6 +30,8 @@ public class Customer implements Comparable<Customer> {
 	// if they leave before their order is complete, your reputation decreases.
 	static final float ALT_PROB = 0.2f;
 	
+	static final boolean EYES_MODE = true;
+	
 	static final float SELFIE_WAIT_LENGTH = 1f;
 
 	static final float BASE_HUNGER_FACTOR = 0.1f;
@@ -319,6 +321,7 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	public CustomerType generateCustomerType() {
+		return CustomerType.NORMAL;
 //		 testing for now
 //		if (Math.random() < .01) ;
 //			return CustomerType.SOLDIER;
@@ -327,25 +330,25 @@ public class Customer implements Comparable<Customer> {
 //		else if (true) return CustomerType.JEWELER;
 		
 		// do this based off profile
-		double[] spread = cm.currentCustomerSpread;
-
-		// first calculate total from Profile
-		float sum = 0;
-		for (double f : spread) sum += f;
-
-		// calculate probabilities (normalize)
-		double[] probs = new double[spread.length];
-		probs[0] = spread[0] / sum;
-		for (int i = 1; i < probs.length; i++) {
-			probs[i] = (spread[i] / sum) + probs[i - 1];
-		}
-
-		double random = Math.random();		
-		for (int i = 0; i < probs.length; i++) {
-			if (random < probs[i])
-				return genOrder[i];
-		}
-		return genOrder[genOrder.length-1];
+//		double[] spread = cm.currentCustomerSpread;
+//
+//		// first calculate total from Profile
+//		float sum = 0;
+//		for (double f : spread) sum += f;
+//
+//		// calculate probabilities (normalize)
+//		double[] probs = new double[spread.length];
+//		probs[0] = spread[0] / sum;
+//		for (int i = 1; i < probs.length; i++) {
+//			probs[i] = (spread[i] / sum) + probs[i - 1];
+//		}
+//
+//		double random = Math.random();		
+//		for (int i = 0; i < probs.length; i++) {
+//			if (random < probs[i])
+//				return genOrder[i];
+//		}
+//		return genOrder[genOrder.length-1];
 		//		throw new java.lang.AssertionError(0);
 	}
 

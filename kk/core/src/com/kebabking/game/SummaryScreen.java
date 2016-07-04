@@ -49,6 +49,8 @@ public class SummaryScreen extends ActiveScreen {
 //	Label dayComplete;
 	Table dayComplete;
 	
+	float meatRevenue;
+	float drinkRevenue;	
 	float revenue;
 	float expenses;
 	float meatExpenses;
@@ -115,7 +117,10 @@ public class SummaryScreen extends ActiveScreen {
 		
 //		dayComplete.setPosition(0, KebabKing.getGlobalY(0.45f));
 
-		this.revenue = kitchen.totalRevenue;
+		this.meatRevenue = kitchen.meatRevenue;
+		this.drinkRevenue = kitchen.drinkRevenue;
+		this.revenue = drinkRevenue + meatRevenue;
+		
 		//		this.expenses = kitchen.moneySpentToday - refund;
 //		this.expenses = kitchen.meatExpenses + rent;
 		
@@ -247,7 +252,7 @@ public class SummaryScreen extends ActiveScreen {
 		
 		float infoPadBetween = KebabKing.getGlobalY(0.005f);
 		Table infoTable = new Table();
-		Table revenueTable = generateTable("revenue", revenue, true, new String[]{}, new float[]{});
+		Table revenueTable = generateTable("revenue", revenue, true, new String[]{"kebabs", "drinks"}, new float[]{meatRevenue, drinkRevenue});
 		infoTable.add(revenueTable).expandX().fillX().padBottom(infoPadBetween).colspan(2);
 		infoTable.row();
 		Table expenseTable = generateTable("expenses", expenses, true, new String[]{"kebabs", "rent"}, new float[]{meatExpenses, rent});
@@ -624,12 +629,12 @@ public class SummaryScreen extends ActiveScreen {
 	}
 
 	public boolean shouldDisplayPromptForRating() {
-		return false;
+//		return false;
 //		if (master.profile.getLevel() < 4) return false;
-//
-//		// every time you gain a level after that with a good rating
+
+		// every time you gain a level after that with a good rating
 //		if (master.profile.getLevel() > levelAtStart && rating >= 4.5) {
-//			return true;
+			return true;
 //		}
 //		return false;
 	}
@@ -690,14 +695,6 @@ public class SummaryScreen extends ActiveScreen {
 					Manager.analytics.promptForRating();
 				}
 			}
-			
-			// save profile once done granting exp
-//			else if (expRemaining == 0 && !grantingExpDone) {
-//				System.out.println("SAVING PROFILE AFTER EXP LOADED");
-//				this.grantingExpDone = true;
-////				this.saveProfile();
-//			}
-			
 		}
 		uiStage.act();
 	}

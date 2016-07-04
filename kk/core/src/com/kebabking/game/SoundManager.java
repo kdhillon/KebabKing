@@ -99,6 +99,10 @@ public class SoundManager {
 		Assets.levelUpSound.play(soundsVolume);
 	}
 	
+	public static void playTrash() {
+		Assets.trash.play(soundsVolume * 1.2f);
+	}
+	
 	public static void playUnlock() {
 		Assets.unlockSound.play(soundsVolume);
 	}

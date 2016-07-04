@@ -69,7 +69,7 @@ project(":android") {
     }
 
     dependencies {
-        compile files('libs/AppRater.jar')
+//        compile files('libs/AppRater.jar')
 
         compile 'com.android.support:multidex:1.0.0'
 
@@ -155,4 +155,8 @@ project(":core") {
 
 tasks.eclipse.doLast {
     delete ".project"
+}
+
+project.ext {
+    defaultApplicationId = "com.kebabchef.game.android"
 }

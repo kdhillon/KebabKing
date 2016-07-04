@@ -18,9 +18,9 @@ public class DrinkQuality extends PurchaseType {
 		new Quality ("2", 	200,	3,	3, 2, 1.5f, 	"green"),
 		new Quality ("3", 	500,	10, 11,4,  2f, 	"brown"), 
 		new Quality ("4",	800,	15, 19,6, 2.5f,	"yellow"),
-		new Quality ("5", 	1100,	15, 28,10,  3f,	 	"dark"),
-		new Quality ("6", 	2500,	20, 35,12,  4f, 	"red"),
-		new Quality ("7", 	5000,	25, 48,16,  5f, 	"tan"),
+		new Quality ("5", 	1100,	20, 28,10,  3f,	 	"dark"),
+		new Quality ("6", 	2500,	25, 35,12,  4f, 	"red"),
+		new Quality ("7", 	5000,	30, 48,16,  5f, 	"tan"),
 		};
 		
 		float sellPrice;

@@ -11,7 +11,7 @@ import com.kebabking.game.Purchases.Purchaseable;
 public class Profile {
 	static final int FIRST_LEVEL_EXP = 90;
 	static final double EXP_GROWTH_RATE = 1.15;
-	static final float EXP_RATE = 1.33f;
+	static final float EXP_RATE = 1.25f; // was 1.33 for v 1.0
 	static final int MAX_LEVEL = 1000;
 
 	static final float STARTING_CASH = 50;

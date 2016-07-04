@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -101,23 +102,24 @@ public class MainStoreScreen extends ActiveScreen {
 //		mainTable.debugAll();
 		
 		// add title
-		int title_pad_top = KebabKing.getGlobalY(0.1f);
-		int title_width = KebabKing.getGlobalX(0.4f);
-		int title_height = KebabKing.getGlobalY(0.07f);
+		int title_pad_top = KebabKing.getGlobalY(0.08f);
+		int title_width = KebabKing.getGlobalX(0.3f);
+		int title_height = KebabKing.getGlobalY(0.05f);
 		Image title = new Image(Assets.marketTitle);
 		mainTable.add(title).center().padTop(title_pad_top).top().width(title_width).height(title_height);
 		mainTable.row();
 		
 		// add text below title
 		String text = Assets.strings.get("welcome_to_the_market");
-		Label label = new Label(text, Assets.generateLabelStyleUILight(32, text));
+		Label label = new Label(text, Assets.generateLabelStyleUILight(28, text));
 		label.setColor(FONT_COLOR);
-		mainTable.add(label).center().expandY().top().padTop(KebabKing.getGlobalY(0.015f));
+		mainTable.add(label).center().expandY().top();
 		mainTable.row();
-		
+//		
 		// add shelf
 		int shelf_width = KebabKing.getGlobalX(0.8f);
-		int shelf_height = KebabKing.getGlobalY(0.6f);
+		int shelf_height_o = KebabKing.getGlobalY(0.6f);
+		int shelf_height = KebabKing.getGlobalY(0.667f);
 		int shelf_pos_y = KebabKing.getGlobalY(0.15f);
 		
 		Table shelf = new Table();
@@ -134,9 +136,9 @@ public class MainStoreScreen extends ActiveScreen {
 		float buttonPadY = SHELF_MIDDLE_PERCENTAGE_Y * shelf_height/2;
 		
 		float buttonWidth = 1.0f/2.54f * shelf_width;
-		float buttonHeight = 1.0f/3.2f * shelf_height;
+		float buttonHeight = 1.0f/3.2f * shelf_height_o;
 		
-		float buttonsPadTop = 1.0f/18.1f * shelf_height;
+		float buttonsPadTop = 1.0f/17f * shelf_height_o * 0.9f;
 		
 		// add buttons
 		Table foodButton = generateButton(TableType.food, buttonWidth, buttonHeight);
@@ -144,10 +146,10 @@ public class MainStoreScreen extends ActiveScreen {
 		Table mapButton = generateButton(TableType.map, buttonWidth, buttonHeight);
 		Table adsButton = generateButton(TableType.ads, buttonWidth, buttonHeight);
 		
-		Table wheelButton = generateButton(TableType.wheel, buttonWidth, buttonHeight);
-		Table coinsButton = generateButton(TableType.jeweler, buttonWidth, buttonHeight);
+		Table wheelButton = generateButton(TableType.wheel, buttonWidth, buttonHeight * 1.15f);
+		Table coinsButton = generateButton(TableType.jeweler, buttonWidth, buttonHeight * 1.15f);
 		
-		String getJade = Assets.strings.get("get_jade");
+//		String getJade = Assets.strings.get("get_jade");
 //		Label earnJade = new Label(getJade, Assets.generateLabelStyleUIChina(26, getJade));
 //		coinsButton.debugAll();
 //		coinsButton.add(earnJade).top().padTop(KebabKing.getGlobalY(0.1f)).expandY().padRight(KebabKing.getGlobalX(0.02f));
@@ -160,9 +162,8 @@ public class MainStoreScreen extends ActiveScreen {
 		shelf.add(adsButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
 		shelf.row();
 		
-		shelf.add(wheelButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX).expandY();
-		shelf.add(coinsButton).width(buttonWidth).height(buttonHeight).center().top().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
-
+		shelf.add(wheelButton).width(buttonWidth).height(buttonHeight).center().bottom().padBottom(KebabKing.getGlobalYFloat(0.003f)).padLeft(buttonPadX).padRight(buttonPadX).expandY();
+		shelf.add(coinsButton).width(buttonWidth).height(buttonHeight).center().bottom().padBottom(KebabKing.getGlobalYFloat(0.003f)).padLeft(buttonPadX).padRight(buttonPadX);
 		
 		System.out.println("BUTTON WIDTH: " + buttonWidth + " BUTTON HEIGHT: " + buttonHeight);
 		
@@ -200,16 +201,19 @@ public class MainStoreScreen extends ActiveScreen {
 		return backButton;
 	}
 	
+	
 	public Table generateButton(final TableType type, float buttonWidth, float buttonHeight) {
 		Table container = new Table();
 		Button button = new Button(Assets.getSpecificMarketButtonStyle(type));
-		button.addListener(new StrictInputListener() {
+		container.setTouchable(Touchable.enabled);
+		container.addListener(new StrictInputListener() {
 			public void touch(InputEvent event) {
 				// switch to 
 				switchTo(type);
 			}
 		});
-		container.add(button).expand().width(buttonWidth).height(buttonHeight);
+		
+		container.add(button).expand().width(buttonWidth).height(Math.min(buttonHeight, buttonWidth * 1.15f));
 		
 		Table labelTable = new Table();
 		labelTable.setBackground(new TextureRegionDrawable(Assets.whiteAlpha));

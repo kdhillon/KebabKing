@@ -1,3 +1,7 @@
+project.ext {
+    defaultApplicationId = "com.kebabchef.game.android"
+    applicationId = "com.kebabchef.game.android"
+}
 android {
     buildToolsVersion '22.0.1'
     compileSdkVersion 23
@@ -6,8 +10,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         /// this is what actually stores the important version information
-        versionCode 31
-        versionName "1.01"
+        versionCode 32
+        versionName "1.02"
         // This is crucial for preventing DexDebug errors
         multiDexEnabled true
     }
@@ -36,6 +40,15 @@ android {
             proguardFile 'proguard-project.txt'
         }
         debug {
+            applicationIdSuffix ".debug"
+            manifestPlaceholders = [ applicationIdWithSuffix: defaultApplicationId + ".debug" ]
+
+            buildConfigField "String", "ACCOUNT_TYPE", "\"${applicationId}\""
+            buildConfigField "String", "AUTHORITY", "\"${applicationId}.provider\""
+
+            resValue "string", "account_type", "${applicationId}"
+            resValue "string", "authority", "${applicationId}.provider"
+
             minifyEnabled false
             proguardFile 'proguard-project.txt'
         }

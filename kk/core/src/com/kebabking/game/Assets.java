@@ -75,13 +75,16 @@ public class Assets {
 	static Skin uiSkin;
 
 	static TextureRegion title;
-
+	
 	static public class CustomerTextures {
 		Animation idle;
 		Animation right;
 		Animation left;
 		Animation down;
 		Animation up;
+		
+		TextureRegion eyes;
+		TextureRegion eyesRight;
 	}
 	
 	static public class KebabTextures {

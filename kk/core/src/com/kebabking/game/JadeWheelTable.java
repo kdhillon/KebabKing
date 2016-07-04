@@ -99,7 +99,7 @@ public class JadeWheelTable extends Table {
 		if (!master.profile.canSpin) {
 			System.out.println("adding play");
 			Image play = new Image(Assets.getTextureRegion("market/Market_menu_element-09"));
-			spinButton.add(play).expand().padLeft(-KebabKing.getGlobalX(0.06f)).padRight(KebabKing.getGlobalX(0.11f));
+			spinButton.add(play).expand().size(KebabKing.getGlobalYFloat(0.045f)).padLeft(-KebabKing.getGlobalX(0.06f)).padRight(KebabKing.getGlobalX(0.11f));
 		}
 	
 		// doesn't work with strict listener for some reason

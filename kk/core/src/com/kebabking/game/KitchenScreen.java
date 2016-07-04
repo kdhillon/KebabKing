@@ -44,7 +44,8 @@ public class KitchenScreen extends ActiveScreen {
 
 	//	float moneyEarnedToday;
 
-	float totalRevenue;
+	float meatRevenue;
+	float drinkRevenue;
 
 	float drinkExpenses;
 	float meatExpenses;
@@ -226,19 +227,19 @@ public class KitchenScreen extends ActiveScreen {
 		
 		float[] revCost = customer.giveMeat(grill.selectedSet);
 		earnMoney(revCost[0] - revCost[1]);
-		totalRevenue += revCost[0];
+		meatRevenue += revCost[0];
 		meatExpenses += revCost[1];
 
 		int served = grill.selectedSet.size();
 		Grill.kebabsServedThisSession += served;
 		grill.removeSelected(); // deletes selected meat from grill;
-		grill.select(Grill.SelectedBox.NONE);
+		grill.selectBox(Grill.SelectedBox.NONE);
 	}
 
 	public boolean serveCustomerBeer(Customer customer) {
 		//		if (canAfford(getDrinkBuyPrice())) {
 		float moneyEarned = cm.mousedOver.giveBeer();
-		totalRevenue += moneyEarned;
+		drinkRevenue += moneyEarned;
 
 		// customer doesn't want beer
 		if (moneyEarned == 0) {
@@ -328,6 +329,7 @@ public class KitchenScreen extends ActiveScreen {
 	// this overrides the "onPause" method
 	@Override
 	public void pause() {
+		System.out.println("pausing from kitchen screen");
 		// this check prevents problems during tutorial
 		if (!DrawUI.notificationActive && master.profile.stats.tutorialComplete()) {
 			grill.deselectAll();

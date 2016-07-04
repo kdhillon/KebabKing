@@ -20,8 +20,8 @@ public class KKLauncher {
 		config.width = 600;
 		config.height = 1000;
 
-//		config.width = 200;
-//		config.height = 300;
+//		config.width = 550;
+//		config.height = 1000;
 		
 		
         // Initialize the platform specific managers

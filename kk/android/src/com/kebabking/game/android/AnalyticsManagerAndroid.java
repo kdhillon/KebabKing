@@ -2,15 +2,15 @@ package com.kebabking.game.android;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.analytics.ecommerce.Product;
 import com.google.android.gms.analytics.ecommerce.ProductAction;
 import com.kebabking.game.Assets;
 import com.kebabking.game.Managers.AnalyticsManager;
-import com.google.android.gms.analytics.Tracker;
 
+import android.app.Activity;
 import android.util.Log;
-
-import im.delight.apprater.AppRater;
+import android.widget.Toast;
 
 /**
  * Created by Kyle on 11/10/2015.
@@ -31,23 +31,34 @@ public class AnalyticsManagerAndroid implements AnalyticsManager {
 
     @Override
     public void promptForRating() {
-        System.out.println("promptForRating");
-        androidLauncher.runOnUiThread(new Runnable() {
+        this.androidLauncher.runOnUiThread(new Runnable() {
+
             public void run() {
-                AppRater appRater = new AppRater(androidLauncher.getContext());
-                appRater.setDaysBeforePrompt(0);
-                appRater.setLaunchesBeforePrompt(0);
-                appRater.setPhrases(
-                        Assets.strings.get("rating_title"),
-                        Assets.strings.get("rating_desc"),
-                        Assets.strings.get("rate_now"),
-                        Assets.strings.get("not_now"),
-                        Assets.strings.get("never"));
-                appRater.show();
-                appRater.demo();
-                System.out.println("prompted for rating");
+                if (!AppRater.initialized) {
+                    AppRater.app_launched(androidLauncher);
+                }
+                System.out.println("prompting for rating");
+                AppRater.showRateDialog(androidLauncher.getContext(), null);
             }
         });
+
+//        System.out.println("promptForRating");
+//        androidLauncher.runOnUiThread(new Runnable() {
+//            public void run() {
+//                AppRater appRater = new AppRater(androidLauncher.getContext());
+//                appRater.setDaysBeforePrompt(0);
+//                appRater.setLaunchesBeforePrompt(0);
+//                appRater.setPhrases(
+//                        Assets.strings.get("rating_title"),
+//                        Assets.strings.get("rating_desc"),
+//                        Assets.strings.get("rate_now"),
+//                        Assets.strings.get("not_now"),
+//                        Assets.strings.get("never"));
+//                appRater.show();
+////                appRater.demo();
+//                System.out.println("prompted for rating");
+//            }
+//        });
     }
 
     @Override

@@ -11,13 +11,14 @@ public class MeatTypes extends PurchaseType {
 	
 	public static class Type extends SimplePurchaseable {
 		public static final Type[] values = new Type[] {
-				//			name	unlk, cash, coins,	buy		sell	cook burn	double	veg
+				//			name	unlk, cash, coins,	buy	sell	cook burn	double	veg
 				new Type ("beef", 	1,	0,		0,	2f, 	4f,  	8, 	12, 	false, false),
 				new Type ("lamb", 	1,	0,		0,	2f, 	4f,  	7, 	10, 	false, false),
 				new Type ("chicken",1,	0,		0,	2f, 	4f,  	6, 	9,  	true, false),
 				
-				new Type ("squid", 	3,	500,	5,	2f, 	4f,  	7, 	12, 	false, false), // squid (or tofu) should unlock very early
-				new Type ("fish", 	5,	1000,	10,	2f, 	4f,  	5, 	8,  	true, false),  // add these to the unlock waterfall
+				new Type ("squid", 	6,	1500,	15,	2f, 	4f,  	7, 	12, 	false, false), // squid (or tofu) should unlock very early
+				new Type ("fish", 	8,	3000,	30,	2f, 	4f,  	5, 	8,  	true, false),  // add these to the unlock waterfall
+				
 //				new Type ("pork", 		2f, 	3.5f,  	8, 	12, 	false, false),
 //				new Type ("veggie", 		2f, 	3.5f,  	8, 	12, 	false, false),
 //				new Type ("goat", 		2f, 	3.5f,  	8, 	12, 	false, false),

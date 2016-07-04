@@ -18,7 +18,7 @@ public class KebabKing extends Game {
 	//	public static final boolean TEST_MODE = false;
 	public static final String lang = "en";
 	public static final boolean EXP_CITY = false; // get 300 exp after day
-	public static final boolean SHORT_DAY = true;
+	public static final boolean SHORT_DAY = false;
 	public static final boolean LVL_50 = false;
 	public static final boolean RICH_MODE = false;
 	public static final boolean FORCE_NEW = false;
@@ -28,7 +28,7 @@ public class KebabKing extends Game {
 	public static final boolean SAVE_AFTER_NEW = false;
 	public static final boolean DONT_SAVE = false;
 	public static final boolean VERIFY_SAVE = false;
-	public static final boolean START_MUTED = true;
+	public static final boolean START_MUTED = false;
 	public static final boolean STRICT_MODE = false; // asserts that save files are in right format, and that only one notification is active at once
 
 	public static final String SAVE_FILENAME = "kk.sav";
@@ -462,6 +462,9 @@ public class KebabKing extends Game {
 	}
 
 	public void kitchenPause() {
+		if (grill != null) {
+			grill.pause();
+		}
 		this.setScreen(pause);
 		SoundManager.pauseAll();
 	}
