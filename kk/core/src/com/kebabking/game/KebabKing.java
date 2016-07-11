@@ -79,7 +79,6 @@ public class KebabKing extends Game {
 	Screen jadeWheelFromThis;
 	// Summary Screens are temporary
 
-
 	@Override
 	public void create () {
 		System.out.println("local storage path " + Gdx.files.getLocalStoragePath());

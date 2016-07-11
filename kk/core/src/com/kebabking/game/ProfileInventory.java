@@ -39,6 +39,9 @@ public class ProfileInventory {
 	// multiple meat types can be selected
 	@Tag(111) public MeatTypes meatTypes;
 	
+	// fix saving bug by:
+	// first trying to get the save off the phone with ddms in android studio. 
+	
 	// testing tags, won't be saved.
 	@Deprecated	@Tag(109) public AdCampaign unused;
 	@Deprecated @Tag(110) public String fake;

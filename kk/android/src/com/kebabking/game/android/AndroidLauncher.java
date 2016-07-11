@@ -1,18 +1,12 @@
 package com.kebabking.game.android;
 
-import com.applovin.sdk.AppLovinSdk;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.kebabking.game.AdsHandler;
-import com.kebabking.game.Grill;
 import com.kebabking.game.KebabKing;
-import com.kebabking.game.MainMenuScreen;
 import com.kebabking.game.StatsHandler;
 import com.kebabking.game.Managers.AdsManager;
-import com.kebabking.game.Managers.AdsManagerMock;
 import com.kebabking.game.Managers.Manager;
-import com.kebabking.game.SummaryScreen;
 
 import android.content.Context;
 import android.content.Intent;

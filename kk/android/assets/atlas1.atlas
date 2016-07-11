@@ -636,7 +636,7 @@ customers/Normal_f
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Normal_f o
+customers/Normal_f n
   rotate: false
   xy: 684, 820
   size: 680, 816
@@ -657,7 +657,7 @@ customers/Normal_m
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Normal_m o
+customers/Normal_m n
   rotate: false
   xy: 1366, 2
   size: 680, 816
