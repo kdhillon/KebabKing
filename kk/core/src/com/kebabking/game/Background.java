@@ -163,7 +163,7 @@ public class Background {
 				// fade towards night
 //				if (!dusk) {
 //					if (this.currentColor.r <= duskSky.r) {
-//						System.out.println("updating current");
+//						KebabKing.print("updating current");
 //						this.currentColor.r += rDif * delta * nightRate;
 //					}
 //					if (this.currentColor.g >= duskSky.g) {
@@ -298,9 +298,9 @@ public class Background {
 
 		// draw plane
 		if (plane != null) {
-//			System.out.println("Drawing plane");
+//			KebabKing.print("Drawing plane");
 			TextureRegion toDraw = Assets.plane.getKeyFrame(timeElapsed);
-//			System.out.println(plane.x);
+//			KebabKing.print(plane.x);
 			batch.draw(toDraw, plane.x, plane.y, planeWidth, planeHeight);
 		}
 		

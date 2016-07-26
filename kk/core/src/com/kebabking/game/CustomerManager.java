@@ -173,7 +173,7 @@ public class CustomerManager {
 	// draw all customers
 	public void draw(SpriteBatch batch) {
 		// order isn't working right now, fix later
-		//		System.out.println("all customers order");
+		//		KebabKing.print("all customers order");
 
 		// note that this can be optimized to only sort on 
 		// frames in which customers actually move
@@ -210,7 +210,7 @@ public class CustomerManager {
 //					if (x > xPos && x < xPos + Customer.TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH) {
 //						if (y > yPos && y < yPos + Customer.TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT) {
 //							mousedOver = c;
-//							System.out.println("Moused over is " + mousedOver.type);
+//							KebabKing.print("Moused over is " + mousedOver.type);
 //							return;
 //						}
 //					}
@@ -224,7 +224,7 @@ public class CustomerManager {
 			}
 		}
 //		if (mousedOver == null) {
-//			System.out.println("Moused over is null");
+//			KebabKing.print("Moused over is null");
 //		}
 	}
 	
@@ -279,7 +279,7 @@ public class CustomerManager {
 				totalBoost += currentCustomerSpread[j];
 			}
 			this.boost = totalBoost / totalOriginal;
-			System.out.println("PROFILE: totalBoost: " + totalBoost + " totalOriginal: " + totalOriginal + " setting boost: " + boost);
+			KebabKing.print("PROFILE: totalBoost: " + totalBoost + " totalOriginal: " + totalOriginal + " setting boost: " + boost);
 		}
 		// boosting all customers
 		else {
@@ -287,7 +287,7 @@ public class CustomerManager {
 				currentCustomerSpread[i] *= bonus;
 			}
 			this.boost = bonus;
-			System.out.println("PROFILE: setting boost: " + boost);
+			KebabKing.print("PROFILE: setting boost: " + boost);
 		}
 		
 		// don't boost everyone based on a single person's boost...
@@ -328,7 +328,7 @@ public class CustomerManager {
 	}
 
 	public Customer addCustomer(boolean active) {
-		//		System.out.println("adding customer");
+		//		KebabKing.print("adding customer");
 		Customer customer = new Customer(customerPatienceFactor, this, active);
 	
 		if (this.generatePoliceNext) {
@@ -338,7 +338,7 @@ public class CustomerManager {
 		}
 		
 		if (!customers.add(customer)) {
-			System.out.println("CANT ADD, ALREADY EXISTS");
+			KebabKing.print("CANT ADD, ALREADY EXISTS");
 		}
 		
 		lastCustomer = 0;
@@ -351,7 +351,7 @@ public class CustomerManager {
 	}
 	
 //	public void addTutorialCustomer() {
-//		System.out.println("Adding tutorial customer");
+//		KebabKing.print("Adding tutorial customer");
 //		Customer customer = addCustomer(true);
 ////		customer.type = Customer.CustomerType.OLD_MAN;
 //	}
@@ -363,7 +363,7 @@ public class CustomerManager {
 //		customer.type = CustomerType.OLD_MAN;
 //		customer.tutorialFirst = true;
 //		if (!customers.add(customer)) {
-//			System.out.println("CANT ADD, ALREADY EXISTS");
+//			KebabKing.print("CANT ADD, ALREADY EXISTS");
 //		}
 //		
 //		lastCustomer = 0;
@@ -378,7 +378,7 @@ public class CustomerManager {
 //		customer.tutorialSecond = true;
 //		
 //		if (!customers.add(customer)) {
-//			System.out.println("CANT ADD, ALREADY EXISTS");
+//			KebabKing.print("CANT ADD, ALREADY EXISTS");
 //		}
 //		
 //		lastCustomer = 0;
@@ -411,7 +411,7 @@ public class CustomerManager {
 	}
 
 	public void removeCustomer(Customer customer) {
-		//		System.out.println("removing customer");
+		//		KebabKing.print("removing customer");
 		// calculate sickness if sick
 		// modify reputation
 

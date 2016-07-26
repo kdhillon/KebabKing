@@ -148,7 +148,7 @@ public class Projectile {
 //	}
 	
 	public void draw(SpriteBatch batch) {
-//		System.out.println("drawing at " + xPos + ", " + yPos);
+//		KebabKing.print("drawing at " + xPos + ", " + yPos);
 		batch.draw(reg, KebabKing.getGlobalXFloat(xPos), KebabKing.getGlobalYFloat(yPos), KebabKing.getGlobalX(size_x)/2, KebabKing.getGlobalY(size_y)/2, KebabKing.getGlobalX(size_x), KebabKing.getGlobalY(size_y), 1, 1, rot);
 	}
 }

@@ -120,7 +120,7 @@ public class ProfileInventory {
 
 	public boolean hasUnlockedByLevel(Purchaseable item) {
 		if (this.profile == null) {
-			System.out.println("PROFILE IS NULL");
+			KebabKing.print("PROFILE IS NULL");
 			throw new java.lang.AssertionError();
 			//			return false;
 		}
@@ -187,15 +187,15 @@ public class ProfileInventory {
 
 	public boolean purchaseConsumable(SimpleConsumable item, PurchaseTypeConsumable type) {
 		if (!type.availableForUnlock(item)) {
-			System.out.println("Consumable not unlocked!");
+			KebabKing.print("Consumable not unlocked!");
 			return false;
 		}
 		if (!canAffordConsumable(item)) {
-			System.out.println("Can't afford consumable!");
+			KebabKing.print("Can't afford consumable!");
 			return false;
 		}
 		if (type.getActive() != null) {
-			System.out.println("A consumable of this type is already active!");
+			KebabKing.print("A consumable of this type is already active!");
 			return false;
 		}
 
@@ -210,7 +210,7 @@ public class ProfileInventory {
 		}		
 		
 		if (type == adCampaign) {
-			System.out.println("purchased ad campaign");
+			KebabKing.print("purchased ad campaign");
 			//			Campaign campaign = (Campaign) item;
 			this.adCampaign.activateConsumable(item);
 			//			this.campaignEndsAtNanos = TimeUtils.nanoTime() + 1000000000*campaign.seconds;
@@ -256,7 +256,7 @@ public class ProfileInventory {
 
 	// unlock second meat option without asking player
 	public void forceSecondBoxUpdate() {
-		System.out.println("forcing second box update");
+		KebabKing.print("forcing second box update");
 		meatTypes.unlock(MeatTypes.Type.values[1]);
 //		profile.master.store.storeScreen.foodTable.updatePurchaseableForUnlock(MeatTypes.Type.values[1]);
 //		meatTypes.addToSelected(1);
@@ -275,8 +275,8 @@ public class ProfileInventory {
 
 	//	// Updates current ad campaign. Should be called every frame that kitchen screen is active.
 	private void updateAds() {
-		//		System.out.println("Boost: " + profile.boost);
-		//		System.out.println("Campaign percent: " + campaignPercent());
+		//		KebabKing.print("Boost: " + profile.boost);
+		//		KebabKing.print("Campaign percent: " + campaignPercent());
 		adCampaign.update();
 	}
 

@@ -50,27 +50,27 @@ public class SoundManager {
 	}
 	
 	public static void muteSound() {
-		System.out.println("Mute sound");
+		KebabKing.print("Mute sound");
 		getSettings().muteSound = true;
 		Assets.sizzle.setVolume(0, MUTE_VOL);
 		soundsVolume = MUTE_VOL;
 	}
 	
 	public static void unmuteSound() {
-		System.out.println("unMute sound");
+		KebabKing.print("unMute sound");
 		getSettings().muteSound = false;
 		Assets.sizzle.setVolume(0, SIZZLE_VOL);
 		soundsVolume = ORDER_VOL;
 	}
 	
 	public static void muteMusic() {
-		System.out.println("Mute music");
+		KebabKing.print("Mute music");
 		getSettings().muteMusic = true;
 		Assets.mainTheme.setVolume(MUTE_VOL);
 	}
 
 	public static void unmuteMusic() {
-		System.out.println("unMute music");
+		KebabKing.print("unMute music");
 		getSettings().muteMusic = false;
 		Assets.mainTheme.setVolume(MUSIC_VOL);
 	}
@@ -157,12 +157,12 @@ public class SoundManager {
 	
 	public static void playLeavingSound(Customer.CustomerType type, int satisfaction, boolean sick) {
 		Sound toPlay = null;
-		if (satisfaction == 5) {
-			toPlay = Assets.veryYum;
-		}
-		else if (satisfaction == 4) {
-			toPlay = Assets.yum;
-		}	
+//		if (satisfaction == 5) {
+//			toPlay = Assets.veryYum;
+//		}
+//		else if (satisfaction == 4) {
+//			toPlay = Assets.yum;
+//		}	
 		
 //		switch(type) {
 //		case POLICE:

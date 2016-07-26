@@ -26,7 +26,7 @@ public class SuperStrictInputListener extends InputListener {
 				|| y < event.getListenerActor().getY()
 				|| x > event.getListenerActor().getX() + event.getListenerActor().getWidth()
 				|| y > event.getListenerActor().getY() + event.getListenerActor().getHeight()) {
-//			System.out.println("x " + x + " y " + y + " getx " + event.getListenerActor().getX() + " get y " + event.getListenerActor().getY());
+//			KebabKing.print("x " + x + " y " + y + " getx " + event.getListenerActor().getX() + " get y " + event.getListenerActor().getY());
 			return;
 		}
 		if (shouldCancel()) return;

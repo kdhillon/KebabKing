@@ -2,6 +2,7 @@ package com.kebabking.game.Purchases;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.kebabking.game.Assets;
+import com.kebabking.game.KebabKing;
 import com.kebabking.game.ProfileInventory;
 
 public class MeatTypes extends PurchaseType {
@@ -75,7 +76,7 @@ public class MeatTypes extends PurchaseType {
 
 //		unlock(Type.values[1]);
 //		unlock(Quality.values[0]);
-		System.out.println("just initialized?");
+		KebabKing.print("just initialized?");
 	}
 	
 	// for kryo

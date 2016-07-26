@@ -33,7 +33,7 @@ public class ScreenTemplate implements Screen {
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		System.out.println("show(): " + this.getClass().toString());
+		KebabKing.print("show(): " + this.getClass().toString());
 		
 		if (Manager.analytics != null) {
 			Manager.analytics.sendScreenHit(screenName);
@@ -43,26 +43,26 @@ public class ScreenTemplate implements Screen {
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
-		System.out.println("hide(): " + this.getClass().toString());
+		KebabKing.print("hide(): " + this.getClass().toString());
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-		System.out.println("pause(): " + this.getClass().toString());
+		KebabKing.print("pause(): " + this.getClass().toString());
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-		System.out.println("resume(): " + this.getClass().toString());
+		KebabKing.print("resume(): " + this.getClass().toString());
 	}
 
 	@Override
 	public void dispose() {
-		System.out.println("dispose(): " + this.getClass().toString());
+		KebabKing.print("dispose(): " + this.getClass().toString());
 
-		System.out.println("deleting temp resources");
+		KebabKing.print("deleting temp resources");
 		Assets.deleteTempResources();
 	}
 }

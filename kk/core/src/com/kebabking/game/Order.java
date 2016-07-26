@@ -147,7 +147,7 @@ public class Order {
 				totalRevCost[1] += revCost[1];
 			}
 		}
-		//		System.out.println(incorrect);
+		//		KebabKing.print(incorrect);
 		updateTable();
 		return totalRevCost;
 	}
@@ -158,7 +158,7 @@ public class Order {
 		switch (selectedBox) {
 		case FIRST:
 			if (first == 0 || (meat.spiced != firstSpicy && !ACCEPT_WRONG_SPICINESS)) {
-				System.out.println("I don't want chicken");
+				KebabKing.print("I don't want chicken");
 				incorrect++;
 				return null;
 			}
@@ -170,7 +170,7 @@ public class Order {
 			break;
 		case SECOND:
 			if (second == 0  || (meat.spiced != secondSpicy && !ACCEPT_WRONG_SPICINESS)) {
-				System.out.println("wrong beef");
+				KebabKing.print("wrong beef");
 				incorrect++;
 				return null;
 			}
@@ -180,7 +180,7 @@ public class Order {
 			break;
 		case THIRD:
 			if (third == 0  || (meat.spiced != thirdSpicy && !ACCEPT_WRONG_SPICINESS)) {
-				System.out.println("wrong lamb");
+				KebabKing.print("wrong lamb");
 				incorrect++;
 				return null;
 			}
@@ -224,7 +224,7 @@ public class Order {
 	//	}
 
 	public float giveBeer() {
-		//		System.out.println("giving beer!");
+		//		KebabKing.print("giving beer!");
 		if (beer == 0) {
 			incorrect++;
 			return 0;

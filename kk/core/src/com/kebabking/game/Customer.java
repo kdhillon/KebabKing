@@ -263,10 +263,10 @@ public class Customer implements Comparable<Customer> {
 		selfieHeight = KebabKing.getGlobalYFloat(SELFIE_STICK_HEIGHT);
 		selfieWidth = selfieHeight * Assets.selfieStick.getRegionWidth() / Assets.selfieStick.getRegionHeight();	
 		
-		//		System.out.println("line choice: " + this.lineChoice);
+		//		KebabKing.print("line choice: " + this.lineChoice);
 		this.initTimeOffset = (float) (Math.random() * 10);
 		
-//			System.out.println("customer created before active");
+//			KebabKing.print("customer created before active");
 		createdBeforeActive = !active;
 		
 		if (active) {
@@ -313,8 +313,8 @@ public class Customer implements Comparable<Customer> {
 			else this.animations = type.male;
 		}
 		if (animations == null) {
-			System.out.println(type);
-			System.out.println("female: " + female);
+			KebabKing.print(type);
+			KebabKing.print("female: " + female);
 		
 			throw new java.lang.AssertionError();	
 		}
@@ -409,8 +409,8 @@ public class Customer implements Comparable<Customer> {
 			}
 			else {
 				this.position_y_full += KebabKing.getGlobalYFloat(BASE_WALK_SPEED_Y * this.type.walkSpeed * delta);
-				//			System.out.println("leaving");
-				//			System.out.println(position_y + " " + targetY);
+				//			KebabKing.print("leaving");
+				//			KebabKing.print(position_y + " " + targetY);
 				if (this.position_y_full >= targetY) {
 					this.finishLeaving();
 					this.position_y_full = targetY;
@@ -495,7 +495,7 @@ public class Customer implements Comparable<Customer> {
 		// otherwise interpolate size linearly
 		else if (y_pos > LINE_TOP && y_pos < this.path_y) {
 			// height of top of line (assuming max 3 per line)
-			//			System.out.println(y_pos);
+			//			KebabKing.print(y_pos);
 			double interpolate = (1.0 * this.path_y - y_pos) / (1.0 * this.path_y - LINE_TOP);
 
 			width = (float) ((TEXTURE_WIDTH - TEXTURE_WIDTH_BACK) * interpolate + TEXTURE_WIDTH_BACK) * KitchenScreen.UNIT_WIDTH;
@@ -521,7 +521,7 @@ public class Customer implements Comparable<Customer> {
 		}
 
 		if (this.action == CustomerAction.LEAVE) {
-//			if (this.satisfaction <= 0) System.out.println("SAT LESS THAN 0");
+//			if (this.satisfaction <= 0) KebabKing.print("SAT LESS THAN 0");
 			//			this.satisfaction = 2;
 			if (this.satisfaction > 0) this.drawHappyness(batch, x_pos_orig, y_pos_orig);
 		}
@@ -558,7 +558,7 @@ public class Customer implements Comparable<Customer> {
 	
 		float waitTimeFactor = waitTime / adjustedMax;
 		waitTimeFactor = Math.min(1, waitTimeFactor);
-//		System.out.println(waitTimeFactor + " " + (int) (waitTimeFactor * 5 + 0.49));
+//		KebabKing.print(waitTimeFactor + " " + (int) (waitTimeFactor * 5 + 0.49));
 		
 		if (this.currentPatience != (int) (waitTimeFactor * 5 + 0.49)) {
 			this.currentPatience = (int) (waitTimeFactor * 5 + 0.49);			
@@ -567,7 +567,7 @@ public class Customer implements Comparable<Customer> {
 	}
 	
 	public void stompFeet(int times) {
-		System.out.println("STOMPING FEET");
+		KebabKing.print("STOMPING FEET");
 		this.stompTimer = 2 * times * this.type.animationTime;
 	}
 	
@@ -597,7 +597,7 @@ public class Customer implements Comparable<Customer> {
 			icon = Assets.face5;
 		} 
 		else {
-			System.out.println(satisfaction);
+			KebabKing.print(satisfaction);
 			throw new java.lang.AssertionError();
 		}
 		if (this.sick) icon = Assets.faceSick;
@@ -648,20 +648,29 @@ public class Customer implements Comparable<Customer> {
 			return;
 		}
 		
+		if (cm.totalPeopleInLines() >= cm.master.profile.getLocation().getMaxCustomers()) {
+			action = CustomerAction.PASS_END;
+			return;
+		}
+		
+		if (cm.peopleInLine(lineChoice) >= maxPerLine()) {
+			action = CustomerAction.PASS_END;
+			return;
+		}
+		
 		if (cm.master.kitchen != null && cm.master.kitchen.lastCustomer) {
 			action = CustomerAction.PASS_END;
 			return;
 		}
 		
 		if (TutorialEventHandler.dontAllowCustomer()) {
-			System.out.println("Don't allow customer");
+			KebabKing.print("Don't allow customer");
 			action = CustomerAction.PASS_END;
 			return;
 		}
 		
 		//tutorial, or force
 		if (cm.totalPeopleInLines() == 0) {
-			
 			startArriving();
 			return;
 		}
@@ -684,12 +693,11 @@ public class Customer implements Comparable<Customer> {
 		// if 2 star, base 30%
 		// if 1 star, base 15%
 
-		//		System.out.println("random: " + random + ", probability: " + probability + ", decision: " + wantsChuanr)
+		//		KebabKing.print("random: " + random + ", probability: " + probability + ", decision: " + wantsChuanr)
 		
 		float maxAtOnce = cm.master.profile.getCurrentReputation();
 		
-		if (cm.peopleInLine(lineChoice) >= CustomerManager.MAX_IN_LINE ||
-				cm.totalPeopleInLines() >= maxAtOnce - 1) {
+		if (cm.totalPeopleInLines() >= maxAtOnce - 1) {
 			if (cm.master.kitchen != null && cm.master.kitchen.forceArrive()) {
 				return;
 			}
@@ -701,6 +709,11 @@ public class Customer implements Comparable<Customer> {
 		else {
 			startArriving();
 		}
+	}
+	
+	public int maxPerLine() {
+		if (cm.master.profile.getLocation().getMaxCustomers() <= 2) return 1;
+		return CustomerManager.MAX_IN_LINE;
 	}
 
 	public void startArriving() {
@@ -773,7 +786,7 @@ public class Customer implements Comparable<Customer> {
 			this.startSelfie();
 		}
 		
-		System.out.println("Playing leaving sounds");
+		KebabKing.print("Playing leaving sounds");
 		SoundManager.playLeavingSound(type, satisfaction, sick);
 	}
 	
@@ -786,10 +799,10 @@ public class Customer implements Comparable<Customer> {
 		float rawSat = currentPatience;
 		
 		// boost raw sat so even if you take forever, they wont be furious
-		System.out.println("raw sat pre adjust: " + rawSat);
+		KebabKing.print("raw sat pre adjust: " + rawSat);
 		rawSat *= 4f/5;
 		rawSat += 1;
-		System.out.println("raw sat post adjust: " + rawSat);
+		KebabKing.print("raw sat post adjust: " + rawSat);
 		
 		// accuracy factor can be between 1 and 0
 		// perfect order (everything satisfied, no burnt) is a perfect 1
@@ -805,10 +818,10 @@ public class Customer implements Comparable<Customer> {
 		if (adBoost != 1) {
 			rawSat *= adBoost;
 			this.drawArrow = true;
-			System.out.println("Boosting satisfaction by " + adBoost);
+			KebabKing.print("Boosting satisfaction by " + adBoost);
 		}
 		
-		System.out.println("raw sat post boost: " + rawSat);
+		KebabKing.print("raw sat post boost: " + rawSat);
 
 		// round to nearest score
 		// so 4.5 is perfect, 3.5-4.5 is weaker
@@ -820,7 +833,7 @@ public class Customer implements Comparable<Customer> {
 		satisfaction = Math.min(5, satisfaction);
 		satisfaction = Math.max(1, satisfaction);
 		if (satisfaction < 0) throw new java.lang.AssertionError();
-		System.out.println("final sat: " + rawSat);
+		KebabKing.print("final sat: " + rawSat);
 		
 		return satisfaction;
 	}
@@ -895,15 +908,15 @@ public class Customer implements Comparable<Customer> {
 		
 		float maxTime = customerPatienceFactor * BASE_WAIT_TIME * this.type.patienceFactor;
 
-//		System.out.println("max time: " + maxTime + " difficultyFactor: " + difficultyFactor + ", together: " + maxTime*difficultyFactor);
+//		KebabKing.print("max time: " + maxTime + " difficultyFactor: " + difficultyFactor + ", together: " + maxTime*difficultyFactor);
 		return maxTime * difficultyFactor;
 	}
 
 	public void updateTargetY() {
 		this.targetY = (int) (KitchenScreen.convertY((CustomerManager.LINES_START_Y + lineIndex * (TEXTURE_HEIGHT * SQUISH_FACTOR))));
-		//		System.out.println(CustomerManager.LINES_START_Y  + " " + lineIndex * TEXTURE_HEIGHT);
-		//		System.out.println("targetY = " + targetY);
-		//		System.out.println("y_pos = " + position_y);
+		//		KebabKing.print(CustomerManager.LINES_START_Y  + " " + lineIndex * TEXTURE_HEIGHT);
+		//		KebabKing.print("targetY = " + targetY);
+		//		KebabKing.print("y_pos = " + position_y);
 	}
 
 	public int chooseLine() {
@@ -1051,7 +1064,7 @@ public class Customer implements Comparable<Customer> {
 	@Override
 	public int compareTo(Customer that) {
 		float diff = (that.position_y_full - this.position_y_full);
-		//		System.out.println(diff);
+		//		KebabKing.print(diff);
 		if (diff == 0) {
 			float diff2 = (this.position_x_range - that.position_x_range);
 			if (diff2 == 0) return 0;

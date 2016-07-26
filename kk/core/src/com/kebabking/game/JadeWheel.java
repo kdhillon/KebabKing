@@ -84,10 +84,10 @@ public class JadeWheel extends Group {
 			if (secondIndex < 0) secondIndex = degrees.length - 1;
 			float secondRot = degrees[secondIndex % degrees.length];    		
 			if (secondRot > firstRot) firstRot += 180;
-//			System.out.println("i: " + i + " first: " + firstRot + " second: " + secondRot);
+//			KebabKing.print("i: " + i + " first: " + firstRot + " second: " + secondRot);
 			float rotOffset = (firstRot - secondRot) / 2;
 
-//			System.out.println("rot offset: " + (int) rotOffset);
+//			KebabKing.print("rot offset: " + (int) rotOffset);
 
 			Label label;
 //			if (rewards[i % degrees.length] == JACKPOT) {
@@ -110,7 +110,7 @@ public class JadeWheel extends Group {
 			smallGroup.setPosition(-label.getPrefWidth()/2, offset + -label.getPrefHeight());
 			smallGroup.setOrigin(label.getPrefWidth()/2, -offset + label.getPrefHeight());
 			smallGroup.addActor(label);
-//			System.out.println("pref height: " + label.getPrefWidth());
+//			KebabKing.print("pref height: " + label.getPrefWidth());
 
 			smallGroup.rotateBy(-(degrees[secondIndex % degrees.length] + add + rotOffset));
 
@@ -145,8 +145,8 @@ public class JadeWheel extends Group {
 			currentRot += currentSpeed * delta;
 
 			currentRot = currentRot % 360;
-			//    		System.out.println("rotation: " + currentRot);
-			//    		System.out.println("speed: " + currentSpeed);
+			//    		KebabKing.print("rotation: " + currentRot);
+			//    		KebabKing.print("speed: " + currentSpeed);
 			if (currentSpeed <= 0) {
 				endSpin();
 			}
@@ -160,7 +160,7 @@ public class JadeWheel extends Group {
 					labels[finalIndex].addAction(Actions.forever(Actions.sequence(Actions.color(Color.WHITE, 1), Actions.color(MainStoreScreen.FONT_COLOR, 1))));
 
 //				labels[finalIndex].addAction(Actions.fadeOut(1));
-				System.out.println("Added fade action");
+				KebabKing.print("Added fade action");
 			}
 		}
 	}
@@ -170,7 +170,7 @@ public class JadeWheel extends Group {
 	}
 
 	public void startSpin() {
-		System.out.println("starting spin");
+		KebabKing.print("starting spin");
 		this.waitingForSpin = false;
 		this.spinning = true;
 		this.currentSpeed = START_SPEED + (float) (Math.random() * (START_SPEED / 2));
@@ -223,12 +223,12 @@ public class JadeWheel extends Group {
 //			}
 //		}
 		
-		System.out.println("final index: " + finalIndex);
+		KebabKing.print("final index: " + finalIndex);
 		
-		System.out.println("adjusted current rot: " + currentRot);
+		KebabKing.print("adjusted current rot: " + currentRot);
 		wheelTable.handleJadeWheelStopped();
 
-		System.out.println("Expected value: " + calcExpectedValue());
+		KebabKing.print("Expected value: " + calcExpectedValue());
 	}
 
 	public int getReward() {

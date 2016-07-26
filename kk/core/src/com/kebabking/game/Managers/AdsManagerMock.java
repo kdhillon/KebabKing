@@ -1,17 +1,18 @@
 package com.kebabking.game.Managers;
 
 import com.kebabking.game.AdsHandler;
+import com.kebabking.game.KebabKing;
 
 public class AdsManagerMock implements AdsManager {
 	@Override
 	public void cacheAd() {
-		System.out.println("cacheAd() mock");
+		KebabKing.print("cacheAd() mock");
 	}
 
 	/** return true if ad was completed, false otherwise */
 	@Override
 	public void showAd() {
-		System.out.println("showAd() mock");
+		KebabKing.print("showAd() mock");
 		AdsHandler.handleAdJustWatched();
 //		AdsHandler.handleAdNotAvailable();
 	}

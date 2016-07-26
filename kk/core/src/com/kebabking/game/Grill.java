@@ -256,7 +256,7 @@ public class Grill {
 	}
 
 	public void deactivate() {
-		System.out.println("deactivating");
+		KebabKing.print("deactivating");
 		this.selectedBox = SelectedBox.NONE;
 		this.ks = null;
 		this.active = false;
@@ -270,9 +270,9 @@ public class Grill {
 		if (!active) {
 			return;
 		}
-		//		System.out.println("just tapped spice: " + justTappedSpice);
-		//		System.out.println("hold spice on next touch: " + holdSpiceOnNextTouch);
-		//		System.out.println("spice selected: " + (SelectedBox.SPICE == selectedBox));
+		//		KebabKing.print("just tapped spice: " + justTappedSpice);
+		//		KebabKing.print("hold spice on next touch: " + holdSpiceOnNextTouch);
+		//		KebabKing.print("spice selected: " + (SelectedBox.SPICE == selectedBox));
 
 		//		if (boxesChanged) {
 		//			this.updateBoxes();
@@ -335,7 +335,7 @@ public class Grill {
 	public void draw(SpriteBatch batch, float delta) {
 		// this is required for now.
 		this.updateSize();
-		//		System.out.println("holding after select: " + holdingAfterSelect);
+		//		KebabKing.print("holding after select: " + holdingAfterSelect);
 		//		if (ks != null && TrashPile.DRAW_TRASH_PILE) {
 		//			drawTrashPile(batch);
 		//		}
@@ -500,6 +500,7 @@ public class Grill {
 	}
 
 	public boolean drawingFloatingSelected() {
+//		System.out.println("drawing floating selected: " + (!ADVANCED_CONTROLS && meatSelected() && !mousedOver() && holding));
 		return !ADVANCED_CONTROLS && meatSelected() && !mousedOver() && holding;
 	}
 
@@ -682,7 +683,7 @@ public class Grill {
 	public void selectBox(SelectedBox newSelected) {
 		this.selectedBox = newSelected;
 
-		//		System.out.println("ring meat");
+		//		KebabKing.print("ring meat");
 		this.deselectAll();
 		//		this.boxSelectedNotHeld = false;
 		this.meatSelectedNotHeld = false;
@@ -707,7 +708,7 @@ public class Grill {
 		double thirdSelected = 0;
 
 		for (Meat m : meat) {
-			//			System.out.println("selectedset contains meat? " + selectedSet.contains(m));
+			//			KebabKing.print("selectedset contains meat? " + selectedSet.contains(m));
 			if (selectedSet.contains(m)) {				
 				if (!o.hasOrderedType(m.type)) {
 					deselectMeat(m);
@@ -781,7 +782,7 @@ public class Grill {
 			}
 			else {
 				SelectedBox box = touchBox(KitchenScreen.getUnitX(x), KitchenScreen.getUnitY(y));
-				//				System.out.println("first touch is " + box);
+				//				KebabKing.print("first touch is " + box);
 				if (box == SelectedBox.SPICE) {
 					if (disableSpice()) return;
 					this.justTappedSpice = true;
@@ -806,8 +807,8 @@ public class Grill {
 		//		if (onGrill(unit_x, unit_y)) {
 		if (onGrillAbsolute(x, y)) {
 			mousedOver = getGrillIndex(x);
-			if (mousedOver < 0) System.out.println("GetGrillIndex is broken: moused over is " + mousedOver);
-			//			System.out.println("Mousing over grill " + mousedOver + " at " + x + ", " + y);
+			if (mousedOver < 0) KebabKing.print("GetGrillIndex is broken: moused over is " + mousedOver);
+			//			KebabKing.print("Mousing over grill " + mousedOver + " at " + x + ", " + y);
 		}
 		// if you have just selected meat but you're sliding your finger off grill, select it.
 		else if (!SELECT_BY_SWIPE) {
@@ -825,7 +826,7 @@ public class Grill {
 		else {
 			indexToPlaceMeatAt = -1;
 			//			if (selected )
-			//			System.out.println("Not mousing over grill at " + x + ", " + y);
+			//			KebabKing.print("Not mousing over grill at " + x + ", " + y);
 		}
 
 		// sliding over grill
@@ -862,10 +863,10 @@ public class Grill {
 			//				if (getType(selectedBox).doubleWidth && index == meat.length - 1) {
 			//					index = meat.length - 2;
 			//				}
-			//				System.out.println("returning " + index);
+			//				KebabKing.print("returning " + index);
 
 			if (canFitAt(index, getType(selectedBox))) {
-				System.out.println("returning " + index);
+				KebabKing.print("returning " + index);
 				return index;
 			}
 
@@ -908,7 +909,7 @@ public class Grill {
 		//		this.holdingAfterSelect = false;
 
 		if (!this.active || this.disableTouch) {
-			System.out.println("GRILL NOT ACTIVE OR TOUCH DISABLED");
+			KebabKing.print("GRILL NOT ACTIVE OR TOUCH DISABLED");
 			return;
 		}
 		firstTouch = true;
@@ -917,9 +918,9 @@ public class Grill {
 			this.trashSelected();
 		}
 
-		if (!SELECT_BY_SWIPE && meatJustTouched >= 0 && getGrillIndex(x) == meatJustTouched && this.selectedBox != SelectedBox.SPICE) {
+		if (!SELECT_BY_SWIPE && meatJustTouched >= 0 && mousedOver() && getGrillIndex(x) == meatJustTouched && this.selectedBox != SelectedBox.SPICE) {
 			if (!selectedSet.contains(meat[meatJustTouched])) {
-				System.out.println("selecting meat just touched");
+				KebabKing.print("selecting meat just touched");
 				selectMeat(meatJustTouched);
 			}
 			else 
@@ -927,14 +928,16 @@ public class Grill {
 		}
 		meatJustTouched = -1;
 
-		//System.out.println("Releasing. Moused over grill: " + mousedOver() + " " + " new meat selected: " + (newMeatSelected() && mousedOver != 0) + " meat selected: " + meatSelected() + " ");
-		//System.out.println("Customer not null :" + (ks.cm.mousedOver != null));
-		// if (ks.cm.mousedOver != null) System.out.println(" order not null: " + ks.cm.mousedOver.order != null);
+		//KebabKing.print("Releasing. Moused over grill: " + mousedOver() + " " + " new meat selected: " + (newMeatSelected() && mousedOver != 0) + " meat selected: " + meatSelected() + " ");
+		//KebabKing.print("Customer not null :" + (ks.cm.mousedOver != null));
+		// if (ks.cm.mousedOver != null) KebabKing.print(" order not null: " + ks.cm.mousedOver.order != null);
 
-		boolean gaveBeerToCustomer = false;
 
+		boolean gaveBeerToCustomer = false;	
+		
 		// moused over grill
 		if (mousedOver()) {
+			System.out.println("moused over grill");
 			if (meatBoxSelected()) {
 				//				// if already meat there, select it, but only if just touched
 				//				if (this.meat[this.mousedOver] != null && !placedWhileHeld) {
@@ -945,12 +948,12 @@ public class Grill {
 				//				if (open(mousedOver)) {
 				////					if (!boxSelectedNotHeld) select(Selected.NONE);
 				//					if (!boxSelectedNotHeld) {
-				//						System.out.println("BAD PLACE");
+				//						KebabKing.print("BAD PLACE");
 				//						select(Selected.NONE);
 				//					}
 				//				}
 				//				else {
-				//					System.out.println("deselecting");
+				//					KebabKing.print("deselecting");
 				//					selected = Selected.NONE;
 				//				}
 			}
@@ -961,7 +964,7 @@ public class Grill {
 			else if (meatSelected() && !holdingPastTap() && (justSelected < 0 || meat[mousedOver] != meat[justSelected]) && !open(mousedOver) && selectedSet.contains(meat[mousedOver])) {
 				// remove it from selected if clicking it twice
 				//				if (!canMoveSelectedTo(mousedOver)) {
-				System.out.println("removing on release");
+				KebabKing.print("removing on release");
 
 				// only remove on release if this isn't the first touch
 				removeOnRelease(mousedOver);
@@ -970,7 +973,7 @@ public class Grill {
 				//				}
 			}
 			else if (selectedBox == SelectedBox.SPICE) {
-				System.out.println("releasing with spice selected");
+				KebabKing.print("releasing with spice selected");
 				if (!open(mousedOver)) {
 					if (!meat[mousedOver].spiced){
 						dropSpice();
@@ -995,7 +998,7 @@ public class Grill {
 			//				if (meat[mousedOver] != null) {
 			//					if (selectedSet.contains(meat[index])) {
 			//						if (meatSelectedNotHeld) {
-			//							//						System.out.println("removing from selected");
+			//							//						KebabKing.print("removing from selected");
 			//							removeOnRelease(index);
 			//
 			//
@@ -1013,6 +1016,7 @@ public class Grill {
 		//		}
 		// drop meat on customers
 		else if (meatSelected() && ks.cm.mousedOver != null && ks.cm.mousedOver.order != null && !TutorialEventHandler.shouldDisableServe()) {
+			System.out.println("dropping meat on customers");
 			ks.serveCustomerAll(ks.cm.mousedOver);
 		}
 		// drop beer on customers
@@ -1024,7 +1028,7 @@ public class Grill {
 			//			trashSelected();
 		}
 
-		//		System.out.println("remove on release: " + removeOnRelease + " justSelected " + justSelected);
+		//		KebabKing.print("remove on release: " + removeOnRelease + " justSelected " + justSelected);
 		// remove on release, don't remove if just selected
 		if (removeOnRelease >= 0) {
 			selectedSet.remove(meat[removeOnRelease]);
@@ -1084,7 +1088,7 @@ public class Grill {
 		}
 
 		if (!ADVANCED_CONTROLS) {
-			//			System.out.println(indexToPlaceMeatAt);
+			//			KebabKing.print(indexToPlaceMeatAt);
 			if (indexToPlaceMeatAt >= 0) {
 				if (!meatBoxSelected()) indexToPlaceMeatAt = -1;
 				else ks.dropMeatOnGrill(getType(selectedBox), indexToPlaceMeatAt);
@@ -1168,7 +1172,7 @@ public class Grill {
 
 	// returns true if x,y is anywhere where a grill could be (anywhere from right of screen to left of screen, including paintbrush)
 	public boolean onGrillArea(int x, int y) {
-		//		System.out.println(x + ", " + y);
+		//		KebabKing.print(x + ", " + y);
 		// assumption is that halfway across screen will always be on grill
 		return onGrillAbsolute(KebabKing.getGlobalX(0.5f), y);
 	}
@@ -1190,9 +1194,9 @@ public class Grill {
 		int top = draw_y + draw_height;
 
 
-		//		System.out.println(left + " " + bottom + " " + right + " " + top + " " + x + " " + (KebabKing.getHeight()-y));
+		//		KebabKing.print(left + " " + bottom + " " + right + " " + top + " " + x + " " + (KebabKing.getHeight()-y));
 		boolean onGrill = (x > left && x < right && KebabKing.getHeight() - y > bottom && KebabKing.getHeight() - y < top);
-		//		System.out.println("On grill: " + onGrill);
+		//		KebabKing.print("On grill: " + onGrill);
 		return (onGrill);
 		//		return onGrill(KitchenScreen.getUnitX(x), KitchenScreen.getUnitY(y));
 	}
@@ -1312,7 +1316,7 @@ public class Grill {
 	public void trashSelected() {
 		int removed = removeSelected();
 		ks.kebabsTrashed += removed;
-		System.out.println("Kebabs trashed: " + ks.kebabsTrashed);
+		KebabKing.print("Kebabs trashed: " + ks.kebabsTrashed);
 		kebabsTrashedThisSession += removed;
 
 		SoundManager.playTrash();
@@ -1390,7 +1394,7 @@ public class Grill {
 	//	}
 
 	public boolean shouldDrawGhostMeatForMove() {
-		//		System.out.println("just selected: " + justSelected + " mousedOver: " + mousedOver);
+		//		KebabKing.print("just selected: " + justSelected + " mousedOver: " + mousedOver);
 		return canMoveSelected() && mousedOver >= 0 && canMoveSelectedTo(mousedOver);// && (justSelected < 0 || meat[mousedOver] != meat[justSelected]);
 	}
 
@@ -1401,7 +1405,7 @@ public class Grill {
 				meat[i] = null;
 			}
 		}
-		System.out.println("moving selected to " + index);
+		KebabKing.print("moving selected to " + index);
 
 		// now relocate all selected meat
 		int i = index;
@@ -1419,7 +1423,7 @@ public class Grill {
 	}
 
 	public boolean canMoveSelectedTo(int index) {
-		//		if (index < 0) System.out.println("can't move to " + index);
+		//		if (index < 0) KebabKing.print("can't move to " + index);
 		if (index < 0) return false;
 		//		return false;
 		//		return false;
@@ -1498,7 +1502,7 @@ public class Grill {
 	}
 
 	public int getGrillCenter() {
-		//		System.out.println(grillRightX + " " + grillLeftX);
+		//		KebabKing.print(grillRightX + " " + grillLeftX);
 		return (this.grillRightX - this.grillLeftX) / 2 + this.grillLeftX;
 	}
 	

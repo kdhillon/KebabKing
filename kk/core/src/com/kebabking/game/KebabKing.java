@@ -17,6 +17,7 @@ import com.kebabking.game.Purchases.Purchaseable;
 public class KebabKing extends Game {
 	//	public static final boolean TEST_MODE = false;
 	public static final String lang = "en";
+	public static final boolean DEBUG = false;
 	public static final boolean EXP_CITY = false; // get 300 exp after day
 	public static final boolean SHORT_DAY = false;
 	public static final boolean LVL_50 = false;
@@ -81,7 +82,7 @@ public class KebabKing extends Game {
 
 	@Override
 	public void create () {
-		System.out.println("local storage path " + Gdx.files.getLocalStoragePath());
+		KebabKing.print("local storage path " + Gdx.files.getLocalStoragePath());
 		this.activityStartTime = System.currentTimeMillis();
 
 		this.kryo = new Kryo();
@@ -94,7 +95,7 @@ public class KebabKing extends Game {
 		kryo.register(ProfileInventory.class);//, new TaggedFieldSerializer(kryo, ProfileInventory.class));
 
 		// load splash screen first to load assets!
-		System.out.println("loading splash");
+		KebabKing.print("loading splash");
 		splash = new SplashScreen(this);
 		this.setScreen(splash);
 
@@ -131,14 +132,14 @@ public class KebabKing extends Game {
 
 				// save exists, at least try loading parts of it?
 				// TODO
-				System.out.println("Loading failed because Kryo is null, creating a new profile");
+				KebabKing.print("Loading failed because Kryo is null, creating a new profile");
 				if (STRICT_MODE) 
 					throw new java.lang.AssertionError();
 				createFreshProfile();
 			}
 		}
 		else {
-			System.out.println("No save found, starting completely new profile");
+			KebabKing.print("No save found, starting completely new profile");
 			if (STRICT_MODE)
 				throw new java.lang.AssertionError();
 
@@ -221,7 +222,7 @@ public class KebabKing extends Game {
 	public void save() {
 		if (DONT_SAVE) return;
 
-		System.out.println("Trying to save");
+		KebabKing.print("Trying to save");
 		// open android fileoutputstream in internal storage
 		//		FileOutputStream internal = openFileOutput("filename.sav", Context.MODE_PRIVATE);
 
@@ -251,14 +252,14 @@ public class KebabKing extends Game {
 			if (p == null) throw new java.lang.AssertionError();
 		}
 
-		System.out.println("Game saved successfully!");
+		KebabKing.print("Game saved successfully!");
 		Manager.analytics.sendUserTiming("Save", System.currentTimeMillis() - startTime);
 	}
 
 	//	public void deleteProfile() {
 	//		platformSpec.deleteProfile();
 	//		this.profile = new Profile();
-	//		System.out.println("deleting profile");
+	//		KebabKing.print("deleting profile");
 	//		this.initialize();
 	//	}
 
@@ -280,7 +281,7 @@ public class KebabKing extends Game {
 			input = new Input(Manager.file.getInputStream());
 		}
 		catch (Exception e) {	
-			System.out.println("no save file found");
+			KebabKing.print("no save file found");
 			return null;
 		}
 
@@ -295,12 +296,12 @@ public class KebabKing extends Game {
 		// Try loading all things separately:
 		try {
 			date = kryo.readObject(input, Date.class);
-			System.out.println("Loading save from " + date.toString());			
+			KebabKing.print("Loading save from " + date.toString());			
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			KebabKing.print(e.getMessage());
 			e.printStackTrace();
-			System.out.println("Date in wrong format");
+			KebabKing.print("Date in wrong format");
 		}
 
 		// Load profile
@@ -308,9 +309,9 @@ public class KebabKing extends Game {
 			profile = kryo.readObject(input, Profile.class);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			KebabKing.print(e.getMessage());
 			e.printStackTrace();
-			System.out.println("Profile in wrong format, creating new!");
+			KebabKing.print("Profile in wrong format, creating new!");
 			profile = new Profile();
 			
 			if (STRICT_MODE) throw new java.lang.AssertionError();
@@ -321,9 +322,9 @@ public class KebabKing extends Game {
 			settings = kryo.readObject(input, ProfileSettings.class);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			KebabKing.print(e.getMessage());
 			e.printStackTrace();
-			System.out.println("Settings in wrong format, creating new!");
+			KebabKing.print("Settings in wrong format, creating new!");
 			settings = new ProfileSettings();
 			
 			if (STRICT_MODE) throw new java.lang.AssertionError();
@@ -334,9 +335,9 @@ public class KebabKing extends Game {
 			stats = kryo.readObject(input, ProfileStats.class);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			KebabKing.print(e.getMessage());
 			e.printStackTrace();
-			System.out.println("Stats in wrong format, creating new!");
+			KebabKing.print("Stats in wrong format, creating new!");
 			stats = new ProfileStats();
 			
 			if (STRICT_MODE) throw new java.lang.AssertionError();
@@ -347,9 +348,9 @@ public class KebabKing extends Game {
 			inventory = kryo.readObject(input, ProfileInventory.class);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			KebabKing.print(e.getMessage());
 			e.printStackTrace();
-			System.out.println("Inventory in wrong format, creating new!");
+			KebabKing.print("Inventory in wrong format, creating new!");
 			inventory = new ProfileInventory(profile);
 			
 			if (STRICT_MODE) throw new java.lang.AssertionError();
@@ -373,7 +374,7 @@ public class KebabKing extends Game {
 		profile.initializeAfterLoad(this);
 
 
-		System.out.println("save loaded successfully");
+		KebabKing.print("save loaded successfully");
 
 		return true;
 
@@ -382,7 +383,7 @@ public class KebabKing extends Game {
 		//		}
 		//		catch (Exception e) {	
 		//			
-		//			System.out.println("save file in wrong format, creating new profile");
+		//			KebabKing.print("save file in wrong format, creating new profile");
 		//			input.close();
 		//			deleteSave();
 		//			// Create fresh profile
@@ -404,7 +405,7 @@ public class KebabKing extends Game {
 	// shutdown the stand
 	public void shutdownStand() {
 		this.kitchen.shutdown();
-		System.out.println("");
+		KebabKing.print("");
 	}
 
 	public void startCountdown() {
@@ -480,7 +481,7 @@ public class KebabKing extends Game {
 		this.settingsFromThis = this.getScreen();
 		if (settingsScreen == null) throw new java.lang.AssertionError();
 		this.setScreen(settingsScreen);
-		System.out.println("Just switched to settings");
+		KebabKing.print("Just switched to settings");
 	}
 
 	public void settingsBack() {
@@ -530,7 +531,7 @@ public class KebabKing extends Game {
 			summary.dispose();
 			this.summary = null;
 		}
-		System.out.println("summary to store");
+		KebabKing.print("summary to store");
 		mainMenu.reset();
 		this.setScreen(store);
 		bg.setToDay();
@@ -542,7 +543,7 @@ public class KebabKing extends Game {
 			summary.dispose();
 			this.summary = null;
 		}
-		System.out.println("summary to main");
+		KebabKing.print("summary to main");
 		mainMenu.reset();
 		this.setScreen(mainMenu);
 		bg.setToDay();
@@ -562,11 +563,15 @@ public class KebabKing extends Game {
 	public void mainToStore() {
 		this.setScreen(store);
 	}
-
-	//	public void setPlatformSpecific(PlatformSpecific ps) {
-	//		this.platformSpec = ps;
-	//		Analytics.init(ps);
-	//	}
+	
+	// this doesn't really do anything, but could be useful later.
+	public static void print(Object string) {
+		// if debug, print all.
+		// if release, don't
+		if (DEBUG) {
+			System.out.println(string);
+		}
+	}
 
 	public static void setWidth(int toSet) {
 		width = toSet;

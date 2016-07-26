@@ -22,7 +22,6 @@ public class PauseScreen extends ActiveScreen  {
 		"Drink and meat upgrades bring more profit per item!",
 		"Vegetarian? New veggie kebabs coming soon!",
 		"Kebabs cooking too slowly? Upgrade your grill type to increase cook speed!",
-		"New seafood kebabs coming soon!",
 			Assets.strings.get("tip1"),
 			Assets.strings.get("tip2"),
 			Assets.strings.get("tip3"),
@@ -152,7 +151,7 @@ public class PauseScreen extends ActiveScreen  {
 	}
 	
 	public void goToMarket() {
-		System.out.println("Go to market!");
+		KebabKing.print("Go to market!");
 	}
 		
 	@Override
@@ -174,7 +173,7 @@ public class PauseScreen extends ActiveScreen  {
 	}
 	
 	public void unpause() {
-		System.out.println("Unpausing");
+		KebabKing.print("Unpausing");
 		master.kitchenUnpause();
 	}
 	

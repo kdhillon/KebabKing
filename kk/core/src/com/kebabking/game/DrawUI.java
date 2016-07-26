@@ -113,7 +113,7 @@ public class DrawUI {
 			Gdx.input.setInputProcessor(uiStage);
 		}
 		else {
-			System.out.println("setting input proc");
+			KebabKing.print("setting input proc");
 			InputMultiplexer im = new InputMultiplexer();
 			im.addProcessor(uiStage);
 			im.addProcessor(ip);
@@ -271,7 +271,7 @@ public class DrawUI {
 	}
 
 	public static void createProjectiles(int count, float posX, float posY, boolean jade) {
-		System.out.println("creating "  + count + " projectiles " + posX + " " + posY);
+		KebabKing.print("creating "  + count + " projectiles " + posX + " " + posY);
 		if (jade) {
 			jadeProjLeft += count;
 			jadeGenX = posX;
@@ -285,7 +285,7 @@ public class DrawUI {
 	}
 
 	public static void clickCoinPlus() {
-		System.out.println("Coin Plus");
+		KebabKing.print("Coin Plus");
 
 	}
 
@@ -389,7 +389,7 @@ public class DrawUI {
 
 	public static void drawLastCustomer(SpriteBatch batch, float inputTime) {
 		//		dayEndLabel.setText(KitchenScreen.LAST_CUSTOMER_TEXT);
-		//		System.out.println("drawing last customer " + inputTime);
+		//		KebabKing.print("drawing last customer " + inputTime);
 		dayEndColor.set(1,  1,  1, Math.max(0, ((inputTime + KitchenScreen.LAST_CUSTOMER_FADE) / KitchenScreen.LAST_CUSTOMER_FADE)));
 
 		dayEndLabel.setColor(dayEndColor);
@@ -427,7 +427,7 @@ public class DrawUI {
 
 	public static void launchShareSuccessNotification(int coins) {
 		if (!canLaunchNotification()) return;
-		System.out.println("launching share success notification for " + coins + " coins");
+		KebabKing.print("launching share success notification for " + coins + " coins");
 		prepareNotification();
 		prepareSuccessNotificationTable(coins);
 	}
@@ -435,7 +435,7 @@ public class DrawUI {
 
 	public static void launchAdSuccessNotification(int coins) {
 		if (!canLaunchNotification()) return;
-		//		System.out.println("launching ad success notification for " + coins + " coins");
+		//		KebabKing.print("launching ad success notification for " + coins + " coins");
 		prepareNotification();
 		if (coins <= 0) {
 			preparePoliceSuccessNotificationTable();
@@ -606,8 +606,8 @@ public class DrawUI {
 
 			for (Purchaseable toUnlock : available) {
 				if (toUnlock.cashToUnlock() == 0 && toUnlock.coinsToUnlock() == 0) {
-//					System.out.println(toUnlock.getName());
-//					System.out.println(master.profile.getLevel());
+//					KebabKing.print(toUnlock.getName());
+//					KebabKing.print(master.profile.getLevel());
 					master.profile.inventory.unlock(toUnlock, toUnlock.getType());
 					master.store.storeScreen.updatePurchaseableAfterUnlock(toUnlock);
 				}
@@ -794,7 +794,7 @@ public class DrawUI {
 	}
 
 	private static void attemptBribe() {
-		System.out.println("bribe was pressed");
+		KebabKing.print("bribe was pressed");
 		AdsHandler.showAd();
 	}
 
@@ -1211,51 +1211,51 @@ public class DrawUI {
 			padYTop *= -0.0f;
 			padRight *= 1.5f;
 			padLeft *= 1.5f;
-			System.out.println("adding extra padding: " + padLeft + text);
+			KebabKing.print("adding extra padding: " + padLeft + text);
 		}
 
 		button.add(resume).padLeft(padLeft).padRight(padRight).padBottom(padYBot).padTop(padYTop);
 
 		TextureRegion bg;
 		if (button.getPrefWidth() > 300 && button.getPrefHeight() > 60) {
-			//			System.out.println("USING 300");
+			//			KebabKing.print("USING 300");
 			bg = Assets.getTextureRegion("screens/pause-052");
 			button.getCell(resume).padLeft(padLeft * 0.6f).padRight(padRight * 0.7f);
 		}
 		//		else if (button.getPrefWidth() > 267 && button.getPrefHeight() > 90) {
-		////			System.out.println("USING 267");
+		////			KebabKing.print("USING 267");
 		//			bg = Assets.getTextureRegion("screens/pause-04");
 		//		}
 		//		else if (button.getPrefWidth() > 267 && button.getPrefHeight() > 80) {
-		////			System.out.println("USING 267 80");
+		////			KebabKing.print("USING 267 80");
 		//			bg = Assets.getTextureRegion("screens/pause-042");
 		//		}
 		else if (button.getPrefWidth() > 270 && button.getPrefHeight() > 60) {
-			//			System.out.println("USING 270 60");
+			//			KebabKing.print("USING 270 60");
 			bg = Assets.getTextureRegion("screens/pause-053");
 		}
 		else if (button.getPrefWidth() > 250 && button.getPrefHeight() > 40) {
-			//			System.out.println("USING 250 40");
+			//			KebabKing.print("USING 250 40");
 			bg = Assets.getTextureRegion("screens/pause-054");
 		}
 		//		else if (button.getPrefWidth() > 229 && button.getPrefHeight() > 60) {
-		////			System.out.println("USING SUPER BIGGG");
+		////			KebabKing.print("USING SUPER BIGGG");
 		//			bg = Assets.getTextureRegion("screens/pause-055");
 		//		}
 		//		else if (button.getPrefWidth() > 208 && button.getPrefHeight() > 60) {
-		////			System.out.println("USING SUPER BIGGG");
+		////			KebabKing.print("USING SUPER BIGGG");
 		//			bg = Assets.getTextureRegion("screens/pause-056");
 		//		}
 		//		else if (button.getPrefWidth() > 206 && button.getPrefHeight() > 63) {
-		////			System.out.println("USING MEDD");
+		////			KebabKing.print("USING MEDD");
 		//			bg = Assets.getTextureRegion("screens/Main-03");
 		//		}
 		else if (button.getPrefWidth() > 196 && button.getPrefHeight() > 86) {
-			System.out.println("USING 196 86");
+			KebabKing.print("USING 196 86");
 			bg = Assets.getTextureRegion("screens/blueSwipe");
 		}
 		else {
-			System.out.println("USING SMALL");
+			KebabKing.print("USING SMALL");
 			bg = Assets.getTextureRegion("screens/blueSwipeSm");			
 		}
 		button.setBackground(new TextureRegionDrawable(bg));

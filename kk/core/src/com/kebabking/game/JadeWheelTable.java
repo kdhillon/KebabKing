@@ -70,7 +70,7 @@ public class JadeWheelTable extends Table {
 //	@Override
 //	public void render(float delta) {		
 //		super.renderGrayAlpha(delta, DrawUI.GRAY_ALPHA, 1);
-//		//		System.out.println("rendering " + bgTint);
+//		//		KebabKing.print("rendering " + bgTint);
 //		//		uiStage.draw();
 //	}
 	
@@ -86,7 +86,7 @@ public class JadeWheelTable extends Table {
 				addSpinButton();
 			}
 			else {
-				System.out.println("adding play");
+				KebabKing.print("adding play");
 				Image play = new Image(Assets.getTextureRegion("market/Market_menu_element-09"));
 				spinButton.add(play).expand().padLeft(-KebabKing.getGlobalX(0.06f)).padRight(KebabKing.getGlobalX(0.11f));
 			}
@@ -97,7 +97,7 @@ public class JadeWheelTable extends Table {
 		String text = Assets.strings.get("spin");
 		spinButton = DrawUI.getBlueButton(text, 56);
 		if (!master.profile.canSpin) {
-			System.out.println("adding play");
+			KebabKing.print("adding play");
 			Image play = new Image(Assets.getTextureRegion("market/Market_menu_element-09"));
 			spinButton.add(play).expand().size(KebabKing.getGlobalYFloat(0.045f)).padLeft(-KebabKing.getGlobalX(0.06f)).padRight(KebabKing.getGlobalX(0.11f));
 		}
@@ -161,14 +161,14 @@ public class JadeWheelTable extends Table {
 	public void hide() {
 //		master.store.storeScreen.uiStage.addActor(wheel);
 //		wheel.setTouchable(Touchable.disabled);
-		System.out.println("hiding");
+		KebabKing.print("hiding");
 		wheel.remove();
 		wheel.reset();
 	}
 
 	// make this shoot a bunch in a row, a second after wheel stops spinning
     public void wheelSpinResult(int reward) {
-    	System.out.println("wheel spin result");
+    	KebabKing.print("wheel spin result");
     	DrawUI.createProjectiles(reward, (wheel.x + wheel.width/2) / KebabKing.getWidth(), wheel.y / KebabKing.getHeight(), true);
     	master.profile.giveCoins(reward);
     	master.profile.canSpin = false;

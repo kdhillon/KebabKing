@@ -69,7 +69,7 @@ public class Profile {
 		this.coins = STARTING_JADE;
 		
 		if (KebabKing.RICH_MODE) {
-			this.cash = 12204;
+			this.cash = 1000;
 			this.coins = 350;
 		}
 		if (KebabKing.LVL_50) {
@@ -99,7 +99,7 @@ public class Profile {
 		// figure out how much cash someone will have at a certain level
 //		int total = 0;
 //		for (int i = 0; i < 100; i++) {
-//			System.out.println("EXP needed for " + i + ": " + EXP_TABLE[i] + " (" + total +")");
+//			KebabKing.print("EXP needed for " + i + ": " + EXP_TABLE[i] + " (" + total +")");
 //			total += EXP_TABLE[i];
 //		}
 	}
@@ -115,8 +115,8 @@ public class Profile {
 		settings.initializeAfterLoad();
 		stats.initializeAfterLoad(this);
 
-		System.out.println("Quit during ad: " + gameQuitDuringAd);
-		System.out.println("Quit during share: " + gameQuitDuringShare);
+		KebabKing.print("Quit during ad: " + gameQuitDuringAd);
+		KebabKing.print("Quit during share: " + gameQuitDuringShare);
 
 		// these booleans are for dealing with cases where game crashes during sharing or ads
 		// for now, we just assume the user watched/shared successfully
@@ -127,7 +127,7 @@ public class Profile {
 			SocialMediaHandler.shareSuccess();
 			StatsHandler.shareCrashedButRewarded();
 		}
-		System.out.println("can spin: " + canSpin);
+		KebabKing.print("can spin: " + canSpin);
 		
 		if (this.exp < 0) this.exp = 0;
 	}
@@ -180,11 +180,11 @@ public class Profile {
 		}
 		sum /= pastFiveDaysReputation.length;
 
-		System.out.println(currentReputation);
+		KebabKing.print(currentReputation);
 
 		currentReputation = sum;
 		
-		System.out.println("NEW REPUTATION: " + currentReputation);
+		KebabKing.print("NEW REPUTATION: " + currentReputation);
 	}
 	
 	private void updateReputationAndStars() {
@@ -224,7 +224,7 @@ public class Profile {
 //	 Just big and small for now
 	public int grillSize() {
 		if (inventory.grillSize == null) {
-			System.out.println("grill is null!!!");
+			KebabKing.print("grill is null!!!");
 			return 0;
 		}
 		return inventory.grillSize.getSize();
@@ -277,10 +277,10 @@ public class Profile {
 	}
 	
 	public void giveExp(int exp) {
-		System.out.println("giving exp");
+		KebabKing.print("giving exp");
 		if (this.exp < 0) this.exp = 0;
 		if (exp <= 0) return;
-//		System.out.println("Granting " + exp + " exp");
+//		KebabKing.print("Granting " + exp + " exp");
 		this.exp += exp * EXP_RATE;
 		if (this.exp > this.getNextExp()) this.levelUp();
 	}
@@ -291,7 +291,7 @@ public class Profile {
 			this.exp -= this.getNextExp();
 			if (this.exp < 0) this.exp = 0;
 			
-			System.out.println("You are now at level " + level + "!");
+			KebabKing.print("You are now at level " + level + "!");
 
 			Manager.analytics.sendEventHit("Player", "Level " + level + " reached at round", "", (long) this.getCurrentDay());
 

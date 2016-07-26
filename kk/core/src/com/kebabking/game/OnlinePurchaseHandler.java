@@ -43,7 +43,7 @@ public class OnlinePurchaseHandler {
 
 	public static void handlePurchaseSuccess(String purchaseID) {
 		PurchaseableOnline purchased = getPurchaseableForID(purchaseID);
-		System.out.println("Successfully purchased " + purchaseID + " for " + purchased.price + " giving you " + purchased.cash + " cash and " + purchased.jade + " coins");
+		KebabKing.print("Successfully purchased " + purchaseID + " for " + purchased.price + " giving you " + purchased.cash + " cash and " + purchased.jade + " coins");
 		master.profile.giveCoins(purchased.jade);
 		master.profile.giveMoney(purchased.cash);
 		
@@ -61,7 +61,7 @@ public class OnlinePurchaseHandler {
 			}
 		}
 			
-		System.out.println("PURCHASE ERROR: PURCHASEID NOT FOUND");
+		KebabKing.print("PURCHASE ERROR: PURCHASEID NOT FOUND");
 		return null;
 	}
 }

@@ -207,7 +207,7 @@ public class StoreScreen extends ActiveScreen {
 		//		case main:
 		//			break;
 		case food:
-			//			System.out.println("initializeing food");
+			//			KebabKing.print("initializeing food");
 			foodTable = new StoreSubtable(foodTypes, this); //master.profile.inventory.stickType});
 			break;
 		case grill:
@@ -237,7 +237,7 @@ public class StoreScreen extends ActiveScreen {
 
 	@Override
 	public void render(float delta) {
-//		System.out.println("rendering store table");
+//		KebabKing.print("rendering store table");
 		if (this.currentTable == TableType.jeweler || this.currentTable == TableType.wheel) 
 			super.renderGrayAlpha(delta, 0.8f);
 		else
@@ -277,7 +277,7 @@ public class StoreScreen extends ActiveScreen {
 	}
 
 	public void clickBack() {
-		System.out.println("switching to main");
+		KebabKing.print("switching to main");
 		switchToMain();
 	}
 
@@ -292,7 +292,7 @@ public class StoreScreen extends ActiveScreen {
 	public void updatePurchaseableAfterUnlock(Purchaseable p) {
 		StoreSubtable subtable = getSubtableForType(p.getType());
 		if (subtable == null) {
-			System.out.println("Wanting to update " + p.getName() + " but it doesn't exist");
+			KebabKing.print("Wanting to update " + p.getName() + " but it doesn't exist");
 			return;
 		}
 		subtable.updatePurchaseableForUnlock(p);
@@ -301,7 +301,7 @@ public class StoreScreen extends ActiveScreen {
 //	public void updateAfterConsumableReset(PurchaseType c) {
 //		StoreSubtable subtable = getSubtableForType(c);
 //		if (subtable == null) {
-//			System.out.println("Wanting to update consumable " + c.getName() + " but it doesn't exist");
+//			KebabKing.print("Wanting to update consumable " + c.getName() + " but it doesn't exist");
 //			return;
 //		}
 //		subtable.updateOnConsumableReset(c);
@@ -474,7 +474,7 @@ public class StoreScreen extends ActiveScreen {
 	}
 	
 	public void campaignEnded() {
-		System.out.println("campaign ended, updating purchase type table for ad campaign");
+		KebabKing.print("campaign ended, updating purchase type table for ad campaign");
 		adsTable.onCampaignEnded(master.profile.inventory.adCampaign);
 //		master.save();
 	}

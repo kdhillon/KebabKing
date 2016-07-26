@@ -1,5 +1,9 @@
 package com.kebabking.game.android;
 
+import com.kebabking.game.Assets;
+import com.kebabking.game.KebabKing;
+import com.kebabking.game.TutorialEventHandler;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.kebabking.game.Assets;
 
 public class AppRater {
     private final static String APP_PNAME = "com.kebabchef.game.android";// Package Name
@@ -22,7 +24,7 @@ public class AppRater {
 
     public static void app_launched(Context mContext) {
         SharedPreferences prefs = mContext.getSharedPreferences("apprater", 0);
-        if (prefs.getBoolean("dontshowagain", false)) { return ; }
+        if (dontShowAgain(prefs)) return;
 
         SharedPreferences.Editor editor = prefs.edit();
 
@@ -38,18 +40,21 @@ public class AppRater {
         }
 
         // Wait at least n days before opening
-        if (launch_count >= LAUNCHES_UNTIL_PROMPT) {
-            if (System.currentTimeMillis() >= date_firstLaunch +
-                    (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000)) {
-                showRateDialog(mContext, editor);
-            }
-        }
+//        if (launch_count >= LAUNCHES_UNTIL_PROMPT) {
+//            if (System.currentTimeMillis() >= date_firstLaunch +
+//                    (DAYS_UNTIL_PROMPT * 24 * 60 * 60 * 1000)) {
+//                showRateDialog(mContext, editor);
+//            }
+//        }
 
         editor.commit();
         initialized = true;
     }
 
     public static void showRateDialog(final Context mContext, final SharedPreferences.Editor editor) {
+        SharedPreferences prefs = mContext.getSharedPreferences("apprater", 0);
+        if (dontShowAgain(prefs)) return;
+
         final Dialog dialog = new Dialog(mContext);
         dialog.setTitle(Assets.strings.get("rating_title"));
 
@@ -68,10 +73,7 @@ public class AppRater {
             public void onClick(View v) {
                 mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + APP_PNAME)));
                 dialog.dismiss();
-                if (editor != null) {
-                    editor.putBoolean("dontshowagain", true);
-                    editor.commit();
-                }
+                setDontShowAgain();
             }
         });
         ll.addView(b1);
@@ -89,10 +91,7 @@ public class AppRater {
         b3.setText(Assets.strings.get("never"));
         b3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (editor != null) {
-                    editor.putBoolean("dontshowagain", true);
-                    editor.commit();
-                }
+                setDontShowAgain();
                 dialog.dismiss();
             }
         });
@@ -100,5 +99,19 @@ public class AppRater {
 
         dialog.setContentView(ll);
         dialog.show();
+    }
+
+    public static void setDontShowAgain() {
+//        if (editor != null) {
+//            editor.putBoolean("dontshowagain", true);
+//            editor.commit();
+//        }
+//        dialog.dismiss();
+        TutorialEventHandler.setDontShowAgain();
+    }
+
+    public static boolean dontShowAgain(SharedPreferences prefs) {
+//        if (prefs.getBoolean("dontshowagain", false)) { return true; }
+        return TutorialEventHandler.dontShowAgain();
     }
 }

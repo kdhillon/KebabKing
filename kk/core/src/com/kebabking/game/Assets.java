@@ -272,6 +272,7 @@ public class Assets {
 		peppercornLogo = new Texture(Gdx.files.internal("logo.png"));
 
 		p = new FreeTypeFontParameter();
+		
 		worksans = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Medium.otf"));
 		worksansHeavy = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
 		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
@@ -303,7 +304,7 @@ public class Assets {
 		
 //		currencyChar = strings.get("currency");
 //		realCurrencyChar = strings.get("currency_iaps");
-//		System.out.println("currency: " + currencyChar);
+//		KebabKing.print("currency: " + currencyChar);
 		
 //strings = manager.get("data/bundles/strings", I18NBundle.class);
 
@@ -552,9 +553,9 @@ public class Assets {
 		String name = "" + gen.hashCode() + size;// + color.hashCode();
 		
 		p.size = getFontSize(size);
-//		System.out.println("generating size " + p.size);
+//		KebabKing.print("generating size " + p.size);
 		
-//		System.out.println(p.size);
+//		KebabKing.print(p.size);
 		
 		p.characters = chars;
 		LabelStyle ls = new LabelStyle();
@@ -579,7 +580,7 @@ public class Assets {
 		
 		charSets.put(name, charset);
 		
-//		System.out.println("total font chars: " + totalCharsForFonts);
+//		KebabKing.print("total font chars: " + totalCharsForFonts);
 	}
 
 	/**Generate label style with given font family, size, and characters. if chars is null, use all chars by default.
@@ -596,7 +597,7 @@ public class Assets {
 		// lets see how big it is if you only do one bitmap font
 		String name = "" + gen.hashCode() + size;// + color.hashCode();
 		if (styles.containsKey(name)) {
-//			System.out.println("styles already contains this size");
+//			KebabKing.print("styles already contains this size");
 //			LabelStyle copy = new LabelStyle(styles.get(name));
 //			copy.fontColor = color;
 			
@@ -611,7 +612,7 @@ public class Assets {
 			}
 			
 			if (existingCharset.equals(newCharset)) {
-//				System.out.println("Found identical existing charset");
+//				KebabKing.print("Found identical existing charset");
 				return styles.get(name);				
 			}
 			else {
@@ -622,14 +623,14 @@ public class Assets {
 				totalCharsForFonts -= existingCharset.size();
 				registerStyle(gen, size, newChars);
 				totalCharsForFonts += newCharset.size();
-//				System.out.println("Updating " + gen.toString() + " " + size + " for " + newChars);
+//				KebabKing.print("Updating " + gen.toString() + " " + size + " for " + newChars);
 				return styles.get(name);
 			}
 		}
 		else {
-//			System.out.println("styles doesn't contain this size");
+//			KebabKing.print("styles doesn't contain this size");
 //			else throw new java.lang.AssertionError("You need to register " + gen.toString() + " " + color.toString() + " " + size);
-//			System.out.println("Registering " + gen.toString() + " " + size + " for " + chars);
+//			KebabKing.print("Registering " + gen.toString() + " " + size + " for " + chars);
 			if (chars == null) {
 //				registerStyle(gen, size, allChars);
 //				totalCharsForFonts += allChars.length();
@@ -1018,7 +1019,7 @@ public class Assets {
 //		return arial;
 //		// these are leaking hard!
 ////		p.size = getFontSize(size);
-////		System.out.println(size + " size font");
+////		KebabKing.print(size + " size font");
 ////		BitmapFont toReturn = worksansLight.generateFont(p);
 ////		if (!permanent)
 ////			fonts.add(toReturn);
@@ -1029,7 +1030,7 @@ public class Assets {
 //		return arial;
 //		// these are leaking hard!
 ////		p.size = getFontSize(size);
-////		System.out.println(size + " size font");
+////		KebabKing.print(size + " size font");
 ////		BitmapFont toReturn = china.generateFont(p);
 ////		if (!permanent)
 ////			fonts.add(toReturn);
@@ -1154,7 +1155,7 @@ public class Assets {
 	
 	public static void deleteTempResources() {
 //		for (BitmapFont bf : fonts) {
-//			System.out.println("deleting font: " + bf.getLineHeight());
+//			KebabKing.print("deleting font: " + bf.getLineHeight());
 //			bf.dispose();
 //		}
 //		fonts.clear();

@@ -72,7 +72,7 @@ public class TutorialEventHandler {
 		if (master.profile.stats.daysWorked >= 2 || master.profile.getLevel() > 1) {
 			master.profile.stats.spiceCustomerServed = true;
 		}
-//		System.out.println("HERE");
+//		KebabKing.print("HERE");
 	}
 	
 	private static ProfileStats getStats() {
@@ -96,50 +96,50 @@ public class TutorialEventHandler {
 		
 		if (!firstCustomerHasOrdered) {
 			firstCustomerHasOrdered = true;
-			System.out.println("First customer ordered");
+			KebabKing.print("First customer ordered");
 			DrawUI.launchTutorialNotification(Assets.strings.get("tut_1_title"), "", Assets.strings.get("tut_1"), MeatTypes.Type.values[0].bigIcon);
 		}
 		else if (!secondCustomerHasOrdered) {
 			secondCustomerHasOrdered = true;
-			System.out.println("Second customer ordered");
+			KebabKing.print("Second customer ordered");
 			DrawUI.launchTutorialNotification(Assets.strings.get("tut_2_title"), "", Assets.strings.get("tut_2"), DrinkQuality.Quality.values[0].coolerRegion);
 		}
 	}
 	
 	public static void handleMeatPlaced() {
-		System.out.println("handle meat placed");
+		KebabKing.print("handle meat placed");
 		if (firstMeatPlaced || getStats().firstCustomerServed) {
 			if (secondMeatPlaced  || getStats().firstCustomerServed) {
 				if (thirdMeatPlaced || getStats().secondCustomerServed) {
 					if (fourthMeatPlaced || getStats().secondCustomerServed) {
 						if (fifthMeatPlaced || getStats().secondCustomerServed) {
-							System.out.println("fifth meat already placed");
+							KebabKing.print("fifth meat already placed");
 							// first two customers have been served
 							if (customerHasOrderedSpice && !meatSpiced && !spiceMeatPlaced) {
 								spiceMeatPlaced = true;
-								System.out.println("Meat needs to be spiced");
+								KebabKing.print("Meat needs to be spiced");
 								DrawUI.exitTutorialNotification();
 								DrawUI.launchTutorialNotification(Assets.strings.get("tut_3_title"), "", Assets.strings.get("tut_3"), Assets.getTextureRegion("grill/brush-48"));
 							}
 						}
 						else {
-							System.out.println("fifth meat placed");
+							KebabKing.print("fifth meat placed");
 							fifthMeatPlaced = true;
 						}
 					}
 					else {
-						System.out.println("fourth meat placed");
+						KebabKing.print("fourth meat placed");
 						fourthMeatPlaced = true;
 					}
 				}
 				else {
-					System.out.println("third meat placed");
+					KebabKing.print("third meat placed");
 					thirdMeatPlaced = true;
 				}
 			}
 			else {
 				// handle second meat placed
-				System.out.println("Second meat placed");
+				KebabKing.print("Second meat placed");
 				secondMeatPlaced = true;
 				DrawUI.exitTutorialNotification();
 				DrawUI.launchTutorialSuccessNotification(Assets.strings.get("tut_1_placed_title"), "", Assets.strings.get("tut_1_placed"), Assets.face5);
@@ -147,7 +147,7 @@ public class TutorialEventHandler {
 		}
 		else {
 			// handle first meat placed
-			System.out.println("First meat placed");
+			KebabKing.print("First meat placed");
 			firstMeatPlaced = true;
 		}
 	}
@@ -168,13 +168,13 @@ public class TutorialEventHandler {
 				else thirdMeatCooked = true;
 			}
 			else {
-				System.out.println("Second meat done");
+				KebabKing.print("Second meat done");
 				secondMeatCooked = true;
 				DrawUI.launchTutorialNotification(Assets.strings.get("tut_1_cooked_title"), "", Assets.strings.get("tut_1_cooked"), Assets.getTextureRegion("screens/tutorial_cooked"));
 			}
 		}
 		else {
-			System.out.println("First meat done");
+			KebabKing.print("First meat done");
 			firstMeatCooked = true;
 		}
 	}
@@ -207,13 +207,13 @@ public class TutorialEventHandler {
 				}
 			}
 			else {
-				System.out.println("Second meat served");
+				KebabKing.print("Second meat served");
 				secondMeatServed = true;
 				handleFirstCustomerDone();
 			}
 		}
 		else {
-			System.out.println("First meat served");
+			KebabKing.print("First meat served");
 			firstMeatServed = true;
 		}
 	}
@@ -222,7 +222,7 @@ public class TutorialEventHandler {
 	public static void handleBeerOrder() {
 		if (getStats().secondCustomerServed || customerHasOrderedBeer) return;
 
-		System.out.println("First drink ordered");
+		KebabKing.print("First drink ordered");
 		customerHasOrderedBeer = true;
 	}
 	
@@ -230,7 +230,7 @@ public class TutorialEventHandler {
 	public static void handleBeerServed() {
 		if (getStats().secondCustomerServed || secondCustomerBeerServed) return;
 	
-		System.out.println("First drink served");
+		KebabKing.print("First drink served");
 		secondCustomerBeerServed = true;
 		DrawUI.exitTutorialNotification();
 		DrawUI.launchTutorialSuccessNotification(Assets.strings.get("tut_2_served_title"), "", Assets.strings.get("tut_2_served"), DrinkQuality.Quality.values[0].getIcon());
@@ -254,7 +254,7 @@ public class TutorialEventHandler {
 		DrawUI.exitTutorialNotification();
 		DrawUI.launchTutorialSuccessNotification(Assets.strings.get("tut_1_served_title"), "", Assets.strings.get("tut_1_served"), Assets.face5);
 
-		System.out.println("First customer done");
+		KebabKing.print("First customer done");
 		getStats().firstCustomerServed = true;	
 	}
 	
@@ -263,7 +263,7 @@ public class TutorialEventHandler {
 		
 		DrawUI.launchTutorialSuccessNotification("Tutorial Complete!", "", "There are still many hungry customers out there! Go get 'em!", Assets.face5);
 
-		System.out.println("Second customer done");
+		KebabKing.print("Second customer done");
 		getStats().secondCustomerServed = true;	
 	}
 	
@@ -279,7 +279,7 @@ public class TutorialEventHandler {
 
 		DrawUI.launchTutorialNotification(Assets.strings.get("tut_burnt_title"), "", Assets.strings.get("tut_burnt"), Assets.getTextureRegion("screens/tutorial_burnt"));
 
-		System.out.println("First burn");
+		KebabKing.print("First burn");
 		meatBurnt = true;
 	}
 	
@@ -290,7 +290,7 @@ public class TutorialEventHandler {
 		DrawUI.exitTutorialNotification();
 		DrawUI.launchTutorialSuccessNotification(Assets.strings.get("tut_trashed_title"), "", Assets.strings.get("tut_trashed"), Assets.face5);
 		
-		System.out.println("Threw away burn");
+		KebabKing.print("Threw away burn");
 		getStats().burntMeatThrownAway = true;
 	}
 	
@@ -306,14 +306,14 @@ public class TutorialEventHandler {
 		
 		DrawUI.launchTutorialSuccessNotification(Assets.strings.get("tut_jeweler_title"), "", Assets.strings.get("tut_jeweler"), Assets.getTextureRegion("screens/tutorial_jeweler"));
 
-		System.out.println("First jeweler");
+		KebabKing.print("First jeweler");
 	}
 	
 	// handle first spice
 	public static void handleSpiceOrder(MeatTypes.Type type) {
 		if (getStats().spiceCustomerServed || customerHasOrderedSpice) return;
 		
-		System.out.println("First Spice");
+		KebabKing.print("First Spice");
 		DrawUI.launchTutorialNotification(Assets.strings.get("tut_3_order_title"), "", Assets.strings.get("tut_3_order"), Assets.getTextureRegion("screens/spicy_order"));
 
 		customerHasOrderedSpice = true;
@@ -322,19 +322,19 @@ public class TutorialEventHandler {
 	public static void handleDoubleOrder(MeatTypes.Type type) {
 		if (getStats().customerHasOrderedDouble) return;
 
-		System.out.println("First double");
+		KebabKing.print("First double");
 		getStats().customerHasOrderedDouble = true;
 	}
 	
 	public static void handleFirstDayComplete() {
-		System.out.println("Handling first day complete");		
+		KebabKing.print("Handling first day complete");		
 		// just in case, set booleans
 		handleFirstCustomerDone();
 		handleSecondCustomerDone();
 	}
 	
 	public static void handleSecondDayComplete() {
-		System.out.println("Handling second day complete");
+		KebabKing.print("Handling second day complete");
 		master.profile.inventory.forceSecondBoxUpdate();
 		
 		// just in case, also set booleans
@@ -344,7 +344,7 @@ public class TutorialEventHandler {
 	}
 	
 	public static void handleThirdDayComplete() {
-		System.out.println("Handling third day complete");
+		KebabKing.print("Handling third day complete");
 		master.profile.inventory.forceThirdBoxUpdate();
 		
 		// just in case, also set booleans
@@ -355,18 +355,18 @@ public class TutorialEventHandler {
 	}
 	
 	public static void handleSecondDayBegun() {
-		System.out.println("Handling second day begun");
+		KebabKing.print("Handling second day begun");
 	}
 	
 	public static void handleThirdDayBegun() {
-		System.out.println("Handling third day begun");
+		KebabKing.print("Handling third day begun");
 		
 		// launch notification about lamb
 		DrawUI.launchTutorialSuccessNotification(Assets.strings.get("tut_lamb_title"), "", Assets.strings.get("tut_lamb"), MeatTypes.Type.values[1].bigIcon);
 	}
 	
 	public static void handleFourthDayBegun() {
-		System.out.println("Handling fourth day begun");
+		KebabKing.print("Handling fourth day begun");
 		
 		// launch notification about lamb
 		DrawUI.launchTutorialSuccessNotification(Assets.strings.get("tut_chicken_title"), "", Assets.strings.get("tut_chicken"), Assets.getTextureRegion("screens/tutorial_chicken"));
@@ -497,5 +497,13 @@ public class TutorialEventHandler {
 	public static boolean showingBurnt() {
 		if (getStats().burntMeatThrownAway) return false;
 		return meatBurnt;
+	}
+
+	public static void setDontShowAgain() {
+		master.profile.settings.setDontShowAgain();
+	}
+
+	public static boolean dontShowAgain() {
+		return master.profile.settings.dontShowAgain;
 	}
 }

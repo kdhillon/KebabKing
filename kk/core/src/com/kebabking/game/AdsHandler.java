@@ -40,7 +40,7 @@ public class AdsHandler {
 
     	// the problem is that this is called before onResume, simple fix is use a boolean flag.
     	Manager.analytics.sendEventHit("Ads", "ad completed");
-		System.out.println("Ad completed!");
+		KebabKing.print("Ad completed!");
 		
 		StatsHandler.completeAd();
 		// save after ad was watched
@@ -65,14 +65,14 @@ public class AdsHandler {
 
     public static void handleAdExited() {
         Manager.analytics.sendEventHit("Ads", "ad not completed");
-        System.out.println("Ad not completed!");
+        KebabKing.print("Ad not completed!");
     }
 
     public static void handleAdNotAvailable() {
         Manager.analytics.sendEventHit("Ads", "ad not available");
         DrawUI.launchAdNotAvailableNotification();
         StatsHandler.adNotAvailable();
-        System.out.println("Ad not available!");
+        KebabKing.print("Ad not available!");
     }
 
     public static void handleAboutToLaunchAd() {

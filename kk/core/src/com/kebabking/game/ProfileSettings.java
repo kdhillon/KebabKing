@@ -10,7 +10,9 @@ import com.esotericsoftware.kryo.serializers.TaggedFieldSerializer.Tag;
 public class ProfileSettings {
 	@Tag(201) boolean muteMusic = false; // unmuted by default
 	@Tag(202) boolean muteSound = false; // unmuted by default
-	
+
+	@Tag(203) boolean dontShowAgain = false;
+
 	public void initializeAfterLoad() {
 		// initialize any fields that were empty at load.
 
@@ -28,5 +30,9 @@ public class ProfileSettings {
 			SoundManager.muteSound();
 		}
 		else SoundManager.unmuteSound();
+	}
+
+	public void setDontShowAgain() {
+		dontShowAgain = true;
 	}
 }

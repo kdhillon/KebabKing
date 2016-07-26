@@ -34,7 +34,7 @@ public class JewelerTable extends Table {
 	// create a table in which people can buy coins 
 	public JewelerTable(KebabKing master) {
 		super();
-		//		System.out.println("RUNNING");
+		//		KebabKing.print("RUNNING");
 		this.master = master;
 		//		Label title = new Label("Coins!", Assets.gen);
 		//		title.setAlignment(Align.center);
@@ -148,7 +148,7 @@ public class JewelerTable extends Table {
 		selectedTable = entries[index];
 		selectedTableContainer.clear();
 		selectedTableContainer.add(selectedTable).top().expand();
-		System.out.println("selected: " + options[index].name);
+		KebabKing.print("selected: " + options[index].name);
 	}
 
 	public void goLeft() {

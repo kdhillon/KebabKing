@@ -84,7 +84,7 @@ public class StorePurchaseableTable extends Table {
 		icon = generateIconBox(purchaseable, iconWidth, iconHeight, type.isSelected(index) && index >= 0, drawLock, drawGray);
 
 		iconCover = new Table();
-		System.out.println("initializing button cover");
+		KebabKing.print("initializing button cover");
 		updateButtonCover(iconCover, false, drawLock, drawGray, iconWidth, iconHeight);
 		icon.add(iconCover).fill();
 
@@ -106,9 +106,6 @@ public class StorePurchaseableTable extends Table {
 		if (!lockedByRound && !consumable && purchaseable.getDailyCost() > 0) {
 			Label pPrice1 = new Label(Assets.getCurrency() + floatToString(purchaseable.getDailyCost()), Assets.generateLabelStyleUIHeavy(DAILY_COST_SIZE, Assets.nums));
 			pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
-			if (purchaseable.getDailyCost() <= 0) {
-				pPrice1.setText(" ");
-			}
 			//		pPrice1.setColor(MainStoreScreen.FONT_COLOR_GREEN);
 			pPrice1.setAlignment(Align.right);
 			info.add(pPrice1).right().expandX().fillX().bottom();
@@ -139,7 +136,7 @@ public class StorePurchaseableTable extends Table {
 
 		String descTextFull = purchaseable.getDescription() + descText;
 		if (this.purchaseable.getName().equals("Rice Paddies")) {
-			System.out.println("DESC TEXT FULL: " + descTextFull);
+			KebabKing.print("DESC TEXT FULL: " + descTextFull);
 		}
 
 		if (descText != null) {
@@ -260,14 +257,14 @@ public class StorePurchaseableTable extends Table {
 		}
 
 		if (green) {
-			System.out.println("Drawing check");
+			KebabKing.print("Drawing check");
 			Image check = new Image(Assets.purchaseableCheck);
 			int checkWidth = (int) (buttonWidth/4.0f);
 			int checkHeight = (int) (buttonHeight/4.0f);
 			buttonCover.add(check).top().left().width(checkWidth).height(checkHeight).padLeft(-1.1f*checkWidth).padTop(0.1f*checkWidth);//.padLeft(checkWidth);//.padTop(-checkHeight/2);
 		}
 		else {
-			System.out.println("removing check");
+			KebabKing.print("removing check");
 		}
 
 		if (drawLock) {
@@ -389,7 +386,7 @@ public class StorePurchaseableTable extends Table {
 	public void attemptUnlock(PurchaseType type, Purchaseable purchaseable) {
 		if (type.consumable) {
 			boolean success = this.master.profile.inventory.purchaseConsumable((SimpleConsumable) purchaseable, (PurchaseTypeConsumable) type);
-			System.out.println(purchaseable.getName() + " consumed: " + success);
+			KebabKing.print(purchaseable.getName() + " consumed: " + success);
 			if (success) {
 				unlockSuccess(purchaseable, type);
 			}
@@ -404,15 +401,15 @@ public class StorePurchaseableTable extends Table {
 	// take care of this yourself.
 	public void unlockSuccess(Purchaseable purchaseable, PurchaseType type) {
 		if (purchaseable.coinsToUnlock() > 0)
-			System.out.println("You unlocked " + purchaseable.getName() + " for " + purchaseable.coinsToUnlock() + " coins");
+			KebabKing.print("You unlocked " + purchaseable.getName() + " for " + purchaseable.coinsToUnlock() + " coins");
 		else {
-			System.out.println("You unlocked " + purchaseable.getName() + " for " + Assets.getCurrency() + purchaseable.cashToUnlock());
+			KebabKing.print("You unlocked " + purchaseable.getName() + " for " + Assets.getCurrency() + purchaseable.cashToUnlock());
 		}
 
 		// verify unlocked
-		//		if (!type.isUnlocked(purchaseable)) System.out.println("SHOULD BE UNLOCKED");
+		//		if (!type.isUnlocked(purchaseable)) KebabKing.print("SHOULD BE UNLOCKED");
 		//		else {
-		//			System.out.println("successfully unlocked!");
+		//			KebabKing.print("successfully unlocked!");
 		//		}
 
 		// TODO select
@@ -432,13 +429,13 @@ public class StorePurchaseableTable extends Table {
 
 	public void click() {
 		if (!type.consumable && !this.isSelected()) {
-			System.out.println("clicking");
+			KebabKing.print("clicking");
 			this.select();
 
 			// hacky
 			if (type == master.profile.inventory.locationType) {
 				// note that this replaces any existing ad campaign.
-				System.out.println("resettting distribution");
+				KebabKing.print("resettting distribution");
 				master.cm.updateCustomerDistribution();
 			}
 
@@ -454,16 +451,16 @@ public class StorePurchaseableTable extends Table {
 		//		}
 		// do nothing if already selected and clicking this.
 		if (this.drawingCheck) {
-			System.out.println("can't deselect");
+			KebabKing.print("can't deselect");
 			return;
 		}
 		
-		System.out.println("currently selected: " + type.getSelected().size());
+		KebabKing.print("currently selected: " + type.getSelected().size());
 
 		// update this table when selected
 		int oldSelected = parent.selectedIndex;
 		type.removeOrSelect(index);
-		System.out.println("currently selected: " + type.getSelected().size());
+		KebabKing.print("currently selected: " + type.getSelected().size());
 
 		this.updateForSelect();
 		parent.selectedIndex = index;
@@ -474,7 +471,7 @@ public class StorePurchaseableTable extends Table {
 		//			parent.purchaseableTables[oldSelected].updateForDeselect();
 //		else if (type.getMaxSelectable() > 1 &&  parent.checksCurrentlyDrawn >= type.getMaxSelectable()) {
 //			//			parent.updateAllUnlocks();
-//			System.out.println("updating in select for multi-selectable type");
+//			KebabKing.print("updating in select for multi-selectable type");
 //			for (int i = 0; i < type.values.length; i++) {
 //				if (parent.purchaseableTables[i] == null) continue;
 //				if (!type.getSelected().contains(i) && parent.purchaseableTables[i].drawingCheck) {
@@ -495,7 +492,7 @@ public class StorePurchaseableTable extends Table {
 			}
 		}
 		
-		System.out.println("currently selected: " + type.getSelected().size());
+		KebabKing.print("currently selected: " + type.getSelected().size());
 	}
 
 	public boolean isSelected() {
@@ -504,7 +501,7 @@ public class StorePurchaseableTable extends Table {
 
 	public void unlockFail(Purchaseable purchaseable) {
 		//		DrawUI.launchNotification("Sorry", "You can't afford " + purchaseable.getName(), null);
-		System.out.println("You can't afford that or it's not available!");
+		KebabKing.print("You can't afford that or it's not available!");
 	}
 
 	public String floatToString(float value) {
@@ -513,62 +510,66 @@ public class StorePurchaseableTable extends Table {
 	}
 
 	public void updateForSelect() {
-		System.out.println("updating for select");
+		KebabKing.print("updating for select");
 		updateButtonCover(iconCover, true, false, false, iconWidth, iconHeight);
 		if (!drawingCheck) {
 			this.parent.checksCurrentlyDrawn++;
 			drawingCheck = true;
 		}
 
-//		System.out.println("checks drawn: " + parent.checksCurrentlyDrawn);
+//		KebabKing.print("checks drawn: " + parent.checksCurrentlyDrawn);
 		//		 make it green
-		System.out.println("Updating " + index + " for select");
+		KebabKing.print("Updating " + index + " for select");
 	}
 
 	public void updateForDeselect() {
-		System.out.println("updating for deselect: " + this.purchaseable.getName());
+		KebabKing.print("updating for deselect: " + this.purchaseable.getName());
 		updateButtonCover(iconCover, false, false, false, iconWidth, iconHeight);
 		if (drawingCheck) {
 			drawingCheck = false;
 			this.parent.checksCurrentlyDrawn--;
 		}
-//		System.out.println("checks drawn: " + parent.checksCurrentlyDrawn);
+//		KebabKing.print("checks drawn: " + parent.checksCurrentlyDrawn);
 		// make it not grey
-		//		System.out.println("Updating " + index + " for deselect");
+		//		KebabKing.print("Updating " + index + " for deselect");
+	}
+	
+	public void updateGreenButtonIfNecessary(boolean force) {
+		if (master.profile.inventory.canAffordPurchase(type, purchaseable) && (!this.type.consumable || ((PurchaseTypeConsumable) this.type).getActive() == null)) {
+			if (!unlockIsGreen || force) {
+				unlockTable.setBackground(Assets.marketGreenD);
+				if (priceCashTable != null)
+					priceCashTable.setBackground(Assets.marketDarkGreenD);
+				if (priceCoinsTable != null)
+					priceCoinsTable.setBackground(Assets.marketDarkGreenD);
+				unlockIsGreen = true;
+			}
+		}
+		else {
+			if (unlockIsGreen || force) {
+				unlockTable.setBackground(Assets.grayLightD);
+				if (priceCashTable != null)
+					priceCashTable.setBackground(Assets.grayD);			
+				if (priceCoinsTable != null)
+					priceCoinsTable.setBackground(Assets.grayD);			
+				unlockIsGreen = false;
+			}
+		}	
 	}
 
 	public void updateForUnlock(boolean force) {
-		System.out.println("updating for unlock: " + purchaseable.getName() + " force: " + force);
+		KebabKing.print("updating for unlock: " + purchaseable.getName() + " force: " + force);
 		if (this.unlockedByLevel() && this.lockedByLevel) {
 			updateForUnlockedByLevel();
 		}
 
 		if (!this.unlocked() && unlockTable != null) {
-			System.out.println("trying to unlock: " + (unlockTable != null));
-			if (master.profile.inventory.canAffordPurchase(type, purchaseable) && (!this.type.consumable || ((PurchaseTypeConsumable) this.type).getActive() == null)) {
-				if (!unlockIsGreen || force) {
-					unlockTable.setBackground(Assets.marketGreenD);
-					if (priceCashTable != null)
-						priceCashTable.setBackground(Assets.marketDarkGreenD);
-					if (priceCoinsTable != null)
-						priceCoinsTable.setBackground(Assets.marketDarkGreenD);
-					unlockIsGreen = true;
-				}
-			}
-			else {
-				if (unlockIsGreen || force) {
-					unlockTable.setBackground(Assets.grayLightD);
-					if (priceCashTable != null)
-						priceCashTable.setBackground(Assets.grayD);			
-					if (priceCoinsTable != null)
-						priceCoinsTable.setBackground(Assets.grayD);			
-					unlockIsGreen = false;
-				}
-			}	
+			KebabKing.print("trying to unlock: " + (unlockTable != null));
+			updateGreenButtonIfNecessary(force);
 		}
 		// for consumables that reset
 		if (drawingCheck && purchaseable.getType().consumable && ((PurchaseTypeConsumable)purchaseable.getType()).getActive() != purchaseable) {
-			System.out.println("updating consumable for unlock");
+			KebabKing.print("updating consumable for unlock");
 			updateButtonCover(iconCover, false, false, false, iconWidth, iconHeight);
 			drawingCheck = false;
 		}
@@ -583,13 +584,13 @@ public class StorePurchaseableTable extends Table {
 		}
 
 		if (this.purchaseable.getType().isSelected(this.index)) {
-			System.out.println(this.purchaseable.getType().getFirstSelected().getName());
+			KebabKing.print(this.purchaseable.getType().getFirstSelected().getName());
 			this.select();
 		}
 	}
 
 	public void updateForUnlockedByLevel() {
-		System.out.println("updating: " + purchaseable.getName() + " for unlocked by level");
+		KebabKing.print("updating: " + purchaseable.getName() + " for unlocked by level");
 		this.lockedByLevel = false;
 		addUnlockButton();
 

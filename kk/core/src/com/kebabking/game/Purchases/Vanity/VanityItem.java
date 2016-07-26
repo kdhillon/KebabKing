@@ -88,7 +88,7 @@
 //	
 ////	// should be implemented by inheriting classes
 ////	public void draw() {
-////		System.out.println("You shouldn't call this draw function in VanityItem");
+////		KebabKing.print("You shouldn't call this draw function in VanityItem");
 ////	}
 //
 //}

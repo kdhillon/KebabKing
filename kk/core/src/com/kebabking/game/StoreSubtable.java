@@ -28,8 +28,8 @@ public class StoreSubtable extends Table {
 		this.parent = parent;
 		this.master = parent.master;
 
-//		System.out.println("Creating store subtable: " + titleString);
-//		System.out.println();
+//		KebabKing.print("Creating store subtable: " + titleString);
+//		KebabKing.print();
 
 		this.types = types;
 		this.typeTables = new StorePurchaseTypeSubtable[types.length];
@@ -60,7 +60,7 @@ public class StoreSubtable extends Table {
 			for (int i = 0; i < types.length; i++) {
 				Button button = new Button(Assets.getPurchaseTypeButtonStyle());
 
-//				System.out.println(i);
+//				KebabKing.print(i);
 				// 
 				Label label = new Label(types[i].getName(), getLabelStyleForButtonCount(types.length, types[i].getName())); // so 48, 24, 16, 12, 9
 				label.setColor(MainStoreScreen.FONT_COLOR);
@@ -96,7 +96,7 @@ public class StoreSubtable extends Table {
 	}
 	
 //	public void markAllForUpdate() {
-////		System.out.println("marking all for update");
+////		KebabKing.print("marking all for update");
 //		for (int i = 0; i < types.length; i++) {
 //			if (typeTables[i] != null)
 //				typeTables[i].needsFullUpdate = true;
@@ -116,7 +116,7 @@ public class StoreSubtable extends Table {
 //	}
 	
 	public void updatePurchaseTypeTable(int typeIndex) {
-		System.out.println("updating purchaseType table");
+		KebabKing.print("updating purchaseType table");
 		if (typeTables[typeIndex] == null) {
 			typeTables[typeIndex] = new StorePurchaseTypeSubtable(this, types[typeIndex], mainWidth);
 		}
@@ -176,7 +176,7 @@ public class StoreSubtable extends Table {
 		if (typeTables[currentTypeIndex].needsInitialization) {
 			typeTables[currentTypeIndex].initialize();
 		}
-		System.out.println("updating current: " + types[currentTypeIndex].getName());
+		KebabKing.print("updating current: " + types[currentTypeIndex].getName());
 		this.typeTables[this.currentTypeIndex].updateAllUnlocks();		
 	}
 		
@@ -189,16 +189,16 @@ public class StoreSubtable extends Table {
 	
 	// update the purchaseable
 	public void updatePurchaseableForUnlock(Purchaseable p) {
-		System.out.println("trying to update purchaseable after unlock");
+		KebabKing.print("trying to update purchaseable after unlock");
 		if (typeTables != null && p != null && getIndexOfType(p.getType()) >= 0 && typeTables[getIndexOfType(p.getType())] != null) {
-			System.out.println("actually updating purchaseable after unlock");
+			KebabKing.print("actually updating purchaseable after unlock");
 			typeTables[getIndexOfType(p.getType())].updatePurchaseableAfterUnlock(p);
 		}
 	}
 	
 	// do everything 
 	public void switchToPurchaseType(int typeIndex) {
-		System.out.println("switching to purchase type");
+		KebabKing.print("switching to purchase type");
 
 		// first, null out currentType to save memory (hopefully)
 //		typeTables[currentTypeIndex] = null;
@@ -213,7 +213,7 @@ public class StoreSubtable extends Table {
 		}
 		
 //		if (typeTables[currentTypeIndex] != null)
-//			System.out.println("needs update: " + typeTables[currentTypeIndex].needsFullUpdate);
+//			KebabKing.print("needs update: " + typeTables[currentTypeIndex].needsFullUpdate);
 		
 		if (typeTables[currentTypeIndex] == null) {
 			updatePurchaseTypeTable(currentTypeIndex);
@@ -222,6 +222,9 @@ public class StoreSubtable extends Table {
 			currentTypeContainer.add(typeTables[typeIndex]).width(mainWidth);
 		}
 		else {
+			// this could just be "updateAllButtons" but we'll see if this works
+			typeTables[currentTypeIndex].updateAllUnlocks();
+			
 			currentTypeContainer.clear();
 			currentTypeContainer.add(typeTables[currentTypeIndex]);
 //			updateSelectedPurchaseableTable(type.getCurrentSelected(), type);
@@ -234,7 +237,7 @@ public class StoreSubtable extends Table {
 	
 	// this is the button that was clicked 
 	public void switchToPurchaseType(Button listener) {
-		//		System.out.println(listener.getText());
+		//		KebabKing.print(listener.getText());
 		int index = -1;
 		for (int i = 0; i < typeButtons.length; i++) {
 			if (typeButtons[i] == listener) index = i;

@@ -115,7 +115,7 @@ public class TopBar extends Table {
 				return true;
 			}
 			public void touchUp(InputEvent event, float x, float y,	int pointer, int button) {
-				System.out.println("PAUSE VISIBLE: " + pauseVisible);
+				KebabKing.print("PAUSE VISIBLE: " + pauseVisible);
 				if (pauseVisible)
 					clickPause();
 				else 
@@ -163,7 +163,7 @@ public class TopBar extends Table {
 		reputationTable.setBackground(new TextureRegionDrawable(Assets.getReputationBG()));
 
 		//		int REPUTATION_TEXT_SIZE = (int) (barHeight * 0.20f);
-		//		System.out.println("REPUTATION TEXT SIZE: " + REPUTATION_TEXT_SIZE);
+		//		KebabKing.print("REPUTATION TEXT SIZE: " + REPUTATION_TEXT_SIZE);
 		String rep = Assets.strings.get("reputation");
 		Label reputationLabel = new Label(rep, Assets.generateLabelStyleUI(REPUTATION_FONT_SIZE, rep));
 		reputationLabel.setColor(REPUTATION_FONT_COLOR);
@@ -402,16 +402,16 @@ public class TopBar extends Table {
 
 	// round to nearest 0.5
 	public static void updateStars(float starCount) {
-		System.out.println("star count o : " + starCount);
+		KebabKing.print("star count o : " + starCount);
 		starCount = ((int) Math.round(starCount * 2)) / 2f;
-		System.out.println("rounded count : " + starCount);
+		KebabKing.print("rounded count : " + starCount);
 		if (currentStarCount != starCount) {
 			starTable.clear();
 			//			starTable.debug();
 
 			// calculate number of gray stars
 			int grayStars = (int) (5 - starCount);
-			System.out.println(starCount + " stars " + grayStars);
+			KebabKing.print(starCount + " stars " + grayStars);
 
 			// star width is determined by size of star area
 			float starHeight = KebabKing.getGlobalY(STAR_HEIGHT);
@@ -446,7 +446,7 @@ public class TopBar extends Table {
 		if (master.profile.inventory.campaignPercent() > 0) {
 			float textWidth = labelText.length() * 0.02f;
 			if (!adCampaignTable.isVisible()) {
-//				System.out.println("UPDATING AD CAMPAIGN BAR");
+//				KebabKing.print("UPDATING AD CAMPAIGN BAR");
 
 				adCampaignTable.setVisible(true);
 
@@ -476,7 +476,7 @@ public class TopBar extends Table {
 	public static void updateCoinsString() {
 		//		coinsString = "" + coinsDisplayed;
 		String text = LanguageManager.localizeNumber(coinsDisplayed);
-//		System.out.println("UPDATE COINS STRING: " + text);
+//		KebabKing.print("UPDATE COINS STRING: " + text);
 		coins.setText(text);
 //		coins.setText(""+coinsDisplayed);
 	}
@@ -495,12 +495,12 @@ public class TopBar extends Table {
 	}
 
 	public static void clickPause() {
-		System.out.println("PAUSING");
+		KebabKing.print("PAUSING");
 		master.kitchenPause();
 	}
 	
 	public static void clickSettings() {
-		System.out.println("SETTINGS");
+		KebabKing.print("SETTINGS");
 		master.switchToSettings();
 	}
 }

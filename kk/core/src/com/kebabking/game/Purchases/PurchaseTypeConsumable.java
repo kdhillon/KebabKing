@@ -2,6 +2,7 @@ package com.kebabking.game.Purchases;
 
 import com.badlogic.gdx.utils.TimeUtils;
 import com.esotericsoftware.kryo.serializers.TaggedFieldSerializer.Tag;
+import com.kebabking.game.KebabKing;
 import com.kebabking.game.ProfileInventory;
 
 public class PurchaseTypeConsumable extends PurchaseType {
@@ -13,10 +14,13 @@ public class PurchaseTypeConsumable extends PurchaseType {
 	@Tag(503) public long endsAtMillis;
 
 	// kryo
-	public PurchaseTypeConsumable(){}
+	public PurchaseTypeConsumable(){
+		KebabKing.print("purchase type consumable constructor");
+	}
 	
 	public PurchaseTypeConsumable(String name, String description, Purchaseable[] values) {
 		super(name, description, values);
+		KebabKing.print("purchase type consumable constructor " + name);
 		this.consumable = true;
 		this.active = -1;
 	}
@@ -37,6 +41,7 @@ public class PurchaseTypeConsumable extends PurchaseType {
 	public void activateConsumable(Purchaseable p) {
 		if (p == null) {
 			active = -1;
+			selected.clear();
 			return;
 		}
 		active = getIndexOf(p);
@@ -58,7 +63,7 @@ public class PurchaseTypeConsumable extends PurchaseType {
 	
 	public Purchaseable getActive() {
 		if (active < 0) {
-//			System.out.println("ad campaign active is null");
+			selected.clear();
 			return null;
 		}
 		return values[active];

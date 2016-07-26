@@ -48,7 +48,7 @@ public class StorePurchaseTypeSubtable extends Table {
 
 	// create 
 	public StorePurchaseTypeSubtable(StoreSubtable parent, PurchaseType type, int mainWidth) {
-		System.out.println("CREATING NEW purchaseType table");
+		KebabKing.print("CREATING NEW purchaseType table");
 
 		this.parent = parent;
 		this.master = parent.master;
@@ -64,7 +64,7 @@ public class StorePurchaseTypeSubtable extends Table {
 		for (int i = 0; i < purchaseables.length; i++) {
 			purchaseableTables[i] = new StorePurchaseableTable(master, this, purchaseables[i], mainWidth, i);
 			if (type.isSelected(i)) {
-				System.out.println(type.values[i].getName());
+				KebabKing.print(type.values[i].getName());
 				purchaseableTables[i].select();
 			}
 		}
@@ -75,9 +75,9 @@ public class StorePurchaseTypeSubtable extends Table {
 	// creates a table of dimensions 8 x 3.5 describing the purchaseable in question
 	// There should be selected Purchaseable tables for each Purchasetype
 	private void updateTypeSummaryTable(PurchaseType type) {
-//		System.out.println("UPDATING SELECTED PURCHASEABLE TABLE");
+//		KebabKing.print("UPDATING SELECTED PURCHASEABLE TABLE");
 //		Purchaseable purchaseable = null;
-		System.out.println("updating type summary table");
+		KebabKing.print("updating type summary table");
 		if (typeSummary == null) typeSummary = new Table();
 		typeSummary.clear();
 		
@@ -147,7 +147,7 @@ public class StorePurchaseTypeSubtable extends Table {
 		description.setColor(MainStoreScreen.FONT_COLOR);
 		typeSummary.add(description).width(mainWidth);
 
-		System.out.println("type summary table updated!");
+		KebabKing.print("type summary table updated!");
 	}
 	
 	public ProfileInventory getInventory() {
@@ -155,7 +155,7 @@ public class StorePurchaseTypeSubtable extends Table {
 	}
 
 	public void initialize() {
-		System.out.println("creating purchase type table");
+		KebabKing.print("creating purchase type table");
 
 		needsInitialization = false;
 		needsPurchaseableUpdate = -1;
@@ -177,39 +177,39 @@ public class StorePurchaseTypeSubtable extends Table {
 //		}
 		// currentPurchaseableIndex might equal -1
 
-		System.out.println("creating purchaseable tables array");
+		KebabKing.print("creating purchaseable tables array");
 //		this.purchaseableTables = new Table[purchaseables.length];
 //		this.purchaseableTables2 = new StorePurchaseableTable[purchaseables.length];
 
 		int purchaseablePad = KebabKing.getGlobalY(0.015f);
 
-		System.out.println("creating purchaseable tables array: " + purchaseables.length);
+		KebabKing.print("creating purchaseable tables array: " + purchaseables.length);
 		Table purchaseableListTable = new Table();
 		for (int i = 0; i < purchaseables.length; i++) {
-			System.out.println("creating purchaseable list table: " + i);
-			//			System.out.println("updating purchaseable table " + i);
+			KebabKing.print("creating purchaseable list table: " + i);
+			//			KebabKing.print("updating purchaseable table " + i);
 			purchaseableListTable.add(purchaseableTables[i]).expandX().left().padTop(purchaseablePad).fillX();
 			purchaseableListTable.row();
 		}
 
 		this.row();
-		System.out.println("creating scrollpane");
+		KebabKing.print("creating scrollpane");
 		ScrollPane sp = new ScrollPane(purchaseableListTable, Assets.getSPS());
 		sp.setScrollingDisabled(true, false);
 		this.add(sp).expandX().fillX();
 
-		System.out.println("purchase type table updated");
+		KebabKing.print("purchase type table updated");
 	}
 	
 	public void updateAllUnlocks() {
-		System.out.println("updating all unlocks");
+		KebabKing.print("updating all unlocks");
 		for (int i = 0; i < purchaseableTables.length; i++) {
 			purchaseableTables[i].updateForUnlock(false);
 		}
 	}
 	
 	public void updatePurchaseableAfterUnlock(Purchaseable toUpdate) {
-		System.out.println("Updating purchaseable after unlock: " + toUpdate.getName());
+		KebabKing.print("Updating purchaseable after unlock: " + toUpdate.getName());
 		int index = -1;
 		for (int i = 0; i < type.values.length; i++) {
 			if (type.values[i] == toUpdate) {
@@ -222,7 +222,7 @@ public class StorePurchaseTypeSubtable extends Table {
 			purchaseableTables[index].updateForUnlock(false);
 		}
 		else {
-			System.out.println("index less than 1");
+			KebabKing.print("index less than 1");
 		}
 	}
 	

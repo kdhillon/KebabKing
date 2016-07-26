@@ -1,17 +1,18 @@
 package com.kebabking.game.Managers;
 
+import com.kebabking.game.KebabKing;
 import com.kebabking.game.OnlinePurchaseHandler;
 
 public class IABManagerMock implements IABManager {
 
 	public  IABManagerMock() {
-		System.out.println("initializing iab manager mock");
+		KebabKing.print("initializing iab manager mock");
 	}
 
 	@Override
 	public void makePurchase(String productID) {
 		// TODO Auto-generated method stub
-		System.out.println("Iab mock purchasing " + productID);
+		KebabKing.print("Iab mock purchasing " + productID);
 		OnlinePurchaseHandler.handlePurchaseSuccess(productID);
 	}
 
@@ -23,7 +24,7 @@ public class IABManagerMock implements IABManager {
 
 	@Override
 	public void checkConsumables() {
-		System.out.println("checking purchased consumables");
+		KebabKing.print("checking purchased consumables");
 	}
 
 }

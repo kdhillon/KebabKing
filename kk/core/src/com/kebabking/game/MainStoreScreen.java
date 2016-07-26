@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -105,15 +104,15 @@ public class MainStoreScreen extends ActiveScreen {
 		int title_pad_top = KebabKing.getGlobalY(0.08f);
 		int title_width = KebabKing.getGlobalX(0.3f);
 		int title_height = KebabKing.getGlobalY(0.05f);
-		Image title = new Image(Assets.marketTitle);
-		mainTable.add(title).center().padTop(title_pad_top).top().width(title_width).height(title_height);
-		mainTable.row();
+//		Image title = new Image(Assets.marketTitle);
+//		mainTable.add(title).center().padTop(title_pad_top).top().width(title_width).height(title_height);
+//		mainTable.row();
 		
 		// add text below title
-		String text = Assets.strings.get("welcome_to_the_market");
+		String text = Assets.strings.get("the_market");
 		Label label = new Label(text, Assets.generateLabelStyleUILight(28, text));
 		label.setColor(FONT_COLOR);
-		mainTable.add(label).center().expandY().top();
+		mainTable.add(label).center().expandY().top().padTop(title_pad_top * 1.5f);
 		mainTable.row();
 //		
 		// add shelf
@@ -165,7 +164,7 @@ public class MainStoreScreen extends ActiveScreen {
 		shelf.add(wheelButton).width(buttonWidth).height(buttonHeight).center().bottom().padBottom(KebabKing.getGlobalYFloat(0.003f)).padLeft(buttonPadX).padRight(buttonPadX).expandY();
 		shelf.add(coinsButton).width(buttonWidth).height(buttonHeight).center().bottom().padBottom(KebabKing.getGlobalYFloat(0.003f)).padLeft(buttonPadX).padRight(buttonPadX);
 		
-		System.out.println("BUTTON WIDTH: " + buttonWidth + " BUTTON HEIGHT: " + buttonHeight);
+		KebabKing.print("BUTTON WIDTH: " + buttonWidth + " BUTTON HEIGHT: " + buttonHeight);
 		
 		// TODO add Play button directly on top of coinsbutton
 //		shelf.add(wheelButton).width(buttonWidth).height(buttonHeight).center().top().expandY().padTop(buttonPadY).padBottom(buttonPadY).padLeft(buttonPadX).padRight(buttonPadX);
@@ -245,7 +244,7 @@ public class MainStoreScreen extends ActiveScreen {
 		float padTop = KebabKing.getGlobalYFloat(0.000f);
 		float labelHeight = KebabKing.getGlobalYFloat(0.035f);
 		
-		Label title = new Label(text, Assets.generateLabelStyleUI(22, text));
+		Label title = new Label(text, Assets.generateLabelStyleUI(21, text));
 		title.setColor(FONT_COLOR);
 		labelTable.add(title);
 		container.row();
@@ -256,7 +255,7 @@ public class MainStoreScreen extends ActiveScreen {
 	}
 	
 	public void switchTo(Purchaseable p) {
-		System.out.println("switching main store screen to " + p.getName());
+		KebabKing.print("switching main store screen to " + p.getName());
 		storeScreen.switchToType(p.getType());
 		master.setScreen(storeScreen);
 	}

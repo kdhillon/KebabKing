@@ -7,6 +7,7 @@ import java.util.HashSet;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.esotericsoftware.kryo.serializers.TaggedFieldSerializer.Tag;
 import com.kebabking.game.Assets;
+import com.kebabking.game.KebabKing;
 import com.kebabking.game.ProfileInventory;
 import com.kebabking.game.Purchases.GrillType.Type;
 
@@ -70,7 +71,7 @@ public class PurchaseType {
 			allPurchaseables.add(p);
 			// way too hacky
 			if (this.getName().equals(Assets.strings.get("location"))) continue;
-			if (p.unlockAtLevel() <= 0) System.out.println(p.getName());
+			if (p.unlockAtLevel() <= 0) KebabKing.print(p.getName());
 			if (LocationType.UNLOCKS_ONLY_WITH_LOCATIONS && LocationType.getLocationAt(p.unlockWithLocation()) == null) throw new java.lang.AssertionError("purchaseable needs to be unlocked with a location");
 		}
 		
@@ -80,7 +81,7 @@ public class PurchaseType {
 //			if (p.unlockAtLevel() > 0) levelUnlockCount[p.unlockAtLevel()]++;
 //		}
 //		for (int i = 2; i < 51; i++) {
-//			System.out.println(i + ": " + levelUnlockCount[i]);
+//			KebabKing.print(i + ": " + levelUnlockCount[i]);
 //		}
 		
 		String regName = "market/" + name + "_icon";
@@ -132,11 +133,8 @@ public class PurchaseType {
 
 	//	@Override
 	public Purchaseable getFirstSelected() {
-		if (this.consumable) {
-			if (selected.size() <= 0) return null;
-		}
 		// if loading from a file that had "currentselected" as an int
-		else if (this.getMaxSelectable() == 1 && selected.size() == 0) {
+		if (this.getMaxSelectable() == 1 && selected.size() == 0) {
 			unlock(Type.values[0]);
 		}
 		if (selected.size() == 0) {
@@ -217,19 +215,26 @@ public class PurchaseType {
 		}
 	}
 
+	// returns index of removed item
 	public int select(int index) {
-		System.out.println("Adding " + index + " to selected");
+		if (selected.contains(index)) {
+			System.out.println(values[index].getName() + " is already selected!");
+			return - 1;
+		}
+		KebabKing.print("Adding " + index + " to selected");
+		
 		int ret = -1;
 		if (selected.size() >= this.getMaxSelectable()) {
-			System.out.println(selected.size() + " >= " + this.getMaxSelectable());
+			KebabKing.print(selected.size() + " >= " + this.getMaxSelectable());
 			ret = selected.removeFirst();
 		}
 		this.selected.add(index);
 		return ret;
 	}
 
-	public boolean isSelected(int index) {
+	public boolean isSelected(int index) {	
 		for (Integer i : selected) {
+			KebabKing.print("is selected: " + i);
 			if (i == index) {
 				return true;
 			}
@@ -259,7 +264,7 @@ public class PurchaseType {
 
 	public boolean unlockIfReady(Purchaseable p) {
 		if (inventory == null) {
-//			System.out.println("INVENTORY IS NULL IN PURCHASETYPE");
+//			KebabKing.print("INVENTORY IS NULL IN PURCHASETYPE");
 			return false;
 		}
 		if (inventory.hasUnlockedByLevel(p)) {
@@ -270,7 +275,7 @@ public class PurchaseType {
 	}
 
 	private void setValues(Purchaseable[] values) {
-		//		System.out.println("set values");
+		//		KebabKing.print("set values");
 		this.values = values;
 		for (Purchaseable p : values) {
 			if (p == null) throw new java.lang.NullPointerException();

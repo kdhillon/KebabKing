@@ -27,7 +27,7 @@ public class SocialMediaHandler {
     }
 
     public static void shareSuccess() {
-        System.out.println("Share Success in SocialMediaHandler");
+        KebabKing.print("Share Success in SocialMediaHandler");
         justShared = true;
         sharedAt = TimeUtils.millis();
         if (master.summary != null) {
@@ -41,7 +41,7 @@ public class SocialMediaHandler {
 
         DrawUI.launchShareSuccessNotification(jade);
         Manager.analytics.sendEventHit("Social", "day shared");
-        System.out.println("Share rewarded!");
+        KebabKing.print("Share rewarded!");
 
         master.profile.gameQuitDuringShare = false;
         StatsHandler.shareOnFb();
@@ -58,12 +58,12 @@ public class SocialMediaHandler {
     }
     
     public static boolean checkIfShouldAllowShare() {
-    	System.out.println(master.profile.stats.lastShareDay);
+    	KebabKing.print(master.profile.stats.lastShareDay);
     	return (master.profile.stats.daysWorked - master.profile.stats.lastShareDay >= DAYS_BETWEEN_SHARES);
     }
 
     public static void handleAboutToLaunchShare() {
-    	System.out.println("HANDLE ABOUT TO LAUNCH SHARE");
+    	KebabKing.print("HANDLE ABOUT TO LAUNCH SHARE");
         master.profile.stats.lastShareDay = master.profile.stats.daysWorked;
         master.profile.gameQuitDuringShare = true;
         // need to save here!
@@ -81,7 +81,7 @@ public class SocialMediaHandler {
             e.printStackTrace();
         }
         pixmap.dispose();
-        System.out.println("Screenshot saved");
+        KebabKing.print("Screenshot saved");
     }
 
     public static void shareScreenshot() {

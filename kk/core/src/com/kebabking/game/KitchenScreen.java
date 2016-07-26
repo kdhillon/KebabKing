@@ -74,7 +74,7 @@ public class KitchenScreen extends ActiveScreen {
 		this.grill.tutorialMode = false;
 
 		if (KebabKing.SHORT_DAY) {
-			System.out.println("setting day length to 10");
+			KebabKing.print("setting day length to 10");
 			DAY_LENGTH = 10;
 			LAST_CUSTOMER_AFTER = 3;
 		}
@@ -257,7 +257,7 @@ public class KitchenScreen extends ActiveScreen {
 	public Meat dropMeatOnGrill(MeatTypes.Type type, int index) {
 		//		if (!canAfford(Meat.getBuyPrice(type))
 		//				|| !grill.open(grill.mousedOver)) return null;
-		System.out.println("Dropping meat on grill");
+		KebabKing.print("Dropping meat on grill");
 		Meat meat = grill.dropMeat(type, index);
 		//		if (meat != null) 
 		//			spendMoney(Meat.getBuyPrice(type));
@@ -329,7 +329,7 @@ public class KitchenScreen extends ActiveScreen {
 	// this overrides the "onPause" method
 	@Override
 	public void pause() {
-		System.out.println("pausing from kitchen screen");
+		KebabKing.print("pausing from kitchen screen");
 		// this check prevents problems during tutorial
 		if (!DrawUI.notificationActive && master.profile.stats.tutorialComplete()) {
 			grill.deselectAll();

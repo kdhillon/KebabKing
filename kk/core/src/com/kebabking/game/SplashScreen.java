@@ -87,7 +87,7 @@ public class SplashScreen extends ScreenTemplate  {
 			Gdx.gl.glClearColor((51f/256), 51f/256, 51f/256, 1);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			
-//			System.out.println("/");
+//			KebabKing.print("/");
 
 			// draw logo fading in on top
 			spriteBatch.begin();
@@ -101,7 +101,7 @@ public class SplashScreen extends ScreenTemplate  {
 			float logoX = (KebabKing.getWidth() - logoWidth)/2;
 			float logoY = (KebabKing.getHeight() - logoHeight)/2;
 			
-//			System.out.println("width: " + logoWidth + " height: " + logoHeight);
+//			KebabKing.print("width: " + logoWidth + " height: " + logoHeight);
 			
 			spriteBatch.draw(logo, logoX, logoY, logoWidth, logoHeight);
 			spriteBatch.end();
@@ -163,11 +163,11 @@ public class SplashScreen extends ScreenTemplate  {
 //						e.printStackTrace();
 //					}
 //					loaderThread.start();
-//					System.out.println("starting load thread");
+//					KebabKing.print("starting load thread");
 //				}
 //				else {
 //					if (!LoadingFinished) {
-//						System.out.println("Setting load text: " + loadText.getText());
+//						KebabKing.print("Setting load text: " + loadText.getText());
 //						try {
 //							Thread.sleep((long) (Math.random() * 500 + 1000));
 //						} catch (InterruptedException e) {
@@ -255,9 +255,9 @@ public class SplashScreen extends ScreenTemplate  {
 	}
 	
 	public void specialDispose() {
-		System.out.println("Disposing");
+		KebabKing.print("Disposing");
 //		Assets.totalCharsForFonts -= Assets.allChars.length();
-		System.out.println("total font chars (after disposing splash): " + Assets.totalCharsForFonts);
+		KebabKing.print("total font chars (after disposing splash): " + Assets.totalCharsForFonts);
 		// both of these are used later.
 //		loadText.getStyle().font.dispose();
 //		title.getStyle().font.dispose();

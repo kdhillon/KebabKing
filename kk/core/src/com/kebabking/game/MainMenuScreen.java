@@ -88,7 +88,7 @@ public class MainMenuScreen extends ActiveScreen {
 
 		marketButton.addListener(new StrictInputListener() {
 			public void touch(InputEvent event) {
-				System.out.println("touched");
+				KebabKing.print("touched");
 				master.mainToStore();
 				marketClicksThisSession++;
 			}
@@ -170,7 +170,7 @@ public class MainMenuScreen extends ActiveScreen {
 		float alpha = 1;
 		if (FADE_IN_GRILL) alpha = fadeoutTimer / FADEOUT_TIME; 
 		super.renderGrayAlpha(delta, bgTint, alpha);
-		//		System.out.println("rendering " + bgTint);
+		//		KebabKing.print("rendering " + bgTint);
 		//		uiStage.draw();
 	}
 
@@ -187,7 +187,7 @@ public class MainMenuScreen extends ActiveScreen {
 		if (!this.disposedSplash && timeElapsed > DISPOSE_SPLASH_TIME) {
 			master.disposeSplash();
 			disposedSplash = true;
-			System.out.println("Disposing splash " + timeElapsed);
+			KebabKing.print("Disposing splash " + timeElapsed);
 		}
 
 		if (this.fadeout) this.fadeout(delta);

@@ -89,7 +89,7 @@ public class CountdownScreen extends ActiveScreen  {
 //			this.countdownLabel.setText("" + (int) (countdown + 1));
 		}
 
-//		System.out.println("goalCountdown: " + goalCountdown + ", countdown: " + countdown);
+//		KebabKing.print("goalCountdown: " + goalCountdown + ", countdown: " + countdown);
 
 		// draw goal
 		if (!this.countingDown) {

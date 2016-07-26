@@ -135,7 +135,7 @@ public class SummaryScreen extends ActiveScreen {
 		// update profit
 		//		this.profit =  master.profile.cash - getProfile().cash - rent;
 		this.profit = revenue - expenses;
-		System.out.println("Profit: " + profit);
+		KebabKing.print("Profit: " + profit);
 		
 		// customers served:
 		this.customersServed = kitchen.cm.totalCustomers;
@@ -219,13 +219,13 @@ public class SummaryScreen extends ActiveScreen {
 	}
 	
 	public void initializeTable() {
-		System.out.println("initializing table");
+		KebabKing.print("initializing table");
 		bigTable.clear();
 //		bigTable.debugAll();
 		float topBarPadY = KebabKing.getGlobalY(0.02f);
 		
 		Table window = new Table();
-		bigTable.add(window).width(KebabKing.getGlobalX(0.95f)).center().expandY().padTop(KebabKing.getGlobalYFloat(0.05f));
+		bigTable.add(window).width(KebabKing.getGlobalX(0.95f)).center().expandY().padTop(KebabKing.getGlobalYFloat(-0.12f));
 		
 		Table subTableFull = new Table();
 		Table subTable = new Table();
@@ -517,7 +517,7 @@ public class SummaryScreen extends ActiveScreen {
 
 //		float expPercent = expDisplayed *1.0f / master.profile.getExpNeededFor(lvlDisplayed + 1);
 ////		float expPercent = 0.05f;
-//		System.out.println("exp percent:" + expPercent);
+//		KebabKing.print("exp percent:" + expPercent);
 
 		expTable = new Table();
 		
@@ -600,7 +600,7 @@ public class SummaryScreen extends ActiveScreen {
 //	public void clickGoToWheel() {
 //		if (DrawUI.notificationActive) return;
 //		
-//		System.out.println("Transitioning to ads");
+//		KebabKing.print("Transitioning to ads");
 ////		AdsHandler.showAd();
 //		master.switchToJadeWheelScreen();
 //	}
@@ -609,9 +609,9 @@ public class SummaryScreen extends ActiveScreen {
 		return Math.max((int) (profit * PROFIT_TO_EXP_RATE), 0);
 	}
 
-	public void grantExp(int exp) {
-		this.getProfile().giveExp(exp); 
-	}
+//	public void grantExp(int exp) {
+//		this.getProfile().giveExp(exp); 
+//	}
 	
 	public void render(float delta) {
 		if (timeElapsed > TIME_TO_WAIT && !dayCompleteDone) {
@@ -630,13 +630,13 @@ public class SummaryScreen extends ActiveScreen {
 
 	public boolean shouldDisplayPromptForRating() {
 //		return false;
-//		if (master.profile.getLevel() < 4) return false;
-
+		if (master.profile.getLevel() < 4) return false;
+		
 		// every time you gain a level after that with a good rating
-//		if (master.profile.getLevel() > levelAtStart && rating >= 4.5) {
+		if (master.profile.getLevel() > levelAtStart && rating >= 4.5) {
 			return true;
-//		}
-//		return false;
+		}
+		return false;
 	}
 	
 	public void increaseDisplayedExp() {
@@ -702,7 +702,7 @@ public class SummaryScreen extends ActiveScreen {
 	public void addContinueButton() {
 		continueButton = DrawUI.getBlueButton(Assets.strings.get("continue"), 40);
 
-		System.out.println("exp remaining: " + expRemaining + " continue button " + (continueButton != null));
+		KebabKing.print("exp remaining: " + expRemaining + " continue button " + (continueButton != null));
 		
 		continueButton.setColor(new Color(1, 1, 1, 0));
 		continueButton.addAction(Actions.fadeIn(1));
@@ -720,7 +720,7 @@ public class SummaryScreen extends ActiveScreen {
 //		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");		
 //		float nextWidth = KebabKing.getGlobalX(0.6f);
 //		float nextHeight = nextWidth * bg.getRegionHeight() / bg.getRegionWidth();
-		bigTable.add(continueButton).top().padTop(KebabKing.getGlobalY(-0.11f)).expandY(); //.width(nextWidth).height(nextHeight);
+		bigTable.add(continueButton).top().padTop(KebabKing.getGlobalY(-0.21f)); //.width(nextWidth).height(nextHeight);
 	}
 	
 	public Profile getProfile() {
