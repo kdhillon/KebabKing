@@ -20,10 +20,10 @@ public class KebabKing extends Game {
 	public static final boolean DEBUG = false;
 	public static final boolean EXP_CITY = false; // get 300 exp after day
 	public static final boolean SHORT_DAY = false;
-	public static final boolean LVL_50 = false;
-	public static final boolean RICH_MODE = false;
-	public static final boolean FORCE_NEW = false;
-	public static final boolean DISABLE_TUTORIAL = false;
+	public static final boolean LVL_50 = true;
+	public static final boolean RICH_MODE = true;
+	public static final boolean FORCE_NEW = true;
+	public static final boolean DISABLE_TUTORIAL = true;
 	public static final boolean DISABLE_FIRST_DAY = false;
 	
 	public static final boolean SAVE_AFTER_NEW = false;

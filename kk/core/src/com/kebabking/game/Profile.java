@@ -69,11 +69,11 @@ public class Profile {
 		this.coins = STARTING_JADE;
 		
 		if (KebabKing.RICH_MODE) {
-			this.cash = 1000;
-			this.coins = 350;
+			this.cash = 1025;
+			this.coins = 42;
 		}
 		if (KebabKing.LVL_50) {
-			level = 48;
+			level = 14;
 		}
 		
 		pastFiveDaysReputation = new float[] {START_REP, START_REP, START_REP, START_REP, START_REP};
