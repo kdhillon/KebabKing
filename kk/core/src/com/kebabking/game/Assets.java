@@ -768,6 +768,9 @@ public class Assets {
 	}
 	
 	public static CustomerTextures generateCustomerTextures(String prefix, float time) {
+//		if (Customer.EYES_SEPARATE)
+//			prefix = "Normal_m";
+		
 		prefix = "customers/" + prefix;
 		CustomerTextures ct = new CustomerTextures();
 		if (!regionExists(prefix)) return null;
@@ -780,6 +783,12 @@ public class Assets {
 		ct.down = createAnimationWithRepeatFirst(prefix, time, 2, 3);
 		if (ct.idle == null || ct.right == null || ct.left == null || ct.up == null || ct.down == null)
 			throw new java.lang.NullPointerException();
+		
+		if (Customer.EYES_SEPARATE) {
+			ct.eyes = getTextureRegion(prefix + "_eyes");
+			ct.eyesRight = getTextureRegion(prefix + "_eyes_r");
+		}
+		
 		return ct;
 	}
 	

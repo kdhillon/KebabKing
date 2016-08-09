@@ -17,7 +17,7 @@ import com.kebabking.game.Purchases.Purchaseable;
 public class KebabKing extends Game {
 	//	public static final boolean TEST_MODE = false;
 	public static final String lang = "en";
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static final boolean EXP_CITY = false; // get 300 exp after day
 	public static final boolean SHORT_DAY = false;
 	public static final boolean LVL_50 = true;

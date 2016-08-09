@@ -119,7 +119,7 @@ public class Customer implements Comparable<Customer> {
 	boolean female;
 //	boolean altTexture;
 //	boolean specialTexture;
-	CustomerTextures animations;
+	CustomerTextures ct;
 	
 	boolean drawArrow;
 	
@@ -143,11 +143,11 @@ public class Customer implements Comparable<Customer> {
 	public enum CustomerType {
 					// pat, 	min,max, 	beer, 	speed
 		OLDIE(		1, 		1, 	5, 		.2f, 	.55f, Gender.EITHER, "Oldie", Assets.strings.get("old_folks")),
-		STUDENT(		.8f, 	2,	8, 		.8f, 	.8f, Gender.MALE, "Student", Assets.strings.get("students")), //
+		STUDENT(		.8f, 	2,	8, 		.8f, 	.8f, Gender.EITHER, "Student", Assets.strings.get("students")), //
 		FAT_MAN(		1, 		3, 	9, 		.6f,	 .5f, Gender.MALE, "FatMan", Assets.strings.get("fat_men")), //
 		NORMAL(			1, 		2,	4, 		.2f, 	.7f, Gender.EITHER, "Normal", Assets.strings.get("normal_people")),
 		BUSINESSMAN(	.8f, 	2,	7, 		.5f, 	.9f, Gender.MALE, "Businessman", Assets.strings.get("businessmen")),
-		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, Gender.MALE, "Policeman", Assets.strings.get("police")),
+		POLICE(			.8f, 	2, 	6, 		.4f, 	.75f, Gender.MALE, "Police", Assets.strings.get("police")),
 		SOLDIER(		.8f, 	2,	7, 		.4f, 	.53f, Gender.MALE, "Soldier", Assets.strings.get("soldiers")),
 		GIRL(			1f, 	2, 	6, 		.05f, 	.75f, Gender.FEMALE, "Girl", Assets.strings.get("girls")),
 		FOREIGNER(		1f, 	3, 	9, 		.4f, 	.53f, Gender.EITHER, "Foreigner", Assets.strings.get("foreigners")),
@@ -193,11 +193,11 @@ public class Customer implements Comparable<Customer> {
 			this.animationTime = 1/speed * Assets.CUSTOMER_ANIMATION_TIME;
 			if (gender == Gender.EITHER) {
 				this.male = Assets.generateCustomerTextures(prefix + "_m", animationTime);
-				this.male_alt = Assets.generateCustomerTextures(prefix + "_m_alt", animationTime);
-				this.male_spc = Assets.generateCustomerTextures(prefix + "_m_spc", animationTime);
+//				this.male_alt = Assets.generateCustomerTextures(prefix + "_m_alt", animationTime);
+//				this.male_spc = Assets.generateCustomerTextures(prefix + "_m_spc", animationTime);
 				this.female = Assets.generateCustomerTextures(prefix + "_f", animationTime);
-				this.female_alt = Assets.generateCustomerTextures(prefix + "_f_alt", animationTime);
-				this.female_spc = Assets.generateCustomerTextures(prefix + "_f_spc", animationTime);
+//				this.female_alt = Assets.generateCustomerTextures(prefix + "_f_alt", animationTime);
+//				this.female_spc = Assets.generateCustomerTextures(prefix + "_f_spc", animationTime);
 			}
 			else if (gender == Gender.MALE) {
 				this.male = Assets.generateCustomerTextures(prefix, animationTime);
@@ -300,19 +300,19 @@ public class Customer implements Comparable<Customer> {
 //		}
 
 		if (this.type.hasSpc(female) && cm.profile.inventory.adCampaign.isTshirts()) {
-			if (female) this.animations = type.female_spc;
-			else this.animations = type.male_spc;
+			if (female) this.ct = type.female_spc;
+			else this.ct = type.male_spc;
 		}
 		if (Math.random() < ALT_PROB && type.hasAlt(female)) {
-			if (female) this.animations = type.female_alt;
-			else this.animations = type.male_alt;
+			if (female) this.ct = type.female_alt;
+			else this.ct = type.male_alt;
 
 		}
 		else {
-			if (female) this.animations = type.female;
-			else this.animations = type.male;
+			if (female) this.ct = type.female;
+			else this.ct = type.male;
 		}
-		if (animations == null) {
+		if (ct == null) {
 			KebabKing.print(type);
 			KebabKing.print("female: " + female);
 		
@@ -323,7 +323,10 @@ public class Customer implements Comparable<Customer> {
 	public CustomerType generateCustomerType() {
 //		 testing for now
 //		if (Math.random() < .01) ;
-//			return CustomerType.SOLDIER;
+		
+//		if (EYES_SEPARATE) 
+//			if (true)
+//			return CustomerType.NORMAL;
 //		else if (Math.random() < 0.5) 
 //			return CustomerType.FOREIGNER;
 //		else if (true) return CustomerType.JEWELER;
@@ -441,30 +444,29 @@ public class Customer implements Comparable<Customer> {
 		
 		switch (orient) {
 		case UP:
-			toDraw = animations.up.getKeyFrame(time);
+			toDraw = ct.up.getKeyFrame(time);
 			break;
 		case DOWN:
 			if ((Math.abs(targetY - position_y_full) < 4 || this.action == CustomerAction.WAIT)) {
 				if (stompTimer > 0) {					
-					toDraw =  animations.down.getKeyFrame(stompTimer);
+					toDraw =  ct.down.getKeyFrame(stompTimer);
 				}
 				else 
-					toDraw =  animations.idle.getKeyFrame(time);
+					toDraw =  ct.idle.getKeyFrame(time);
 			}
 			else {
-				toDraw =  animations.down.getKeyFrame(time);
+				toDraw =  ct.down.getKeyFrame(time);
 			}
 			break;
 		case LEFT:
-			toDraw =  animations.left.getKeyFrame(time);
+			toDraw =  ct.left.getKeyFrame(time);
 			break;
 		case RIGHT:
-			toDraw =  animations.right.getKeyFrame(time);
+			toDraw =  ct.right.getKeyFrame(time);
 			break;
 		default:
-			toDraw = animations.right.getKeyFrame(time);
+			toDraw = ct.right.getKeyFrame(time);
 		}
-		
 
 		int x_pos_orig = (int) (KebabKing.getGlobalX(this.position_x_range));
 		int y_pos_orig = (int) (this.position_y_full);
@@ -510,6 +512,10 @@ public class Customer implements Comparable<Customer> {
 
 		// draw proper animation, in proper location
 		batch.draw(toDraw, x_pos, y_pos, width, height);
+		
+		// draw eyes
+		if (EYES_SEPARATE)
+			drawEyes(orient, batch, highlight);
 
 		// draw order
 		if (this.order != null) {
@@ -529,6 +535,59 @@ public class Customer implements Comparable<Customer> {
 //		if (highlight) {
 //			highlight(batch);
 //		}
+	}
+	
+	public void drawEyes(Orient orient, SpriteBatch batch, boolean highlight) {
+		TextureRegion toDraw;
+
+		switch (orient) {
+		case UP:
+			return;
+//			break;
+		case DOWN:
+			toDraw =  ct.eyes;
+			break;
+		case LEFT:
+			toDraw =  ct.eyesRight;
+			break;
+		case RIGHT:
+			toDraw =  ct.eyesRight;
+			break;
+		default:
+			return;
+		}
+		
+		int x_pos_orig = (int) (KebabKing.getGlobalX(this.position_x_range));
+		int y_pos_orig = (int) (this.position_y_full);
+	
+		// calculate global position
+		int x_pos = x_pos_orig;
+		int y_pos = y_pos_orig;
+
+		width =  (int) (TEXTURE_WIDTH * KitchenScreen.UNIT_WIDTH);
+		height = (int) (TEXTURE_HEIGHT * KitchenScreen.UNIT_HEIGHT);		
+
+		float highlightScale = 1.1f;
+
+		if (highlight) {
+			x_pos -= ((width * highlightScale) - width)/2;
+			y_pos -= ((height * highlightScale) - height)/2;
+			width *= highlightScale;
+			height *= highlightScale;
+		}
+		
+		y_pos += height * 0.62f;
+		height *= 0.072f;
+		float oldWidth = width;
+		width = toDraw.getRegionWidth() * height / toDraw.getRegionHeight();
+		
+		if (toDraw == ct.eyesRight) {
+			x_pos += (oldWidth - width) * 0.58;			
+		}
+		else 
+			x_pos += (oldWidth - width) * 0.5;
+
+		batch.draw(toDraw, x_pos, y_pos, width, height);
 	}
 	
 	public float getStrictLeft() {
