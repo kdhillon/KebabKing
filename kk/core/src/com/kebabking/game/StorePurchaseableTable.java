@@ -164,8 +164,14 @@ public class StorePurchaseableTable extends Table {
 		if (locked && !lockedByRound && !shouldNotAddUnlock) {
 			// add unlock button
 			// create unlock button
-			
-			addUnlockButton();
+			if (this.purchaseable.coinsToUnlock() == 0 && this.purchaseable.cashToUnlock() == 0) {
+				System.out.println("attempting unlock: " + purchaseable.getName());
+				attemptUnlock(purchaseable.getType(), purchaseable);
+				updateForUnlock(false);
+			}
+			else {
+				addUnlockButton();
+			}
 			//			info.debugAll();
 		}
 
@@ -592,11 +598,19 @@ public class StorePurchaseableTable extends Table {
 	public void updateForUnlockedByLevel() {
 		KebabKing.print("updating: " + purchaseable.getName() + " for unlocked by level");
 		this.lockedByLevel = false;
-		addUnlockButton();
+		
+		if (this.purchaseable.coinsToUnlock() == 0 && this.purchaseable.cashToUnlock() == 0) {
+			System.out.println("attempting unlock: " + purchaseable.getName());
+			attemptUnlock(purchaseable.getType(), purchaseable);
+			updateForUnlock(false);
+		}
+		else {
+			addUnlockButton();
 
-		desc.setText(purchaseable.getDescription());
-		desc.setColor(MainStoreScreen.FONT_COLOR);
-		title.setColor(MainStoreScreen.FONT_COLOR);
+			desc.setText(purchaseable.getDescription());
+			desc.setColor(MainStoreScreen.FONT_COLOR);
+			title.setColor(MainStoreScreen.FONT_COLOR);
+		}
 		// need to update description, add unlock button and update font color
 	}
 

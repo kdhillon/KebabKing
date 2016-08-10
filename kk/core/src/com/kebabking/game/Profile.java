@@ -73,7 +73,7 @@ public class Profile {
 			this.coins = 42;
 		}
 		if (KebabKing.LVL_50) {
-			level = 14;
+			level = 25;
 		}
 		
 		pastFiveDaysReputation = new float[] {START_REP, START_REP, START_REP, START_REP, START_REP};

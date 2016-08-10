@@ -204,7 +204,8 @@ public class StorePurchaseTypeSubtable extends Table {
 	public void updateAllUnlocks() {
 		KebabKing.print("updating all unlocks");
 		for (int i = 0; i < purchaseableTables.length; i++) {
-			purchaseableTables[i].updateForUnlock(false);
+			if (purchaseableTables[i] != null)
+				purchaseableTables[i].updateForUnlock(false);
 		}
 	}
 	

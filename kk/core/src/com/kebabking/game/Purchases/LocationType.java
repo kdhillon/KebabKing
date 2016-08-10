@@ -12,33 +12,37 @@ public class LocationType extends PurchaseType {
 	static float JEWELER_PROB = 0.05f;
 			
 	public static class Location extends SimplePurchaseable {
+		
+		public transient static final int[] locationUnlockLevels = {0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 50};
 		public transient static final Location[] values = new Location[]{
 				
 		// Note: an array isn't the best way to do this, but a hashmap is more complicated (especially for static initialization) - already tried
 
 								   //{NOR, FAT_, OLDIE, STUDent, GIRL, FOREI, POLICE, SOLDIER, BUS, FAR, JEW};
-		new Location(	new double[] {2,	0.5,	2,	0.1,	0.5,	0,		0.1,	0.1,	.1,	.5,	JEWELER_PROB},1, 1, 0, 0, 0, 0, "village"),
-		new Location(	new double[] {2,	0.2,	1,	0.1,	0.5,	0.1,	0.1,	0.1,	.4,	2,	JEWELER_PROB},1, 2, 0, 3, 250, 3, "paddy"),
+		new Location(0,	new double[] {2,	0.5,	2,	0.1,	0.5,	0,		0.1,	0.1,	.1,	.5,	JEWELER_PROB},1, 1, 0, 0, 0, "paddy"),
+		new Location(1,	new double[] {2,	0.2,	1,	0.1,	0.5,	0.1,	0.1,	0.1,	.4,	2,	JEWELER_PROB},1, 2, 0, 250, 3, "village"),
 		
-		new Location(	new double[] {2,	0.4,	1.5,0.4,	0.5,	0.2,	0.3,	0.3,	.4,	.1,	JEWELER_PROB},2, 2, 0, 6, 0, 10, "suburbs"),
-		new Location(	new double[] {2,	0.4,	1,	0.4,	0.5,	0.1,	0.5, 	0.3,	.4,	.1,	JEWELER_PROB},2, 3, 0, 9, 200, 10, "subway"),
-		new Location(	new double[] {2,	0.6,	1.5,0.4,	0.5,	0.1,	0.2,	0.2,	.4,	.1,	JEWELER_PROB},2, 3, 0, 12, 250, 10, "urbancomplex"),
+		new Location(2,	new double[] {2,	0.4,	1.5,0.4,	0.5,	0.2,	0.3,	0.3,	.4,	.1,	JEWELER_PROB},2, 2, 0, 0, 10, "suburbs"),
+		new Location(3,	new double[] {2,	0.4,	1,	0.4,	0.5,	0.1,	0.5, 	0.3,	.4,	.1,	JEWELER_PROB},2, 3, 0, 200, 10, "subway"),
+		new Location(4,	new double[] {2,	0.6,	1.5,0.4,	0.5,	0.1,	0.2,	0.2,	.4,	.1,	JEWELER_PROB},2, 3, 0, 250, 10, "urbancomplex"),
 		
-		new Location(	new double[] {2,	0.6,	1.5,0.4,	0.5,	0.2,	0.3,	0.3,	.4,	.1,	JEWELER_PROB},3, 4, 10, 15, 0, 15,  "smallcity"),
-		new Location(	new double[] {1,	0.7,	0.6,2,		0.8,	0.7,	0.4,	0.2,	.8,	.1,	JEWELER_PROB},3, 4, 10, 18, 0, 20, "university"),
-		new Location(	new double[] {2,	0.6,	1,	0.5,	0.4,	1.5,	0.5,	0.5,	.3,	.3,	JEWELER_PROB},3, 4, 10, 21, 300, 20, "birdsnest"),
+		new Location(5,	new double[] {2,	0.6,	1.5,0.4,	0.5,	0.2,	0.3,	0.3,	.4,	.1,	JEWELER_PROB},3, 4, 10, 0, 15,  "smallcity"),
+		new Location(6,	new double[] {1,	0.7,	0.6,10,		0.8,	0.7,	0.4,	0.2,	.8,	.1,	JEWELER_PROB},3, 4, 10, 0, 20, "university"),
 		
-		new Location(	new double[] {1,	0.6,	1.5,0.7,	0.4,	0.5,	0.5,	0.2,	.5,	.4,	JEWELER_PROB},4, 4, 20, 24, 350, 40, "temple"),
-		new Location(	new double[] {1,	0.7,	0.1,0.8,	1.2,	0.9,	0.5,	0.2,	.9,	0,	JEWELER_PROB},4, 4, 20, 27, 0, 30, "nightclub"),
-		new Location(	new double[] {2,	0.6,	1,	0.5,	0.4,	0.5,	0.5,	0.3,	.3,	.3,	JEWELER_PROB},4, 4, 20, 30, 400, 40,"drum"),
+		new Location(7,	new double[] {1,	0.6,	1.5,0.7,	0.4,	0.5,	0.5,	0.2,	.5,	.4,	JEWELER_PROB},4, 4, 20, 350, 40, "temple"),
+		new Location(8,	new double[] {1,	0.7,	0.1,0.8,	1.2,	0.9,	0.5,	0.2,	.9,	0,	JEWELER_PROB},4, 4, 20, 0, 30, "nightclub"),
+		new Location(9,	new double[] {2,	0.6,	1,	0.5,	0.4,	0.5,	0.5,	0.3,	.3,	.3,	JEWELER_PROB},4, 4, 20, 400, 40,"drum"),
 		
-		new Location(	new double[] {2,	0.6,	1,	0.5,	0.4,	2,		0.5,	0.7,	.3,	.3,	JEWELER_PROB},5, 4, 30, 33, 0, 40, "forbidden"),
-		new Location(	new double[] {2,	0.6,	1,	0.5,	0.4,	2,		0.5,	0.5,	.3,	0,	JEWELER_PROB},5, 4, 40, 36, 400, 40, "summerpalace"),
-		new Location(	new double[] {2,	0.6,	0.4,0.5,	0.4,	0.5,	0.5,	0.2,	1.5,0,	JEWELER_PROB},5, 4, 40, 39, 0, 40, "shanghai"),
-		new Location(	new double[] {2,	0.6,	1,	0.5,	0.4,	2,		0.5,	0.5,	.3,	0,	JEWELER_PROB},5, 4, 40, 42, 0, 30, "terracotta"),
-		new Location(	new double[] {2,	1.0,	1,	0.5,	0.4,	1.5,	0.5,	0.5,	.3,	0,	JEWELER_PROB},5, 4, 40, 45, 400, 40, "panda"),
-		new Location(	new double[] {2,	0.6,	1,	0.5,	0.4,	0.5,	0.5,	0.5,	.3,	0.5,JEWELER_PROB},5, 4, 40, 48, 0, 5, "silkroad"),
-		new Location(	new double[] {2,	0.5,	0,	0.2,	0.4,	0.5,	0.5,	0.5,	2,	0,	JEWELER_PROB},5, 4, 40, 50, 500, 50, "cbd")
+		new Location(10,	new double[] {2,	0.6,	1,	0.5,	0.4,	2,		0.5,	0.5,	.3,	0,	JEWELER_PROB},5, 4, 40, 400, 40, "summerpalace"),
+		new Location(11,	new double[] {2,	0.6,	0.4,0.5,	0.4,	0.5,	0.5,	0.2,	1.5,0,	JEWELER_PROB},5, 4, 40, 0, 40, "shanghai"),
+		new Location(12,	new double[] {2,	1.0,	1,	0.5,	0.4,	1.5,	0.5,	0.5,	.3,	0,	JEWELER_PROB},5, 4, 40, 400, 40, "panda"),
+		new Location(13,	new double[] {2,	0.6,	1,	0.5,	0.4,	0.5,	0.5,	0.5,	.3,	0.5,JEWELER_PROB},5, 4, 40, 0, 5, "silkroad"),
+		new Location(14,	new double[] {2,	0.5,	0,	0.2,	0.4,	0.5,	0.5,	0.5,	2,	0,	JEWELER_PROB},5, 4, 40, 500, 50, "cbd"),
+		
+		new Location(15,	new double[] {2,	0.6,	1,	0.5,	0.4,	1.5,	0.5,	0.5,	.3,	.3,	JEWELER_PROB},6, 4, 10, 300, 20, "birdsnest"),
+		new Location(16,	new double[] {2,	0.6,	1,	0.5,	0.4,	2,		0.5,	0.5,	.3,	0,	JEWELER_PROB},6, 4, 40, 0, 30, "terracotta"),
+		new Location(17,	new double[] {2,	0.6,	1,	0.5,	0.4,	2,		0.5,	0.7,	.3,	.3,	JEWELER_PROB},6, 4, 30, 0, 40, "forbidden"),
+
 		};
 		
 		public double[] originalCustomerSpread; 	// once we figure out how many types of customers, assign these.
@@ -55,8 +59,8 @@ public class LocationType extends PurchaseType {
 //			}
 //		}
 		
-		private Location(double[] spread, int tier, int maxCustomers, float rentCost, int unlockAt, float cash, int coins, String name) {
-			super(Assets.strings.get(LocationType.name + "_" +name), 0, 0, rentCost, unlockAt, -5,Assets.strings.get(LocationType.name + "_" + name + "_d"), "");
+		private Location(int index, double[] spread, int tier, int maxCustomers, float rentCost, float cash, int coins, String name) {
+			super(Assets.strings.get(LocationType.name + "_" +name), 0, 0, rentCost, locationUnlockLevels[index], -5,Assets.strings.get(LocationType.name + "_" + name + "_d"), "");
 		
 //			bgName = "background/" + bg;
 			fullBG = Assets.getTextureRegion("background/" + name);

@@ -118,6 +118,7 @@ public class ProfileInventory {
 		StatsHandler.spendCash(cash);
 	}
 
+	// figure this shit out... fix "unlock at levels" for all locations.
 	public boolean hasUnlockedByLevel(Purchaseable item) {
 		if (this.profile == null) {
 			KebabKing.print("PROFILE IS NULL");

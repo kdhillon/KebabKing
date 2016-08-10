@@ -109,7 +109,7 @@ public class MainStoreScreen extends ActiveScreen {
 //		mainTable.row();
 		
 		// add text below title
-		String text = Assets.strings.get("the_market");
+		String text = Assets.strings.get("welcome_to_the_market");
 		Label label = new Label(text, Assets.generateLabelStyleUILight(28, text));
 		label.setColor(FONT_COLOR);
 		mainTable.add(label).center().expandY().top().padTop(title_pad_top * 1.5f);

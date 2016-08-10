@@ -154,6 +154,8 @@ public class Customer implements Comparable<Customer> {
 		FARMER(			.8f, 	2, 	8, 		.3f, 	.7f, Gender.MALE,"Farmer", Assets.strings.get("farmers")),//
 		JEWELER(		1f, 	1, 	8, 		.2f, 	.6f, Gender.MALE,"Jeweler", Assets.strings.get("jewelers")),//
 ;
+		
+		// post this online: http://www.mirror.co.uk/news/world-news/street-food-chef-speaks-amazement-8561995
 		enum Gender {MALE, FEMALE, EITHER};
 
 		CustomerTextures male;
@@ -193,10 +195,10 @@ public class Customer implements Comparable<Customer> {
 			this.animationTime = 1/speed * Assets.CUSTOMER_ANIMATION_TIME;
 			if (gender == Gender.EITHER) {
 				this.male = Assets.generateCustomerTextures(prefix + "_m", animationTime);
-//				this.male_alt = Assets.generateCustomerTextures(prefix + "_m_alt", animationTime);
+				this.male_alt = Assets.generateCustomerTextures(prefix + "_m_alt", animationTime);
 //				this.male_spc = Assets.generateCustomerTextures(prefix + "_m_spc", animationTime);
 				this.female = Assets.generateCustomerTextures(prefix + "_f", animationTime);
-//				this.female_alt = Assets.generateCustomerTextures(prefix + "_f_alt", animationTime);
+				this.female_alt = Assets.generateCustomerTextures(prefix + "_f_alt", animationTime);
 //				this.female_spc = Assets.generateCustomerTextures(prefix + "_f_spc", animationTime);
 			}
 			else if (gender == Gender.MALE) {

@@ -65,8 +65,10 @@ public class SimplePurchaseable implements Purchaseable {
 	@Override
 	public int unlockAtLevel() {
 		if (unlockWithLocation <= 0) KebabKing.print(getName());
-		if (LocationType.UNLOCKS_ONLY_WITH_LOCATIONS)
+		if (LocationType.UNLOCKS_ONLY_WITH_LOCATIONS) {
+			System.out.println("getting unlock at level for: " + this.getName() + " (" + unlockWithLocation +")");
 			return LocationType.getLocationAt(unlockWithLocation).unlockAtLevel;
+		}
 		else return unlockAtLevel;
 	}
 	
