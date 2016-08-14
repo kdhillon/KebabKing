@@ -24,7 +24,7 @@ public class CustomerManager {
 	static final float INIT_WAIT_BEFORE_GENERATE = 3f;
 	
 	// fix this
-	static final float[] LINE_POSITIONS = new float[] {0.75f, 7.2f};
+	static final float[] LINE_POSITIONS = new float[] {0.7f, 7.f};
 //	static final float[] LINE_POSITIONS = new float[] {0, 3.5f, 7f};
 
 	static final float PATH_Y = 9.9f; // out of 18

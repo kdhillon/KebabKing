@@ -54,8 +54,8 @@ public class Customer implements Comparable<Customer> {
 //	static final float TEXTURE_WIDTH = 3f; 	// double the old values before Vic's textures
 //	static final float TEXTURE_HEIGHT = 4.5f; 
 
-	static final float TEXTURE_WIDTH = 4f; 	// double the old values before Vic's textures
-	static final float TEXTURE_HEIGHT = 4f; 
+	static final float TEXTURE_WIDTH = 4.5f; 	// double the old values before Vic's textures
+	static final float TEXTURE_HEIGHT = 4.5f; 
 	
 	static final float SELFIE_OFFSET_X = 0.24f;
 	static final float SELFIE_OFFSET_Y = 0.08f;

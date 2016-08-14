@@ -1195,17 +1195,20 @@ public class DrawUI {
 		unlockDisplayQueue.add(p);
 	}
 
-	public static Table getBlueButton(String text, int size) {
+	public static Table getBlueButtonFancy(String text, int size, int color) {
 		Table button = new Table();
 		// THE KEY IS SET BACKGROUND!!!
 		// SET BACKGROUND FUCKS UP PREFERRED SIZE!
 		button.setTouchable(Touchable.enabled);
-		Label resume = new Label(text, Assets.generateLabelStyleUIChina(size, text));
+		Label label = new Label(text, Assets.generateLabelStyleUITitle(size, text));
 
-		float padRight = resume.getPrefWidth() * 0.35f;
-		float padLeft = resume.getPrefWidth() * 0.25f;
-		float padYTop = resume.getPrefHeight() * 0.3f;
-		float padYBot = padYTop * 1.5f;
+		float padRight = label.getPrefWidth() * 0.35f;
+		float padLeft = label.getPrefWidth() * 0.25f;
+		padLeft = 0;
+		padRight = 0;
+		float padYTop = -label.getPrefHeight() * 0.2f - KebabKing.getGlobalY(0.04f);
+		float padYBot = label.getPrefHeight() * 0.15f -KebabKing.getGlobalY(0.05f);
+
 		if (Assets.getLanguage().extraPadding) {
 			padYBot *= 0.3f;
 			padYTop *= -0.0f;
@@ -1214,13 +1217,51 @@ public class DrawUI {
 			KebabKing.print("adding extra padding: " + padLeft + text);
 		}
 
-		button.add(resume).padLeft(padLeft).padRight(padRight).padBottom(padYBot).padTop(padYTop);
+		button.add(label).padLeft(padLeft).padRight(padRight).padBottom(padYBot).padTop(padYTop);
+		if (color == 0)
+			button.setBackground(new NinePatchDrawable(Assets.bigGreen9Patch));
+		if (color == 1) 
+			button.setBackground(new NinePatchDrawable(Assets.bigBlue9Patch));
+		if (color == 2)
+			button.setBackground(new NinePatchDrawable(Assets.bigRed9Patch));
+	
+	
+		//		button.debugAll();
+		return button;
+	}
+	
+	public static Table getBlueButton(String text, int size) {
+		if (true) return getBlueButtonFancy(text, size, 1);
+		
+		Table button = new Table();
+		// THE KEY IS SET BACKGROUND!!!
+		// SET BACKGROUND FUCKS UP PREFERRED SIZE!
+		button.setTouchable(Touchable.enabled);
+		Label label = new Label(text, Assets.generateLabelStyleUIChina(size, text));
+
+		float padRight = label.getPrefWidth() * 0.35f;
+		float padLeft = label.getPrefWidth() * 0.25f;
+		float padYTop = label.getPrefHeight() * 0.3f;
+		float padYBot = padYTop * 1.5f;
+		
+		padYTop = 0;
+		padYBot = 0;
+
+		if (Assets.getLanguage().extraPadding) {
+			padYBot *= 0.3f;
+			padYTop *= -0.0f;
+			padRight *= 1.5f;
+			padLeft *= 1.5f;
+			KebabKing.print("adding extra padding: " + padLeft + text);
+		}
+
+		button.add(label).padLeft(padLeft).padRight(padRight).padBottom(padYBot).padTop(padYTop);
 
 		TextureRegion bg;
 		if (button.getPrefWidth() > 300 && button.getPrefHeight() > 60) {
 			//			KebabKing.print("USING 300");
 			bg = Assets.getTextureRegion("screens/pause-052");
-			button.getCell(resume).padLeft(padLeft * 0.6f).padRight(padRight * 0.7f);
+			button.getCell(label).padLeft(padLeft * 0.6f).padRight(padRight * 0.7f);
 		}
 		//		else if (button.getPrefWidth() > 267 && button.getPrefHeight() > 90) {
 		////			KebabKing.print("USING 267");

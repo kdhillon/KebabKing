@@ -96,42 +96,42 @@ filter: Nearest,Nearest
 repeat: none
 background/SkyElement-02
   rotate: false
-  xy: 462, 141
+  xy: 2, 2
   size: 579, 300
   orig: 579, 300
   offset: 0, 0
   index: -1
 background/SkyElement-03
   rotate: false
-  xy: 1043, 229
+  xy: 583, 90
   size: 433, 212
   orig: 433, 212
   offset: 0, 0
   index: -1
 background/SkyElement-04
   rotate: false
-  xy: 2, 2
-  size: 458, 439
-  orig: 458, 439
+  xy: 1018, 82
+  size: 229, 220
+  orig: 229, 220
   offset: 0, 0
   index: -1
 background/SkyElement-05
   rotate: false
-  xy: 1882, 1910
+  xy: 1882, 1771
   size: 83, 96
   orig: 83, 96
   offset: 0, 0
   index: -1
 background/birdsnest
   rotate: false
-  xy: 2, 443
+  xy: 2, 304
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
   index: -1
 background/cbd
   rotate: false
-  xy: 942, 443
+  xy: 942, 304
   size: 938, 1563
   orig: 938, 1563
   offset: 0, 0
@@ -1500,7 +1500,7 @@ market/Market_menu_element-08
   index: -1
 market/Market_menu_element-09
   rotate: false
-  xy: 1562, 451
+  xy: 1595, 590
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
@@ -1538,6 +1538,13 @@ market/Market_subMenus__template_element-06
   xy: 1941, 51
   size: 103, 72
   orig: 103, 72
+  offset: 0, 0
+  index: -1
+market/blue3x
+  rotate: false
+  xy: 1562, 435
+  size: 63, 69
+  orig: 63, 69
   offset: 0, 0
   index: -1
 market/bluePixel
@@ -1584,7 +1591,7 @@ market/gray9patchSmallFilledCut
   index: -1
 market/gray9patchSmallHollow
   rotate: false
-  xy: 1595, 833
+  xy: 1595, 565
   size: 21, 23
   orig: 21, 23
   offset: 0, 0
@@ -1594,6 +1601,13 @@ market/gray9patchSmallHollow2
   xy: 2026, 28
   size: 20, 21
   orig: 20, 21
+  offset: 0, 0
+  index: -1
+market/green3x
+  rotate: false
+  xy: 1595, 787
+  size: 63, 69
+  orig: 63, 69
   offset: 0, 0
   index: -1
 market/green9patch
@@ -1612,7 +1626,7 @@ market/green9patchSmall
   index: -1
 market/green9patchSmallHollow
   rotate: false
-  xy: 1595, 810
+  xy: 1618, 567
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
@@ -1659,9 +1673,16 @@ market/jade
   orig: 73, 73
   offset: 0, 0
   index: -1
+market/light_green3x
+  rotate: false
+  xy: 1595, 716
+  size: 63, 69
+  orig: 63, 69
+  offset: 0, 0
+  index: -1
 market/limeGreen9patchSmallFilled2
   rotate: false
-  xy: 1595, 764
+  xy: 1595, 542
   size: 13, 21
   orig: 13, 21
   offset: 0, 0
@@ -1694,6 +1715,13 @@ market/real_estate
   orig: 344, 364
   offset: 0, 0
   index: -1
+market/red3x
+  rotate: false
+  xy: 1595, 645
+  size: 63, 69
+  orig: 63, 69
+  offset: 0, 0
+  index: -1
 market/red9patchSmall
   rotate: false
   xy: 499, 14
@@ -1724,14 +1752,14 @@ market/wheel_solo_stand
   index: -1
 market/white9patchSmall
   rotate: false
-  xy: 1595, 787
+  xy: 1618, 544
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
 market/white9patchSmall - Copy
   rotate: false
-  xy: 1595, 787
+  xy: 1618, 544
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
@@ -2126,334 +2154,300 @@ filter: Nearest,Nearest
 repeat: none
 screens/Airplane-01
   rotate: false
-  xy: 785, 1541
+  xy: 2, 1217
   size: 938, 500
   orig: 938, 500
   offset: 0, 0
   index: -1
-screens/Main-02
-  rotate: false
-  xy: 1725, 1658
-  size: 252, 383
-  orig: 252, 383
-  offset: 0, 0
-  index: -1
-screens/Summary-08
-  rotate: false
-  xy: 673, 11
-  size: 313, 101
-  orig: 313, 101
-  offset: 0, 0
-  index: -1
-screens/bill_blue
-  rotate: false
-  xy: 1838, 1090
-  size: 208, 125
-  orig: 208, 125
-  offset: 0, 0
-  index: -1
-screens/bill_green
-  rotate: false
-  xy: 1838, 963
-  size: 208, 125
-  orig: 208, 125
-  offset: 0, 0
-  index: -1
-screens/bill_red
-  rotate: false
-  xy: 1568, 844
-  size: 208, 125
-  orig: 208, 125
-  offset: 0, 0
-  index: -1
-screens/blueSwipe
-  rotate: false
-  xy: 1290, 6
-  size: 196, 86
-  orig: 196, 86
-  offset: 0, 0
-  index: -1
-screens/blueSwipeSm
-  rotate: false
-  xy: 1725, 971
-  size: 96, 70
-  orig: 96, 70
-  offset: 0, 0
-  index: -1
-screens/green_arrow
-  rotate: false
-  xy: 2011, 1959
-  size: 20, 20
-  orig: 20, 20
-  offset: 0, 0
-  index: -1
-screens/jadeBox
-  rotate: false
-  xy: 2, 176
-  size: 681, 296
-  orig: 681, 296
-  offset: 0, 0
-  index: -1
-screens/minijade
-  rotate: false
-  xy: 1979, 1951
-  size: 30, 28
-  orig: 30, 28
-  offset: 0, 0
-  index: -1
-screens/music_off
-  rotate: false
-  xy: 1568, 425
-  size: 417, 417
-  orig: 417, 417
-  offset: 0, 0
-  index: -1
-screens/music_on
-  rotate: false
-  xy: 1568, 6
-  size: 417, 417
-  orig: 417, 417
-  offset: 0, 0
-  index: -1
-screens/neonsign
-  rotate: false
-  xy: 785, 1039
-  size: 938, 500
-  orig: 938, 500
-  offset: 0, 0
-  index: -1
-screens/pause-02
-  rotate: false
-  xy: 1725, 1408
-  size: 262, 248
-  orig: 262, 248
-  offset: 0, 0
-  index: -1
-screens/pause-03
-  rotate: false
-  xy: 685, 114
-  size: 474, 137
-  orig: 474, 137
-  offset: 0, 0
-  index: -1
-screens/pause-04
-  rotate: false
-  xy: 1778, 871
-  size: 267, 90
-  orig: 267, 90
-  offset: 0, 0
-  index: -1
-screens/pause-042
-  rotate: false
-  xy: 404, 94
-  size: 267, 80
-  orig: 267, 80
-  offset: 0, 0
-  index: -1
-screens/pause-05
-  rotate: false
-  xy: 988, 2
-  size: 300, 90
-  orig: 300, 90
-  offset: 0, 0
-  index: -1
-screens/pause-052
-  rotate: false
-  xy: 2, 25
-  size: 300, 60
-  orig: 300, 60
-  offset: 0, 0
-  index: -1
-screens/red
-  rotate: false
-  xy: 2040, 2039
-  size: 2, 2
-  orig: 2, 2
-  offset: 0, 0
-  index: -1
-screens/selfie
-  rotate: false
-  xy: 1725, 1043
-  size: 111, 363
-  orig: 111, 363
-  offset: 0, 0
-  index: -1
-screens/spicy_order_old
-  rotate: false
-  xy: 1568, 989
-  size: 69, 48
-  orig: 69, 48
-  offset: 0, 0
-  index: -1
-screens/triangle
-  rotate: false
-  xy: 1979, 1981
-  size: 59, 60
-  orig: 59, 60
-  offset: 0, 0
-  index: -1
-screens/tutorial_burnt
-  rotate: false
-  xy: 404, 5
-  size: 197, 87
-  orig: 197, 87
-  offset: 0, 0
-  index: -1
-screens/tutorial_chicken
-  rotate: false
-  xy: 1161, 94
-  size: 400, 157
-  orig: 400, 157
-  offset: 0, 0
-  index: -1
-screens/tutorial_cooked
-  rotate: false
-  xy: 2, 87
-  size: 400, 87
-  orig: 400, 87
-  offset: 0, 0
-  index: -1
-screens/tutorial_jeweler
-  rotate: false
-  xy: 1838, 1217
-  size: 141, 189
-  orig: 141, 189
-  offset: 0, 0
-  index: -1
-screens/wheel
-  rotate: false
-  xy: 2, 1260
-  size: 781, 781
-  orig: 781, 781
-  offset: 0, 0
-  index: -1
-screens/wheel3
-  rotate: false
-  xy: 2, 867
-  size: 781, 391
-  orig: 781, 391
-  offset: 0, 0
-  index: -1
-screens/wheel6
-  rotate: false
-  xy: 785, 646
-  size: 781, 391
-  orig: 781, 391
-  offset: 0, 0
-  index: -1
-screens/wheel7
-  rotate: false
-  xy: 2, 474
-  size: 781, 391
-  orig: 781, 391
-  offset: 0, 0
-  index: -1
-screens/wheel7 o
-  rotate: false
-  xy: 785, 253
-  size: 781, 391
-  orig: 781, 391
-  offset: 0, 0
-  index: -1
-
-atlas124.png
-size: 2048,512
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
 screens/Main-03
   rotate: false
-  xy: 1052, 304
+  xy: 898, 301
   size: 206, 63
   orig: 206, 63
   offset: 0, 0
   index: -1
 screens/Main-04
   rotate: false
-  xy: 840, 431
+  xy: 1361, 834
   size: 293, 60
   orig: 293, 60
   offset: 0, 0
   index: -1
 screens/Summary-02
   rotate: false
-  xy: 840, 266
+  xy: 898, 557
   size: 210, 101
   orig: 210, 101
   offset: 0, 0
   index: -1
-screens/blueSwipe n
+screens/Summary-08
   rotate: false
-  xy: 840, 76
+  xy: 478, 219
+  size: 313, 101
+  orig: 313, 101
+  offset: 0, 0
+  index: -1
+screens/bigmeat
+  rotate: false
+  xy: 2, 1719
+  size: 1249, 311
+  orig: 1249, 311
+  offset: 0, 0
+  index: -1
+screens/bill_blue
+  rotate: false
+  xy: 1780, 1357
+  size: 208, 125
+  orig: 208, 125
+  offset: 0, 0
+  index: -1
+screens/bill_green
+  rotate: false
+  xy: 1780, 1230
+  size: 208, 125
+  orig: 208, 125
+  offset: 0, 0
+  index: -1
+screens/bill_red
+  rotate: false
+  xy: 1780, 1103
+  size: 208, 125
+  orig: 208, 125
+  offset: 0, 0
+  index: -1
+screens/blueSwipe
+  rotate: false
+  xy: 1110, 572
   size: 196, 86
   orig: 196, 86
   offset: 0, 0
   index: -1
+screens/blueSwipe n
+  rotate: false
+  xy: 1308, 572
+  size: 196, 86
+  orig: 196, 86
+  offset: 0, 0
+  index: -1
+screens/blueSwipeSm
+  rotate: false
+  xy: 1936, 1960
+  size: 96, 70
+  orig: 96, 70
+  offset: 0, 0
+  index: -1
 screens/facebook-share-button
   rotate: false
-  xy: 1366, 420
+  xy: 1320, 499
   size: 194, 71
   orig: 194, 71
   offset: 0, 0
   index: -1
+screens/green_arrow
+  rotate: false
+  xy: 1923, 1081
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+screens/jadeBox
+  rotate: false
+  xy: 1253, 1734
+  size: 681, 296
+  orig: 681, 296
+  offset: 0, 0
+  index: -1
+screens/minijade
+  rotate: false
+  xy: 1990, 1454
+  size: 30, 28
+  orig: 30, 28
+  offset: 0, 0
+  index: -1
+screens/music_off
+  rotate: false
+  xy: 942, 1300
+  size: 417, 417
+  orig: 417, 417
+  offset: 0, 0
+  index: -1
+screens/music_on
+  rotate: false
+  xy: 942, 881
+  size: 417, 417
+  orig: 417, 417
+  offset: 0, 0
+  index: -1
+screens/neonsign
+  rotate: false
+  xy: 2, 715
+  size: 938, 500
+  orig: 938, 500
+  offset: 0, 0
+  index: -1
+screens/pause-02
+  rotate: false
+  xy: 1780, 1484
+  size: 262, 248
+  orig: 262, 248
+  offset: 0, 0
+  index: -1
+screens/pause-03
+  rotate: false
+  xy: 2, 183
+  size: 474, 137
+  orig: 474, 137
+  offset: 0, 0
+  index: -1
+screens/pause-04
+  rotate: false
+  xy: 1344, 742
+  size: 267, 90
+  orig: 267, 90
+  offset: 0, 0
+  index: -1
+screens/pause-042
+  rotate: false
+  xy: 1344, 660
+  size: 267, 80
+  orig: 267, 80
+  offset: 0, 0
+  index: -1
+screens/pause-05
+  rotate: false
+  xy: 478, 127
+  size: 300, 90
+  orig: 300, 90
+  offset: 0, 0
+  index: -1
+screens/pause-052
+  rotate: false
+  xy: 2, 2
+  size: 300, 60
+  orig: 300, 60
+  offset: 0, 0
+  index: -1
 screens/pause-053
   rotate: false
-  xy: 840, 369
+  xy: 942, 660
   size: 270, 60
   orig: 270, 60
   offset: 0, 0
   index: -1
 screens/pause-054
   rotate: false
-  xy: 2, 2
+  xy: 404, 85
   size: 250, 40
   orig: 250, 40
   offset: 0, 0
   index: -1
 screens/pause-055
   rotate: false
-  xy: 1135, 431
+  xy: 404, 23
   size: 229, 60
   orig: 229, 60
   offset: 0, 0
   index: -1
 screens/pause-056
   rotate: false
-  xy: 1112, 369
+  xy: 1110, 510
   size: 208, 60
   orig: 208, 60
   offset: 0, 0
   index: -1
+screens/red
+  rotate: false
+  xy: 1253, 1730
+  size: 2, 2
+  orig: 2, 2
+  offset: 0, 0
+  index: -1
+screens/selfie
+  rotate: false
+  xy: 785, 350
+  size: 111, 363
+  orig: 111, 363
+  offset: 0, 0
+  index: -1
 screens/sound_off
   rotate: false
-  xy: 2, 74
+  xy: 1361, 1315
   size: 417, 417
   orig: 417, 417
   offset: 0, 0
   index: -1
 screens/sound_on
   rotate: false
-  xy: 421, 74
+  xy: 1361, 896
   size: 417, 417
   orig: 417, 417
   offset: 0, 0
   index: -1
 screens/spicy_order
   rotate: false
-  xy: 840, 164
+  xy: 898, 455
   size: 200, 100
   orig: 200, 100
   offset: 0, 0
   index: -1
+screens/spicy_order_old
+  rotate: false
+  xy: 1656, 846
+  size: 69, 48
+  orig: 69, 48
+  offset: 0, 0
+  index: -1
 screens/summary_bottom
   rotate: false
-  xy: 2, 44
+  xy: 2, 64
   size: 400, 28
   orig: 400, 28
   offset: 0, 0
   index: -1
+screens/triangle
+  rotate: false
+  xy: 1214, 660
+  size: 59, 60
+  orig: 59, 60
+  offset: 0, 0
+  index: -1
+screens/tutorial_burnt
+  rotate: false
+  xy: 898, 366
+  size: 197, 87
+  orig: 197, 87
+  offset: 0, 0
+  index: -1
+screens/tutorial_chicken
+  rotate: false
+  xy: 942, 722
+  size: 400, 157
+  orig: 400, 157
+  offset: 0, 0
+  index: -1
+screens/tutorial_cooked
+  rotate: false
+  xy: 2, 94
+  size: 400, 87
+  orig: 400, 87
+  offset: 0, 0
+  index: -1
+screens/tutorial_jeweler
+  rotate: false
+  xy: 1780, 912
+  size: 141, 189
+  orig: 141, 189
+  offset: 0, 0
+  index: -1
+screens/wheel7
+  rotate: false
+  xy: 2, 322
+  size: 781, 391
+  orig: 781, 391
+  offset: 0, 0
+  index: -1
 
-atlas125.png
+atlas124.png
 size: 2048,512
 format: RGBA8888
 filter: Nearest,Nearest

@@ -68,13 +68,14 @@ public class Assets {
 	public static BitmapFont arial;
 
 	static Texture peppercornLogo; // must be disposed
-	static Texture kebabMain;
+//	static Texture kebabMain;
+	static Texture bigMeat;
 	
 	static TextureAtlas atlas; // must be disposed after load
 
 	static Skin uiSkin;
 
-	static TextureRegion title;
+//	static TextureRegion title;
 	
 	static public class CustomerTextures {
 		Animation idle;
@@ -150,7 +151,8 @@ public class Assets {
 	static FreeTypeFontGenerator worksansLight;
 	static FreeTypeFontGenerator worksansHeavy;
 	static FreeTypeFontGenerator china;
-	
+	static FreeTypeFontGenerator harlow;
+
 //	static final static
 	static FreeTypeFontGenerator mangal;
 
@@ -231,6 +233,10 @@ public class Assets {
 
 	static NinePatch white9PatchSmall;
 	static NinePatch green9PatchSmall;
+	static NinePatch bigGreen9Patch;
+	static NinePatch bigRed9Patch;
+	static NinePatch bigBlue9Patch;
+
 	static NinePatch limeGreen9PatchSmallFilled;
 //	static NinePatch gray9Patch;
 	static NinePatch gray9PatchSmall;
@@ -268,7 +274,9 @@ public class Assets {
 		arial = new BitmapFont();
 
 		//make sure to load logo first!!
-		kebabMain = new Texture(Gdx.files.internal("Main-02.png"));
+//		kebabMain = new Texture(Gdx.files.internal("Main-02.png"));
+		bigMeat = new Texture(Gdx.files.internal("bigmeat.png"));
+
 		peppercornLogo = new Texture(Gdx.files.internal("logo.png"));
 
 		p = new FreeTypeFontParameter();
@@ -277,6 +285,7 @@ public class Assets {
 		worksansHeavy = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-SemiBold.otf"));
 		worksansLight = new FreeTypeFontGenerator(Gdx.files.internal("data/WorkSans-Regular.otf"));
 		china = new FreeTypeFontGenerator(Gdx.files.internal("data/CHINA.TTF"));
+		harlow = new FreeTypeFontGenerator(Gdx.files.internal("data/HARLOW.TTF"));
 		mangal = new FreeTypeFontGenerator(Gdx.files.internal("data/mangal.ttf"));
 		
 		loadLanguages();
@@ -285,14 +294,19 @@ public class Assets {
 		charSets = new HashMap<String, HashSet<Character>>();
 	}
 	
+	public static boolean allCaps(FreeTypeFontGenerator fg) {
+		if (fg == china) return true;
+		else return false;
+	}
+	
 	public static Language getLanguage() {
 		return languages.get(KebabKing.lang);
 	}
 	
 	public static void loadLanguages() {
 		languages = new HashMap<String, Language>();
-		languages.put("en", new Language("en", worksans, worksansHeavy, worksansLight, china, false)); 
-		languages.put("hi", new Language("hi", mangal, mangal, mangal, mangal, true)); 
+		languages.put("en", new Language("en", worksans, worksansHeavy, worksansLight, china, harlow, false)); 
+		languages.put("hi", new Language("hi", mangal, mangal, mangal, mangal, mangal, true)); 
 		
 		// load languages
 		FileHandle baseFileHandle = Gdx.files.internal("data/bundles/strings");
@@ -494,6 +508,7 @@ public class Assets {
 		worksansHeavy.dispose();
 		worksansLight.dispose();
 		china.dispose();
+		harlow.dispose();
 		mainTheme.dispose();
 	}
 	
@@ -542,6 +557,10 @@ public class Assets {
 //	}	
 	public static LabelStyle generateLabelStyleUIChina(int size, String chars) {
 		return generateLabelStyle(getLanguage().chinaFont, size, chars);
+	}
+	
+	public static LabelStyle generateLabelStyleUITitle(int size, String chars) {
+		return generateLabelStyle(getLanguage().titleFont, size, chars);
 	}
 	
 //	public static LabelStyle generateLabelStyleUIChinaRed(int size) {
@@ -593,6 +612,11 @@ public class Assets {
 	public static LabelStyle generateLabelStyle(FreeTypeFontGenerator gen, int size, String chars) {
 //		chars = Assets.allChars; //TODO remove this test
 		// best before was 28 label styles and 2548 font chars after summary
+		
+//		if (allCaps(gen)) {
+//			System.out.println("chars: " + chars);
+//			chars = chars.toUpperCase();
+//		}
 		
 		// lets see how big it is if you only do one bitmap font
 		String name = "" + gen.hashCode() + size;// + color.hashCode();
@@ -684,7 +708,7 @@ public class Assets {
 		
 		notificationBottom = getTextureRegion("screens/summary_bottom");
 
-		title = getTextureRegion("screens/Main-02");
+//		title = getTextureRegion("screens/Main-02");
 		
 		spiceBoxDisabled = getTextureRegion("grill/grill-06");
 
@@ -750,7 +774,11 @@ public class Assets {
 //		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		white9PatchSmall = new NinePatch(getTextureRegion("market/white9patchSmall"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
 		green9PatchSmall = new NinePatch(getTextureRegion("market/green9patchSmallHollow"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
-		
+		bigGreen9Patch = new NinePatch(getTextureRegion("market/light_green3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
+		bigRed9Patch = new NinePatch(getTextureRegion("market/red3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
+		bigBlue9Patch = new NinePatch(getTextureRegion("market/blue3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
+//		bigGreen9Patch = new NinePatch(getTextureRegion("market/green3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
+
 		
 		limeGreen9PatchSmallFilled = new NinePatch(getTextureRegion("market/limeGreen9patchSmallFilled2"), 8, 4, 8, 8);
 		

@@ -10,13 +10,16 @@ public class Language {
 	FreeTypeFontGenerator heavy;
 	FreeTypeFontGenerator light;
 	FreeTypeFontGenerator chinaFont;
+	FreeTypeFontGenerator titleFont;
+
 	boolean extraPadding;
-	public Language(String code, FreeTypeFontGenerator regular, FreeTypeFontGenerator heavy, FreeTypeFontGenerator light, FreeTypeFontGenerator china, boolean pad) {
+	public Language(String code, FreeTypeFontGenerator regular, FreeTypeFontGenerator heavy, FreeTypeFontGenerator light, FreeTypeFontGenerator china, FreeTypeFontGenerator title, boolean pad) {
 		this.locale = new Locale(code);
 		this.regular = regular;
 		this.heavy = heavy;
 		this.light = light;
 		this.chinaFont = china;
+		this.titleFont = title;
 		this.extraPadding = pad;
 	}
 }

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
@@ -65,7 +64,7 @@ public class SplashScreen extends ScreenTemplate  {
 		startTime = System.currentTimeMillis();
 		Assets.load();
 		logo = Assets.peppercornLogo;
-		kebab = Assets.kebabMain;
+		kebab = Assets.bigMeat;
 		
 //		arrPercent = 1f / textArray.length;
 //		nextSwitch = -1;
@@ -232,16 +231,21 @@ public class SplashScreen extends ScreenTemplate  {
 		table = new Table();
 		table.setSize(KebabKing.getWidth(), KebabKing.getHeight());
 		uiStage.addActor(table);
-		String titleText = Assets.strings.get("title");
-		title = new Label(titleText, Assets.generateLabelStyleUIChina(60, titleText));
-		title.setAlignment(Align.center);
-		Image image = new Image(kebab);
-		float imageWidth = KebabKing.getGlobalX(0.4f);
+//		String titleText = Assets.strings.get("title");
+//		title = new Label(titleText, Assets.generateLabelStyleUIChina(60, titleText));
+//		title.setAlignment(Align.center);
+//		Image image = new Image(kebab);
+		float imageWidth = KebabKing.getGlobalX(1);
 		float imageHeight = imageWidth * kebab.getHeight() / kebab.getWidth();
-		table.add(title).center().top().padTop(KebabKing.getGlobalY(0.1f));
+//		table.add(title).center().top().padTop(KebabKing.getGlobalY(0.1f));
+//		table.row();
+//		table.add(image).center().top().expandY().padTop(KebabKing.getGlobalY(0.1f)).width(imageWidth).height(imageHeight);
+//		table.row();
+		
+		Table top = MainMenuScreen.getTitle();
+		table.add(top).center().top().expandY().padTop(KebabKing.getGlobalY(0.35f)).width(imageWidth).height(imageHeight);
 		table.row();
-		table.add(image).center().top().expandY().padTop(KebabKing.getGlobalY(0.1f)).width(imageWidth).height(imageHeight);
-		table.row();
+		
 		loadText = new Label(getLoadText(), Assets.generateLabelStyleUI(20, allText));
 		loadText.setAlignment(Align.center);
 		table.add(loadText).center().bottom().padBottom(KebabKing.getGlobalY(0.1f));
@@ -262,6 +266,6 @@ public class SplashScreen extends ScreenTemplate  {
 //		loadText.getStyle().font.dispose();
 //		title.getStyle().font.dispose();
 		logo.dispose();
-		kebab.dispose();
+//		kebab.dispose();
 	}
 }

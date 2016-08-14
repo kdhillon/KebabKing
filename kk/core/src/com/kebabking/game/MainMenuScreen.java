@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class MainMenuScreen extends ActiveScreen {
 	static final boolean FADE_IN_GRILL = false;
@@ -25,7 +24,7 @@ public class MainMenuScreen extends ActiveScreen {
 	//	Image connectToFB;
 
 	boolean stageSet;
-
+	
 	boolean fadeout;
 	float fadeoutTimer; 
 	//	Color currentBatchColor; // alpha will change as fades out
@@ -56,20 +55,16 @@ public class MainMenuScreen extends ActiveScreen {
 
 		addTopTable();
 
-		Image title = new Image(Assets.title);
-		float titleWidth = KebabKing.getGlobalX(0.45f);
-		float titleHeight = titleWidth * Assets.title.getRegionHeight() /Assets.title.getRegionWidth();
-		table.add(title).size(titleWidth, titleHeight).padBottom(KebabKing.getGlobalY(0.04f)).padTop(KebabKing.getGlobalYFloat(0.03f));
+		float topButtonPad = KebabKing.getGlobalY(0.08f);
+		
 
-		table.row();
-
-		startDay = DrawUI.getBlueButton(Assets.strings.get("play"), 60);
+		startDay = DrawUI.getBlueButtonFancy(Assets.strings.get("play"), 100, 0);
 
 		//		TextureRegion bg = Assets.getTextureRegion("screens/pause-03");		
 		//		float width = KebabKing.getGlobalX(0.55f);
 		//		float height = width * bg.getRegionHeight() / bg.getRegionWidth();
 
-		table.add(startDay).center();//.width(width).height(height);
+		table.add(startDay).center().padTop(topButtonPad);//.width(width).height(height);
 
 		startDay.addListener(new StrictInputListener() {
 			public void touch(InputEvent event) {
@@ -78,13 +73,17 @@ public class MainMenuScreen extends ActiveScreen {
 		});
 
 		table.row();
-
-		Table marketButton = DrawUI.getBlueButton(Assets.strings.get("market"), 60);
+		
+		Table doub = new Table();
+		
+		Table marketButton = DrawUI.getBlueButtonFancy(Assets.strings.get("market"), 65, 1);
 
 		//		float width2 = KebabKing.getGlobalX(0.7f);
 		//		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();
 
-		table.add(marketButton).center().padTop(KebabKing.getGlobalY(.015f)); //.width(width2).height(height2);//.width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));
+		doub.add(marketButton);
+		
+//		table.add(marketButton).center().top().padTop(buttonPad); //.width(width2).height(height2);//.width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));
 
 		marketButton.addListener(new StrictInputListener() {
 			public void touch(InputEvent event) {
@@ -93,7 +92,29 @@ public class MainMenuScreen extends ActiveScreen {
 				marketClicksThisSession++;
 			}
 		});	
+		
+//		startDay.setVisible(false);
+//		marketButton.setVisible(false);
 
+//		table.row();
+		
+		Table awardsButton = DrawUI.getBlueButtonFancy(Assets.strings.get("achievements"), 40, 2);
+		
+		//		float width2 = KebabKing.getGlobalX(0.7f);
+		//		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();
+		float buttonPad = KebabKing.getGlobalY(.04f);
+
+//		doub.add(awardsButton).padLeft(KebabKing.getGlobalXFloat(0.05f));
+		table.add(doub).center().expandY().top().padTop(buttonPad); //.width(width2).height(height2);//.width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));
+
+		awardsButton.addListener(new StrictInputListener() {
+			public void touch(InputEvent event) {
+				KebabKing.print("touched awards");
+//				master.mainToStore();
+//				marketClicksThisSession++;
+			}
+		});	
+		
 		table.row();
 		//		connectToFB = new TextButton("FB Connect", Assets.tbs48);
 
@@ -126,30 +147,49 @@ public class MainMenuScreen extends ActiveScreen {
 	}
 
 	public void addTopTable() {
-		Table topBar = new Table();
+		
+//		topBar.add(topRight).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));;
+
+		float padTop = KebabKing.getGlobalY(.35f);
+		float padBot = 0; //KebabKing.getGlobalY(.05f);
+		
+		Table top = getTitle();
+		
+		//		KebabKing.getWidth() * 1f * kebab.getRegionHeight() / kebab.getRegionWidth()
+		table.add(top).padTop(padTop).expandX().fillX().padBottom(padBot).height(getTitleHeight()).top();
+		//		topBar.debugAll();
+		table.row();
+	}
+	
+	public static Table getTitle() {
+		Table topTable = new Table();
+		
+		Image title = new Image(Assets.bigMeat);
+		float titleWidth = KebabKing.getGlobalX(1);
+		float titleHeight = getTitleHeight();
+		topTable.add(title).size(titleWidth, titleHeight);
+		topTable.row();
+		
 		//		TextureRegion kebab = Assets.getTextureRegion("screens/tutorial_cooked");
 		//		topBar.setBackground(new TextureRegionDrawable(kebab));
 		//		topBar.debugAll();
-		Table topLeft = new Table();
-		Table topRight = new Table();
-		topLeft.setBackground(new TextureRegionDrawable(Assets.white));
-		topRight.setBackground(new TextureRegionDrawable(Assets.white));
+//		Table topLeft = new Table();
+//		Table topRight = new Table();
+//		topLeft.setBackground(new TextureRegionDrawable(Assets.white));
+//		topRight.setBackground(new TextureRegionDrawable(Assets.white));
 
-		Label topText = new Label(Assets.strings.get("title"), Assets.generateLabelStyleUIChina(75, Assets.strings.get("title")));
+		Label topText = new Label(Assets.strings.get("title"), Assets.generateLabelStyleUITitle(70, Assets.strings.get("title")));
 
-		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));
+//		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));
 
 		float imagePadX = KebabKing.getGlobalX(0.05f);
-		topBar.add(topText).top().padLeft(imagePadX).padRight(imagePadX);
-		topBar.add(topRight).expandX().fillX().height(KebabKing.getGlobalY(SummaryScreen.BAR_HEIGHT));;
-
-		float padTop = KebabKing.getGlobalY(.05f);
-		float padBot = KebabKing.getGlobalY(.03f);
-
-		//		KebabKing.getWidth() * 1f * kebab.getRegionHeight() / kebab.getRegionWidth()
-		table.add(topBar).padTop(padTop).expandX().fillX().padBottom(padBot);
-		//		topBar.debugAll();
-		table.row();
+		topTable.add(topText).top().padLeft(imagePadX).padRight(imagePadX).height(getTitleHeight()).padTop(-titleHeight*1.14f).padLeft(KebabKing.getGlobalX(0.05f));
+				
+		return topTable;
+	}
+	
+	public static float getTitleHeight() {
+		return KebabKing.getGlobalX(1) * Assets.bigMeat.getHeight() /Assets.bigMeat.getWidth();
 	}
 
 	public void reset() {

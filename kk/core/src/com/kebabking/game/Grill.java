@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -340,13 +341,15 @@ public class Grill {
 		//			drawTrashPile(batch);
 		//		}
 
+	
+				Color original = batch.getColor();
+		if (!this.active) {
+			batch.setColor(new Color(0.2f, 0.2f, 0.2f, 1));
+		}
+		
 		// draw grill stand (behind boxes
 		drawStandBack(batch);
 
-		//		Color original = batch.getColor();
-		//		if (!this.active) {
-		//			batch.setColor(Color.GRAY);
-		//		}
 
 		drawGrill(batch);
 
@@ -405,6 +408,8 @@ public class Grill {
 			holdTime += delta;
 		}
 		else holdTime = 0;
+		
+		batch.setColor(original);
 	}
 
 	public void drawGrill(SpriteBatch batch) {
