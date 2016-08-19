@@ -559,35 +559,35 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-customers/Foreigner_f_alt
+customers/Foreigner_f2
   rotate: false
   xy: 2, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Foreigner_m
+customers/Foreigner_f_alt
   rotate: false
   xy: 2, 2
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Jeweler
+customers/Foreigner_m
   rotate: false
   xy: 684, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Normal_f
+customers/Jeweler
   rotate: false
   xy: 1366, 820
   size: 680, 816
   orig: 680, 816
   offset: 0, 0
   index: -1
-customers/Normal_f _n
+customers/Normal_f
   rotate: false
   xy: 684, 2
   size: 680, 816
@@ -1500,7 +1500,7 @@ market/Market_menu_element-08
   index: -1
 market/Market_menu_element-09
   rotate: false
-  xy: 1595, 590
+  xy: 1595, 519
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
@@ -1554,6 +1554,13 @@ market/bluePixel
   orig: 1, 1
   offset: 0, 0
   index: -1
+market/dark_blue3x
+  rotate: false
+  xy: 1595, 787
+  size: 63, 69
+  orig: 63, 69
+  offset: 0, 0
+  index: -1
 market/drink_quality_icon
   rotate: false
   xy: 1789, 1495
@@ -1591,7 +1598,7 @@ market/gray9patchSmallFilledCut
   index: -1
 market/gray9patchSmallHollow
   rotate: false
-  xy: 1595, 565
+  xy: 1562, 410
   size: 21, 23
   orig: 21, 23
   offset: 0, 0
@@ -1605,7 +1612,7 @@ market/gray9patchSmallHollow2
   index: -1
 market/green3x
   rotate: false
-  xy: 1595, 787
+  xy: 1595, 716
   size: 63, 69
   orig: 63, 69
   offset: 0, 0
@@ -1626,7 +1633,7 @@ market/green9patchSmall
   index: -1
 market/green9patchSmallHollow
   rotate: false
-  xy: 1618, 567
+  xy: 1562, 387
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
@@ -1675,14 +1682,14 @@ market/jade
   index: -1
 market/light_green3x
   rotate: false
-  xy: 1595, 716
+  xy: 1595, 645
   size: 63, 69
   orig: 63, 69
   offset: 0, 0
   index: -1
 market/limeGreen9patchSmallFilled2
   rotate: false
-  xy: 1595, 542
+  xy: 1562, 341
   size: 13, 21
   orig: 13, 21
   offset: 0, 0
@@ -1717,7 +1724,7 @@ market/real_estate
   index: -1
 market/red3x
   rotate: false
-  xy: 1595, 645
+  xy: 1595, 574
   size: 63, 69
   orig: 63, 69
   offset: 0, 0
@@ -1752,14 +1759,14 @@ market/wheel_solo_stand
   index: -1
 market/white9patchSmall
   rotate: false
-  xy: 1618, 544
+  xy: 1562, 364
   size: 20, 21
   orig: 20, 21
   offset: 0, 0
   index: -1
 market/white9patchSmall - Copy
   rotate: false
-  xy: 1618, 544
+  xy: 1562, 364
   size: 20, 21
   orig: 20, 21
   offset: 0, 0

@@ -3,7 +3,6 @@ package com.kebabking.game;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -309,19 +308,22 @@ public class SummaryScreen extends ActiveScreen {
 		
 		Table topCenter = new Table();
 		
-		TextureRegion topImage = Assets.getTextureRegion("screens/Summary-02");
-		float IMAGE_WIDTH = 0.2f;
-		float IMAGE_HEIGHT = IMAGE_WIDTH * topImage.getRegionHeight() / topImage.getRegionWidth();
-		Image image = new Image(topImage);
+//		TextureRegion topImage = Assets.getTextureRegion("screens/Summary-02");
+//		float IMAGE_WIDTH = 0.2f;
+//		float IMAGE_HEIGHT = IMAGE_WIDTH * topImage.getRegionHeight() / topImage.getRegionWidth();
+//		Image image = new Image(topImage);
 //		image.setWidth(KebabKing.getGlobalX(IMAGE_WIDTH));
 //		image.setHeight(KebabKing.getGlobalY(IMAGE_HEIGHT));
-		topCenter.add(image).width(KebabKing.getGlobalX(IMAGE_WIDTH)).height(KebabKing.getGlobalX(IMAGE_HEIGHT));
-		topCenter.row();
+		
+		
 		String daily = Assets.strings.get("daily_accounts");
-		Label dailyAccounts = new Label(daily, Assets.generateLabelStyleUI(12, daily));
-		dailyAccounts.setColor(MainStoreScreen.FONT_COLOR);
+		Label dailyAccounts = new Label(daily, Assets.generateLabelStyleUITitle(40, daily));
+		dailyAccounts.setColor(MainStoreScreen.FONT_COLOR_RED);
 	
-		topCenter.add(dailyAccounts);
+		topCenter.add(dailyAccounts).padTop(-KebabKing.getGlobalY(0.02f));
+		topCenter.row();
+		
+//		topCenter.add(dailyAccounts);
 		topBar.add(topLeft).expandX().fillX().height(KebabKing.getGlobalY(BAR_HEIGHT));
 		
 		float imagePadX = KebabKing.getGlobalX(0.03f);

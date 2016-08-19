@@ -774,7 +774,7 @@ public class Assets {
 //		green9Patch = new NinePatch(getTextureRegion("market/green9patch"), GREEN_9PATCH_OFFSET_X, GREEN_9PATCH_OFFSET_X_2, GREEN_9PATCH_OFFSET_Y, GREEN_9PATCH_OFFSET_Y_2);
 		white9PatchSmall = new NinePatch(getTextureRegion("market/white9patchSmall"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
 		green9PatchSmall = new NinePatch(getTextureRegion("market/green9patchSmallHollow"), PATCH_OFFSET_X, PATCH_OFFSET_X, PATCH_OFFSET_Y, PATCH_OFFSET_Y);
-		bigGreen9Patch = new NinePatch(getTextureRegion("market/light_green3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
+		bigGreen9Patch = new NinePatch(getTextureRegion("market/blue3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
 		bigRed9Patch = new NinePatch(getTextureRegion("market/red3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
 		bigBlue9Patch = new NinePatch(getTextureRegion("market/blue3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);
 //		bigGreen9Patch = new NinePatch(getTextureRegion("market/green3x"), PATCH_OFFSET_X*3, PATCH_OFFSET_X*3, PATCH_OFFSET_Y*3, PATCH_OFFSET_Y*3);

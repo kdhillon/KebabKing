@@ -187,11 +187,13 @@ public class StorePurchaseableTable extends Table {
 		icon.addListener(new SuperStrictInputListener() {
 			@Override
 			public void touch(InputEvent event){
+				System.out.println("touching");
 				click();
 			}
 		});	
 		title.addListener(new SuperStrictInputListener() {
 			public void touch(InputEvent event) {					
+				System.out.println("touching");
 				click();
 			}
 		});	
@@ -586,8 +588,9 @@ public class StorePurchaseableTable extends Table {
 			this.unlockButtonTable.clear();
 			this.unlockButtonTable = null;
 			this.unlockButton = null;
-			addSelectListeners();
 		}
+
+		addSelectListeners();
 
 		if (this.purchaseable.getType().isSelected(this.index)) {
 			KebabKing.print(this.purchaseable.getType().getFirstSelected().getName());

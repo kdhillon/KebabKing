@@ -76,7 +76,7 @@ public class MainMenuScreen extends ActiveScreen {
 		
 		Table doub = new Table();
 		
-		Table marketButton = DrawUI.getBlueButtonFancy(Assets.strings.get("market"), 65, 1);
+		Table marketButton = DrawUI.getBlueButtonFancy(Assets.strings.get("market"), 65, 2);
 
 		//		float width2 = KebabKing.getGlobalX(0.7f);
 		//		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();
@@ -102,7 +102,7 @@ public class MainMenuScreen extends ActiveScreen {
 		
 		//		float width2 = KebabKing.getGlobalX(0.7f);
 		//		float height2 = width * bg.getRegionHeight() / bg.getRegionWidth();
-		float buttonPad = KebabKing.getGlobalY(.04f);
+		float buttonPad = KebabKing.getGlobalY(.03f);
 
 //		doub.add(awardsButton).padLeft(KebabKing.getGlobalXFloat(0.05f));
 		table.add(doub).center().expandY().top().padTop(buttonPad); //.width(width2).height(height2);//.width(KebabKing.getGlobalX(BUTTON_WIDTH)).height(KebabKing.getGlobalX(BUTTON_WIDTH));

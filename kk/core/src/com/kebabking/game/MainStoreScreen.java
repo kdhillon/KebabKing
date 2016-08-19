@@ -24,6 +24,7 @@ public class MainStoreScreen extends ActiveScreen {
 	static Color FONT_COLOR = new Color(0.22f, 0.2f, 0.2f, 1); 
 	static Color FONT_COLOR_GRAY = new Color(0.22f, 0.2f, 0.2f, 0.8f); 
 	static Color FONT_COLOR_GREEN = new Color(0.223f, 0.707f, 0.289f, 1); 
+	static Color FONT_COLOR_RED = new Color(193/256f, 39/256f, 45/256f, 1); 
 
 	static float TitlePad = 0.15f;
 	static float TitleHeight = 2.15f;
@@ -109,10 +110,12 @@ public class MainStoreScreen extends ActiveScreen {
 //		mainTable.row();
 		
 		// add text below title
-		String text = Assets.strings.get("welcome_to_the_market");
-		Label label = new Label(text, Assets.generateLabelStyleUILight(28, text));
-		label.setColor(FONT_COLOR);
-		mainTable.add(label).center().expandY().top().padTop(title_pad_top * 1.5f);
+		
+		Table label = DrawUI.getBlueButtonFancy(Assets.strings.get("welcome_to_the_market"), 60, 2);
+//		String text = Assets.strings.get("welcome_to_the_market");
+//		Label label = new Label(text, Assets.generateLabelStyleUILight(28, text));
+//		label.setColor(FONT_COLOR);
+		mainTable.add(label).center().expandY().top().padTop(title_pad_top * 1.4f);
 		mainTable.row();
 //		
 		// add shelf
